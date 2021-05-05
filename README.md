@@ -11,3 +11,18 @@ with no configuration needed to add a new setting. It works in the following way
   a parent matches less variables than the sibling we just visited, this means those "missing" variables can be
   attributed to that previous sibling.
 
+TODO:
+- Decouple WordPress further (use other or no component lib)
+- Add a local storage namespace configuration option, so that more than one instance can run on the same domain
+- Support other variables as a value
+- Show the same property in different screen sizes in a single control
+- Instead of searching for a corresponding regular property by removing `--hover` (or other state) from the name, try
+  if we can do the same with the selector, and so locate it reliably regardless of naming scheme.
+- More tailored controls / group properties into single control?
+- Clean up and rename unwieldy `VarPicker`
+- Make hotkeys configurable in the UI
+- Move constant inline styles to CSS
+- Clean up the drag code (I kept adding (too much) things to it, to prevent it from going off-screen.)
+- Use more of available screen space in "responsive" view
+- Use `ResponsiveFrame` to render multiple themes / screen sizes at the same time
+- Write tests
