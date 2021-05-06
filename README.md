@@ -14,7 +14,7 @@ with no configuration needed to add a new setting. It works in the following way
 TODO:
 - Decouple WordPress further (use other or no component lib)
 - Add a local storage namespace configuration option, so that more than one instance can run on the same domain
-- Support other variables as a value
+- Facilitate other variables as a value (you can type them for now)
 - Show the same property in different screen sizes in a single control
 - Instead of searching for a corresponding regular property by removing `--hover` (or other state) from the name, try
   if we can do the same with the selector, and so locate it reliably regardless of naming scheme.
