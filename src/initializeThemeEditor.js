@@ -44,7 +44,7 @@ const applyFromLocalStorage = (key) => {
     }
   });
   lastRead[key] = json;
-}
+};
 
 export const setupThemeEditor = async (config) => {
   applyFromLocalStorage(LOCAL_STORAGE_KEY);
@@ -54,9 +54,9 @@ export const setupThemeEditor = async (config) => {
     document.documentElement.classList.add('hide-wp-admin-bar');
     const refreshLoop = () => {
       applyFromLocalStorage('theme-with-previews');
-    }
+    };
     const fps = 60;
-    setInterval(refreshLoop, 1000 / 60);
+    setInterval(refreshLoop, 1000 / fps);
   }
 
   // Quick way to make it work with WPML. In case of NL, which doesn't have WPML, it doesn't match because without
@@ -79,7 +79,7 @@ export const setupThemeEditor = async (config) => {
         editorRoot.style.top = `${ Math.min(y, maxY) }px`;
       }
     } catch (e) {
-      console.log('No position found in local storage', e)
+      console.log('No position found in local storage', e);
     }
   }
 
@@ -114,7 +114,7 @@ export const setupThemeEditor = async (config) => {
 
     const rawGroups = await groupVars(matchedVars, event.target);
 
-    const groups = await filterMostSpecific(rawGroups, event.target)
+    const groups = await filterMostSpecific(rawGroups, event.target);
 
     if (isRunningAsFrame) {
       window.parent.postMessage(
