@@ -5,7 +5,7 @@
 If you `alt + click` an element, you will get all variables that apply to the element you clicked or any of its parents.
 These by default are grouped per HTML element.
 
-For example if your page have a header with a variable background color, within it a left section with also a variable
+For example if your page has a header with a variable background color, within it a left section with also a variable
 background color, then in that section a button (also with some options).
 
 `header > div.header-left-side (with options) > button (with options)`
@@ -98,6 +98,7 @@ If you hover the currently selected one, you will see a summary of the changes y
 before saving to the server.
 
 ### Comparing multiple themes
+
 You can also use this comparison to see the differences among multiple themes. If you switch to theme `a`, and hover
 over theme `b`, you will see how theme `a` is different from theme `b`. If you hover the `default` theme (which is
 basically empty), you see all the options the current theme is setting.
@@ -106,6 +107,9 @@ This is just a very quick implementation that puts the info in the title attribu
 it's better than nothing for now :). This will be made more robust in a future iteration.
 
 ## Known limitations/bugs
+
+There are no known issues that prevent it from being unusable, but given this is an early version, there's a few things
+to watch out for, and a few things that for now require more "manual" work.
 
 - There is no local storage "namespace", so if multiple sites run on the same domain, it will currently read and apply
   the last theme you edited to all sites that have the theme editor.
@@ -123,3 +127,6 @@ it's better than nothing for now :). This will be made more robust in a future i
 - No Google Fonts integration. The font picker is currently disabled because it crashes when the value is not found in
   Google Fonts. Also picking a new font from Google Fonts doesn't ensure the font is actually available on the page.
   This integration will be finished later.
+- No UI for setting a variable to another variable. It's supported, but you have to enter the variable name manually in
+  the text field at the bottom. This will be added, but it still needs to be shaped how that UI would look like.
+  Probably it will be created as part of the "theme-builder-builder" functionality.
