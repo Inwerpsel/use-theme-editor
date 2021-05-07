@@ -17,8 +17,8 @@ If there are elements in the tree that don't have any options, these will not be
 
 `header > div (with no options) > div (also no options) > div.header-left-side (with options) > button (with options)`
 
-This will display the same 3 groups as the first example. If options are added to one of those 2 elements, it will
-result in a 4th group being shown.
+This will display the same 3 groups as the first example. If new code is pushed that adds options to one of those 2
+elements that previously had none, the theme editor will start displaying a 4th group.
 
 If there are no options for the element you clicked or any of its parents, no groups will be shown.
 
