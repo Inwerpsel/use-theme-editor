@@ -1,6 +1,6 @@
 {
   "name": "use-theme-editor",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Zero configuration CSS variables based theme editor",
   "main": "index.js",
   "scripts": {
@@ -19,7 +19,6 @@
   },
   "dependencies": {
     "balanced-match": "^2.0.0",
-    "eslint": "^7.25.0",
     "font-picker-react": "^3.5.2",
     "react-color": "^2.19.3",
     "react-hotkeys-hook": "^3.0.3",
@@ -34,6 +33,7 @@
     "@greenpeace/dashdash": "^1.1.1",
     "@wordpress/components": "^8.3.2",
     "balanced-match": "^2.0.0",
+    "eslint": "^7.25.0",
     "font-picker-react": "^3.5.2",
     "react": "^16.9.0",
     "react-color": "^2.19.3",
