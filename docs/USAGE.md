@@ -69,6 +69,42 @@ the "grouped" mode which only includes the last clicked element). You can indivi
 the minus sign on the right. This was the first mode I created, the grouped mode is a lot more convenient, but I
 preserved it because it could be handy in some cases.
 
+## Saving a theme on the server
+
+There is currently a quick way included to save themes and view the differences/changes with local themes. Whenever the
+theme name field matches the name of a theme on the server, it's considered to be the same. So if you save it, it will
+overwrite that theme on the server.
+
+You can save by clicking the "Save" button, or by pressing `alt + s`. The button will prompt you to confirm the save, to
+prevent accidentally overwriting a theme on the server. If you use the keyboard shortcut it does not prompt you and
+immediately saves (since it's a lot less likely to press the combination by accident).
+
+If you have changes compared to the version on the server, you will see `(*)` behind its name. Then you'll also get a
+prompt when clicking the "switch" button of another theme, to prevent you from losing these changes.
+
+If no theme with that name exists on the server, the button will say "Upload" instead, and upload the theme without
+requiring confirmation.
+
+Next to each theme on the server there's a button to delete it (with confirmation), and a button to switch to it.
+
+## Comparing themes
+
+If you hover any theme in the list, it will be compared with what you currently have in the editor. This works the same
+way for all themes on the server. You can use this comparison for different purposes.
+
+### Seeing your current changes
+
+If you hover the currently selected one, you will see a summary of the changes you made. You can use this to check
+before saving to the server.
+
+### Comparing multiple themes
+You can also use this comparison to see the differences among multiple themes. If you switch to theme `a`, and hover
+over theme `b`, you will see how theme `a` is different from theme `b`. If you hover the `default` theme (which is
+basically empty), you see all the options the current theme is setting.
+
+This is just a very quick implementation that puts the info in the title attribute. So it's not very user-friendly, but
+it's better than nothing for now :). This will be made more robust in a future iteration.
+
 ## Known limitations/bugs
 
 - There is no local storage "namespace", so if multiple sites run on the same domain, it will currently read and apply
@@ -84,3 +120,6 @@ preserved it because it could be handy in some cases.
 - In a few rare cases the logic for filtering the most specific property doesn't pick the right one. Because of that, I
   preserved a checkbox at the top to disable this filtering ("Show only specific properties"). Once these cases are
   solved, the checkbox will likely be removed.
+- No Google Fonts integration. The font picker is currently disabled because it crashes when the value is not found in
+  Google Fonts. Also picking a new font from Google Fonts doesn't ensure the font is actually available on the page.
+  This integration will be finished later.
