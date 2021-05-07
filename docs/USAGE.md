@@ -130,3 +130,5 @@ to watch out for, and a few things that for now require more "manual" work.
 - No UI for setting a variable to another variable. It's supported, but you have to enter the variable name manually in
   the text field at the bottom. This will be added, but it still needs to be shaped how that UI would look like.
   Probably it will be created as part of the "theme-builder-builder" functionality.
+- Media queries are taken into account to some degree, but the UI currently doesn't visualize that a setting applies
+  only to a certain screen size range. For now, you have to check the name of variables for this info.
