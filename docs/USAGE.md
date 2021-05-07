@@ -2,7 +2,7 @@
 
 ### Getting an element's settings
 
-If you alt + click an element, you will get all variables that apply to the element you clicked or any of its parents.
+If you `alt + click` an element, you will get all variables that apply to the element you clicked or any of its parents.
 These by default are grouped per HTML element.
 
 For example if your page have a header with a variable background color, within it a left section with also a variable
@@ -24,10 +24,10 @@ If there are no options for the element you clicked or any of its parents, no gr
 
 ### Undo/redo behavior
 
-You can undo changes by pressing ctrl + Z (or cmd + Z). For now the history is NOT preserved across page loads, so
+You can undo changes by pressing `ctrl + Z` (or `cmd + Z`). For now the history is NOT preserved across page loads, so
 refreshing the page will prevent you from undoing earlier changes.
 
-After undoing changes, you can redo them again using ctrl + shift + Z (or cmd + shift + Z).
+After undoing changes, you can redo them again using `ctrl + shift + Z` (or `cmd + shift + Z`).
 
 Each change you make in the editor is applied immediately, so also "fluid" rapid changes, for example dragging the color
 picker to a different color. While dragging you see the color applied immediately, but the history will only include the
@@ -44,9 +44,10 @@ the resizable server themes into account so if you make that one too big it gets
 
 ### Responsive view
 
-If you check the checkbox at the top (or press alt + v), you switch to a responsive mode where the site is displayed in
+If you check the checkbox at the top (or press `alt + v`), you switch to a responsive mode where the site is displayed in
 an iframe with any dimensions. If you need to work with a screen size bigger than your current screen, you can use the
-slider at the top to scale down this frame.
+slider at the top to scale down this frame. On the right you have some preset screen sizes. You can also manually enter
+width and height, or use the bottom right square with your mouse to drag it to different dimensions.
 
 ### "Group by last clicked element" checkbox
 
