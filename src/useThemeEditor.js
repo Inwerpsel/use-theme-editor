@@ -51,8 +51,6 @@ const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
 const ACTIONS = {
   SET: (state, { name, value }) => {
     const { theme } = state;
-    // In case this action is dispatched but the value doesn't change,
-    const isActualSet = theme[name] !== value;
 
     if (theme[name] === value) {
       return state;
@@ -64,6 +62,7 @@ const ACTIONS = {
       ...state,
       theme: { ...state.theme, [name]: value },
       history: !shouldAddEntry ? state.history : pushHistory(state.history, state.theme),
+      future: [],
       lastSet: { ...state.lastSet, [name]: Date.now(), }
     };
   },
@@ -73,16 +72,15 @@ const ACTIONS = {
       ...others
     } = state.theme;
 
-    const isActualUnset = state.theme.hasOwnProperty(name);
-
-    if (isActualUnset) {
-      keysToRemove[name] = true;
+    if (!state.theme.hasOwnProperty(name)) {
+      return state;
     }
 
     return {
       ...state,
       theme: others,
-      history: !isActualUnset ? state.history : pushHistory(state.history, state.theme),
+      history: pushHistory(state.history, state.theme),
+      future: [],
     };
   },
   START_PREVIEW: (state, { name, value }) => {
@@ -204,9 +202,9 @@ const ACTIONS = {
 
 // Experimenting with exporting the reducers themselves as ACTION keys. If you pass a function to the "main" reducer,
 // it will use the name of the function to locate the action. This has some benefits: no need to have a separate ACTIONS
-// constant each time you want to use a reducer, and need to update it each time you add a new action. It also makes it
-// easier to navigate from the dispatch directly to the function that handles it. This can be easily switched back to
-// strings if needed by changing the import only.
+// constant each time you want to use a reducer, which you need to update it each time you add a new action. Only 1
+// symbol to rename instead of 3. It also makes it easier to navigate from the dispatch directly to the function that
+// handles it. This can be easily switched back to strings if needed by changing the import only.
 export const THEME_ACTIONS = ACTIONS;
 
 function reducer(state, { type, payload }) {
