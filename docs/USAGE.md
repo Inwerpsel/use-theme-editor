@@ -29,6 +29,10 @@ refreshing the page will prevent you from undoing earlier changes.
 
 After undoing changes, you can redo them again using ctrl + shift + Z (or cmd + shift + Z).
 
+Each change you make in the editor is applied immediately, so also "fluid" rapid changes, for example dragging the color
+picker to a different color. While dragging you see the color applied immediately, but the history will only include the
+"final" color you land on. This way the history stays manageable and navigable. This is done by using a 700ms timeout.
+
 Note that this is only local history and not saved on the server. Versioning of themes saved on the server is not
 included yet, but may be supported (to some degree) by this library at a later point.
 
@@ -67,4 +71,3 @@ preserved it because it could be handy in some cases.
 - In a few rare cases the logic for filtering the most specific property doesn't pick the right one. Because of that, I
   preserved a checkbox at the top to disable this filtering ("Show only specific properties"). Once these cases are
   solved, the checkbox will likely be removed.
-- In some cases the "future" (i.e.)
