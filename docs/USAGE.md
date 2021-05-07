@@ -13,7 +13,7 @@ background color, then in that section a button (also with some options).
 Then you will see 3 different groups corresponding to each element. The deepest element (in this case the button) is
 displayed at the top and opened already.
 
-If there are elements in the tree that don't have any settings, these will not be shown. E.g.
+If there are elements in the tree that don't have any options, these will not be shown. E.g.
 
 `header > div (with no options) > div (also no options) > div.header-left-side (with options) > button (with options)`
 
@@ -21,6 +21,18 @@ This will display the same 3 groups as the first example. If options are added t
 result in a 4th group being shown.
 
 If there are no options for the element you clicked or any of its parents, no groups will be shown.
+
+### Locating opened elements on the page
+
+Hovering the title of each group will highlight the corresponding element on the page. Note that this is only the
+element you last clicked (or parent of). The same options could also apply to other elements on the page, but these are
+not highlighted.
+
+This currently does not work in responsive mode, but can be fixed to do so.
+
+It's a very quick implementation that just sets a border, so this is likely to make the whole layout jiggle. I'll
+replace it with something that doesn't change the layout, but for now this seems acceptable, given there's otherwise no
+way to locate the element again.
 
 ### Undo/redo behavior
 
@@ -44,10 +56,10 @@ the resizable server themes into account so if you make that one too big it gets
 
 ### Responsive view
 
-If you check the checkbox at the top (or press `alt + v`), you switch to a responsive mode where the site is displayed in
-an iframe with any dimensions. If you need to work with a screen size bigger than your current screen, you can use the
-slider at the top to scale down this frame. On the right you have some preset screen sizes. You can also manually enter
-width and height, or use the bottom right square with your mouse to drag it to different dimensions.
+If you check the checkbox at the top (or press `alt + v`), you switch to a responsive mode where the site is displayed
+in an iframe with any dimensions. If you need to work with a screen size bigger than your current screen, you can use
+the slider at the top to scale down this frame. On the right you have some preset screen sizes. You can also manually
+enter width and height, or use the bottom right square with your mouse to drag it to different dimensions.
 
 ### "Group by last clicked element" checkbox
 
