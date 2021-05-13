@@ -106,6 +106,10 @@ basically empty), you see all the options the current theme is setting.
 This is just a very quick implementation that puts the info in the title attribute. So it's not very user-friendly, but
 it's better than nothing for now :). This will be made more robust in a future iteration.
 
+### Copying a theme on the server
+
+Just type something else in the theme name field, and upload it as a new theme.
+
 ## Known limitations/bugs
 
 There are no known issues that prevent it from being unusable, but given this is an early version, there's a few things
