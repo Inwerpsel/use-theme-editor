@@ -27,6 +27,7 @@ const wrapperMargin = 28;
 export const ResizableFrame = props => {
   const {
     src,
+    frameRef,
   } = props;
 
   const [
@@ -145,6 +146,7 @@ export const ResizableFrame = props => {
     >
       <iframe
         className='responsive-frame'
+        ref={frameRef}
         { ...{ src, width: parseInt(width) + 12, height: parseInt(height) + 12 } }
       />
     </div>

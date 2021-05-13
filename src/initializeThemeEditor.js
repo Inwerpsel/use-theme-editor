@@ -94,6 +94,8 @@ export const setupThemeEditor = async (config) => {
     ),
   ], []);
 
+  let lastGroups = [];
+
   window.addEventListener('message', event => {
     const { type, payload } = event.data;
     if (type !== 'render-vars') {
@@ -117,12 +119,16 @@ export const setupThemeEditor = async (config) => {
     const groups = await filterMostSpecific(rawGroups, event.target);
 
     if (isRunningAsFrame) {
+      lastGroups = groups;
+      const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
+      const rawWithElementIndexes = rawGroups.map((group, index) => ({...group, element: index}));
+
       window.parent.postMessage(
         {
           type: 'render-vars', payload: {
             matchedVars,
-            groups: groups.map(({ element, ...rest }) => rest),
-            rawGroups: rawGroups.map(({ element, ...rest }) => rest),
+            groups: withElementIndexes,
+            rawGroups: rawWithElementIndexes,
           }
         },
         window.location.href,
@@ -134,4 +140,50 @@ export const setupThemeEditor = async (config) => {
     addHighlight(event.target);
     setTimeout(() => removeHighlight(event.target), 700);
   });
+
+  // Below are only listeners for messages sent from the parent frame.
+  if (!isRunningAsFrame) {
+    return;
+  }
+
+  window.addEventListener('message', event => {
+    const { type, payload } = event.data;
+    if (type !== 'highlight-element-start') {
+      return;
+    }
+    const group = lastGroups[payload.index];
+    if (!group) {
+      return;
+    }
+    addHighlight(group.element);
+  }, false);
+
+  window.addEventListener('message', event => {
+    const { type, payload } = event.data;
+    if (type !== 'highlight-element-end') {
+      return;
+    }
+    const group = lastGroups[payload.index];
+    if (!group) {
+      return;
+    }
+    removeHighlight(group.element);
+  }, false);
+
+  window.addEventListener('message', event => {
+    const { type, payload } = event.data;
+    if (type !== 'scroll-in-view') {
+      return;
+    }
+    const group = lastGroups[payload.index];
+    if (!group) {
+      return;
+    }
+    group.element.scrollIntoView({
+      behavior: 'smooth',
+      block:  'nearest',
+      inline: 'end',
+    });
+  }, false);
 };
+

@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { VariableControl } from './VariableControl';
 import { THEME_ACTIONS, useThemeEditor } from './useThemeEditor';
-import { whileHoverHighlight } from './highlight';
+import {addHighlight, removeHighlight} from './highlight';
 import { exportCss, exportJson } from './export';
 import { useServerThemes } from './useServerThemes';
 import { useLocalStorage } from './useLocalStorage';
@@ -139,10 +139,12 @@ export const VarPicker = (props) => {
     }
   },hotkeysOptions, [fileName, modifiedServerVersion, theme]);
 
+  const frameRef = useRef(null);
+
   return <div
     className='var-picker'
   >
-    {!!isResponsive && <ResizableFrame src={window.location.href} />}
+    {!!isResponsive && <ResizableFrame frameRef={frameRef} src={window.location.href} />}
     <span
         style={ {
           fontSize: '10px',
@@ -293,13 +295,68 @@ export const VarPicker = (props) => {
     { !collapsed && shouldGroup && <ul className={'group-list'}>
       { (onlySpecific ? groups : rawGroups).map(({ element, label, vars }) => (
         <li className={ 'var-group' } key={ label } style={ { marginBottom: '12px' } }>
-          <h4
-            style={ { fontWeight: 400, marginBottom: 0, cursor: 'pointer' } }
-            onClick={ () => toggleGroup(label) }
-            { ...whileHoverHighlight(element) }
+          <div
+            onMouseEnter={ () => {
+              if (element && element.classList) {
+                addHighlight(element);
+                return;
+              }
+              if (!frameRef?.current) {
+                return;
+              }
+
+              frameRef.current.contentWindow.postMessage(
+                {
+                  type: 'highlight-element-start', payload: {index: element}
+                },
+                window.location.origin,
+              );
+            }}
+            onMouseLeave={ () => {
+              if (element && element.classList) {
+                removeHighlight(element);
+                return;
+              }
+              if (!frameRef?.current) {
+                return;
+              }
+
+              frameRef.current.contentWindow.postMessage(
+                {
+                  type: 'highlight-element-end', payload: {index: element}
+                },
+                window.location.origin,
+              );
+            }}
           >
-            { label } ({ vars.length })
-          </h4>
+            <button
+              title='Scroll in view'
+              style={{border: '1px solid gray', background: 'white', borderRadius: '5px', padding: '4px', fontSize: '12px', float: 'right'}}
+              disabled={frameRef.current && isNaN(element)}
+              onClick={() => {
+                if (frameRef.current) {
+                  frameRef.current.contentWindow.postMessage(
+                    {
+                      type: 'scroll-in-view', payload: {index: element}
+                    },
+                    window.location.href,
+                  );
+                  return;
+                }
+                element.scrollIntoView({
+                  behavior: 'smooth',
+                  block:  'nearest',
+                  inline: 'end',
+                });
+              }}
+            >👁</button>
+            <h4
+              style={ { fontWeight: 400, marginBottom: 0, cursor: 'pointer' } }
+              onClick={ () => toggleGroup(label) }
+            >
+              { label } ({ vars.length })
+            </h4>
+          </div>
           { openGroups.includes(label) && <ul>
             { vars.map(cssVar => {
                 const defaultValue = defaultValues[cssVar.name];
