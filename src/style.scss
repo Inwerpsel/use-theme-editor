@@ -10,6 +10,13 @@ body {
   }
 }
 
+.scroll-in-view {
+  opacity: .7;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .var-picker * {
   font-family: Roboto, sans-serif !important;
   color: black !important;
@@ -105,8 +112,7 @@ html.hide-wp-admin-bar {
 }
 
 .theme-editor-highlight {
-  border: 2px solid yellow !important;
-  box-sizing: border-box !important;
+  outline: 2px solid #ffff00 !important;
 }
 
 .var-picker .var-group {

@@ -331,7 +331,17 @@ export const VarPicker = (props) => {
           >
             <button
               title='Scroll in view'
-              style={{border: '1px solid gray', background: 'white', borderRadius: '5px', padding: '4px', fontSize: '12px', float: 'right'}}
+              className='scroll-in-view'
+              style={{
+                border: '1px solid gray',
+                background: 'white',
+                margin: '4px 2px',
+                borderRadius: '5px',
+                padding: '4px',
+                fontSize: '12px',
+                float: 'right',
+                cursor: 'zoom-in',
+              }}
               disabled={frameRef.current && isNaN(element)}
               onClick={() => {
                 if (frameRef.current) {
