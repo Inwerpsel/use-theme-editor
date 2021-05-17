@@ -8,6 +8,7 @@ import { useLocalStorage } from './useLocalStorage';
 import { useToggle } from './useToggle';
 import { ResizableFrame } from './ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
+import {createPortal} from "react-dom";
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT'],
@@ -141,10 +142,33 @@ export const VarPicker = (props) => {
 
   const frameRef = useRef(null);
 
+  const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'alt');
+
+  useHotkeys('alt+a', () => {
+    setFrameClickBehavior(value => value=== 'alt' ? 'any' : 'alt');
+  }, [frameClickBehavior]);
+
+  useEffect(() => {
+    if (!isResponsive) {
+      return;
+    }
+    if (!frameRef?.current || !isResponsive) {
+      return;
+    }
+    const message = {type: 'theme-edit-alt-click', payload: {frameClickBehavior}};
+    frameRef.current.contentWindow.postMessage(message, window.location.origin);
+
+  }, [frameClickBehavior, frameRef.current, isResponsive])
+
   return <div
     className='var-picker'
   >
     {!!isResponsive && <ResizableFrame frameRef={frameRef} src={window.location.href} />}
+
+    {!!isResponsive && createPortal(<button style={{zIndex: 1003,position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
+      setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
+    }}>{ frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}</button>, document.body)}
+
     <span
         style={ {
           fontSize: '10px',

@@ -94,6 +94,7 @@ export const setupThemeEditor = async (config) => {
     ),
   ], []);
 
+  let requireAlt = !isRunningAsFrame || localStorage.getItem('theme-editor-frame-click-behavior') === 'alt';
   let lastGroups = [];
 
   window.addEventListener('message', event => {
@@ -106,9 +107,10 @@ export const setupThemeEditor = async (config) => {
   }, false);
 
   document.addEventListener('click', async event => {
-    if (!event.altKey) {
+    if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
       return;
     }
+
     document.documentElement.classList.add('hide-wp-admin-bar');
     event.preventDefault();
 
@@ -118,7 +120,9 @@ export const setupThemeEditor = async (config) => {
 
     const groups = await filterMostSpecific(rawGroups, event.target);
 
-    if (isRunningAsFrame) {
+    if (!isRunningAsFrame) {
+      renderSelectedVars(editorRoot, matchedVars, event.target, groups, rawGroups, cssVars, config);
+    } else {
       lastGroups = groups;
       const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
       const rawWithElementIndexes = rawGroups.map((group, index) => ({...group, element: index}));
@@ -133,8 +137,6 @@ export const setupThemeEditor = async (config) => {
         },
         window.location.href,
       );
-    } else {
-      renderSelectedVars(editorRoot, matchedVars, event.target, groups, rawGroups, cssVars, config);
     }
 
     addHighlight(event.target);
@@ -184,6 +186,14 @@ export const setupThemeEditor = async (config) => {
       block:  'nearest',
       inline: 'end',
     });
+  }, false);
+
+  window.addEventListener('message', event => {
+    const { type, payload } = event.data;
+    if (type !== 'theme-edit-alt-click') {
+      return;
+    }
+    requireAlt = payload.frameClickBehavior !== 'any';
   }, false);
 };
 

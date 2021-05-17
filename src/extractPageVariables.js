@@ -1,7 +1,7 @@
 const balancedVar = require('./balancedVar');
 
 const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
-const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes')
+const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
 const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
@@ -29,7 +29,7 @@ const collectRuleVars = (collected, rule, sheet, media = null, supports = null) 
           media,
           supports,
           sheet: sheet.href,
-        }
+        };
         if (!(variableName in collected)) {
           collected[variableName] = { usages: [] };
         }
@@ -37,12 +37,12 @@ const collectRuleVars = (collected, rule, sheet, media = null, supports = null) 
         // Replace variable name (first occurrence only) from result, to avoid circular loop
         remainingValue = (match.pre || '') + match.body.replace(variableName, '') + (match.post || '');
       }
-    })
+    });
     return collected;
   }
   if (rule.type === 4) {
     // No nested media queries for now.
-    [...rule.cssRules].forEach(innerRule => collectRuleVars(collected, innerRule, sheet, rule.conditionText, supports))
+    [...rule.cssRules].forEach(innerRule => collectRuleVars(collected, innerRule, sheet, rule.conditionText, supports));
     return collected;
   }
   if (rule.type === 12) {
@@ -53,7 +53,7 @@ const collectRuleVars = (collected, rule, sheet, media = null, supports = null) 
 
   // console.log(rule.type, rule);
   return collected;
-}
+};
 
 const collectSheetVars = (vars, sheet) => {
   return [...sheet.cssRules].reduce((sheetVars, rule) => collectRuleVars(sheetVars, rule, sheet), vars);
@@ -68,5 +68,5 @@ export const extractPageVariables = async() => {
       name: k,
       ...v,
     });
-  })
+  });
 };
