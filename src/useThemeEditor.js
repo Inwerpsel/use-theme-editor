@@ -207,8 +207,10 @@ const ACTIONS = {
 // handles it. This can be easily switched back to strings if needed by changing the import only.
 export const THEME_ACTIONS = ACTIONS;
 
+const IS_VERBOSE = false;
+
 function reducer(state, { type, payload }) {
-  console.log('Received action', type, 'with payload', payload);
+  IS_VERBOSE && console.log('Received action', type, 'with payload', payload);
 
   const action = typeof type === 'function' ? type.name : type;
 
