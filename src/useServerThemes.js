@@ -19,7 +19,7 @@ export const useServerThemes = (config) => {
         ...themes,
       });
       setLoading(false);
-    }
+    };
     doApiCall();
   }, [dirty]);
 
@@ -37,5 +37,5 @@ export const useServerThemes = (config) => {
       setDirty(!dirty);
     }
   };
-}
+};
 

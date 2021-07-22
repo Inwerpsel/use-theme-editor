@@ -53,7 +53,7 @@ const byHexValue = ({color1}, { color2}) => {
   }
 
   return hex1 < hex2 ? 1 : -1;
-}
+};
 
 export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
 
@@ -81,7 +81,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange(hasTransparency ? `rgba(${ r } , ${ g }, ${ b }, ${ a })` : color.hex);
         } }
       />
-      { colorUsages.sort(byHexValue).map(({ color, usages }) => (<span
+      { colorUsages.sort(byHexValue).map(({ color, usages }) => <span
         key={color}
         onClick={ () => {
           onChange(color, true);
@@ -107,7 +107,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           cursor: 'pointer',
         } }>
         <span key={`${color}---usages`} style={ { backgroundColor: 'white' } }>{ usages.length }</span>
-        </span>)
+      </span>
       ) }
       <div>
         <TextControl style={{marginTop: '6px'}}

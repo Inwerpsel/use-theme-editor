@@ -35,7 +35,7 @@ export const dragElement = (draggedElement) => {
         ul.style.maxHeight = `${ maxHeight - 2  }px`;
       }, 300);
     }
-  })
+  });
 
   draggedElement.onmousedown = dragMouseDown;
   draggedElement.ondragstart = dragMouseDown;
@@ -65,7 +65,7 @@ export const dragElement = (draggedElement) => {
   function elementDrag(e) {
     e = e || window.event;
     e.preventDefault();
-    draggedElement.classList.add('dragging')
+    draggedElement.classList.add('dragging');
     const maxHeight = window.outerHeight - draggedElement.offsetTop - 318;
     // calculate the new cursor position:
     posX1 = posX2 - e.clientX;
@@ -77,7 +77,7 @@ export const dragElement = (draggedElement) => {
     if (posY1 < 0) {
       // set the element's new position:
       if (maxHeight > 220 || lastYMax !== null && posY2 < lastYMax) {
-        draggedElement.style.top = (draggedElement.offsetTop - posY1) + "px";
+        draggedElement.style.top = (draggedElement.offsetTop - posY1) + 'px';
       } else {
         if (lastYMax === null) {
           lastYMax = posY2;
@@ -88,7 +88,7 @@ export const dragElement = (draggedElement) => {
     if (posY1 > 0) {
       // set the element's new position:
       if (draggedElement.offsetTop > 2 || lastYMax !== null && posY2 > lastYMin) {
-        draggedElement.style.top = (draggedElement.offsetTop - posY1) + "px";
+        draggedElement.style.top = (draggedElement.offsetTop - posY1) + 'px';
       } else {
         if (lastYMin === null) {
           lastYMin = posY2;
@@ -97,7 +97,7 @@ export const dragElement = (draggedElement) => {
     }
 
     if (draggedElement.offsetLeft > 4 || posX1 < 0 && posX2 > lastXMin) {
-      draggedElement.style.left = (draggedElement.offsetLeft - posX1) + "px";
+      draggedElement.style.left = (draggedElement.offsetLeft - posX1) + 'px';
     } else {
       if (lastXMin === null) {
         lastXMin = posX2;
@@ -111,7 +111,7 @@ export const dragElement = (draggedElement) => {
 
   function closeDragElement(event) {
     // stop moving when mouse button is released:
-    draggedElement.classList.remove('dragging')
+    draggedElement.classList.remove('dragging');
     lastYMin = null;
     lastYMax = null;
     lastXMin = null;
@@ -127,4 +127,4 @@ export const dragElement = (draggedElement) => {
     document.onmouseup = null;
     document.onmousemove = null;
   }
-}
+};

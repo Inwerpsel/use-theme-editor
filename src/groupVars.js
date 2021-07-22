@@ -23,11 +23,11 @@ export const byNameStateProp = ({name: nameA},{name: nameB}) => {
 
     return stateA < stateB ? -1 : 1;
   } catch (e) {
-    console.log(e)
+    console.log(e);
     console.log('A', nameA, 'B', nameB);
     return nameA > nameB;
   }
-}
+};
 
 export const groupVars = async (vars, target) => {
   const groups = [];
@@ -57,5 +57,5 @@ export const groupVars = async (vars, target) => {
   }
 
   return groups;
-}
+};
 

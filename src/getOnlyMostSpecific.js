@@ -23,12 +23,12 @@ const getMaxMatchingSpecificity = (usages, element) => {
     }
     return max;
   }, null);
-}
+};
 
 const groupByMediaQueries = (all, usage) => {
   const mediaKey = usage.media || 'all';
   const prevUsages = all[mediaKey] || [];
-  const allUsages = [...prevUsages, usage]
+  const allUsages = [...prevUsages, usage];
   return ({
     ...all,
     [mediaKey]: allUsages,
@@ -43,7 +43,7 @@ export const getOnlyMostSpecific = (vars, element) => {
     Object.entries(byMediaQueries).forEach(([media,usages]) => {
       const maxSpecific = getMaxMatchingSpecificity(usages, element) || usages[0];
       // Won't have anything added if it doesn't match
-      const pseudoSuffix = (maxSpecific.selector.split(',')[0].match(pseudoRegex) || []).join('')
+      const pseudoSuffix = (maxSpecific.selector.split(',')[0].match(pseudoRegex) || []).join('');
       const propName = usages[0].property + pseudoSuffix + media;
 
       if (!all[propName]) {
@@ -55,12 +55,12 @@ export const getOnlyMostSpecific = (vars, element) => {
         }
       }
 
-    })
+    });
     return all;
   },{});
   // Map back to array.
   return Object.entries(asObject).map(([, v]) => v);
-}
+};
 
 
 export const filterMostSpecific = (groups) => {

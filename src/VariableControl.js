@@ -17,7 +17,7 @@ const uniqueUsages = cssVar => {
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
   // todo: make this make more sense
-  const raw = name.replace(/^--/, '').replace(/--/g, ': ').replace(/[-_]/g, ' ')
+  const raw = name.replace(/^--/, '').replace(/--/g, ': ').replace(/[-_]/g, ' ');
   const parts = raw.split(':');
 
   return [
@@ -68,47 +68,47 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
       marginTop: '2px'
     } }
   >
-      { value }
-    </span>;
-}
+    { value }
+  </span>;
+};
 const renderCollapsed = ({cssVar, toggleSelectors}) => <pre
   // style={ { maxWidth: '80%', overflowX: 'hidden' } }
   onClick={ toggleSelectors }
   className={ 'usages-collapsed' }
 >
-    { uniqueUsages(cssVar).join(', ') }
-  </pre>;
+  { uniqueUsages(cssVar).join(', ') }
+</pre>;
 
 const renderShow = ({cssVar, toggleSelectors}) => <pre
   onClick={ toggleSelectors }
 >
-    { uniqueUsages(cssVar).join('\n').replace(',', ',\n') }
-  </pre>;
+  { uniqueUsages(cssVar).join('\n').replace(',', ',\n') }
+</pre>;
 
 const showUsages = (cssVar, showSelectors, toggleSelectors) => {
 
   return <div
     style={ { display: 'inline-block', fontSize: '11px', position: 'relative', marginTop: '16px', minWidth: '40%' } }
   >
-      <span
-        key={ 3 }
-        onClick={ toggleSelectors }
-        style={ {
-          userSelect: 'none',
-          fontSize: '10px',
-          position: 'absolute',
-          top: -12,
-          left: 0
-        } }
-      >
-        { uniqueUsages(cssVar).length } selectors
-      </span>
+    <span
+      key={ 3 }
+      onClick={ toggleSelectors }
+      style={ {
+        userSelect: 'none',
+        fontSize: '10px',
+        position: 'absolute',
+        top: -12,
+        left: 0
+      } }
+    >
+      { uniqueUsages(cssVar).length } selectors
+    </span>
     { showSelectors
       ? renderShow({ cssVar, toggleSelectors })
       : renderCollapsed({ cssVar, toggleSelectors }) }
 
   </div>;
-}
+};
 
 export const VariableControl = (props) => {
   const {
@@ -132,7 +132,7 @@ export const VariableControl = (props) => {
     showSelectors, setShowSelectors
   ] = useState(true);
 
-  const toggleSelectors = () => setShowSelectors(!showSelectors)
+  const toggleSelectors = () => setShowSelectors(!showSelectors);
   const value = theme[cssVar.name] || defaultValue;
   const isDefault = value === defaultValue;
 

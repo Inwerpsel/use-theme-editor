@@ -60,8 +60,8 @@ export const ResizableFrame = props => {
         behavior: 'auto'
       });
 
-    }
-  }, [])
+    };
+  }, []);
 
   return createPortal(<Fragment>
     <div
