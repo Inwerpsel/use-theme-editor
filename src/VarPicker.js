@@ -113,6 +113,14 @@ export const VarPicker = (props) => {
     setResponsive(!isResponsive);
   }, [isResponsive]);
 
+  useHotkeys('ctrl+z,cmd+z', () => {
+    dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD});
+  }, hotkeysOptions);
+
+  useHotkeys('ctrl+shift+z,cmd+shift+z', () => {
+    dispatch({type: THEME_ACTIONS.HISTORY_FORWARD});
+  }, hotkeysOptions);
+
   const [
     serverThemesHeight,
     setServerThemesHeight

@@ -1,7 +1,8 @@
 import { useReducer, useEffect } from 'react';
 import { LOCAL_STORAGE_KEY } from './VarPicker';
-import { useHotkeys } from 'react-hotkeys-hook';
 import { byNameStateProp } from './groupVars';
+import {applyPseudoPreviews} from './applyPseudoPreviews';
+import {getAllDefaultValues} from './getAllDefaultValues';
 
 const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;
@@ -13,14 +14,10 @@ const unset = prop => {
   return document.documentElement.style.removeProperty(prop);
 };
 
-const pushHistory = (history, entry) => {
-  return [
-    entry,
-    // Slice to preserve up to 1001 last entries to have some upper limit.
-    ...history.slice(-1000),
-  ];
-};
+// Slice to preserve up to 1001 last entries to have some upper limit.
+const pushHistory = (history, entry) => [entry, ...history.slice(-1000)];
 
+// I created these as an optimization, but not sure if it's really needed or even improving things.
 const lastWritten = {};
 const keysToRemove = {};
 
@@ -56,25 +53,26 @@ const ACTIONS = {
       return state;
     }
 
-    const shouldAddEntry = !state.lastSet[name] || Date.now() - state.lastSet[name] > 700;
+    // Only add a history entry if the same property wasn't set in the last 700ms.
+    const shouldAddHistory = !state.lastSet[name] || Date.now() - state.lastSet[name] > 700;
 
     return {
       ...state,
       theme: { ...state.theme, [name]: value },
-      history: !shouldAddEntry ? state.history : pushHistory(state.history, state.theme),
+      history: !shouldAddHistory ? state.history : pushHistory(state.history, state.theme),
       future: [],
       lastSet: { ...state.lastSet, [name]: Date.now(), }
     };
   },
   UNSET: (state, { name }) => {
+    if (!state.theme.hasOwnProperty(name)) {
+      return state;
+    }
+
     const {
       [name]: oldValue,
       ...others
     } = state.theme;
-
-    if (!state.theme.hasOwnProperty(name)) {
-      return state;
-    }
 
     return {
       ...state,
@@ -207,10 +205,8 @@ const ACTIONS = {
 // handles it. This can be easily switched back to strings if needed by changing the import only.
 export const THEME_ACTIONS = ACTIONS;
 
-const IS_VERBOSE = false;
-
 function reducer(state, { type, payload }) {
-  IS_VERBOSE && console.log('Received action', type, 'with payload', payload);
+  state.verbose && console.log('Received action', type, 'with payload', payload);
 
   const action = typeof type === 'function' ? type.name : type;
 
@@ -247,67 +243,6 @@ const processRemovals = (defaultValues) => {
   });
 };
 
-const getAllDefaultValues = allVars => {
-  const fromAvailableVars = allVars.reduce((values, cssVar) => {
-    // All should use the default value, but can't be guaranteed. If they're different it's hard to tell which it
-    // should be. Just use the first one. No usages is not possible in theory but check existence anyway.
-    const supposedDefaultValue = cssVar.usages[0]?.defaultValue;
-
-    return {
-      ...values,
-      [cssVar.name]: supposedDefaultValue,
-    };
-  }, {});
-
-  return {
-    ...fromAvailableVars,
-    // ...atRuntime,
-  };
-};
-
-const applyPseudoPreviews = (defaultValues, resolvedValues, previewPseudoVars) =>
-  Object.keys(defaultValues).reduce((values, k) => {
-
-    const withoutProperty = k.replace(PROP_REGEX, '').replace(/-+$/, '');
-    let elementState = previewPseudoVars[withoutProperty + '--'];
-
-    if (!elementState) {
-      return values;
-    }
-
-    elementState = elementState.replace(/-/g, '');
-    const propName = (k.match(PROP_REGEX) || [null])[0];
-
-    const varToPreview = Object.keys(defaultValues).find(k => {
-      const lastPart =
-        k
-          .replace(withoutProperty, '')
-          .replace(/^-+/, '');
-
-      if (!lastPart.startsWith(elementState)) {
-        return false;
-      }
-      const defaultProperty =
-        lastPart
-          .replace(`${ elementState }--`, '')
-          .replace(/^-+/, '');
-
-      return defaultProperty === propName;
-    });
-
-    if (!varToPreview) {
-      return values;
-    }
-
-    const tmpValue = values[varToPreview] || defaultValues[varToPreview];
-
-    // Set the regular property to what the pseudo element's value is.
-    return {
-      ...values,
-      [k]: tmpValue,
-    };
-  }, resolvedValues)
-
 export const useThemeEditor = (
   {
     initialState = DEFAULT_STATE,
@@ -337,24 +272,15 @@ export const useThemeEditor = (
     ? resolvedValues
     : applyPseudoPreviews(defaultValues, resolvedValues, previewPseudoVars);
 
+  const serialized = JSON.stringify(withPseudoPreviews);
+
   useEffect(() => {
     processRemovals(defaultValues);
     writeNewValues(withPseudoPreviews);
-    localStorage.setItem('theme-with-previews', JSON.stringify(withPseudoPreviews));
-  }, [JSON.stringify(withPseudoPreviews)]);
+    localStorage.setItem('theme-with-previews', serialized);
+  }, [serialized]);
 
-  const hotkeysOptions = {
-    enableOnTags: ['INPUT'],
-  }
-
-  useHotkeys('ctrl+z,cmd+z', () => {
-    dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD});
-  }, hotkeysOptions);
-
-  useHotkeys('ctrl+shift+z,cmd+shift+z', () => {
-    dispatch({type: THEME_ACTIONS.HISTORY_FORWARD});
-  }, hotkeysOptions);
-
+  // Todo: clean up.
   const sorted = Object.keys(theme).sort(
     (a, b) => byNameStateProp({ name: a }, { name: b })
   ).reduce((t, k) => ({ ...t, [k]: theme[k] }), {});

@@ -1,4 +1,4 @@
-const wasRejected = result => 'rejected' === result.status;
+// const wasRejected = result => 'rejected' === result.status;
 const wasFulfilled = result => 'fulfilled' === result.status;
 const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled)/g;
 
@@ -22,6 +22,7 @@ const matchVar = async ( cssVar, target ) => {
   return [];
 };
 
+// Todo: make dynamic.
 const excludedVars = [
   '--bs-gutter-x',
   '--bs-gutter-y',

@@ -2,10 +2,12 @@ import {  TextControl } from '@wordpress/components';
 import { SketchPicker as ColorPicker} from 'react-color';
 import tinycolor from 'tinycolor2';
 import { Fragment } from 'react';
-import FontPicker from 'font-picker-react';
+// import FontPicker from 'font-picker-react';
 import { THEME_ACTIONS} from './useThemeEditor';
+import {GRADIENT_REGEX} from "./VariableControl";
 
-const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
+// Key meant for public usage.
+// const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 
@@ -18,28 +20,27 @@ const isPercent = value => value && value.match(/\d%$/);
 const isVh = value => value && value.match(/vh$/);
 const isVw = value => value && value.match(/vw$/);
 
+const extractUsage = (colors = [] , [name, color]) => {
+  if (COLOR_VALUE_REGEX.test(color) || GRADIENT_REGEX.test(color)) {
+    const alreadyUsed = colors.find(colorUsage => colorUsage.color === color);
+
+    if (!alreadyUsed) {
+      colors.push({ color, usages: [name] });
+    } else {
+      alreadyUsed.usages.push(name);
+    }
+  }
+
+  return colors;
+};
+
 const extractColorUsages = theme => {
   if (null === theme) {
     return [];
   }
-  const keys = Object.keys(theme);
 
-  return keys.reduce((colors = [] , name) => {
-    const color = theme[name];
-
-    if (COLOR_VALUE_REGEX.test(color)) {
-      const alreadyUsed = colors.find(colorUsage => colorUsage.color === color);
-
-      if (!alreadyUsed) {
-        colors.push({ color, usages: [name] });
-      } else {
-        alreadyUsed.usages.push(name);
-      }
-    }
-
-    return colors;
-  }, []);
-}
+  return Object.entries(theme).reduce(extractUsage, []);
+};
 
 // const byCountUsagesDesc = ({ usages: usages1 }, { usages: usages2 }) => usages2.length - usages1.length;
 

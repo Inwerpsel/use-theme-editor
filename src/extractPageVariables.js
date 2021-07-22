@@ -1,16 +1,18 @@
 const balancedVar = require('./balancedVar');
 
+// For now only extract from the same domain.
 const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
+// For now hard coded exclude of WP core files. Could be made configurable.
 const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
 const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
+    // Rule is a selector.
     // Parse CSS text to get original declarations.
     const ruleBody = rule.cssText.trim().replace(/^.*{/, '').replace(/;?\s*}\s*$/, '');
     const decls = ruleBody.split(';').map(decl => decl.split(':'));
 
     decls.forEach(([propertyRaw, ...value]) => {
-      const property = propertyRaw.trim();
       // Rejoin in case there could be more ":" inside of the value.
       let remainingValue = value.join(':');
       let match;
@@ -24,7 +26,7 @@ const collectRuleVars = (collected, rule, sheet, media = null, supports = null) 
 
         const usage = {
           selector: rule.selectorText,
-          property,
+          property: propertyRaw.trim(),
           defaultValue: defaultValue.join(','),
           media,
           supports,

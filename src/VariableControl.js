@@ -34,7 +34,7 @@ const formatTitle = (cssVar, isRepeat) => {
   </Fragment>;
 };
 
-const GRADIENT_REGEX = /linear-gradient\(.+\)/;
+export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 const previewValue = (value, cssVar, onClick, isDefault) => {
   const size = '30px';
 
