@@ -68,18 +68,16 @@ export const setupThemeEditor = async (config) => {
     document.body.appendChild( editorRoot );
     dragElement( editorRoot );
     const storedLocation = localStorage.getItem(DRAG_KEY);
-    try {
-      const {x,y} = JSON.parse(storedLocation);
+    if (/{.*}/.test(storedLocation)) {
+      const {x, y} = JSON.parse(storedLocation);
       if (x) {
         const maxX = window.outerWidth - 300;
-        editorRoot.style.left = `${ Math.min(x, maxX) }px`;
+        editorRoot.style.left = `${Math.min(x, maxX)}px`;
       }
       if (y) {
         const maxY = window.outerHeight - 300;
-        editorRoot.style.top = `${ Math.min(y, maxY) }px`;
+        editorRoot.style.top = `${Math.min(y, maxY)}px`;
       }
-    } catch (e) {
-      console.log('No position found in local storage', e);
     }
   }
 
