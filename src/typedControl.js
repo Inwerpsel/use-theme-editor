@@ -59,7 +59,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
 
   if (cssVar.usages.some(usage =>
     !!usage.property.match(/color$/)
-    || ['background', 'fill'].includes(usage.property)
+    || ['background', 'fill', 'stroke'].includes(usage.property)
   )) {
     const colorUsages = extractColorUsages(theme);
 
