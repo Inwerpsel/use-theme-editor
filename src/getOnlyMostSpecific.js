@@ -58,8 +58,9 @@ export const getOnlyMostSpecific = (vars, element) => {
     });
     return all;
   },{});
+
   // Map back to array.
-  return Object.entries(asObject).map(([, v]) => v);
+  return Object.values(asObject);
 };
 
 

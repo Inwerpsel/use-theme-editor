@@ -16,7 +16,6 @@ TODO:
 
 - Decouple WordPress further (use other or no component lib)
 - Facilitate other variables as a value (you can type them for now)
-- Show the same property in different screen sizes in a single control
 - Instead of searching for a corresponding regular property by removing `--hover` (or other state) from the name, try if
   we can do the same with the selector, and so locate it reliably regardless of naming scheme.
 - More tailored controls / group properties into single control?
@@ -27,3 +26,6 @@ TODO:
 - Use more of available screen space in "responsive" view
 - Use `ResponsiveFrame` to render multiple themes / screen sizes at the same time
 - Write tests
+- Expand the color usages quick menu to allow picking all kinds of values. Maybe a textual widget ordered by how frequently used?
+- Combine all media query versions of the same property into a single control. This can update the iframe to match the
+media query, so that you always can see your changes applied.
