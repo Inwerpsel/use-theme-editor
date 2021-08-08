@@ -34,7 +34,6 @@ const groupByMediaQueries = (all, usage) => {
     [mediaKey]: allUsages,
   });
 };
-
 export const getOnlyMostSpecific = (vars, element) => {
   // Reduce to an object, then back to array. Easier to work with for this purpose.
   const asObject = vars.reduce((all, current)=> {
@@ -49,7 +48,7 @@ export const getOnlyMostSpecific = (vars, element) => {
       if (!all[propName]) {
         all[propName] = {...current, maxSpecific};
       } else {
-        const comparedUsage = getMaxMatchingSpecificity([maxSpecific, all[propName].maxSpecific], element);
+        const comparedUsage = getMaxMatchingSpecificity([all[propName].maxSpecific, maxSpecific], element);
         if (maxSpecific === comparedUsage) {
           all[propName] = {...current, maxSpecific};
         }
