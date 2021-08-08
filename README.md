@@ -29,3 +29,4 @@ TODO:
 - Expand the color usages quick menu to allow picking all kinds of values. Maybe a textual widget ordered by how frequently used?
 - Combine all media query versions of the same property into a single control. This can update the iframe to match the
 media query, so that you always can see your changes applied.
+- Hot reloading would be nice, as reloading the page to see your changes applied will reset the iframe's scroll position.
