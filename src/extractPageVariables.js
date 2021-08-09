@@ -64,8 +64,7 @@ const collectSheetVars = (vars, sheet) => {
 export const extractPageVariables = async() => {
   const asObject = [...document.styleSheets].filter(isSameDomain).filter(isNotCoreFile).reduce(collectSheetVars, {});
 
-  return Object.keys(asObject).sort().map((k) => {
-    const v = asObject[k];
+  return Object.entries(asObject).map(([k, v]) => {
     return ({
       name: k,
       ...v,

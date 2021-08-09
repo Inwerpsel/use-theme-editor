@@ -352,7 +352,7 @@ export const VarPicker = (props) => {
             </h4>
           </div>
           { openGroups.includes(label) && <ul>
-            { vars.map(cssVar => {
+            { vars.sort(byNameStateProp).map(cssVar => {
                 const defaultValue = defaultValues[cssVar.name];
 
                 return <VariableControl

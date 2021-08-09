@@ -48,7 +48,7 @@ export const groupVars = async (vars, target) => {
       groups.push({
         element: previous,
         label: toLabel(previous),
-        vars: previousMatches.filter(match => !currentMatches.includes(match)).sort(byNameStateProp),
+        vars: previousMatches.filter(match => !currentMatches.includes(match)),
       });
       previousMatches = currentMatches;
     }
