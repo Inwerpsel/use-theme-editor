@@ -34,9 +34,10 @@ export const VarPicker = (props) => {
 
     setOpenGroups(newGroups);
   };
-  useEffect(() => {
+  const openFirstGroup = () => {
     setOpenGroups([groups[0]?.label]);
-  }, [groups]);
+  }
+  useEffect(openFirstGroup, [groups]);
 
   const [
     {
