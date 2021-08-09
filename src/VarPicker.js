@@ -10,6 +10,9 @@ import { ResizableFrame } from './ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {createPortal} from "react-dom";
 import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
+import {diffSummary, diffThemes} from "./diffThemes";
+import {ServerThemesList} from "./ServerThemesList";
+import {byNameStateProp} from "./groupVars";
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT'],
@@ -18,28 +21,6 @@ const hotkeysOptions = {
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 
 const byName = (a, b) => a.name > b.name ? 1 : (a.name === b.name ? 0 : -1);
-
-const diffThemes = (themeA, themeB) => {
-  const added = Object.keys(themeB).filter(k => !themeA[k]);
-  const removed = Object.keys(themeA).filter(k => !themeB[k]);
-  const changed = Object.keys(themeB).filter(k => !!themeA[k] && themeA[k] !== themeB[k]);
-  const hasChanges = added.length > 0 || removed.length > 0 || changed.length > 0;
-
-  return {added,removed,changed, hasChanges}
-}
-
-const diffSummary = (themeA, themeB) => {
-  const { added, removed, changed } = diffThemes(themeA, themeB);
-
-  return `Differences of your current theme to this one:
-  added(${added.length}):
-  ${added.map(k => `${ k }: ${ themeB[k] }`).join('\n')}
-  removed(${removed.length}):
-  ${removed.join('\n')}
-  changed(${changed.length}):
-  ${changed.map(k =>`${k}: ${themeA[k]} => ${themeB[k]}`).join('\n')}
-  `;
-}
 
 export const VarPicker = (props) => {
   const {
@@ -67,7 +48,7 @@ export const VarPicker = (props) => {
     setActiveVars(activeVars.filter(isOtherVar));
   };
   const closeAll = () => setActiveVars([]);
-  const CloseAllButton = () => <span
+  const CloseAllButton = () => <button
     style={ {
       float: 'right',
       fontSize: '14px',
@@ -78,7 +59,7 @@ export const VarPicker = (props) => {
       marginBottom: '8px'
     } }
     onClick={ closeAll }
-  > Close all </span>;
+  > Close all </button>;
 
   const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = id => {
@@ -121,11 +102,6 @@ export const VarPicker = (props) => {
   useHotkeys('ctrl+shift+z,cmd+shift+z', () => {
     dispatch({type: THEME_ACTIONS.HISTORY_FORWARD});
   }, hotkeysOptions);
-
-  const [
-    serverThemesHeight,
-    setServerThemesHeight
-  ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
 
   const {
     serverThemes,
@@ -228,41 +204,16 @@ export const VarPicker = (props) => {
       { 'Responsive view' }
     </label> }
     { !collapsed && serverThemesLoading && <span>Loading server themes...</span> }
-    { !collapsed && !!serverThemes && !serverThemesLoading && <ul
-      onMouseUp={ event => {
-        setServerThemesHeight(event.target.closest('ul').style.height);
-      } }
-      style={ { resize: 'vertical', height: serverThemesHeight } }
-    >
-      {Object.entries(serverThemes).map(([name, serverTheme]) => <li
-        ref={ name === fileName ? activeThemeRef : null }
-        title={diffSummary(serverTheme, theme)}
-        className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
-        style={{textAlign: 'center', fontSize: '14px', height: '21px', marginBottom: '4px', clear: 'both'}}
-      >
-        {name} {modifiedServerVersion && name === fileName && '(*)'}
-        {name !== 'default' && <button
-          style={{float: 'right'}}
-          onClick={ async () => {
-            if (!confirm('Delete theme from server?')) {
-              return;
-            }
-            deleteTheme(name);
-          }}
-        >Delete</button>}
-
-        <button
-          style={{float: 'right'}}
-          onClick={() => {
-            if (modifiedServerVersion && !confirm('You have some local changes that are not on the server. Cancel if you want to save changes.')) {
-              return;
-            }
-            setFileName(name);
-            dispatch({ type: THEME_ACTIONS.LOAD_THEME, payload: { theme: serverTheme } });
-          }}
-        >Switch</button>
-      </li>)}
-    </ul>}
+    { !collapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
+      serverThemes,
+      deleteTheme,
+      fileName,
+      setFileName,
+      activeThemeRef,
+      theme,
+      modifiedServerVersion,
+      dispatch,
+    }}/>}
 
     { !collapsed && <div
       title='Click and hold to drag'
