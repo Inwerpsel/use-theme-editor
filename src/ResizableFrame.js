@@ -78,10 +78,9 @@ export const ResizableFrame = props => {
       } }
     />
     <div
+      className="responsive-size-controls"
       style={ {
         position: 'fixed',
-        top: '8px',
-        left: '400px',
         zIndex: 1000,
       } }
     >

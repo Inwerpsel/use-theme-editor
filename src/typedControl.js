@@ -143,6 +143,10 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     'max-height',
     'letter-spacing',
     'outline-offset',
+    'top',
+    'bottom',
+    'left',
+    'right',
   ];
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {

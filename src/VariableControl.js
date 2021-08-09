@@ -30,7 +30,7 @@ const formatTitle = (cssVar, isRepeat) => {
   return <Fragment>
     <span style={ { fontWeight: 'bold', color: isRepeat ? 'grey' : 'black' } }>{capitalize(prefix)}</span>
     <br/>
-    <span>{prop}</span>
+    <span className={'var-control-property'}>{prop}</span>
   </Fragment>;
 };
 
