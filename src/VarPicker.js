@@ -10,7 +10,7 @@ import { ResizableFrame } from './ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {createPortal} from "react-dom";
 import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
-import {diffSummary, diffThemes} from "./diffThemes";
+import {diffThemes} from "./diffThemes";
 import {ServerThemesList} from "./ServerThemesList";
 import {byNameStateProp} from "./groupVars";
 
@@ -20,47 +20,15 @@ const hotkeysOptions = {
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 
-const byName = (a, b) => a.name > b.name ? 1 : (a.name === b.name ? 0 : -1);
-
 export const VarPicker = (props) => {
   const {
     config,
     groups,
     rawGroups,
-    selectedVars,
     allVars,
   } = props;
 
   const [onlySpecific, setOnlySpecific] = useState(true);
-
-  const [activeVars, setActiveVars] = useState([]);
-
-  useEffect(() => {
-    const notAlreadyActive = cssVar => !activeVars.map(active => active.name).includes(cssVar.name);
-
-    const newOnes = selectedVars.filter(notAlreadyActive);
-
-    setActiveVars(([...activeVars, ...newOnes]));
-  }, [selectedVars]);
-
-  const deactivate = (cssVar) => {
-    const isOtherVar = active => active.name !== cssVar.name;
-    setActiveVars(activeVars.filter(isOtherVar));
-  };
-  const closeAll = () => setActiveVars([]);
-  const CloseAllButton = () => <button
-    style={ {
-      float: 'right',
-      fontSize: '14px',
-      padding: '3px 2px',
-      background: 'white',
-      border: '1px solid black',
-      borderRadius: '4px',
-      marginBottom: '8px'
-    } }
-    onClick={ closeAll }
-  > Close all </button>;
-
   const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = id => {
     const newGroups = openGroups.includes(id)
@@ -82,8 +50,6 @@ export const VarPicker = (props) => {
   ] = useThemeEditor({allVars});
 
   const [collapsed, toggleCollapsed] = useToggle(false);
-
-  const [shouldGroup, setShouldGroup] = useState(true);
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
 
@@ -148,7 +114,7 @@ export const VarPicker = (props) => {
   return <div
     className='var-picker'
   >
-    {!!isResponsive && <ResizableFrame frameRef={frameRef} src={window.location.href} />}
+    {!!isResponsive && <ResizableFrame {...{frameRef}} src={window.location.href}/>}
 
     {!!isResponsive && createPortal(<button style={{zIndex: 1003,position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
       setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
@@ -174,19 +140,6 @@ export const VarPicker = (props) => {
     >
       <input type="checkbox" readOnly checked={ onlySpecific }/>
       { 'Show only specific properties.' }
-    </label> }
-    <br/>
-    <input
-      type="checkbox"
-      readOnly
-      checked={ shouldGroup }
-      onClick={ () => { setShouldGroup(!shouldGroup); } }
-    />
-    { !collapsed && <label
-      onClick={ () => setShouldGroup(!shouldGroup) }
-      style={ { marginBottom: '2px' } }
-    >
-      { 'Group last clicked element' }
     </label> }
     <br/>
     <input
@@ -276,7 +229,7 @@ export const VarPicker = (props) => {
       </div>
     </div> }
 
-    { !collapsed && shouldGroup && <ul className={'group-list'}>
+    { !collapsed && <ul className={'group-list'}>
       { (onlySpecific ? groups : rawGroups).map(({ element, label, vars }) => (
         <li className={ 'var-group' } key={ label } style={ { marginBottom: '12px' } }>
           <div
@@ -375,34 +328,6 @@ export const VarPicker = (props) => {
           </ul> }
         </li>
       )) }
-    </ul> }
-
-    { !collapsed && !shouldGroup && <ul>
-      <span>
-        showing { activeVars.length } propert{ activeVars.length === 1 ? 'y' : 'ies' }
-      </span>
-      { activeVars.length > 0 && (
-        <CloseAllButton/>
-      ) }
-
-      { activeVars.sort(byName).map(cssVar => {
-          const defaultValue = defaultValues[cssVar.name];
-
-          return <VariableControl
-            { ...{
-              cssVar,
-              defaultValue,
-              dispatch,
-              theme,
-            }
-            }
-            key={ cssVar.name }
-            onUnset={ () => dispatch({ type: THEME_ACTIONS.UNSET, payload: { name: cssVar.name } }) }
-            onCloseClick={ deactivate }
-            onChange={ value => dispatch({ type: THEME_ACTIONS.SET, payload: { name: cssVar.name, value } }) }
-          />;
-        }
-      ) }
     </ul> }
   </div>;
 };
