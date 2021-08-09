@@ -68,6 +68,7 @@ const ACTIONS = {
     if (!state.theme.hasOwnProperty(name)) {
       return state;
     }
+    keysToRemove[name] = true;
 
     const {
       [name]: oldValue,
