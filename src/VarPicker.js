@@ -24,11 +24,8 @@ export const VarPicker = (props) => {
   const {
     config,
     groups,
-    rawGroups,
     allVars,
   } = props;
-
-  const [onlySpecific, setOnlySpecific] = useState(true);
   const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = id => {
     const newGroups = openGroups.includes(id)
@@ -133,15 +130,6 @@ export const VarPicker = (props) => {
       >
         { collapsed ? 'show' : 'hide' }
     </span>
-    { !collapsed && <label
-      htmlFor=""
-      onClick={ () => setOnlySpecific(!onlySpecific) }
-      style={ { marginBottom: '2px' } }
-    >
-      <input type="checkbox" readOnly checked={ onlySpecific }/>
-      { 'Show only specific properties.' }
-    </label> }
-    <br/>
     <input
       type="checkbox"
       readOnly
@@ -230,7 +218,7 @@ export const VarPicker = (props) => {
     </div> }
 
     { !collapsed && <ul className={'group-list'}>
-      { (onlySpecific ? groups : rawGroups).map(({ element, label, vars }) => (
+      { groups.map(({ element, label, vars }) => (
         <li className={ 'var-group' } key={ label } style={ { marginBottom: '12px' } }>
           <div
             onMouseEnter={ () => {

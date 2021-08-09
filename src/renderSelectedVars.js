@@ -8,7 +8,6 @@ export const renderSelectedVars = (rootElement, cssVars = [], lastTarget, groups
       initialOpen={ false }
       selectedVars={ cssVars }
       groups={ groups }
-      rawGroups={rawGroups}
       lastTarget={ lastTarget }
       allVars={ allVars }
     />,
