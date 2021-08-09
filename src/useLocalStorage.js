@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
+import {getLocalStorageNamespace} from './getLocalStorageNamespace';
 
-const base = `${document.documentElement.dataset.base}`;
-const [,rawNs] = base.split(window.location.origin);
-const namespace = (rawNs || '').replace(/^\//, '').replace(/\/$/, '');
+const namespace = getLocalStorageNamespace();
 
 export const useLocalStorage = (key, defaultValue) => {
-  const scopedKey = !namespace ? key : `${namespace || ''}${key}`;
+  const scopedKey = namespace + key;
 
   const [value, setValue] = useState(() => {
     const stored = localStorage.getItem(scopedKey);

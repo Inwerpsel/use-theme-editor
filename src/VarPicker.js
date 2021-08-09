@@ -9,12 +9,13 @@ import { useToggle } from './useToggle';
 import { ResizableFrame } from './ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {createPortal} from "react-dom";
+import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT'],
 }
 
-export const LOCAL_STORAGE_KEY = 'p4-theme';
+export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 
 const byName = (a, b) => a.name > b.name ? 1 : (a.name === b.name ? 0 : -1);
 
