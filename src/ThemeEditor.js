@@ -3,7 +3,6 @@ import { THEME_ACTIONS, useThemeEditor } from './useThemeEditor';
 import { exportCss, exportJson } from './export';
 import { useServerThemes } from './useServerThemes';
 import { useLocalStorage } from './useLocalStorage';
-import { useToggle } from './useToggle';
 import { ResizableFrame } from './ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {createPortal} from "react-dom";
@@ -45,7 +44,7 @@ export const ThemeEditor = (props) => {
     dispatch,
   ] = useThemeEditor({allVars});
 
-  const [collapsed, toggleCollapsed] = useToggle(false);
+  const [collapsed, setCollapsed] = useState(false);
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
 
@@ -125,7 +124,9 @@ export const ThemeEditor = (props) => {
           padding: '2px 4px',
           background: 'grey',
         } }
-        onClick={ toggleCollapsed }
+        onClick={() => {
+          setCollapsed(!collapsed)
+        }}
       >
         { collapsed ? 'show' : 'hide' }
     </span>
