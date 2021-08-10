@@ -1,14 +1,14 @@
-import { useEffect, useState, useRef } from 'react';
-import { THEME_ACTIONS, useThemeEditor } from './useThemeEditor';
-import { exportCss, exportJson } from './export';
-import { useServerThemes } from './useServerThemes';
-import { useLocalStorage } from './useLocalStorage';
-import { ResizableFrame } from './components/ResizableFrame';
-import { useHotkeys } from 'react-hotkeys-hook';
-import {createPortal} from "react-dom";
-import {diffThemes} from "./diffThemes";
-import {GroupControl} from "./components/GroupControl";
-import {ServerThemesList} from "./components/ServerThemesList";
+import {useEffect, useRef, useState} from 'react';
+import {THEME_ACTIONS, useThemeEditor} from '../useThemeEditor';
+import {useLocalStorage} from '../useLocalStorage';
+import {useHotkeys} from 'react-hotkeys-hook';
+import {useServerThemes} from '../useServerThemes';
+import {diffThemes} from '../diffThemes';
+import {ResizableFrame} from './ResizableFrame';
+import {createPortal} from 'react-dom';
+import {ServerThemesList} from './ServerThemesList';
+import {exportCss, exportJson} from '../export';
+import {GroupControl} from './GroupControl';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT'],
