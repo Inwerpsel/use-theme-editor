@@ -2,7 +2,7 @@ import {useEffect, useRef, useState} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
-import {useServerThemes} from '../useServerThemes';
+import {useServerThemes} from '../hooks/useServerThemes';
 import {diffThemes} from '../diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {createPortal} from 'react-dom';
