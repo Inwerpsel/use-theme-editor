@@ -1,9 +1,8 @@
 import { useReducer, useEffect } from 'react';
-import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from './ThemeEditor';
+import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from './initializeThemeEditor';
 import { byNameStateProp } from './groupVars';
 import {applyPseudoPreviews} from './applyPseudoPreviews';
 import {getAllDefaultValues} from './getAllDefaultValues';
-import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
 
 const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;

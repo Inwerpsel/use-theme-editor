@@ -1,7 +1,7 @@
 import {  createPortal } from 'react-dom';
 import { Fragment, useEffect } from 'react';
 import { RadioControl, RangeControl } from '@wordpress/components';
-import { useLocalStorage } from './useLocalStorage';
+import { useLocalStorage } from '../useLocalStorage';
 
 const screenOptions = [
   { dims: [360, 640], label: 'Phone' },

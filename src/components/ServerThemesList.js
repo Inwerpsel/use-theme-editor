@@ -1,6 +1,6 @@
-import {diffSummary} from './diffThemes';
-import {THEME_ACTIONS} from './useThemeEditor';
-import {useLocalStorage} from './useLocalStorage';
+import {useLocalStorage} from "../useLocalStorage";
+import {diffSummary} from "../diffThemes";
+import {THEME_ACTIONS} from "../useThemeEditor";
 
 export const ServerThemesList = props => {
   const {
@@ -20,13 +20,13 @@ export const ServerThemesList = props => {
   ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
 
   return <ul
-    onMouseUp={ event => {
+    onMouseUp={event => {
       setServerThemesHeight(event.target.closest('ul').style.height);
-    } }
-    style={ { resize: 'vertical', height: serverThemesHeight } }
+    }}
+    style={{resize: 'vertical', height: serverThemesHeight}}
   >
     {Object.entries(serverThemes).map(([name, serverTheme]) => <li
-      ref={ name === fileName ? activeThemeRef : null }
+      ref={name === fileName ? activeThemeRef : null}
       title={diffSummary(serverTheme, currentTheme)}
       className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
       style={{textAlign: 'center', fontSize: '14px', height: '21px', marginBottom: '4px', clear: 'both'}}
@@ -34,7 +34,7 @@ export const ServerThemesList = props => {
       {name} {modifiedServerVersion && name === fileName && '(*)'}
       {name !== 'default' && <button
         style={{float: 'right'}}
-        onClick={ async () => {
+        onClick={async () => {
           if (!confirm('Delete theme from server?')) {
             return;
           }
@@ -49,9 +49,10 @@ export const ServerThemesList = props => {
             return;
           }
           setFileName(name);
-          dispatch({ type: THEME_ACTIONS.LOAD_THEME, payload: { theme: serverTheme } });
+          dispatch({type: THEME_ACTIONS.LOAD_THEME, payload: {theme: serverTheme}});
         }}
-      >Switch</button>
+      >Switch
+      </button>
     </li>)}
   </ul>;
 };

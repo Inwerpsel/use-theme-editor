@@ -3,20 +3,16 @@ import { THEME_ACTIONS, useThemeEditor } from './useThemeEditor';
 import { exportCss, exportJson } from './export';
 import { useServerThemes } from './useServerThemes';
 import { useLocalStorage } from './useLocalStorage';
-import { ResizableFrame } from './ResizableFrame';
+import { ResizableFrame } from './components/ResizableFrame';
 import { useHotkeys } from 'react-hotkeys-hook';
 import {createPortal} from "react-dom";
-import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
 import {diffThemes} from "./diffThemes";
-import {ServerThemesList} from "./ServerThemesList";
-import {GroupControl} from "./GroupControl";
+import {GroupControl} from "./components/GroupControl";
+import {ServerThemesList} from "./components/ServerThemesList";
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT'],
 }
-
-export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
-export const LOCAL_STORAGE_PREVIEWS_KEY = `${getLocalStorageNamespace()}theme-with-previews`;
 
 export const ThemeEditor = (props) => {
   const {
