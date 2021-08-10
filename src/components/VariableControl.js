@@ -1,7 +1,7 @@
 import { useState, Fragment } from 'react';
-import { COLOR_VALUE_REGEX, TypedControl } from './typedControl';
+import {COLOR_VALUE_REGEX, GRADIENT_REGEX, TypedControl} from './TypedControl';
 import { Button } from '@wordpress/components';
-import { PSEUDO_REGEX, THEME_ACTIONS} from './useThemeEditor';
+import { PSEUDO_REGEX, THEME_ACTIONS} from '../useThemeEditor';
 import classnames from 'classnames';
 
 const uniqueUsages = cssVar => {
@@ -34,7 +34,6 @@ const formatTitle = (cssVar, isRepeat) => {
   </Fragment>;
 };
 
-export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 const previewValue = (value, cssVar, onClick, isDefault) => {
   const size = '30px';
 

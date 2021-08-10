@@ -3,13 +3,13 @@ import { SketchPicker as ColorPicker} from 'react-color';
 import tinycolor from 'tinycolor2';
 import { Fragment } from 'react';
 // import FontPicker from 'font-picker-react';
-import { THEME_ACTIONS} from './useThemeEditor';
-import {GRADIENT_REGEX} from "./VariableControl";
+import { THEME_ACTIONS} from '../useThemeEditor';
 
 // Key meant for public usage.
 // const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
+export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 
 const convertRemToPixels = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
 const convertPixelsToRem = (px) => px / parseFloat(getComputedStyle(document.documentElement).fontSize);

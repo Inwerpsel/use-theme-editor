@@ -1,6 +1,6 @@
 import {addHighlight, removeHighlight} from "../highlight";
 import {byNameStateProp} from "../groupVars";
-import {VariableControl} from "../VariableControl";
+import {VariableControl} from "./VariableControl";
 import {THEME_ACTIONS} from "../useThemeEditor";
 
 export const GroupControl = props => {
