@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import {getLocalStorageNamespace} from './getLocalStorageNamespace';
+import {getLocalStorageNamespace} from '../getLocalStorageNamespace';
 
 const namespace = getLocalStorageNamespace();
 

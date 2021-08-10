@@ -1,6 +1,6 @@
-import {useLocalStorage} from "../useLocalStorage";
-import {diffSummary} from "../diffThemes";
-import {THEME_ACTIONS} from "../useThemeEditor";
+import {useLocalStorage} from '../hooks/useLocalStorage';
+import {diffSummary} from '../diffThemes';
+import {THEME_ACTIONS} from '../useThemeEditor';
 
 export const ServerThemesList = props => {
   const {

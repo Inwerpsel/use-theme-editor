@@ -1,6 +1,6 @@
 import {useEffect, useRef, useState} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../useThemeEditor';
-import {useLocalStorage} from '../useLocalStorage';
+import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../useServerThemes';
 import {diffThemes} from '../diffThemes';
