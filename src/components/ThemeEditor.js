@@ -1,5 +1,5 @@
 import {useEffect, useRef, useState} from 'react';
-import {THEME_ACTIONS, useThemeEditor} from '../useThemeEditor';
+import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';

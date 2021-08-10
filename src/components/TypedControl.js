@@ -3,7 +3,7 @@ import { SketchPicker as ColorPicker} from 'react-color';
 import tinycolor from 'tinycolor2';
 import { Fragment } from 'react';
 // import FontPicker from 'font-picker-react';
-import { THEME_ACTIONS} from '../useThemeEditor';
+import { THEME_ACTIONS} from '../hooks/useThemeEditor';
 
 // Key meant for public usage.
 // const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
