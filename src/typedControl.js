@@ -42,8 +42,6 @@ const extractColorUsages = theme => {
   return Object.entries(theme).reduce(extractUsage, []);
 };
 
-// const byCountUsagesDesc = ({ usages: usages1 }, { usages: usages2 }) => usages2.length - usages1.length;
-
 const byHexValue = ({color1}, { color2}) => {
   const hex1 = tinycolor(color1).toHex();
   const hex2 = tinycolor(color2).toHex();
@@ -121,6 +119,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
   const sizeLikeProperties = [
     'font-size',
     'border',
+    'border-width',
     'border-bottom',
     'border-bottom-width',
     'line-height',
