@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from 'react';
-import { LOCAL_STORAGE_KEY } from './VarPicker';
+import { LOCAL_STORAGE_KEY } from './ThemeEditor';
 import { byNameStateProp } from './groupVars';
 import {applyPseudoPreviews} from './applyPseudoPreviews';
 import {getAllDefaultValues} from './getAllDefaultValues';

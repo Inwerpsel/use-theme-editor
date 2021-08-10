@@ -18,7 +18,7 @@ const hotkeysOptions = {
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 
-export const VarPicker = (props) => {
+export const ThemeEditor = (props) => {
   const {
     config,
     groups,
@@ -108,7 +108,7 @@ export const VarPicker = (props) => {
   }, [frameClickBehavior, frameRef.current, isResponsive])
 
   return <div
-    className='var-picker'
+    className='theme-editor'
   >
     {!!isResponsive && <ResizableFrame {...{frameRef}} src={window.location.href}/>}
 

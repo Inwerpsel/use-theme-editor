@@ -17,7 +17,7 @@ body {
   }
 }
 
-.var-picker * {
+.theme-editor * {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial !important;
@@ -94,7 +94,7 @@ html.hide-wp-admin-bar {
   background: rgba(246, 246, 89, 0.63);
 }
 
-.var-picker > ul {
+.theme-editor > ul {
   _-- {
     width: 360px;
   }
@@ -130,7 +130,7 @@ html.hide-wp-admin-bar {
   outline: 2px solid #ffff00 !important;
 }
 
-.var-picker .var-group {
+.theme-editor .var-group {
   background: white !important;
   border: 1px solid black !important;
   margin-bottom: 3px !important;
@@ -142,7 +142,7 @@ html.hide-wp-admin-bar {
   }
 }
 
-.var-picker ul > li > ul {
+.theme-editor ul > li > ul {
   padding-left: 8px;
 }
 

@@ -1,7 +1,7 @@
 import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './getMatchingVars';
 import { DRAG_KEY, dragElement } from './dragElement';
-import { LOCAL_STORAGE_KEY} from './VarPicker';
+import { LOCAL_STORAGE_KEY} from './ThemeEditor';
 import { addHighlight, removeHighlight } from './highlight';
 import { groupVars } from './groupVars';
 import { extractPageVariables } from './extractPageVariables';

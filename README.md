@@ -19,7 +19,6 @@ TODO:
 - Instead of searching for a corresponding regular property by removing `--hover` (or other state) from the name, try if
   we can do the same with the selector, and so locate it reliably regardless of naming scheme.
 - More tailored controls / group properties into single control?
-- Clean up and rename unwieldy `VarPicker`
 - Make hotkeys configurable in the UI
 - Move constant inline styles to CSS
 - Clean up the drag code (I kept adding (too much) things to it, to prevent it from going off-screen.)

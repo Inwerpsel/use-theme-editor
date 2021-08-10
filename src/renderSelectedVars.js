@@ -1,9 +1,9 @@
 import {render} from 'react-dom';
-import { VarPicker } from './VarPicker';
+import { ThemeEditor } from './ThemeEditor';
 
 export const renderSelectedVars = (rootElement, cssVars = [], lastTarget, groups, rawGroups, allVars, config) => {
   render(
-    <VarPicker
+    <ThemeEditor
       config={ config }
       initialOpen={ false }
       selectedVars={ cssVars }

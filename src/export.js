@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_KEY } from './VarPicker';
+import { LOCAL_STORAGE_KEY } from './ThemeEditor';
 
 export const exportJson = (fileName) => {
   const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
