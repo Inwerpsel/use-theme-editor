@@ -3,6 +3,7 @@ import { LOCAL_STORAGE_KEY } from './ThemeEditor';
 import { byNameStateProp } from './groupVars';
 import {applyPseudoPreviews} from './applyPseudoPreviews';
 import {getAllDefaultValues} from './getAllDefaultValues';
+import {getLocalStorageNamespace} from "./getLocalStorageNamespace";
 
 const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;
@@ -278,7 +279,7 @@ export const useThemeEditor = (
   useEffect(() => {
     processRemovals(defaultValues);
     writeNewValues(withPseudoPreviews);
-    localStorage.setItem('theme-with-previews', serialized);
+    localStorage.setItem(getLocalStorageNamespace() + 'theme-with-previews', serialized);
   }, [serialized]);
 
   // Todo: clean up.
@@ -295,8 +296,8 @@ export const useThemeEditor = (
     {
       theme,
       defaultValues,
-      hasHistory: history.length > 0,
-      hasFuture: future.length > 0,
+      history,
+      future,
     },
     dispatch,
   ];
