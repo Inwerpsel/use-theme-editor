@@ -1,7 +1,7 @@
 import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './getMatchingVars';
 import { DRAG_KEY, dragElement } from './dragElement';
-import { LOCAL_STORAGE_KEY} from './ThemeEditor';
+import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from './ThemeEditor';
 import { addHighlight, removeHighlight } from './highlight';
 import { groupVars } from './groupVars';
 import { extractPageVariables } from './extractPageVariables';
@@ -53,7 +53,7 @@ export const setupThemeEditor = async (config) => {
     document.documentElement.classList.add('simulating-touch-device');
     document.documentElement.classList.add('hide-wp-admin-bar');
     const refreshLoop = () => {
-      applyFromLocalStorage('theme-with-previews');
+      applyFromLocalStorage(LOCAL_STORAGE_PREVIEWS_KEY);
     };
     const fps = 60;
     setInterval(refreshLoop, 1000 / fps);

@@ -16,6 +16,7 @@ const hotkeysOptions = {
 }
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
+export const LOCAL_STORAGE_PREVIEWS_KEY = `${getLocalStorageNamespace()}theme-with-previews`;
 
 export const ThemeEditor = (props) => {
   const {

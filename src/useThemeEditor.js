@@ -1,5 +1,5 @@
 import { useReducer, useEffect } from 'react';
-import { LOCAL_STORAGE_KEY } from './ThemeEditor';
+import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from './ThemeEditor';
 import { byNameStateProp } from './groupVars';
 import {applyPseudoPreviews} from './applyPseudoPreviews';
 import {getAllDefaultValues} from './getAllDefaultValues';
@@ -279,7 +279,7 @@ export const useThemeEditor = (
   useEffect(() => {
     processRemovals(defaultValues);
     writeNewValues(withPseudoPreviews);
-    localStorage.setItem(getLocalStorageNamespace() + 'theme-with-previews', serialized);
+    localStorage.setItem(LOCAL_STORAGE_PREVIEWS_KEY, serialized);
   }, [serialized]);
 
   // Todo: clean up.
