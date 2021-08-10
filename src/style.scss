@@ -126,8 +126,11 @@ html.hide-wp-admin-bar {
   }
 }
 
-.theme-editor-highlight {
-  outline: 2px solid #ffff00 !important;
+.theme-editor-highlight _-- {
+  outline-style: solid;
+  outline-color: #ffff00;
+  outline-width: 2px;
+  outline-offset: 0;
 }
 
 .theme-editor .var-group {

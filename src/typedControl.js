@@ -146,6 +146,8 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     'bottom',
     'left',
     'right',
+    'outline-width',
+    'outline-offset',
   ];
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
