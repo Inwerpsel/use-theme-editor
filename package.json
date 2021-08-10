@@ -22,6 +22,7 @@
     "font-picker-react": "^3.5.2",
     "react-color": "^2.19.3",
     "react-hotkeys-hook": "^3.0.3",
+    "react-shadow-picker": "^1.0.5",
     "specificity": "^0.4.1",
     "tinycolor2": "^1.4.2"
   },
