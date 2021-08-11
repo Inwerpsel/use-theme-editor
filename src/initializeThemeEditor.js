@@ -70,7 +70,7 @@ export const setupThemeEditor = async (config) => {
     editorRoot.id = 'theme-editor-root';
     document.body.appendChild( editorRoot );
     dragElement( editorRoot );
-    const storedLocation = localStorage.getItem(DRAG_KEY);
+    const storedLocation = localStorage.getItem(getLocalStorageNamespace() + DRAG_KEY);
     if (/{.*}/.test(storedLocation)) {
       const {x, y} = JSON.parse(storedLocation);
       if (x) {
@@ -95,7 +95,7 @@ export const setupThemeEditor = async (config) => {
     ),
   ], []);
 
-  let requireAlt = !isRunningAsFrame || localStorage.getItem('theme-editor-frame-click-behavior') === 'alt';
+  let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
   let lastGroups = [];
 
   window.addEventListener('message', event => {
