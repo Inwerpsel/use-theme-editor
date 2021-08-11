@@ -186,9 +186,9 @@ export const VariableControl = (props) => {
         <div>{cssVar.name}</div>
         { showUsages(cssVar, showSelectors,toggleSelectors) }
         { isDefault && <span style={{float: 'right', marginBottom: '14.5px', color: 'grey'}}>default</span>}
-        { !isDefault && <button
+        { cssVar.name in theme && <button
           style={ { float: 'right', marginBottom: '14.5px' } }
-          title={`Reset to "${defaultValue}"`}
+          title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
           onClick={ () => {
             onUnset();
           } }
