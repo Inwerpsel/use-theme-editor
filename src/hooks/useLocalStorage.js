@@ -5,15 +5,18 @@ const namespace = getLocalStorageNamespace();
 
 export const useLocalStorage = (key, defaultValue) => {
   const scopedKey = namespace + key;
+  const isObject = typeof defaultValue === 'object';
 
   const [value, setValue] = useState(() => {
     const stored = localStorage.getItem(scopedKey);
-
-    return stored === null ? defaultValue : stored;
+    if (stored === null) {
+      return defaultValue;
+    }
+    return isObject ? JSON.parse(stored) : stored;
   });
 
   useEffect(() => {
-    localStorage.setItem(scopedKey, value);
+    localStorage.setItem(scopedKey, isObject ? JSON.stringify(value) : value);
   }, [value]);
 
   return [

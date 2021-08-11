@@ -39,9 +39,10 @@ export const ResizableFrame = props => {
     setHeight,
   ] = useLocalStorage('responsive-height', 640);
   const [
-    scale,
-    setScale,
-  ] = useLocalStorage('responsive-scale', 1);
+    scales,
+    setScales,
+  ] = useLocalStorage('responsive-scales', {});
+  const scale = scales[`${width}x${height}`] || 1;
 
   useEffect(() => {
     const orig = document.body.style.maxHeight;
@@ -86,7 +87,9 @@ export const ResizableFrame = props => {
     >
       <RangeControl
         value={scale}
-        onChange={ value => setScale(value) }
+        onChange={ value => {
+          setScales({...scales, [`${width}x${height}`]: value});
+        } }
         min={.2}
         max={1}
         step={.02}
