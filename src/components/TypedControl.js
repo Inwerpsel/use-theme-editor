@@ -1,9 +1,10 @@
-import {  TextControl } from '@wordpress/components';
+import {SelectControl, TextControl} from '@wordpress/components';
 import { SketchPicker as ColorPicker} from 'react-color';
 import tinycolor from 'tinycolor2';
 import { Fragment } from 'react';
 // import FontPicker from 'font-picker-react';
 import { THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ShadowPicker} from "react-shadow-picker";
 
 // Key meant for public usage.
 // const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
@@ -230,8 +231,16 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     </Fragment>;
   }
 
-  // if ( cssVar.usages.some( usage => usage.property === 'font-weight' ) ) {
-  // }
+  if ( cssVar.usages.some( usage => usage.property === 'box-shadow' ) ) {
+    return <ShadowPicker {...{value, onChange}}/>;
+  }
+
+  if ( cssVar.usages.some( usage => usage.property === 'display' ) ) {
+    return <SelectControl
+      {...{value, onChange}}
+      options={['none', 'inline', 'inline-block', 'block', 'flex'].map(s => ({label: s, value: s}))}
+    />;
+  }
 
   return <Fragment>
     { !isNaN(value) && <input type={ 'number' } onChange={ e => onChange(e.target.value) } value={ value }/> }
