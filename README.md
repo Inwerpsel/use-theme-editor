@@ -32,3 +32,5 @@ media query, so that you always can see your changes applied.
 - Better organizing of themes.
 - Personal editor settings that are applied regardless of which theme is being edited.
 - Fix frame click behavior setting not applied when navigating inside the iframe.
+- Check whether source maps can allow us to locate the exact line of each declaration. This makes the reasonable assumption
+that a CSS declaration will be on one line and the only thing on the line, regardless of the preprocessor "dialect".
