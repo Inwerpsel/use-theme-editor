@@ -52,7 +52,6 @@ export const getOnlyMostSpecific = (vars, element) => {
   // Reduce to an object, then back to array. Easier to work with for this purpose.
   const asObject = vars.reduce((all, current)=> {
     const byMediaQueries = current.usages.reduce(groupByMediaQueries, {});
-    console.log(current.name, byMediaQueries);
 
     Object.entries(byMediaQueries).forEach(([media,usages]) => {
       const maxSpecific = getMaxMatchingSpecificity(usages, element) || usages[0];

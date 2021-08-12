@@ -57,7 +57,6 @@ const collectRuleVars = (collected, rule, sheet, media = null, supports = null) 
     return collected;
   }
 
-  // console.log(rule.type, rule);
   return collected;
 };
 
