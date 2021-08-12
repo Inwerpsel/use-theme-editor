@@ -124,6 +124,9 @@ export const setupThemeEditor = async (config) => {
     if (!isRunningAsFrame) {
       renderSelectedVars(editorRoot, matchedVars, event.target, groups, rawGroups, cssVars, config);
     } else {
+      // It's not possible to sent a message including a reference to a DOM element to the parent window. Doing so
+      // results in an error. Instead, every time we update the shown groups, we keep track of the last groups. This
+      // way we still know which element to access when a message gets back from the parent window.
       lastGroups = groups;
       const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
       const rawWithElementIndexes = rawGroups.map((group, index) => ({...group, element: index}));
