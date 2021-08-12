@@ -1,6 +1,6 @@
 {
   "name": "use-theme-editor",
-  "version": "1.0.10",
+  "version": "1.1.0",
   "description": "Zero configuration CSS variables based theme editor",
   "main": "index.js",
   "scripts": {
