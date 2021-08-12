@@ -7,6 +7,10 @@ const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
 const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
+    // Don't collect :root usages for now, it needs special handling and currently causes bugs in the editor.
+    if (rule.selectorText.includes(':root')) {
+      return collected;
+    }
     // Rule is a selector.
     // Parse CSS text to get original declarations.
     const ruleBody = rule.cssText.trim().replace(/^.*{/, '').replace(/;?\s*}\s*$/, '');
