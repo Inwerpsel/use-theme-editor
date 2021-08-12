@@ -9,24 +9,34 @@ const toLabel = element => {
 
 export const byNameStateProp = ({name: nameA},{name: nameB}) => {
   const reg = /--(?<element>\w+(-?-\w+)*)(--(?<state>(active|focus|visited|hover|disabled)))?--(?<prop>\w+(-\w+)*)/;
-  try {
 
-    const {element: elementA, state: stateA, prop: propA } = nameA.match(reg).groups;
-    const {element: elementB, state: stateB, prop: propB } = nameB.match(reg).groups;
+  const matchA = nameA.match(reg);
+  const matchB = nameB.match(reg);
 
-    if (propA !== propB) {
-      return propA < propB ? -1 : 1;
-    }
-    if (elementA !== elementB) {
-      return elementA < elementB ? -1 : 1;
-    }
-
-    return stateA < stateB ? -1 : 1;
-  } catch (e) {
-    console.log(e);
-    console.log('A', nameA, 'B', nameB);
-    return nameA > nameB;
+  if (!matchA && !matchB) {
+    // Compare names if they don't match regex.
+    return nameA < nameB ? -1 : 1;
   }
+
+  if (!matchA) {
+    return 1;
+  }
+
+  if (!matchB) {
+    return -1;
+  }
+
+  const {element: elementA, state: stateA, prop: propA } = matchA.groups;
+  const {element: elementB, state: stateB, prop: propB } = matchB.groups;
+
+  if (propA !== propB) {
+    return propA < propB ? -1 : 1;
+  }
+  if (elementA !== elementB) {
+    return elementA < elementB ? -1 : 1;
+  }
+
+  return stateA < stateB ? -1 : 1;
 };
 
 export const groupVars = async (vars, target) => {
