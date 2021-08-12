@@ -7,7 +7,7 @@ export const getLocalStorageNamespace = () => {
 
   const [, rawNs] = base.split(window.location.origin);
 
-  if (!rawNs) {
+  if (!rawNs || rawNs === '/') {
     return '';
   }
 
