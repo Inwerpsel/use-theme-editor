@@ -152,7 +152,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     const pxValue = isPx(value) ? value.replace('px', '') : isRem(value) ? convertRemToPixels(parseFloat(value.replace('rem', ''))) : '';
     const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
     return <div className='theme-length-controls'>
-      <div key={ 1 } style={{clear: 'both'}}>
+      <div className={'theme-length-control control-px'} style={{clear: 'both'}}>
         <input
           type={ 'number' }
           value={pxValue}
@@ -162,7 +162,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
         />
         <span>px</span>
       </div>
-      <div key={ 2 }>
+      <div className={'theme-length-control control-rem'}  >
         <input
           type={ 'number' }
           value={remValue}
@@ -172,7 +172,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
         />
         <span>rem</span>
       </div>
-      <div key={ 3 }>
+      <div className={'theme-length-control control-pct'}>
         <input
           type={ 'number' }
           value={ isPercent(value) ? value.replace('%', '') : ''}
@@ -182,7 +182,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
         />
         <span>%</span>
       </div>
-      <div key={ 4 }>
+      <div className={'theme-length-control control-vh'}>
         <input
           type={ 'number' }
           value={ isVh(value) ? value.replace('vh', '') : ''}
@@ -192,7 +192,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
         />
         <span>vh</span>
       </div>
-      <div key={ 5 }>
+      <div className={'theme-length-control control-vw'}>
         <input
           type={ 'number' }
           value={ isVw(value) ? value.replace('vw', '') : ''}

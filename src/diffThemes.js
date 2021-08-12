@@ -10,13 +10,24 @@ export const diffThemes = (themeA, themeB) => {
 export const diffSummary = (themeA, themeB) => {
   const { added, removed, changed } = diffThemes(themeA, themeB);
 
-  return `Differences of your current theme to this one:
-  added(${added.length}):
-  ${added.map(k => `${ k }: ${ themeB[k] }`).join('\n')}
-  removed(${removed.length}):
-  ${removed.join('\n')}
-  changed(${changed.length}):
-  ${changed.map(k =>`${k}: ${themeA[k]} => ${themeB[k]}`).join('\n')}
+  let summary = `
   `;
+
+  if (added.length) {
+    summary += `added(${added.length}):
+  ${added.map(k => `${k}: ${themeB[k]}`).join('\n')}
+  `;
+  }
+  if (removed.length) {
+    summary += `removed(${removed.length}):
+  ${removed.join('\n')}
+    `;
+  }
+  if (changed.length) {
+    summary += `changed(${changed.length}):
+  ${changed.map(k =>`${k}: ${themeA[k]} => ${themeB[k]}`).join('\n')}
+    `;
+  }
+  return summary;
 };
 

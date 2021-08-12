@@ -3,7 +3,7 @@ import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
-import {diffThemes} from '../diffThemes';
+import {diffSummary, diffThemes} from '../diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {createPortal} from 'react-dom';
 import {ServerThemesList} from './ServerThemesList';
@@ -37,11 +37,17 @@ export const ThemeEditor = (props) => {
     {
       theme,
       defaultValues,
+      history,
+      future,
     },
     dispatch,
   ] = useThemeEditor({allVars});
 
   const [collapsed, setCollapsed] = useState(false);
+
+  const [importCollapsed, setImportCollapsed] = useState(true);
+  const [storedServerThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
+  const serverThemesCollapsed = !!storedServerThemesCollapsed && storedServerThemesCollapsed !== 'false';
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
 
@@ -78,7 +84,7 @@ export const ThemeEditor = (props) => {
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [serverThemes])
+  }, [serverThemes, serverThemesCollapsed])
 
   const existsOnServer = serverThemes && fileName in serverThemes;
   const modifiedServerVersion = existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
@@ -117,7 +123,6 @@ export const ThemeEditor = (props) => {
     {!!isResponsive && createPortal(<button style={{zIndex: 1003,position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
       setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
     }}>{ frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}</button>, document.body)}
-
     <span
         style={ {
           fontSize: '10px',
@@ -147,58 +152,31 @@ export const ThemeEditor = (props) => {
     >
       { 'Responsive view' }
     </label> }
-    { !collapsed && serverThemesLoading && <span>Loading server themes...</span> }
-    { !collapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
-      serverThemes,
-      deleteTheme,
-      fileName,
-      setFileName,
-      activeThemeRef,
-      theme,
-      modifiedServerVersion,
-      dispatch,
-    }}/>}
+    <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
 
-    { !collapsed && <div
+    { !collapsed && !importCollapsed && <div
       title='Click and hold to drag'
       className="themer-controls">
       <div>
         <button
           onClick={ () => exportJson(fileName) }
-        >JSON
+        >Export JSON
         </button>
         <button
           onClick={ () => exportCss(fileName) }
-        >CSS
+        >Export CSS
         </button>
         <label style={{fontSize: '12px'}}>
-          <input value={fileName} style={ { width: '130px' } } placeholder='theme' type="text"
-                 onChange={ event => setFileName(event.target.value) }/>
         </label>
-        <button
-          title={existsOnServer ? 'Save on server' : 'Upload this theme to the server. You can upload as many as you want.'}
-          style={{clear: 'both'}}
-          disabled={!fileName || fileName === 'default'}
-          onClick={ async () => {
-            if (existsOnServer && !confirm('Overwrite theme on server?')) {
-              return;
-            }
-            uploadTheme(fileName, theme);
-          }}
-        >
-          { existsOnServer ? 'Save' : 'Upload'}
-        </button>
+
       </div>
       <div>
         <label
           style={ {
-            display: 'inline-block',
-            maxWidth: '33%',
-            overflowX: 'hidden',
             background: 'rgba(255,255,255,.3)',
             cursor: 'copy'
           } }
-        >
+        > Upload JSON:
           <input
             type="file"
             accept={ '.json' }
@@ -218,7 +196,54 @@ export const ThemeEditor = (props) => {
           />
         </label>
       </div>
-    </div> }
+    </div>}
+    <div>
+      <input value={fileName} style={ { width: '130px', clear: 'both' } } placeholder='theme' type="text"
+             onChange={ event => setFileName(event.target.value) }/>
+      <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
+      <button
+        title={existsOnServer ? `Save on server. Changes: ${diffSummary(serverThemes[fileName], theme)}` : 'Upload this theme to the server. You can upload as many as you want.'}
+        style={{clear: 'both'}}
+        disabled={!fileName || fileName === 'default'}
+        onClick={ async () => {
+          if (existsOnServer && !confirm('Overwrite theme on server?')) {
+            return;
+          }
+          uploadTheme(fileName, theme);
+        }}
+      >
+        { existsOnServer ? `Save${ !modifiedServerVersion ? '' : ' (*)'}` : 'Upload'}
+      </button>
+    </div>
+
+    { !collapsed && !serverThemesCollapsed && serverThemesLoading && <div>Loading server themes...</div> }
+    { !collapsed && !serverThemesCollapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
+      serverThemes,
+      deleteTheme,
+      fileName,
+      setFileName,
+      activeThemeRef,
+      theme,
+      modifiedServerVersion,
+      dispatch,
+    }}/>}
+
+    { !collapsed &&  <div>
+      <button
+        style={{float: 'right'}}
+        disabled={future.length === 0}
+        title={future.length === 0 ? 'No future' : diffSummary(theme, future[0])}
+        onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_FORWARD})}
+      >redo
+      </button>
+      <button
+        style={{float: 'right'}}
+        disabled={history.length === 0}
+        title={history.length === 0 ? 'No history' : diffSummary(history[0], theme)}
+        onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD})}
+      >undo
+      </button>
+    </div>}
 
     { !collapsed && <ul className={'group-list'}>
       { groups.map(({ element, label, vars }) => <GroupControl
