@@ -26,6 +26,7 @@ export const ServerThemesList = props => {
     style={{resize: 'vertical', height: serverThemesHeight}}
   >
     {Object.entries(serverThemes).map(([name, serverTheme]) => <li
+      key={name}
       ref={name === fileName ? activeThemeRef : null}
       title={diffSummary(serverTheme, currentTheme)}
       className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
