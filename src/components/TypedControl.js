@@ -1,13 +1,10 @@
 import {SelectControl, TextControl} from '@wordpress/components';
 import { SketchPicker as ColorPicker} from 'react-color';
 import tinycolor from 'tinycolor2';
-import { Fragment } from 'react';
-// import FontPicker from 'font-picker-react';
+import {Fragment} from 'react';
 import { THEME_ACTIONS} from '../hooks/useThemeEditor';
-import {ShadowPicker} from "react-shadow-picker";
-
-// Key meant for public usage.
-// const googleApiKey = 'AIzaSyBt0d8TsNo0wJn8Pj2zICtBY614IsEqrHw';
+import {ShadowPicker} from 'react-shadow-picker';
+import {FontFamilyControl} from './properties/FontFamilyControl';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
@@ -162,7 +159,6 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange={ event => {
             onChange(`${ event.currentTarget.value }px`);
           } }
-          style={ { minWidth: '100px' } }
         />
         <span>px</span>
       </div>
@@ -173,7 +169,6 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange={ event => {
             onChange(`${ event.currentTarget.value }rem`);
           } }
-          style={ { minWidth: '100px' } }
         />
         <span>rem</span>
       </div>
@@ -184,7 +179,6 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange={ event => {
             onChange(`${ event.currentTarget.value }%`);
           } }
-          style={ { minWidth: '100px' } }
         />
         <span>%</span>
       </div>
@@ -195,7 +189,6 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange={ event => {
             onChange(`${ event.currentTarget.value }vh`);
           } }
-          style={ { minWidth: '100px' } }
         />
         <span>vh</span>
       </div>
@@ -206,7 +199,6 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           onChange={ event => {
             onChange(`${ event.currentTarget.value }vw`);
           } }
-          style={ { minWidth: '100px' } }
         />
         <span>vw</span>
       </div>
@@ -218,17 +210,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
   }
 
   if (cssVar.usages.some(usage => usage.property === 'font-family')) {
-    return <Fragment>
-      {/*<FontPicker*/}
-      {/*  apiKey={ googleApiKey }*/}
-      {/*  activeFontFamily={ value }*/}
-      {/*  onChange={ value => onChange(value.family) }*/}
-      {/*/>*/}
-      <TextControl
-        value={ value }
-        onChange={ onChange }
-      />
-    </Fragment>;
+    return <FontFamilyControl {...{value, onChange}}/>;
   }
 
   if ( cssVar.usages.some( usage => usage.property === 'box-shadow' ) ) {

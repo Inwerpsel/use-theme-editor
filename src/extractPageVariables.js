@@ -1,9 +1,9 @@
 const balancedVar = require('./balancedVar');
 
 // For now only extract from the same domain.
-const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
+export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
 // For now hard coded exclude of WP core files. Could be made configurable.
-const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
+export const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
 const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {

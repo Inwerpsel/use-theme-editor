@@ -17,7 +17,7 @@ body {
   }
 }
 
-.theme-editor * {
+.theme-editor *:not(.font-button) {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial !important;
