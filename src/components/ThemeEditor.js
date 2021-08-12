@@ -71,7 +71,13 @@ export const ThemeEditor = (props) => {
   const activeThemeRef = useRef();
 
   useEffect(() => {
-    activeThemeRef?.current?.scrollIntoView();
+    const timeout = window.setTimeout(() => {
+      activeThemeRef.current?.scrollIntoView();
+    }, 200);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
   }, [serverThemes])
 
   const existsOnServer = serverThemes && fileName in serverThemes;
