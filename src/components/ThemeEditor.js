@@ -11,7 +11,7 @@ import {exportCss, exportJson} from '../export';
 import {GroupControl} from './GroupControl';
 
 const hotkeysOptions = {
-  enableOnTags: ['INPUT'],
+  enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
 }
 
 export const ThemeEditor = (props) => {
