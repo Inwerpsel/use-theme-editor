@@ -30,10 +30,14 @@ body {
   }
 }
 
-.theme-editor *:not(.font-button) {
+.theme-editor *:not(.font-button), .responsive-size-controls * {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial !important;
+}
+
+.components-range-control__track {
+  color: var(--theme-editor--range--color, #007cba) !important;
 }
 
 .simulating-touch-device body {
