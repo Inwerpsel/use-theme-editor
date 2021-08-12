@@ -1,4 +1,6 @@
-export const DRAG_KEY = 'dragThingy';
+import {getLocalStorageNamespace} from './getLocalStorageNamespace';
+
+export const DRAG_KEY = getLocalStorageNamespace() + 'dragThingy';
 function detectLeftButton(event) {
   if (event.metaKey || event.ctrlKey || event.altKey || event.shiftKey) {
     return false;
