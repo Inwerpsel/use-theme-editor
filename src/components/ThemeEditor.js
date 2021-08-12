@@ -74,7 +74,7 @@ export const ThemeEditor = (props) => {
     activeThemeRef?.current?.scrollIntoView();
   }, [serverThemes])
 
-  const existsOnServer = serverThemes && Object.keys(serverThemes).some(t => t === fileName);
+  const existsOnServer = serverThemes && fileName in serverThemes;
   const modifiedServerVersion = existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
 
   useHotkeys('alt+s', () => {
