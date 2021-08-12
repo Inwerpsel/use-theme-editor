@@ -4,9 +4,22 @@ body {
 }
 
 .theme-length-controls {
-  input _-- {
-    margin-right: 5px;
-    text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+
+  .theme-length-control {
+    input _-- {
+      margin-right: 5px;
+      text-align: right;
+      min-width: 40px;
+      max-width: 120px;
+    }
+    display: inline-flex;
+    > * {
+      display: inline;
+      flex-shrink: 2;
+    }
   }
 }
 
