@@ -202,6 +202,13 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
         />
         <span>vw</span>
       </div>
+      <button
+        disabled={value === 0 || value === '0'}
+        onClick={() => {
+          onChange('0');
+        }}
+      >0
+      </button>
       <TextControl
         value={ value }
         onChange={ onChange }
