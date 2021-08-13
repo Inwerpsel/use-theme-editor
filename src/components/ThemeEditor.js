@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useRef, useState, Fragment} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -99,6 +99,8 @@ export const ThemeEditor = (props) => {
 
   const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'alt');
 
+  const [responsiveSticky, setResponsiveSticky] = useLocalStorage('responsive-on-load', 'false');
+
   useHotkeys('alt+a', () => {
     setFrameClickBehavior(value => value=== 'alt' ? 'any' : 'alt');
   }, [frameClickBehavior]);
@@ -120,9 +122,14 @@ export const ThemeEditor = (props) => {
   >
     {!!isResponsive && <ResizableFrame {...{frameRef}} src={window.location.href}/>}
 
-    {!!isResponsive && createPortal(<button style={{zIndex: 1003,position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
-      setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
-    }}>{ frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}</button>, document.body)}
+    {!!isResponsive && createPortal(<Fragment>
+      <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
+        setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
+      }}>{frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}</button>
+      <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '380px'}} onClick={() => {
+        setResponsiveSticky(responsiveSticky === 'true' ? 'false' : 'true');
+      }}>{responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}</button>
+    </Fragment>, document.body)}
     <span
         style={ {
           fontSize: '10px',

@@ -107,6 +107,11 @@ export const setupThemeEditor = async (config) => {
 
   }, false);
 
+  if (!isRunningAsFrame && localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
+    document.documentElement.classList.add('hide-wp-admin-bar');
+    renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+  }
+
   document.addEventListener('click', async event => {
     if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
       return;
