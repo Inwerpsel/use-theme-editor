@@ -1,7 +1,7 @@
 import FontPicker from 'font-picker-react';
 import {useEffect, useState} from 'react';
 import {getAllDefinedFonts} from '../../getAllDefinedFonts';
-import {SelectControl} from '@wordpress/components';
+// import {SelectControl} from '@wordpress/components';
 const unquote = s => {
   return s.replace(/^"/, '').replace(/"$/, '');
 };
@@ -17,8 +17,9 @@ export const FontFamilyControl = props => {
 
   useEffect(() => {
     const loadFonts = async () => {
+      const tStart = performance.now();
       const loaded = await getAllDefinedFonts();
-      console.log(loaded);
+      console.log(`Loaded ${loaded.length} fonts in ms`, performance.now() - tStart);
       setFonts(loaded);
     };
     loadFonts();
