@@ -3,7 +3,18 @@ import { Fragment, useEffect } from 'react';
 import { RadioControl, RangeControl } from '@wordpress/components';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 
-const screenOptions = [
+const toSelectOptions = options => options.map(({ dims, label }) => ({
+  label: `${label} (${dims.join(' x ')})`,
+  value: dims.join(),
+}));
+
+const simpleScreenOptions = [
+  { dims: [360, 640], label: 'Phone' },
+  { dims: [768, 1024], label: 'Tablet Portrait' },
+  { dims: [1024, 768], label: 'Tablet Landscape' },
+  { dims: [1536, 864], label: 'Laptop Wide' },
+];
+const allScreenOptions = [
   { dims: [360, 640], label: 'Phone' },
   { dims: [360, 780], label: 'Apple iPhone 12 mini' },
   { dims: [390, 844], label: 'Apple iPhone 12 Pro', },
@@ -17,10 +28,7 @@ const screenOptions = [
   { dims: [2560, 1440], label: 'UHD' },
   { dims: [3440, 1440], label: 'Ultrawide UHD' },
   { dims: [3840, 2160], label: '4K' },
-].map(({ dims, label }) => ({
-  label: `${label} (${dims.join(' x ')})`,
-  value: dims.join(),
-}));
+];
 
 const wrapperMargin = 28;
 
@@ -43,6 +51,8 @@ export const ResizableFrame = props => {
     setScales,
   ] = useLocalStorage('responsive-scales', {});
   const scale = scales[`${width}x${height}`] || 1;
+
+  const [isSimpleSizes, setIsSimpleSizes] = useLocalStorage('responsive-simple-sizes', true);
 
   useEffect(() => {
     const orig = document.body.style.maxHeight;
@@ -108,8 +118,13 @@ export const ResizableFrame = props => {
       top: '20px',
       right: '100px',
     }}>
+      <button
+        onClick={() => {
+          setIsSimpleSizes(!isSimpleSizes);
+        }}
+      >{ isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes' }</button>
       <RadioControl
-        options={ screenOptions }
+        options={isSimpleSizes ? toSelectOptions(simpleScreenOptions) : toSelectOptions(allScreenOptions)}
         selected={ [width, height].join() }
         onChange={ value => {
           const [newWidth, newHeight] = value.split(',');
