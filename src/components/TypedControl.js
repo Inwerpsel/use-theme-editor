@@ -17,6 +17,7 @@ const isRem = value => value && value.match(/[\d.]+rem$/);
 const isPercent = value => value && value.match(/\d%$/);
 const isVh = value => value && value.match(/vh$/);
 const isVw = value => value && value.match(/vw$/);
+const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
 const extractUsage = (colors = [] , [name, color]) => {
   if (COLOR_VALUE_REGEX.test(color) || GRADIENT_REGEX.test(color)) {
@@ -216,6 +217,29 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     </div>;
   }
 
+  if (cssVar.usages.some(usage => usage.property === 'font-weight')) {
+    const numbers = ['', 100, 200, 300, 400, 500, 600, 700, 800, 900].map(valuesAsLabels);
+    const constants = ['', 'normal', 'bold', 'lighter', 'bolder'].map(valuesAsLabels);
+
+    return <Fragment>
+      <SelectControl
+        {...{value, onChange}}
+        options={numbers}
+      />
+      <SelectControl
+        {...{value, onChange}}
+        options={constants}
+      />
+    </Fragment>;
+  }
+
+  if (cssVar.usages.some(usage => usage.property === 'font-style')) {
+    const options = ['normal', 'italic'].map(valuesAsLabels);
+    return <SelectControl
+      {...{value, onChange, options}}
+    />;
+  }
+
   if (cssVar.usages.some(usage => usage.property === 'font-family')) {
     return <FontFamilyControl {...{value, onChange}}/>;
   }
@@ -225,9 +249,37 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
   }
 
   if ( cssVar.usages.some( usage => usage.property === 'display' ) ) {
+    const options = ['none', 'inline', 'inline-block', 'block', 'flex'].map(valuesAsLabels);
     return <SelectControl
-      {...{value, onChange}}
-      options={['none', 'inline', 'inline-block', 'block', 'flex'].map(s => ({label: s, value: s}))}
+      {...{value, onChange, options}}
+    />;
+  }
+
+  if (cssVar.usages.some(usage => usage.property === 'text-align')) {
+    const options = [
+      'start',
+      'end',
+      'center',
+    ].map(valuesAsLabels);
+    return <Fragment>
+      <SelectControl
+        {...{value, onChange, options}}
+      />
+      <TextControl
+        value={ value }
+        onChange={ onChange }
+      />
+    </Fragment>;
+  }
+
+  if (cssVar.usages.some(usage => usage.property === 'text-decoration')) {
+    const options = [
+      'none',
+      'underline',
+      'center',
+    ].map(valuesAsLabels);
+    return <SelectControl
+      {...{value, onChange, options}}
     />;
   }
 
