@@ -12,8 +12,16 @@ const getGoogleSheetRules = async href => {
   if (inDom) {
     return inDom.sheet.rules;
   }
-  const response = await fetch(href);
-  const css = await response.text();
+  let css;
+  try {
+    const response = await fetch(href);
+    css = await response.text();
+  } catch (e) {
+    // Proceed with an empty style element, so it doesn't get retried over and over.
+    css = '';
+    console.log(`Failed fetching sheet ${href}`)
+  }
+
   const style = document.createElement('style');
   style.id = id;
   style.innerText = css;
