@@ -1,8 +1,9 @@
 import { useState, Fragment } from 'react';
-import {COLOR_VALUE_REGEX, GRADIENT_REGEX, TypedControl} from './TypedControl';
+import {TypedControl} from './TypedControl';
 import { Button } from '@wordpress/components';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
+import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
 
 const uniqueUsages = cssVar => {
   return [

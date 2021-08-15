@@ -1,0 +1,115 @@
+import {TextControl} from '@wordpress/components';
+
+export const sizeLikeProperties = [
+  'font-size',
+  'border',
+  'border-width',
+  'border-bottom',
+  'border-bottom-width',
+  'line-height',
+  'border-radius',
+  'margin',
+  'margin-bottom',
+  'margin-top',
+  'margin-left',
+  'margin-right',
+  'padding',
+  'padding-bottom',
+  'padding-left',
+  'padding-right',
+  'padding-top',
+  'width',
+  'height',
+  'min-width',
+  'max-width',
+  'min-height',
+  'max-height',
+  'letter-spacing',
+  'outline-offset',
+  'top',
+  'bottom',
+  'left',
+  'right',
+  'outline-width',
+  'outline-offset',
+];
+
+const convertRemToPixels = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
+const convertPixelsToRem = (px) => px / parseFloat(getComputedStyle(document.documentElement).fontSize);
+
+const isPx = value => value && value.match(/[\d.]+px$/);
+const isRem = value => value && value.match(/[\d.]+rem$/);
+const isPercent = value => value && value.match(/\d%$/);
+const isVh = value => value && value.match(/vh$/);
+const isVw = value => value && value.match(/vw$/);
+
+export const SizeControl = props => {
+  const {onChange, value} = props;
+
+  const pxValue = isPx(value) ? value.replace('px', '') : isRem(value) ? convertRemToPixels(parseFloat(value.replace('rem', ''))) : '';
+  const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
+
+  return <div className='theme-length-controls'>
+    <div className={'theme-length-control control-px'} style={{clear: 'both'}}>
+      <input
+        type={ 'number' }
+        value={pxValue}
+        onChange={ event => {
+          onChange(`${ event.currentTarget.value }px`);
+        } }
+      />
+      <span>px</span>
+    </div>
+    <div className={'theme-length-control control-rem'}  >
+      <input
+        type={ 'number' }
+        value={remValue}
+        onChange={ event => {
+          onChange(`${ event.currentTarget.value }rem`);
+        } }
+      />
+      <span>rem</span>
+    </div>
+    <div className={'theme-length-control control-pct'}>
+      <input
+        type={ 'number' }
+        value={ isPercent(value) ? value.replace('%', '') : ''}
+        onChange={ event => {
+          onChange(`${ event.currentTarget.value }%`);
+        } }
+      />
+      <span>%</span>
+    </div>
+    <div className={'theme-length-control control-vh'}>
+      <input
+        type={ 'number' }
+        value={ isVh(value) ? value.replace('vh', '') : ''}
+        onChange={ event => {
+          onChange(`${ event.currentTarget.value }vh`);
+        } }
+      />
+      <span>vh</span>
+    </div>
+    <div className={'theme-length-control control-vw'}>
+      <input
+        type={ 'number' }
+        value={ isVw(value) ? value.replace('vw', '') : ''}
+        onChange={ event => {
+          onChange(`${ event.currentTarget.value }vw`);
+        } }
+      />
+      <span>vw</span>
+    </div>
+    <button
+      disabled={value === 0 || value === '0'}
+      onClick={() => {
+        onChange('0');
+      }}
+    >0
+    </button>
+    <TextControl
+      value={ value }
+      onChange={ onChange }
+    />
+  </div>;
+};

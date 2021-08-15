@@ -3,7 +3,9 @@ import {THEME_ACTIONS} from '../../hooks/useThemeEditor';
 import {TextControl} from '@wordpress/components';
 import {Fragment} from 'react';
 import tinycolor from 'tinycolor2';
-import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from '../TypedControl';
+
+export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
+export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 
 const PREVIEW_SIZE = '30px';
 

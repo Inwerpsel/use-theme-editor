@@ -30,7 +30,6 @@ export const FontFamilyControl = props => {
     activeFontFamily={rawFamily(value)}
     families={fonts.map(f => rawFamily(f.fontFamily))}
     onChange={value => {
-      console.log(fonts, value);
       onChange(value.family);
     }}
   />;
