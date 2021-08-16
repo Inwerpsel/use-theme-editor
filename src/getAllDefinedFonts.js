@@ -31,30 +31,32 @@ const getGoogleSheetRules = async href => {
   return style.sheet.rules;
 };
 
+const collectFontVariant = async (fonts, {style: {fontFamily, fontWeight, fontStyle}}) => {
+
+  const previousFonts = await fonts;
+  const previousVariants = previousFonts[fontFamily]?.variants || {};
+
+  return {
+    ...previousFonts,
+    [fontFamily]: {
+      fontFamily,
+      variants: {
+        ...previousVariants,
+        [`${fontWeight || 'normal'}|${fontStyle || 'normal'}`]: {
+          fontWeight: fontWeight || 'normal',
+          fontStyle: fontStyle || 'normal',
+        }
+      }
+    }
+  };
+}
+
 const extractFonts = async (fonts, sheet) => {
   const rules = sheet.href?.startsWith(GOOGLE_FONTS_URL) ? await getGoogleSheetRules(sheet.href) : sheet.rules;
 
   const fontFaces = [...rules].filter(rule => rule instanceof CSSFontFaceRule);
 
-  return await fontFaces.reduce(async (fonts, {style: {fontFamily, fontWeight, fontStyle}}) => {
-
-    const previousFonts = await fonts;
-    const previousVariants = previousFonts[fontFamily]?.variants || {};
-
-    return {
-      ...previousFonts,
-      [fontFamily]: {
-        fontFamily,
-        variants: {
-          ...previousVariants,
-          [`${fontWeight || 'normal'}|${fontStyle || 'normal'}`]: {
-            fontWeight: fontWeight || 'normal',
-            fontStyle: fontStyle || 'normal',
-          }
-        }
-      }
-    };
-  }, fonts);
+  return await fontFaces.reduce(collectFontVariant, fonts);
 };
 const ourDomainOrGoogleFonts = sheet => isSameDomain(sheet) || sheet.href.startsWith(GOOGLE_FONTS_URL);
 
