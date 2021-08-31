@@ -12,7 +12,7 @@ const matchVar = async ( cssVar, target ) => {
 
     return `${ selector }${ !shouldIncludeStar ? '' : `, ${ selector } *` }`;
     // Remove any pseudo selectors that might not match the clicked element right now.
-  } ).filter(selector => !/:(before|after)/.test(selector)).join().replace( allStateSelectorsRegexp, '' );
+  }).join().replace(allStateSelectorsRegexp, '').replace(/:?:(before|after)/g, '');
 
 
   if ( target.matches( combinedSelector ) ) {

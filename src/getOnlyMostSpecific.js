@@ -1,7 +1,7 @@
 import { compare } from 'specificity';
 import {byNameStateProp} from "./groupVars";
 
-const pseudoRegex = /(:(hover|focus|active|disabled|visited))/g;
+const pseudoStateRegex = /(:(hover|focus|active|disabled|visited))/g;
 
 const getMaxMatchingSpecificity = (usages, element) => {
   return usages.reduce((max, usage) => {
@@ -56,8 +56,9 @@ export const getOnlyMostSpecific = (vars, element) => {
     Object.entries(byMediaQueries).forEach(([media,usages]) => {
       const maxSpecific = getMaxMatchingSpecificity(usages, element) || usages[0];
       // Won't have anything added if it doesn't match
-      const pseudoSuffix = (maxSpecific.selector.split(',')[0].match(pseudoRegex) || []).join('');
-      const propName = usages[0].property + pseudoSuffix + media;
+      const stateSuffix = (maxSpecific.selector.split(',')[0].match(pseudoStateRegex) || []).join('');
+      const pseudoElementSuffix = (maxSpecific.selector.split(',')[0].match(/:?:(before|after)/g) || []).join('');
+      const propName = usages[0].property + stateSuffix + media + pseudoElementSuffix;
 
       if (!all[propName]) {
         all[propName] = {...current, maxSpecific};
