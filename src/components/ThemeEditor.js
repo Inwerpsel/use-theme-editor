@@ -9,6 +9,7 @@ import {createPortal} from 'react-dom';
 import {ServerThemesList} from './ServerThemesList';
 import {exportCss, exportJson} from '../export';
 import {GroupControl} from './GroupControl';
+import {readFromUploadedFile} from './readFromUploadedFile';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -170,18 +171,7 @@ export const ThemeEditor = (props) => {
           <input
             type="file"
             accept={ '.json' }
-            onChange={ event => {
-              const reader = new FileReader();
-              reader.onload = event => {
-                try {
-                  const theme = JSON.parse(event.target.result);
-                  dispatch({ type: THEME_ACTIONS.LOAD_THEME, payload: { theme } });
-                } catch (e) {
-                  console.log('File contents is not valid JSON.', event.target.result, event);
-                }
-              };
-              reader.readAsText(event.target.files[0]);
-            } }
+            onChange={ event => { readFromUploadedFile(dispatch)} }
             style={ { cursor: 'copy' } }
           />
         </label>
