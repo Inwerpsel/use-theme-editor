@@ -22,17 +22,27 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
   }
 
   if (cssVar.usages.some(usage => usage.property === 'font-weight')) {
-    const numbers = ['', 100, 200, 300, 400, 500, 600, 700, 800, 900].map(valuesAsLabels);
-    const constants = ['', 'normal', 'bold', 'lighter', 'bolder'].map(valuesAsLabels);
+    const numbers = [100, 200, 300, 400, 500, 600, 700, 800, 900].map(valuesAsLabels);
+    const constants = ['normal', 'bold', 'lighter', 'bolder'].map(valuesAsLabels);
+
+    const currentIsNumber = !value || /^-?\d+$/.test(value);
 
     return <Fragment>
       <SelectControl
         {...{value, onChange}}
-        options={numbers}
+        style={{fontStyle: !value || !currentIsNumber ? 'italic' : 'normal'}}
+        options={[
+          ...(value && currentIsNumber ? [] : [{value: '', label: '-- use a number --'}]),
+          ...numbers,
+        ]}
       />
       <SelectControl
         {...{value, onChange}}
-        options={constants}
+        style={{fontStyle: !value || currentIsNumber ? 'italic' : 'normal'}}
+        options={[
+          ...(value && !currentIsNumber ? [] : [{value: '', label: '-- use a word --'}]),
+          ...constants,
+        ]}
       />
     </Fragment>;
   }
