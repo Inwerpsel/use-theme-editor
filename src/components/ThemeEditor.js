@@ -43,8 +43,6 @@ export const ThemeEditor = (props) => {
     dispatch,
   ] = useThemeEditor({allVars});
 
-  const [collapsed, setCollapsed] = useState(false);
-
   const [importCollapsed, setImportCollapsed] = useState(true);
   const [storedServerThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const serverThemesCollapsed = !!storedServerThemesCollapsed && storedServerThemesCollapsed !== 'false';
@@ -130,38 +128,23 @@ export const ThemeEditor = (props) => {
         setResponsiveSticky(responsiveSticky === 'true' ? 'false' : 'true');
       }}>{responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}</button>
     </Fragment>, document.body)}
-    <span
-        style={ {
-          fontSize: '10px',
-          border: '1px solid grey',
-          borderRadius: '3px',
-          margin: '0 8px',
-          padding: '2px 4px',
-          background: 'grey',
-        } }
-        onClick={() => {
-          setCollapsed(!collapsed)
-        }}
-      >
-        { collapsed ? 'show' : 'hide' }
-    </span>
     <input
       type="checkbox"
       readOnly
       checked={ isResponsive }
       onClick={ () => { setResponsive(!isResponsive); } }
     />
-    { !collapsed && <label
+    <label
       onClick={ () => {
         setResponsive(!isResponsive);
       } }
       style={ { marginBottom: '2px' } }
     >
       { 'Responsive view' }
-    </label> }
+    </label>
     <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
 
-    { !collapsed && !importCollapsed && <div
+    { !importCollapsed && <div
       title='Click and hold to drag'
       className="themer-controls">
       <div>
@@ -223,8 +206,9 @@ export const ThemeEditor = (props) => {
       </button>
     </div>
 
-    { !collapsed && !serverThemesCollapsed && serverThemesLoading && <div>Loading server themes...</div> }
-    { !collapsed && !serverThemesCollapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
+    { !serverThemesCollapsed && serverThemesLoading && <div>Loading server themes...</div> }
+
+    { !serverThemesCollapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
       serverThemes,
       deleteTheme,
       fileName,
@@ -235,7 +219,7 @@ export const ThemeEditor = (props) => {
       dispatch,
     }}/>}
 
-    { !collapsed &&  <div>
+    <div>
       <button
         style={{float: 'right'}}
         disabled={future.length === 0}
@@ -250,13 +234,13 @@ export const ThemeEditor = (props) => {
         onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD})}
       >undo
       </button>
-    </div>}
+    </div>
 
-    { !collapsed && <ul className={'group-list'}>
+    <ul className={'group-list'}>
       { groups.map(({ element, label, vars }) => <GroupControl
         {...{element, label, vars, toggleGroup, defaultValues, theme, frameRef, dispatch}}
         isOpen={openGroups.includes(label)}
       />) }
-    </ul> }
+    </ul>
   </div>;
 };
