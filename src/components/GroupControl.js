@@ -101,6 +101,7 @@ export const GroupControl = props => {
               defaultValue,
               dispatch,
             }}
+            initialOpen={vars.length === 1}
             key={cssVar.name}
             onChange={value => {
               dispatch({type: THEME_ACTIONS.SET, payload: {name: cssVar.name, value}});

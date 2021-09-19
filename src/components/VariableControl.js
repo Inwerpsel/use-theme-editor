@@ -22,16 +22,18 @@ const format = name => {
   const parts = raw.split(':');
 
   return [
-    parts.slice(0, parts.length - 1).join(':') + ':',
+    parts.slice(0, parts.length - 1).join(' — '),
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };
 const formatTitle = (cssVar, isRepeat) => {
   const [prefix, prop] = format(cssVar.name);
   return <Fragment>
-    <span style={ { fontWeight: 'bold', color: isRepeat ? 'grey' : 'black' } }>{capitalize(prefix)}</span>
-    <br/>
     <span className={'var-control-property'}>{prop}</span>
+    <br/>
+    <span
+      style={ { fontSize: '13px', marginLeft: '32px',  fontStyle: 'italic', color: isRepeat ? 'grey' : 'black' } }
+    >{capitalize(prefix)}</span>
   </Fragment>;
 };
 
@@ -120,11 +122,12 @@ export const VariableControl = (props) => {
     defaultValue,
     isRepeat = false,
     dispatch,
+    initialOpen,
   } = props;
 
   const [
     isOpen, setIsOpen
-  ] = useState(false);
+  ] = useState(initialOpen);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
