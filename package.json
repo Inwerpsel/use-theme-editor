@@ -24,6 +24,7 @@
     "react-hotkeys-hook": "^3.0.3",
     "react-shadow-picker": "^1.0.5",
     "specificity": "^0.4.1",
+    "stylelint": "^13.13.1",
     "tinycolor2": "^1.4.2"
   },
   "devDependencies": {
