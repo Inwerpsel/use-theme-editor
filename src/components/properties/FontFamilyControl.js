@@ -28,9 +28,10 @@ export const FontFamilyControl = props => {
 
   return <Fragment>
     <CheckboxControl
+      label={'Use Google picker (might crash)'}
       checked={googleOn}
       onChange={() => setGoogleOn(!googleOn)}
-    /> Use Google picker (might crash)
+    />
     { !googleOn || fonts.length === 0 ? null : <FontPicker
       apiKey={googleApiKey}
       activeFontFamily={rawFamily(value)}
