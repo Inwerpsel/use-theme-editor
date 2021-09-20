@@ -243,3 +243,12 @@ body.logged-in #theme-editor-root {
 .usages-wrapper:hover {
   overflow: visible;
 }
+
+.font-weight-control {
+  display: flex;
+  justify-content: space-between;
+  .components-base-control {
+    display: inline-block;
+    width: 48%;
+  }
+}

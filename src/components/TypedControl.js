@@ -27,7 +27,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
 
     const currentIsNumber = !value || /^-?\d+$/.test(value);
 
-    return <Fragment>
+    return <div className={'font-weight-control'}>
       <SelectControl
         {...{value, onChange}}
         style={{fontStyle: !value || !currentIsNumber ? 'italic' : 'normal'}}
@@ -44,7 +44,7 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
           ...constants,
         ]}
       />
-    </Fragment>;
+    </div>;
   }
 
   if (cssVar.usages.some(usage => usage.property === 'font-style')) {
