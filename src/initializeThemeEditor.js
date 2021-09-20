@@ -70,7 +70,7 @@ export const setupThemeEditor = async (config) => {
     editorRoot.id = 'theme-editor-root';
     document.body.appendChild( editorRoot );
     dragElement( editorRoot );
-    const storedLocation = localStorage.getItem(getLocalStorageNamespace() + DRAG_KEY);
+    const storedLocation = localStorage.getItem(DRAG_KEY);
     if (/{.*}/.test(storedLocation)) {
       const {x, y} = JSON.parse(storedLocation);
       if (x) {
