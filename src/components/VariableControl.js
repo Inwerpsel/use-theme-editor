@@ -26,14 +26,20 @@ const format = name => {
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };
-const formatTitle = (cssVar, isRepeat) => {
+const formatTitle = (cssVar) => {
   const [prefix, prop] = format(cssVar.name);
   return <Fragment>
     <span className={'var-control-property'}>{prop}</span>
     <br/>
-    <span
-      style={ { fontSize: '13px', marginLeft: '32px',  fontStyle: 'italic', color: isRepeat ? 'grey' : 'black' } }
-    >{capitalize(prefix)}</span>
+    <div
+      style={{
+        fontSize: '13px',
+        marginTop: '4px',
+        marginLeft: '24px',
+        fontStyle: 'italic',
+        color: 'black'
+      }}
+    >{capitalize(prefix)}</div>
   </Fragment>;
 };
 
@@ -73,43 +79,22 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
     { value }
   </span>;
 };
-const renderCollapsed = ({cssVar, toggleSelectors}) => <pre
-  // style={ { maxWidth: '80%', overflowX: 'hidden' } }
-  onClick={ toggleSelectors }
-  className={ 'usages-collapsed' }
->
-  { uniqueUsages(cssVar).join(', ') }
-</pre>;
 
-const renderShow = ({cssVar, toggleSelectors}) => <pre
-  onClick={ toggleSelectors }
->
-  { uniqueUsages(cssVar).join('\n').replace(',', ',\n') }
-</pre>;
+const showUsages = (cssVar) => {
+  return <ul>
+    {uniqueUsages(cssVar).map(usage => {
+      const selectors = usage.split(',');
+      if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
+        return <li key={selectors}>
+          <ul
+            style={{listStyleType: 'none'}}
+          >{selectors.map(selector => <li key={selector}>{selector}</li>)}</ul>
+        </li>;
+      }
 
-const showUsages = (cssVar, showSelectors, toggleSelectors) => {
-
-  return <div
-    style={ { display: 'inline-block', fontSize: '11px', position: 'relative', marginTop: '16px', minWidth: '40%' } }
-  >
-    <span
-      key={ 3 }
-      onClick={ toggleSelectors }
-      style={ {
-        userSelect: 'none',
-        fontSize: '10px',
-        position: 'absolute',
-        top: -12,
-        left: 0
-      } }
-    >
-      { uniqueUsages(cssVar).length } selectors
-    </span>
-    { showSelectors
-      ? renderShow({ cssVar, toggleSelectors })
-      : renderCollapsed({ cssVar, toggleSelectors }) }
-
-  </div>;
+      return <li key={selectors}>{usage}</li>;
+    })}
+  </ul>;
 };
 
 export const VariableControl = (props) => {
@@ -120,7 +105,6 @@ export const VariableControl = (props) => {
     onChange,
     onUnset,
     defaultValue,
-    isRepeat = false,
     dispatch,
     initialOpen,
   } = props;
@@ -133,7 +117,7 @@ export const VariableControl = (props) => {
 
   const [
     showSelectors, setShowSelectors
-  ] = useState(true);
+  ] = useState(false);
 
   const toggleSelectors = () => setShowSelectors(!showSelectors);
   const value = theme[cssVar.name] || defaultValue;
@@ -170,7 +154,7 @@ export const VariableControl = (props) => {
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
       onClick={ ()=> isOpen && toggleOpen() }
     >
-      { formatTitle(cssVar, isRepeat) }
+      { formatTitle(cssVar) }
     </h5>
     { isOpen && (
       <div
@@ -187,8 +171,6 @@ export const VariableControl = (props) => {
           });
         } }
       >
-        <div>{cssVar.name}</div>
-        { showUsages(cssVar, showSelectors,toggleSelectors) }
         { isDefault && <span style={{float: 'right', marginBottom: '14.5px', color: 'grey'}}>default</span>}
         { cssVar.name in theme && <button
           style={ { float: 'right', marginBottom: '14.5px' } }
@@ -197,9 +179,13 @@ export const VariableControl = (props) => {
             onUnset();
           } }
         >unset</button>}
+        <br/>
         <TypedControl { ...{
           cssVar, theme, value, dispatch, onChange,
         } }/>
+        <div>{cssVar.name}</div>
+        <button onClick={toggleSelectors}>{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(cssVar).length})</button>
+        {showSelectors && showUsages(cssVar, showSelectors,toggleSelectors)}
       </div>
     ) }
   </li>;
