@@ -10,6 +10,7 @@ import {ServerThemesList} from './ServerThemesList';
 import {exportCss, exportJson} from '../export';
 import {GroupControl} from './GroupControl';
 import {readFromUploadedFile} from './readFromUploadedFile';
+import {CustomVariableInput} from './CustomVariableInput';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -208,7 +209,7 @@ export const ThemeEditor = (props) => {
       modifiedServerVersion,
       dispatch,
     }}/>}
-
+    <CustomVariableInput {...{dispatch, theme}}/>
     <div>
       <button
         style={{float: 'right'}}
