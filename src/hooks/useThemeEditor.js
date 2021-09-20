@@ -48,7 +48,9 @@ const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
 const ACTIONS = {
   SET: (state, { name, value }) => {
     const { theme } = state;
-
+    if (name === '') {
+      return;
+    }
     if (theme[name] === value) {
       return state;
     }
@@ -58,7 +60,7 @@ const ACTIONS = {
 
     return {
       ...state,
-      theme: { ...state.theme, [name]: value },
+      theme: { ...theme, [name]: value },
       history: !shouldAddHistory ? state.history : pushHistory(state.history, state.theme),
       future: [],
       lastSet: { ...state.lastSet, [name]: Date.now(), }
@@ -98,7 +100,7 @@ const ACTIONS = {
     } = state.previewProps;
 
     if (
-      !state.theme.hasOwnProperty(name)
+      !(name in state.theme)
       && !Object.keys(state.previewPseudoVars).map(s => s.replace(PSEUDO_REGEX, '--')).includes(name)) {
       keysToRemove[name] = true;
     }
