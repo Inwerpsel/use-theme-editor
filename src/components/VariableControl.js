@@ -101,7 +101,6 @@ export const VariableControl = (props) => {
   const {
     theme,
     cssVar,
-    onCloseClick,
     onChange,
     onUnset,
     defaultValue,
@@ -136,19 +135,6 @@ export const VariableControl = (props) => {
       cursor: isOpen ? 'auto' : 'pointer',
     } }
   >
-    { !!onCloseClick && <Button
-      style={ {
-        float: 'right',
-        borderRadius: '7px',
-        marginTop: '9px',
-        marginLeft: '9px',
-        padding: '3px 10px',
-        height: '29px',
-        fontSize: '32px',
-        border: '1px solid black'
-      } }
-      title='Close'
-      onClick={ () => onCloseClick(cssVar) }>-</Button> }
     { previewValue(value, cssVar, toggleOpen, isDefault) }
     <h5
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
