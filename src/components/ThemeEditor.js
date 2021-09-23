@@ -11,6 +11,7 @@ import {exportCss, exportJson} from '../export';
 import {GroupControl} from './GroupControl';
 import {readFromUploadedFile} from './readFromUploadedFile';
 import {CustomVariableInput} from './CustomVariableInput';
+import {StylesheetDisabler} from './StylesheetDisabler';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -48,6 +49,7 @@ export const ThemeEditor = (props) => {
   const [importCollapsed, setImportCollapsed] = useState(true);
   const [storedServerThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const serverThemesCollapsed = !!storedServerThemesCollapsed && storedServerThemesCollapsed !== 'false';
+  const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
 
@@ -144,9 +146,14 @@ export const ThemeEditor = (props) => {
     >
       { 'Responsive view' }
     </label>
+
+
     <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
+    <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
+    <StylesheetDisabler collapsed={sheetsDisablerCollapsed}{...{frameRef}}/>
 
     { !importCollapsed && <div
+      style={{position: 'fixed', left: 0, background: 'white'}}
       title='Click and hold to drag'
       className="themer-controls">
       <div>

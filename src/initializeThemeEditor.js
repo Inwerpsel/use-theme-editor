@@ -49,6 +49,16 @@ const applyFromLocalStorage = (key) => {
   lastRead[key] = json;
 };
 
+const toggleStylesheets = (disabledSheets) => {
+  [...document.styleSheets].forEach(sheet => {
+    if (!sheet.href) {
+      return;
+    }
+    const id = sheet.href.replace(/\?.*/, '');
+    sheet.disabled = !!disabledSheets[id];
+  });
+}
+
 export const setupThemeEditor = async (config) => {
   applyFromLocalStorage(LOCAL_STORAGE_KEY);
 
@@ -203,6 +213,25 @@ export const setupThemeEditor = async (config) => {
       return;
     }
     requireAlt = payload.frameClickBehavior !== 'any';
+  }, false);
+
+  const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
+
+  if (storedSheetConfig) {
+    const disabledSheets = JSON.parse(storedSheetConfig);
+    toggleStylesheets(disabledSheets);
+  }
+
+  window.addEventListener('message', event => {
+    const {type, payload} = event.data;
+    if (type !== 'set-sheet-config') {
+      return;
+    }
+
+    console.log('Sheet config');
+
+    const disabledSheets = JSON.parse(payload);
+    toggleStylesheets(disabledSheets);
   }, false);
 };
 
