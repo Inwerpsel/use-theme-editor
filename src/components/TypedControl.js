@@ -59,7 +59,10 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
   }
 
   if ( cssVar.usages.some( usage => usage.property === 'box-shadow' ) ) {
-    return <ShadowPicker {...{value, onChange}}/>;
+    return <Fragment>
+      <ShadowPicker {...{value, onChange}}/>;
+      <TextControl {...{value, onChange}}/>
+    </Fragment>;
   }
 
   if ( cssVar.usages.some( usage => usage.property === 'display' ) ) {
