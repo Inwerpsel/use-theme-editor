@@ -97,7 +97,7 @@ export const ThemeEditor = (props) => {
 
   const frameRef = useRef(null);
 
-  const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'alt');
+  const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
 
   const [responsiveSticky, setResponsiveSticky] = useLocalStorage('responsive-on-load', 'false');
 
