@@ -44,18 +44,28 @@ export const StylesheetDisabler = props => {
     style={{
       position: 'fixed',
       left: '0',
-      minWidth: '22vw',
+      minWidth: '28vw',
       background: 'white',
       color: 'black',
+      zIndex: 1010,
+      border: '1px solid black',
+      borderRadius: '6px',
     }}
   >
+    <p>The following stylesheets are loaded on the page in the same order as they are shown.</p>
+    <p>If you uncheck one it is disabled <b>while in the editor</b>.</p>
     <ul
+      style={{
+        paddingLeft: '3px',
+        listStyleType: 'none',
+      }}
     >{sheets.map(({href}) => {
         const id = href.replace(/\?.*/, '');
 
         return <li
           style={{
             fontSize: '14px',
+            marginBottom: '4px',
           }}
           onClick={() => {
             setDisabledSheets({...disabledSheets, [id]: !disabledSheets[id] || null});
