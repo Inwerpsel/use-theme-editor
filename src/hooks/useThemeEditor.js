@@ -283,10 +283,7 @@ export const useThemeEditor = (
     localStorage.setItem(LOCAL_STORAGE_PREVIEWS_KEY, serialized);
   }, [serialized]);
 
-  // Todo: clean up.
-  const sorted = Object.keys(theme).sort(
-    (a, b) => byNameStateProp({ name: a }, { name: b })
-  ).reduce((t, k) => ({ ...t, [k]: theme[k] }), {});
+  const sorted = Object.keys(theme).sort().reduce((t, k) => ({ ...t, [k]: theme[k] }), {});
 
   const themeJson = JSON.stringify(sorted);
   useEffect(() => {
