@@ -91,7 +91,7 @@ export const GroupControl = props => {
       </h4>
     </div>
     {isOpen && <ul>
-      {vars.sort(byNameStateProp).map(cssVar => {
+      {vars.map(cssVar => {
           const defaultValue = defaultValues[cssVar.name];
 
           return <VariableControl
