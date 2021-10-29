@@ -48,10 +48,7 @@ const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
 const ACTIONS = {
   SET: (state, { name, value }) => {
     const { theme } = state;
-    if (name === '') {
-      return;
-    }
-    if (theme[name] === value) {
+    if (name === '' || theme[name] === value) {
       return state;
     }
 
