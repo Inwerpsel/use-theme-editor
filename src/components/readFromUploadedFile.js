@@ -1,6 +1,6 @@
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
 
-export const readFromUploadedFile = (dispatch) => {
+export const readFromUploadedFile = (dispatch, event) => {
   const reader = new FileReader();
 
   reader.onload = event => {

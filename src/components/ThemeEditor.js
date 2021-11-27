@@ -179,7 +179,7 @@ export const ThemeEditor = (props) => {
           <input
             type="file"
             accept={ '.json' }
-            onChange={ event => { readFromUploadedFile(dispatch)} }
+            onChange={ event => { readFromUploadedFile(dispatch, event)} }
             style={ { cursor: 'copy' } }
           />
         </label>
