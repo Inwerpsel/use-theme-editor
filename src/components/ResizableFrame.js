@@ -8,13 +8,13 @@ const toSelectOptions = options => options.map(({ dims, label }) => ({
   value: dims.join(),
 }));
 
-const simpleScreenOptions = [
+const simpleScreenOptions = toSelectOptions([
   { dims: [360, 640], label: 'Phone' },
   { dims: [768, 1024], label: 'Tablet Portrait' },
   { dims: [1024, 768], label: 'Tablet Landscape' },
   { dims: [1536, 864], label: 'Laptop Wide' },
-];
-const allScreenOptions = [
+]);
+const allScreenOptions = toSelectOptions([
   { dims: [360, 640], label: 'Phone' },
   { dims: [360, 780], label: 'Apple iPhone 12 mini' },
   { dims: [390, 844], label: 'Apple iPhone 12 Pro', },
@@ -28,7 +28,7 @@ const allScreenOptions = [
   { dims: [2560, 1440], label: 'UHD' },
   { dims: [3440, 1440], label: 'Ultrawide UHD' },
   { dims: [3840, 2160], label: '4K' },
-];
+]);
 
 const wrapperMargin = 28;
 
@@ -124,7 +124,7 @@ export const ResizableFrame = props => {
         }}
       >{ isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes' }</button>
       <RadioControl
-        options={isSimpleSizes ? toSelectOptions(simpleScreenOptions) : toSelectOptions(allScreenOptions)}
+        options={isSimpleSizes ? simpleScreenOptions : allScreenOptions}
         selected={ [width, height].join() }
         onChange={ value => {
           const [newWidth, newHeight] = value.split(',');
