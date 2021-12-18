@@ -1,9 +1,78 @@
+// eslint-disable-next-line no-undef
 const balancedVar = require('./balancedVar');
 
 // For now only extract from the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
 // For now hard coded exclude of WP core files. Could be made configurable.
 export const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
+
+window.sourceMap && window.sourceMap.SourceMapConsumer.initialize({
+  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+});
+
+const sourceMapConsumers = {};
+
+const warmupConsumers = async sheets => await Promise.allSettled(sheets.map(async sheet => getConsumer(sheet)));
+
+const getConsumer = async sheetUrl => {
+  if (!sourceMapConsumers[sheetUrl]) {
+    const mapUrl = sheetUrl.split('?')[0] + '.map';
+    const data = await (await fetch(mapUrl)).json();
+    sourceMapConsumers[sheetUrl] = await new window.sourceMap.SourceMapConsumer(data);
+  }
+
+  return sourceMapConsumers[sheetUrl];
+};
+
+const getLineVarPositions = (varName, sourceMapConsumer, sheet) => (positions, line, lineIndex) => {
+  const occurrenceStart = `var(${varName}`;
+
+  const [pre, ...matches] = line.split(occurrenceStart);
+
+  let column = pre.length;
+
+  for (const match of matches) {
+    const line = lineIndex + 1;
+
+    // Don't record position if it's the start of a longer variable name.
+    /^[\w-]/.test(match) || positions.push({
+      ...sourceMapConsumer.originalPositionFor({line, column}),
+      generated: {
+        line,
+        column,
+        sheet,
+      }
+    });
+    column += occurrenceStart.length + match.length;
+  }
+
+  return positions;
+};
+
+const sheetLines = {};
+
+const getSheetLines = async sheetUrl => {
+  if (!sheetLines[sheetUrl]) {
+    const text = await (await fetch(sheetUrl)).text();
+    sheetLines[sheetUrl] = text.split('\n');
+  }
+
+  return sheetLines[sheetUrl];
+};
+
+const warmupLines = async sheets => {
+  await Promise.allSettled(sheets.map(getSheetLines));
+};
+
+const getVarPositions = async (sheet, varName, sourceMapConsumer) => {
+  if (!sheet) {
+    console.log(varName, 'NO SHEET');
+    return [];
+  }
+  const lines = await getSheetLines(sheet);
+
+  return lines.reduce(getLineVarPositions(varName, sourceMapConsumer, sheet), []);
+};
 
 const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
@@ -65,12 +134,40 @@ const collectSheetVars = (vars, sheet) => {
 };
 
 export const extractPageVariables = async() => {
-  const asObject = [...document.styleSheets].filter(isSameDomain).filter(isNotCoreFile).reduce(collectSheetVars, {});
+  const startTime = performance.now();
+  const sheets = [...document.styleSheets].filter(isSameDomain).filter(isNotCoreFile);
+  const asObject = sheets.reduce(collectSheetVars, {});
 
-  return Object.entries(asObject).map(([k, v]) => {
-    return ({
-      name: k,
-      ...v,
-    });
+  const asArray = Object.entries(asObject).map(([k, v]) => ({name: k, ...v}));
+
+  const promises = await asArray.map(async (cssVar) => {
+    const {name, usages} = cssVar;
+    const sheetsUsingIt = [...new Set(usages.filter(u => u.sheet).map(u => u.sheet))];
+
+    await Promise.allSettled([await warmupConsumers(sheetsUsingIt), await warmupLines(sheetsUsingIt)]);
+
+    const positions = await sheetsUsingIt.reduce(async (positions, sheet) => {
+      const sourceMapConsumer = await getConsumer(sheet);
+      const newPositions = await getVarPositions(sheet, name, sourceMapConsumer);
+
+      return [...await positions, ...newPositions];
+    }, []);
+
+    return {
+      ...cssVar,
+      usages: cssVar.usages.map((u, i) => ({...u, position: positions[i]})),
+      positions,
+    };
   });
+
+  const results = await Promise.allSettled( promises );
+  Object.values(sourceMapConsumers).forEach(consumer => consumer.destroy);
+  const duration = performance.now() - startTime;
+  console.log(`Extracted data in ${duration}ms`);
+
+  const values = await results.filter( wasFulfilled ).map( result => result.value );
+  console.log(values);
+
+  return values;
 };
+const wasFulfilled = result => 'fulfilled' === result.status;

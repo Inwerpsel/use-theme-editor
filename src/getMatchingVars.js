@@ -34,6 +34,7 @@ const excludedVars = [
 
 export const getMatchingVars = async ( { cssVars, target } ) => {
 
+  const startTime = performance.now();
   const uniqueVars = cssVars.reduce( ( carry, cssVar ) => {
     if (!excludedVars.includes(cssVar.name) && !carry.some(collected => collected.name === cssVar.name)) {
       carry.push( cssVar );
@@ -51,6 +52,8 @@ export const getMatchingVars = async ( { cssVars, target } ) => {
   // results.filter( wasRejected ).forEach( console.log );
 
   const arrays = results.filter( wasFulfilled ).map( result => result.value );
+
+  console.log('matched vars in', performance.now() - startTime);
 
   return [].concat( ...arrays );
 };

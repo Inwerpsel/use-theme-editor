@@ -1,18 +1,22 @@
 import { useState, Fragment } from 'react';
 import {TypedControl} from './TypedControl';
-import { Button } from '@wordpress/components';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
 
 const uniqueUsages = cssVar => {
-  return [
-    ...new Set(
-      cssVar.usages.map(
-        usage => usage.selector.replace(',', ',\n')
-      )
-    )
-  ];
+  const obj =  cssVar.usages.reduce((usages, usage) => ({
+    ...usages,
+    [usage.selector.replace(',', ',\n')]: usage,
+  }), {});
+  return Object.values(obj);
+  // return [
+  //   ...new Set(
+  //     cssVar.usages.map(
+  //       usage => usage.selector.replace(',', ',\n')
+  //     )
+  //   )
+  // ];
 };
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
@@ -82,20 +86,53 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
 
 const showUsages = (cssVar) => {
   return <ul>
-    {uniqueUsages(cssVar).map(usage => {
-      const selectors = usage.split(',');
+    {uniqueUsages(cssVar).map(({selector, position}) => {
+      const selectors = selector.split(',');
       if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
         return <li key={selectors}>
+          <IdeLink {...position}/>
           <ul
             style={{listStyleType: 'none'}}
           >{selectors.map(selector => <li key={selector}>{selector}</li>)}</ul>
         </li>;
       }
 
-      return <li key={selectors}>{usage}</li>;
+      return <li key={selectors}>{selector} <IdeLink {...position}/></li>;
     })}
   </ul>;
 };
+
+const myBasePath = '/home/pieter/github/planet4-docker-compose/persistence/app/public/wp-content/';
+const pathReplacements = {
+  'planet4-master-theme': myBasePath + 'themes/planet4-master-theme/',
+  'planet4-plugin-gutenberg-blocks': myBasePath + 'plugins/planet4-plugin-gutenberg-blocks/',
+};
+
+function IdeLink(props) {
+  const {
+    source,
+    line,
+    generated: {sheet},
+  } = props;
+  const path = source.replace('webpack://', '');
+
+  let basePath;
+  for (const needle in pathReplacements) {
+    if (sheet.includes(needle)) {
+      basePath = pathReplacements[needle];
+      break;
+    }
+  }
+  if (!basePath) {
+    return null;
+  }
+
+  return <a
+    href={`phpstorm://open?file=${basePath.replace(/\/+$/, '') + '/' + path.replace(/^\//, '')}&line=${line}`}
+    style={{color: 'blue', fontSize: '12px'}}
+    onClick={e => e.stopPropagation()}
+  >{path} {line}</a>;
+}
 
 export const VariableControl = (props) => {
   const {
@@ -136,6 +173,7 @@ export const VariableControl = (props) => {
     } }
   >
     { previewValue(value, cssVar, toggleOpen, isDefault) }
+    <IdeLink {...(cssVar.positions[0] || {})}/>
     <h5
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
       onClick={ ()=> isOpen && toggleOpen() }
