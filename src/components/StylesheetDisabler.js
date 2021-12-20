@@ -62,17 +62,21 @@ export const StylesheetDisabler = props => {
     >{sheets.map(({href}) => {
         const id = href.replace(/\?.*/, '');
 
+        const path = id.replace(window.location.origin, '');
+        const parts = path.split('/');
+        const firstParts = parts.slice(0, -1) || [];
+
         return <li
           style={{
             fontSize: '14px',
-            marginBottom: '4px',
+            marginBottom: '8px',
           }}
           onClick={() => {
             setDisabledSheets({...disabledSheets, [id]: !disabledSheets[id] || null});
           }}
         >
           <input type="checkbox" checked={!disabledSheets[id]}/>
-          {id.replace(window.location.origin, '')}
+          {firstParts.join('/')}/<b>{parts.at(-1)}</b>
         </li>;
       })}</ul>
   </div>;
