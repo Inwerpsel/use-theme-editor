@@ -43,13 +43,15 @@ export const StylesheetDisabler = props => {
   return <div
     style={{
       position: 'fixed',
-      left: '0',
+      top: 0,
+      left: 'calc(var(--theme-editor--ul--width, 360px) + 10px)',
       minWidth: '28vw',
       background: 'white',
       color: 'black',
       zIndex: 1010,
       border: '1px solid black',
       borderRadius: '6px',
+      padding: '5px',
     }}
   >
     <p>The following stylesheets are loaded on the page in the same order as they are shown.</p>

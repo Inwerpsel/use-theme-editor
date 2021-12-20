@@ -132,28 +132,30 @@ export const ThemeEditor = (props) => {
         setResponsiveSticky(responsiveSticky === 'true' ? 'false' : 'true');
       }}>{responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}</button>
     </Fragment>, document.body)}
-    <input
-      type="checkbox"
-      readOnly
-      checked={ isResponsive }
-      onClick={ () => { setResponsive(!isResponsive); } }
-    />
-    <label
-      onClick={ () => {
-        setResponsive(!isResponsive);
-      } }
-      style={ { marginBottom: '2px' } }
-    >
-      { 'Responsive view' }
-    </label>
 
-
-    <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
-    <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
+    <div className={'theme-editor-menu'}>
+      <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
+      <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
+      <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
+      <label
+        onClick={ () => {
+          setResponsive(!isResponsive);
+        } }
+        style={ { marginBottom: '2px' } }
+      >
+        <input
+          type="checkbox"
+          readOnly
+          checked={ isResponsive }
+          onClick={ () => { setResponsive(!isResponsive); } }
+        />
+        { 'Responsive view' }
+      </label>
+    </div>
     <StylesheetDisabler collapsed={sheetsDisablerCollapsed}{...{frameRef}}/>
 
     { !importCollapsed && <div
-      style={{position: 'fixed', left: 0, background: 'white'}}
+      style={{position: 'fixed', left: 'var(--theme-editor--ul--width, 360px)', background: 'white'}}
       title='Click and hold to drag'
       className="themer-controls">
       <div>
@@ -165,9 +167,6 @@ export const ThemeEditor = (props) => {
           onClick={ () => exportCss(fileName) }
         >Export CSS
         </button>
-        <label style={{fontSize: '12px'}}>
-        </label>
-
       </div>
       <div>
         <label
@@ -188,7 +187,6 @@ export const ThemeEditor = (props) => {
     <div>
       <input value={fileName} style={ { width: '130px', clear: 'both' } } placeholder='theme' type="text"
              onChange={ event => setFileName(event.target.value) }/>
-      <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
       <button
         title={existsOnServer ? `Save on server. Changes: ${diffSummary(serverThemes[fileName], theme)}` : 'Upload this theme to the server. You can upload as many as you want.'}
         style={{clear: 'both'}}

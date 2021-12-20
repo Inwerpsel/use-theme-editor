@@ -149,7 +149,6 @@ export const ResizableFrame = props => {
         transform: `scale(${scale})`,
         position: 'fixed',
         top: '100px',
-        left: '400px',
         zIndex: 1000,
         resize: 'both',
         overflow: 'scroll',

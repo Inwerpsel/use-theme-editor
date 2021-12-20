@@ -1,6 +1,5 @@
 import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './getMatchingVars';
-import { DRAG_KEY, dragElement } from './dragElement';
 import { addHighlight, removeHighlight } from './highlight';
 import { groupVars } from './groupVars';
 import { extractPageVariables } from './extractPageVariables';
@@ -57,7 +56,7 @@ const toggleStylesheets = (disabledSheets) => {
     const id = sheet.href.replace(/\?.*/, '');
     sheet.disabled = !!disabledSheets[id];
   });
-}
+};
 
 export const setupThemeEditor = async (config) => {
   applyFromLocalStorage(LOCAL_STORAGE_KEY);
@@ -79,19 +78,6 @@ export const setupThemeEditor = async (config) => {
   if (!isRunningAsFrame) {
     editorRoot.id = 'theme-editor-root';
     document.body.appendChild( editorRoot );
-    dragElement( editorRoot );
-    const storedLocation = localStorage.getItem(DRAG_KEY);
-    if (/{.*}/.test(storedLocation)) {
-      const {x, y} = JSON.parse(storedLocation);
-      if (x) {
-        const maxX = window.outerWidth - 300;
-        editorRoot.style.left = `${Math.min(x, maxX)}px`;
-      }
-      if (y) {
-        const maxY = window.outerHeight - 300;
-        editorRoot.style.top = `${Math.min(y, maxY)}px`;
-      }
-    }
   }
 
   const allVars = await extractPageVariables();
@@ -227,8 +213,6 @@ export const setupThemeEditor = async (config) => {
     if (type !== 'set-sheet-config') {
       return;
     }
-
-    console.log('Sheet config');
 
     const disabledSheets = JSON.parse(payload);
     toggleStylesheets(disabledSheets);

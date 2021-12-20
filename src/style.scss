@@ -73,11 +73,12 @@ body {
 .responsive-size-controls _-- {
   top: 8px;
   bottom: auto;
-  left: 400px;
+  left: calc(var(--theme-editor--ul--width, 360px) + 10px) ;
   right: auto;
 }
 
 .responsive-frame-container {
+  left: calc(var(--theme-editor--ul--width, 360px) + 10px) ;
   transform-origin: 0 0;
 }
 
@@ -111,12 +112,17 @@ html.hide-wp-admin-bar {
   background: rgba(246, 246, 89, 0.63);
 }
 
+.theme-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .theme-editor > ul {
   _-- {
     width: 360px;
   }
   padding: 0;
-  max-height: 80vh;
   overflow-y: scroll;
   margin-bottom: 0;
 
@@ -141,6 +147,11 @@ html.hide-wp-admin-bar {
   &::-webkit-scrollbar-thumb:window-inactive {
     background: rgba(140, 140, 140, 0.05);
   }
+}
+.theme-editor-menu {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: var(--theme-editor--ul--width, 360px);
 }
 
 .theme-editor-highlight {
@@ -218,8 +229,9 @@ div[id^=font-picker] ul {
 
 #theme-editor-root {
   position: fixed;
-  top: 64px;
-  left: 50px;
+  top: 0;
+  left: 0;
+  bottom: 0;
   z-index: 99999999;
   padding: 4px 1px 3px 4px;
   background: rgba(255, 255, 255, 0.1);
@@ -228,10 +240,6 @@ div[id^=font-picker] ul {
   &.dragging {
     cursor: grabbing;
   }
-}
-
-body.logged-in #theme-editor-root {
-  top: 92px;
 }
 
 .usages-wrapper {
