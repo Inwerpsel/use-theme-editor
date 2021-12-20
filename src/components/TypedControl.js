@@ -72,6 +72,13 @@ export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
     />;
   }
 
+  if ( cssVar.usages.some( usage => usage.property === 'position' ) ) {
+    const options = ['absolute', 'relative', 'fixed', 'sticky'].map(valuesAsLabels);
+    return <SelectControl
+      {...{value, onChange, options}}
+    />;
+  }
+
   if (cssVar.usages.some(usage => usage.property === 'text-align')) {
     const options = ['start', 'center', 'end'].map(valuesAsLabels);
     return <Fragment>
