@@ -3,6 +3,7 @@ import {TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
+import {useLocalStorage} from '../hooks/useLocalStorage';
 
 const uniqueUsages = cssVar => {
   const obj =  cssVar.usages.reduce((usages, usage) => ({
@@ -103,7 +104,7 @@ const showUsages = (cssVar) => {
 };
 
 const myBasePath = '/home/pieter/github/planet4-docker-compose/persistence/app/public/wp-content/';
-const pathReplacements = {
+const defaultReplacements = {
   'planet4-master-theme': myBasePath + 'themes/planet4-master-theme/',
   'planet4-plugin-gutenberg-blocks': myBasePath + 'plugins/planet4-plugin-gutenberg-blocks/',
 };
@@ -115,11 +116,14 @@ function IdeLink(props) {
     generated: {sheet},
   } = props;
   const path = source.replace('webpack://', '');
+  // No setter for now, enter manually in local storage.
+  const [customReplacements] = useLocalStorage('repo-paths', null);
 
   let basePath;
-  for (const needle in pathReplacements) {
+  const replacements = customReplacements || defaultReplacements;
+  for (const needle in replacements) {
     if (sheet.includes(needle)) {
-      basePath = pathReplacements[needle];
+      basePath = replacements[needle];
       break;
     }
   }
@@ -127,6 +131,7 @@ function IdeLink(props) {
     return null;
   }
 
+  // This protocol requires installing a handler on your system.
   return <a
     href={`phpstorm://open?file=${basePath.replace(/\/+$/, '') + '/' + path.replace(/^\//, '')}&line=${line}`}
     style={{color: 'blue', fontSize: '12px'}}
