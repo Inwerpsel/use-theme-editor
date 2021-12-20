@@ -90,14 +90,14 @@ const showUsages = (cssVar) => {
       const selectors = selector.split(',');
       if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
         return <li key={selectors}>
-          <IdeLink {...position}/>
+          {!!position && <IdeLink {...position}/>}
           <ul
             style={{listStyleType: 'none'}}
           >{selectors.map(selector => <li key={selector}>{selector}</li>)}</ul>
         </li>;
       }
 
-      return <li key={selectors}>{selector} <IdeLink {...position}/></li>;
+      return <li key={selectors}>{selector} {!!position && <IdeLink {...position}/>}</li>;
     })}
   </ul>;
 };
@@ -173,13 +173,13 @@ export const VariableControl = (props) => {
     } }
   >
     { previewValue(value, cssVar, toggleOpen, isDefault) }
-    <IdeLink {...(cssVar.positions[0] || {})}/>
     <h5
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
       onClick={ ()=> isOpen && toggleOpen() }
     >
       { formatTitle(cssVar) }
     </h5>
+    {!!cssVar.positions[0] && <IdeLink {...(cssVar.positions[0] || {})}/>}
     { isOpen && (
       <div
         onMouseEnter={ () => {
