@@ -13,6 +13,23 @@ const isRunningAsFrame = window.self !== window.top;
 
 const lastRead = {};
 
+const sourcemapScript = 'https://unpkg.com/source-map@0.7.3/dist/source-map.js';
+const fetchDependency = () => {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+
+    s.setAttribute('src', sourcemapScript);
+    s.addEventListener('load', resolve);
+    s.addEventListener('error', reject);
+
+    document.head.appendChild(s);
+  });
+};
+const initializeConsumer = async () => await fetchDependency() && window.sourceMap.SourceMapConsumer.initialize({
+  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
+});
+const dependencyReady = initializeConsumer();
+
 const applyFromLocalStorage = (key) => {
   let storedVars;
   const json = localStorage.getItem( key );
@@ -80,6 +97,7 @@ export const setupThemeEditor = async (config) => {
     document.body.appendChild( editorRoot );
   }
 
+  await dependencyReady;
   const allVars = await extractPageVariables();
   const cssVars = allVars.reduce((cssVars, someVar) => [
     ...cssVars,

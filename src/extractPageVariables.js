@@ -6,10 +6,6 @@ export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.
 // For now hard coded exclude of WP core files. Could be made configurable.
 export const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
-window.sourceMap && window.sourceMap.SourceMapConsumer.initialize({
-  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
-});
-
 const sourceMapConsumers = {};
 
 const warmupConsumers = sheets => sheets.map(sheet => getConsumer(sheet));
