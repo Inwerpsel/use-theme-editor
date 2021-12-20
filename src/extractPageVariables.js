@@ -12,7 +12,7 @@ window.sourceMap && window.sourceMap.SourceMapConsumer.initialize({
 
 const sourceMapConsumers = {};
 
-const warmupConsumers = async sheets => await Promise.allSettled(sheets.map(async sheet => getConsumer(sheet)));
+const warmupConsumers = sheets => sheets.map(sheet => getConsumer(sheet));
 
 const getConsumer = async sheetUrl => {
   if (!sourceMapConsumers[sheetUrl]) {
@@ -24,52 +24,64 @@ const getConsumer = async sheetUrl => {
   return sourceMapConsumers[sheetUrl];
 };
 
-const getLineVarPositions = (varName, sourceMapConsumer, sheet) => (positions, line, lineIndex) => {
+const getLineVarPositions = (varName, sourceMapConsumer, sheet) => async (positions, line) => {
+  const {text, index} = line;
   const occurrenceStart = `var(${varName}`;
-
-  const [pre, ...matches] = line.split(occurrenceStart);
+  const [pre, ...matches] = text.split(occurrenceStart);
 
   let column = pre.length;
 
   for (const match of matches) {
-    const line = lineIndex + 1;
-
-    // Don't record position if it's the start of a longer variable name.
-    /^[\w-]/.test(match) || positions.push({
-      ...sourceMapConsumer.originalPositionFor({line, column}),
-      generated: {
-        line,
-        column,
-        sheet,
-      }
-    });
+    const line = index + 1;
+    if (!/^[\w-]/.test(match)) {
+      return [
+        ...await positions,
+        {
+          ...sourceMapConsumer.originalPositionFor({line, column}),
+          generated: {
+            line,
+            column,
+            sheet,
+          },
+        }
+      ];
+    }
     column += occurrenceStart.length + match.length;
   }
-
-  return positions;
+  return await positions;
 };
 
 const sheetLines = {};
 
 const getSheetLines = async sheetUrl => {
-  if (!sheetLines[sheetUrl]) {
-    const text = await (await fetch(sheetUrl)).text();
-    sheetLines[sheetUrl] = text.split('\n');
+  if (!(sheetUrl in sheetLines)) {
+    console.warn('getting sheet lines');
+    const sheetText = await (await fetch(sheetUrl)).text();
+
+    sheetLines[sheetUrl] = sheetText.split('\n').reduce((linesWithVar, line, index) => {
+      if (line.includes('var(')) {
+        linesWithVar.push({text: line, index});
+      }
+      return linesWithVar;
+    }, []);
   }
 
   return sheetLines[sheetUrl];
 };
 
-const warmupLines = async sheets => {
-  await Promise.allSettled(sheets.map(getSheetLines));
-};
+const warmupLines = sheets => sheets.map(sheet=>getSheetLines(sheet));
 
-const getVarPositions = async (sheet, varName, sourceMapConsumer) => {
+const getVarPositions = (sheet, varName, sourceMapConsumer) => {
   if (!sheet) {
     console.log(varName, 'NO SHEET');
     return [];
   }
-  const lines = await getSheetLines(sheet);
+  const lines = sheetLines[sheet];
+  if (!lines) {
+    // Shouldn't happen but just in case.
+    console.log('no lines', sheet, Object.keys(sheetLines));
+    return [];
+  }
 
   return lines.reduce(getLineVarPositions(varName, sourceMapConsumer, sheet), []);
 };
@@ -133,24 +145,38 @@ const collectSheetVars = (vars, sheet) => {
   return [...sheet.cssRules].reduce((sheetVars, rule) => collectRuleVars(sheetVars, rule, sheet), vars);
 };
 
+const isUsed = (vars,sheet) => {
+  return vars.some(({usages}) => usages.some(usage => usage.sheet === sheet.href));
+};
+
+const warmup = async (vars, sheets) => {
+  const promises = sheets.filter(s => s.href && isUsed(vars, s)).map(sheet => {
+    return [
+      ...warmupConsumers([sheet.href]),
+      ...warmupLines([sheet.href])
+    ];
+  });
+  return await Promise.allSettled(...promises);
+};
+
 export const extractPageVariables = async() => {
   const startTime = performance.now();
   const sheets = [...document.styleSheets].filter(isSameDomain).filter(isNotCoreFile);
   const asObject = sheets.reduce(collectSheetVars, {});
 
-  const asArray = Object.entries(asObject).map(([k, v]) => ({name: k, ...v}));
+  const allVars = Object.entries(asObject).map(([k, v]) => ({name: k, ...v}));
 
-  const promises = await asArray.map(async (cssVar) => {
+  await warmup(allVars, sheets);
+
+  const promises = allVars.map(async (cssVar) => {
     const {name, usages} = cssVar;
     const sheetsUsingIt = [...new Set(usages.filter(u => u.sheet).map(u => u.sheet))];
 
-    await Promise.allSettled([await warmupConsumers(sheetsUsingIt), await warmupLines(sheetsUsingIt)]);
-
     const positions = await sheetsUsingIt.reduce(async (positions, sheet) => {
-      const sourceMapConsumer = await getConsumer(sheet);
-      const newPositions = await getVarPositions(sheet, name, sourceMapConsumer);
+      const sourceMapConsumer = sourceMapConsumers[sheet];
+      const newPositions = getVarPositions(sheet, name, sourceMapConsumer);
 
-      return [...await positions, ...newPositions];
+      return [...await positions, ...await newPositions];
     }, []);
 
     return {
@@ -161,13 +187,12 @@ export const extractPageVariables = async() => {
   });
 
   const results = await Promise.allSettled( promises );
-  Object.values(sourceMapConsumers).forEach(consumer => consumer.destroy);
+  Object.values(sourceMapConsumers).map(async consumer => {
+    consumer.destroy;
+  });
   const duration = performance.now() - startTime;
   console.log(`Extracted data in ${duration}ms`);
 
-  const values = await results.filter( wasFulfilled ).map( result => result.value );
-  console.log(values);
-
-  return values;
+  return await results.filter(wasFulfilled).map(result => result.value);
 };
 const wasFulfilled = result => 'fulfilled' === result.status;
