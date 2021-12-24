@@ -19,6 +19,7 @@
   },
   "dependencies": {
     "balanced-match": "^2.0.0",
+    "css-mediaquery": "^0.1.2",
     "font-picker-react": "^3.5.2",
     "react-color": "^2.19.3",
     "react-hotkeys-hook": "^3.0.3",
