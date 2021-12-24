@@ -128,9 +128,7 @@ export const extractPageVariables = async() => {
   });
 
   const results = await Promise.allSettled( promises );
-  Object.values(sourceMapConsumers).map(async consumer => {
-    consumer.destroy;
-  });
+  Object.values(sourceMapConsumers).forEach(consumer => consumer.destroy());
   const duration = performance.now() - startTime;
   console.log(`Extracted data in ${duration}ms`);
 
