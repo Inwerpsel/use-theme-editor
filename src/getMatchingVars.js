@@ -1,5 +1,6 @@
 // const wasRejected = result => 'rejected' === result.status;
 const wasFulfilled = result => 'fulfilled' === result.status;
+const wasRejected = result => 'rejected' === result.status;
 const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled)/g;
 
 const matchVar = async ( cssVar, target ) => {
@@ -42,14 +43,12 @@ export const getMatchingVars = async ( { cssVars, target } ) => {
     return carry;
   }, [] );
 
-  const promises = uniqueVars.map( cssVar => {
-
-    return matchVar( cssVar, target );
-  } );
+  const promises = uniqueVars.map( cssVar => matchVar(cssVar, target));
 
   const results = await Promise.allSettled( promises );
 
-  // results.filter( wasRejected ).forEach( console.log );
+  const failed = results.filter(wasRejected);
+  failed.length && console.log(failed);
 
   const arrays = results.filter( wasFulfilled ).map( result => result.value );
 
