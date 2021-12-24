@@ -14,6 +14,7 @@ export const GroupControl = props => {
     defaultValues,
     dispatch,
     theme,
+    screenWidth,
   } = props;
 
   return <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
@@ -100,6 +101,7 @@ export const GroupControl = props => {
               cssVar,
               defaultValue,
               dispatch,
+              screenWidth,
             }}
             initialOpen={vars.length === 1}
             key={cssVar.name}

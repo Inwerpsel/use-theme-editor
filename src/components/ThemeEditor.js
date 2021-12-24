@@ -57,6 +57,11 @@ export const ThemeEditor = (props) => {
 
   const isResponsive = !!storedIsResponsive && storedIsResponsive !== 'false';
 
+  const [
+    width,
+    setWidth,
+  ] = useLocalStorage('responsive-width', 360);
+
   useHotkeys('alt+v', () => {
     setResponsive(!isResponsive);
   }, [isResponsive]);
@@ -122,7 +127,7 @@ export const ThemeEditor = (props) => {
   return <div
     className='theme-editor'
   >
-    {!!isResponsive && <ResizableFrame {...{frameRef}} src={window.location.href}/>}
+    {!!isResponsive && <ResizableFrame {...{frameRef, width, setWidth}} src={window.location.href}/>}
 
     {!!isResponsive && createPortal(<Fragment>
       <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
@@ -234,7 +239,17 @@ export const ThemeEditor = (props) => {
 
     <ul className={'group-list'}>
       { groups.map(({ element, label, vars }) => <GroupControl
-        {...{element, label, vars, toggleGroup, defaultValues, theme, frameRef, dispatch}}
+        {...{
+          element,
+          label,
+          vars,
+          toggleGroup,
+          defaultValues,
+          theme,
+          frameRef,
+          dispatch,
+          screenWidth: width
+        }}
         isOpen={openGroups.includes(label)}
       />) }
     </ul>

@@ -4,6 +4,7 @@ import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
+import mediaQuery from 'css-mediaquery';
 
 const uniqueUsages = cssVar => {
   const obj =  cssVar.usages.reduce((usages, usage) => ({
@@ -148,6 +149,7 @@ export const VariableControl = (props) => {
     defaultValue,
     dispatch,
     initialOpen,
+    screenWidth,
   } = props;
 
   const [
@@ -163,10 +165,18 @@ export const VariableControl = (props) => {
   const toggleSelectors = () => setShowSelectors(!showSelectors);
   const value = theme[cssVar.name] || defaultValue;
   const isDefault = value === defaultValue;
+  const {media} = cssVar.maxSpecific;
+  const matchesScreen = !media || mediaQuery.match(media, {type: 'screen', width: screenWidth});
 
   return <li
     key={ cssVar.name }
-    className={ classnames('var-control', {'var-control-in-theme': cssVar.name in theme }) }
+    className={classnames(
+      'var-control',
+      {
+        'var-control-in-theme': cssVar.name in theme,
+        'var-control-no-match-screen': !matchesScreen,
+      },
+    )}
     onClick={ () => !isOpen && toggleOpen()}
     style={ {
       // userSelect: 'none',
