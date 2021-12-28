@@ -5,7 +5,6 @@ export const renderSelectedVars = (rootElement, cssVars = [], lastTarget, groups
   render(
     <ThemeEditor
       config={ config }
-      initialOpen={ false }
       selectedVars={ cssVars }
       groups={ groups }
       lastTarget={ lastTarget }
