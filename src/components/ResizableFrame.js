@@ -2,7 +2,6 @@ import {  createPortal } from 'react-dom';
 import { Fragment, useEffect } from 'react';
 import { RadioControl, RangeControl } from '@wordpress/components';
 import { useLocalStorage } from '../hooks/useLocalStorage';
-import {allScreenOptions, simpleScreenOptions} from './screenOptions';
 
 const wrapperMargin = 28;
 
@@ -12,19 +11,18 @@ export const ResizableFrame = props => {
     frameRef,
     width,
     setWidth,
-  } = props;
-
-  const [
     height,
     setHeight,
-  ] = useLocalStorage('responsive-height', 640);
+    setIsSimpleSizes,
+    isSimpleSizes,
+    screenOptions,
+  } = props;
+
   const [
     scales,
     setScales,
   ] = useLocalStorage('responsive-scales', {});
   const scale = scales[`${width}x${height}`] || 1;
-
-  const [isSimpleSizes, setIsSimpleSizes] = useLocalStorage('responsive-simple-sizes', true);
 
   useEffect(() => {
     const orig = document.body.style.maxHeight;
@@ -85,7 +83,7 @@ export const ResizableFrame = props => {
     </div>
 
     <div style={{
-      zIndex: 1000,
+      zIndex: 1001,
       position: 'fixed',
       top: '20px',
       right: '100px',
@@ -96,7 +94,7 @@ export const ResizableFrame = props => {
         }}
       >{ isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes' }</button>
       <RadioControl
-        options={isSimpleSizes ? simpleScreenOptions : allScreenOptions}
+        options={screenOptions}
         selected={ [width, height].join() }
         onChange={ value => {
           const [newWidth, newHeight] = value.split(',');
@@ -123,6 +121,7 @@ export const ResizableFrame = props => {
         top: '100px',
         zIndex: 1000,
         resize: 'both',
+        overflow: 'scroll',
         minWidth: '200px',
         width: `${ wrapperMargin + parseInt(width) }px`,
         minHeight: '200px',

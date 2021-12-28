@@ -1,5 +1,4 @@
 import {addHighlight, removeHighlight} from "../highlight";
-import {byNameStateProp} from "../groupVars";
 import {VariableControl} from "./VariableControl";
 import {THEME_ACTIONS} from "../hooks/useThemeEditor";
 
@@ -15,6 +14,9 @@ export const GroupControl = props => {
     dispatch,
     theme,
     screenWidth,
+    screenOptions,
+    setWidth,
+    setHeight,
   } = props;
 
   return <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
@@ -102,6 +104,9 @@ export const GroupControl = props => {
               defaultValue,
               dispatch,
               screenWidth,
+              screenOptions,
+              setWidth,
+              setHeight,
             }}
             initialOpen={vars.length === 1}
             key={cssVar.name}

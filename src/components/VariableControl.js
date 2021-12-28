@@ -5,9 +5,10 @@ import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import mediaQuery from 'css-mediaquery';
+import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
 
-const uniqueUsages = cssVar => {
-  const obj =  cssVar.usages.reduce((usages, usage) => ({
+const uniqueUsages = usages => {
+  const obj =  usages.reduce((usages, usage) => ({
     ...usages,
     [usage.selector.replace(',', ',\n')]: usage,
   }), {});
@@ -32,8 +33,8 @@ const format = name => {
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };
-const formatTitle = (cssVar) => {
-  const [prefix, prop] = format(cssVar.name);
+const formatTitle = (name) => {
+  const [prefix, prop] = format(name);
   return <Fragment>
     <span className={'var-control-property'}>{prop}</span>
     <br/>
@@ -86,9 +87,9 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
   </span>;
 };
 
-const showUsages = (cssVar) => {
+const showUsages = usages => {
   return <ul>
-    {uniqueUsages(cssVar).map(({selector, position}) => {
+    {uniqueUsages(usages).map(({selector, position}) => {
       const selectors = selector.split(',');
       if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
         return <li key={selectors}>
@@ -150,7 +151,17 @@ export const VariableControl = (props) => {
     dispatch,
     initialOpen,
     screenWidth,
+    screenOptions,
+    setWidth,
+    setHeight,
   } = props;
+
+  const {
+    name,
+    usages,
+    maxSpecific,
+    positions,
+  } = cssVar;
 
   const [
     isOpen, setIsOpen
@@ -163,17 +174,21 @@ export const VariableControl = (props) => {
   ] = useState(false);
 
   const toggleSelectors = () => setShowSelectors(!showSelectors);
-  const value = theme[cssVar.name] || defaultValue;
+  const value = theme[name] || defaultValue;
   const isDefault = value === defaultValue;
-  const {media} = cssVar.maxSpecific;
-  const matchesScreen = !media || mediaQuery.match(media, {type: 'screen', width: screenWidth});
+  const {media} = maxSpecific;
+
+  const screen = {type: 'screen', width: screenWidth || window.screen.width};
+  const {overridingMedia} = cssVar.allVar || cssVar;
+  const matchesQuery = !media || mediaQuery.match(media, screen);
+  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width: screenWidth}));
 
   return <li
-    key={ cssVar.name }
+    key={ name }
     className={classnames(
       'var-control',
       {
-        'var-control-in-theme': cssVar.name in theme,
+        'var-control-in-theme': name in theme,
         'var-control-no-match-screen': !matchesScreen,
       },
     )}
@@ -187,31 +202,39 @@ export const VariableControl = (props) => {
       cursor: isOpen ? 'auto' : 'pointer',
     } }
   >
+    {!matchesScreen && <VariableScreenSwitcher {...{
+      cssVar,
+      media,
+      screenOptions,
+      screenWidth,
+      setWidth,
+      setHeight,
+    }}/>}
     { previewValue(value, cssVar, toggleOpen, isDefault) }
     <h5
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
       onClick={ ()=> isOpen && toggleOpen() }
     >
-      { formatTitle(cssVar) }
+      { formatTitle(name) }
     </h5>
-    {!!cssVar.positions[0] && <IdeLink {...(cssVar.positions[0] || {})}/>}
+    {!!positions[0] && <IdeLink {...(positions[0] || {})}/>}
     { isOpen && (
       <div
         onMouseEnter={ () => {
-          PSEUDO_REGEX.test(cssVar.name) && dispatch({
+          PSEUDO_REGEX.test(name) && dispatch({
             type: THEME_ACTIONS.START_PREVIEW_PSEUDO_STATE,
-            payload: { name: cssVar.name }
+            payload: { name }
           });
         } }
         onMouseLeave={ () => {
-          PSEUDO_REGEX.test(cssVar.name) && dispatch({
+          PSEUDO_REGEX.test(name) && dispatch({
             type: THEME_ACTIONS.END_PREVIEW_PSEUDO_STATE,
-            payload: { name: cssVar.name }
+            payload: { name }
           });
         } }
       >
         { isDefault && <span style={{float: 'right', marginBottom: '14.5px', color: 'grey'}}>default</span>}
-        { cssVar.name in theme && <button
+        { name in theme && <button
           style={ { float: 'right', marginBottom: '14.5px' } }
           title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
           onClick={ () => {
@@ -222,9 +245,9 @@ export const VariableControl = (props) => {
         <TypedControl { ...{
           cssVar, theme, value, dispatch, onChange,
         } }/>
-        <div>{cssVar.name}</div>
-        <button onClick={toggleSelectors}>{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(cssVar).length})</button>
-        {showSelectors && showUsages(cssVar, showSelectors,toggleSelectors)}
+        <div>{name}</div>
+        <button onClick={toggleSelectors}>{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})</button>
+        {showSelectors && showUsages(uniqueUsages(usages))}
       </div>
     ) }
   </li>;

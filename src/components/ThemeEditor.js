@@ -12,6 +12,7 @@ import {GroupControl} from './GroupControl';
 import {readFromUploadedFile} from './readFromUploadedFile';
 import {CustomVariableInput} from './CustomVariableInput';
 import {StylesheetDisabler} from './StylesheetDisabler';
+import {allScreenOptions, simpleScreenOptions} from './screenOptions';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -61,6 +62,15 @@ export const ThemeEditor = (props) => {
     width,
     setWidth,
   ] = useLocalStorage('responsive-width', 360);
+
+  const [
+    height,
+    setHeight,
+  ] = useLocalStorage('responsive-height', 640);
+
+  const [isSimpleSizes, setIsSimpleSizes] = useLocalStorage('responsive-simple-sizes', true);
+
+  const screenOptions = isSimpleSizes ? simpleScreenOptions : allScreenOptions;
 
   useHotkeys('alt+v', () => {
     setResponsive(!isResponsive);
@@ -113,10 +123,7 @@ export const ThemeEditor = (props) => {
   }, [frameClickBehavior]);
 
   useEffect(() => {
-    if (!isResponsive) {
-      return;
-    }
-    if (!frameRef?.current || !isResponsive) {
+    if (!isResponsive || !frameRef?.current) {
       return;
     }
     const message = {type: 'theme-edit-alt-click', payload: {frameClickBehavior}};
@@ -127,7 +134,17 @@ export const ThemeEditor = (props) => {
   return <div
     className='theme-editor'
   >
-    {!!isResponsive && <ResizableFrame {...{frameRef, width, setWidth}} src={window.location.href}/>}
+    {!!isResponsive &&
+      <ResizableFrame {...{
+        frameRef,
+        width,
+        setWidth,
+        height,
+        setHeight,
+        isSimpleSizes,
+        setIsSimpleSizes,
+        screenOptions,
+      }} src={window.location.href}/>}
 
     {!!isResponsive && createPortal(<Fragment>
       <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
@@ -248,7 +265,10 @@ export const ThemeEditor = (props) => {
           theme,
           frameRef,
           dispatch,
-          screenWidth: width
+          screenWidth: width,
+          screenOptions,
+          setWidth,
+          setHeight,
         }}
         isOpen={openGroups.includes(label)}
       />) }

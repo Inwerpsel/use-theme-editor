@@ -1,5 +1,5 @@
 import { compare } from 'specificity';
-import {byNameStateProp} from "./groupVars";
+import {sortForUI} from "./groupVars";
 
 const pseudoStateRegex = /(:(hover|focus|active|disabled|visited))/g;
 
@@ -50,8 +50,9 @@ const groupByMediaQueries = (all, usage) => {
 
 export const getOnlyMostSpecific = (vars, element) => {
   // Reduce to an object, then back to array. Easier to work with for this purpose.
-  const asObject = vars.reduce((all, currentVar)=> {
-    const byMediaQueries = currentVar.usages.reduce(groupByMediaQueries, {all: []});
+  const varsWithOnlyMediaQueries = {};
+  const specificVars = vars.reduce((specificVars, cssVar)=> {
+    const byMediaQueries = cssVar.usages.reduce(groupByMediaQueries, {all: []});
 
     let found = false;
     Object.entries(byMediaQueries).forEach(([media,usages]) => {
@@ -66,23 +67,38 @@ export const getOnlyMostSpecific = (vars, element) => {
       // Won't have anything added if it doesn't match
       const stateSuffix = (maxSpecific.selector.split(',')[0].match(pseudoStateRegex) || []).join('');
       const pseudoElementSuffix = (maxSpecific.selector.split(',')[0].match(/:?:(before|after)/g) || []).join('');
-      const propName = usages[0].property + stateSuffix + media + pseudoElementSuffix;
+      const propName = maxSpecific.property + stateSuffix + media + pseudoElementSuffix;
+      // This depends on "all" running first so that we can assume it's there already if it exists.
+      // Set the overriding media
+      if (media !== 'all') {
+        const allPropName = maxSpecific.property + stateSuffix + 'all' + pseudoElementSuffix;
 
-      if (!all[propName]) {
-        all[propName] = {...currentVar, maxSpecific};
+        if (!specificVars[allPropName] && !varsWithOnlyMediaQueries[allPropName]) {
+          varsWithOnlyMediaQueries[allPropName] = {};
+        }
+        const allVar = specificVars[allPropName] || varsWithOnlyMediaQueries[allPropName];
+        if (!allVar.overridingMedia) {
+          allVar.overridingMedia = [];
+        }
+        allVar.overridingMedia.push({media, cssVar});
+        cssVar.allVar = allVar;
+      }
+
+      if (!specificVars[propName]) {
+        specificVars[propName] = {...cssVar, maxSpecific};
       } else {
-        const comparedUsage = getMaxMatchingSpecificity([all[propName].maxSpecific, maxSpecific], element);
+        const comparedUsage = getMaxMatchingSpecificity([specificVars[propName].maxSpecific, maxSpecific], element);
         if (maxSpecific === comparedUsage) {
-          all[propName] = {...currentVar, maxSpecific};
+          specificVars[propName] = {...cssVar, maxSpecific};
         }
       }
 
     });
-    return all;
+    return specificVars;
   },{});
 
   // Map back to array.
-  return Object.values(asObject);
+  return Object.values(specificVars);
 };
 
 
@@ -90,6 +106,6 @@ export const filterMostSpecific = (groups) => {
   return groups.map(({ vars, element, ...other }) => ({
     ...other,
     element,
-    vars: getOnlyMostSpecific(vars, element).sort(byNameStateProp),
+    vars: getOnlyMostSpecific(vars, element).sort(sortForUI),
   }));
 };

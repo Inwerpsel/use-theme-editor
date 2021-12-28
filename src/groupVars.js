@@ -7,8 +7,28 @@ const toLabel = element => {
   return element.tagName.toLowerCase() + idPart + classPart;
 };
 
-export const byNameStateProp = ({name: nameA},{name: nameB}) => {
+export const sortForUI = (
+  {name: nameA, maxSpecific: maxSpecificA},
+  {name: nameB, maxSpecific: maxSpecificB},
+) => {
   const reg = /--(?<element>\w+(-?-\w+)*)(--(?<state>(active|focus|visited|hover|disabled)))?--(?<prop>\w+(-\w+)*)/;
+
+  const {media: mediaA, property: propA} = maxSpecificA;
+  const {media: mediaB, property: propB} = maxSpecificB;
+
+  if (propA !== propB) {
+    return propA < propB ? -1 : 1;
+  }
+
+  if (mediaA !== mediaB) {
+    if (!mediaA) {
+      return -1;
+    }
+    if (!mediaB) {
+      return 1;
+    }
+    return mediaA.localeCompare(mediaB, 'en', {numeric: true});
+  }
 
   const matchA = nameA.match(reg);
   const matchB = nameB.match(reg);
@@ -26,12 +46,9 @@ export const byNameStateProp = ({name: nameA},{name: nameB}) => {
     return -1;
   }
 
-  const {element: elementA, state: stateA, prop: propA } = matchA.groups;
-  const {element: elementB, state: stateB, prop: propB } = matchB.groups;
+  const {element: elementA, state: stateA } = matchA.groups;
+  const {element: elementB, state: stateB } = matchB.groups;
 
-  if (propA !== propB) {
-    return propA < propB ? -1 : 1;
-  }
   if (elementA !== elementB) {
     return elementA < elementB ? -1 : 1;
   }
