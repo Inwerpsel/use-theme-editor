@@ -1,6 +1,5 @@
 import { useReducer, useEffect } from 'react';
 import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from '../initializeThemeEditor';
-import {byNameStateProp} from '../groupVars';
 import {applyPseudoPreviews} from '../applyPseudoPreviews';
 import {getAllDefaultValues} from '../getAllDefaultValues';
 
