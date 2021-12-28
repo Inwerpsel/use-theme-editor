@@ -88,8 +88,6 @@ export const setupThemeEditor = async (config) => {
     setInterval(refreshLoop, 1000 / fps);
   }
 
-  // Quick way to make it work with WPML. In case of NL, which doesn't have WPML, it doesn't match because without
-  // WPML there is no slash at the end...
   const editorRoot = document.createElement( 'div' );
 
   if (!isRunningAsFrame) {
