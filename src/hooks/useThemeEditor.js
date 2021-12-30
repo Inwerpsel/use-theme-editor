@@ -52,14 +52,14 @@ const ACTIONS = {
     }
 
     // Only add a history entry if the same property wasn't set in the last 700ms.
-    const shouldAddHistory = !state.lastSet[name] || Date.now() - state.lastSet[name] > 700;
+    const shouldAddHistory = !state.lastSet[name] || performance.now() - state.lastSet[name] > 700;
 
     return {
       ...state,
       theme: { ...theme, [name]: value },
       history: !shouldAddHistory ? state.history : pushHistory(state.history, state.theme),
       future: [],
-      lastSet: { ...state.lastSet, [name]: Date.now(), }
+      lastSet: { ...state.lastSet, [name]: performance.now(), }
     };
   },
   UNSET: (state, { name }) => {
