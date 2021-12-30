@@ -21,7 +21,6 @@ TODO:
 - More tailored controls / group properties into single control?
 - Make hotkeys configurable in the UI
 - Move constant inline styles to CSS
-- Clean up the drag code (I kept adding (too much) things to it, to prevent it from going off-screen.)
 - Use more of available screen space in "responsive" view
 - Use `ResponsiveFrame` to render multiple themes / screen sizes at the same time
 - Write tests
