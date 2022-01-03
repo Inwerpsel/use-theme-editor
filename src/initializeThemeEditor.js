@@ -169,54 +169,6 @@ export const setupThemeEditor = async (config) => {
     return;
   }
 
-  window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    if (type !== 'highlight-element-start') {
-      return;
-    }
-    const group = lastGroups[payload.index];
-    if (!group) {
-      return;
-    }
-    addHighlight(group.element);
-  }, false);
-
-  window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    if (type !== 'highlight-element-end') {
-      return;
-    }
-    const group = lastGroups[payload.index];
-    if (!group) {
-      return;
-    }
-    removeHighlight(group.element);
-  }, false);
-
-  window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    if (type !== 'scroll-in-view') {
-      return;
-    }
-    const group = lastGroups[payload.index];
-    if (!group) {
-      return;
-    }
-    group.element.scrollIntoView({
-      behavior: 'smooth',
-      block:  'nearest',
-      inline: 'end',
-    });
-  }, false);
-
-  window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    if (type !== 'theme-edit-alt-click') {
-      return;
-    }
-    requireAlt = payload.frameClickBehavior !== 'any';
-  }, false);
-
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
   if (storedSheetConfig) {
@@ -225,13 +177,30 @@ export const setupThemeEditor = async (config) => {
   }
 
   window.addEventListener('message', event => {
-    const {type, payload} = event.data;
-    if (type !== 'set-sheet-config') {
-      return;
-    }
+    const { type, payload } = event.data;
+    const group = lastGroups[payload.index];
 
-    const disabledSheets = JSON.parse(payload);
-    toggleStylesheets(disabledSheets);
+    switch (type) {
+    case 'highlight-element-start':
+      group && addHighlight(group.element);
+      break;
+    case 'highlight-element-end':
+      group && removeHighlight(group.element);
+      break;
+    case 'scroll-in-view':
+      group && group.element.scrollIntoView({
+        behavior: 'smooth',
+        block:  'nearest',
+        inline: 'end',
+      });
+      break;
+    case 'theme-edit-alt-click':
+      requireAlt = payload.frameClickBehavior !== 'any';
+      break;
+    case 'set-sheet-config':
+      toggleStylesheets(JSON.parse(payload));
+      break;
+    }
   }, false);
 };
 
