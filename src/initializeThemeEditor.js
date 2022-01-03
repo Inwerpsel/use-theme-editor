@@ -5,6 +5,7 @@ import { groupVars } from './groupVars';
 import { extractPageVariables } from './extractPageVariables';
 import { filterMostSpecific } from './getOnlyMostSpecific';
 import {getLocalStorageNamespace} from './getLocalStorageNamespace';
+import {initializeConsumer} from './sourcemap';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 export const LOCAL_STORAGE_PREVIEWS_KEY = `${getLocalStorageNamespace()}theme-with-previews`;
@@ -13,21 +14,6 @@ const isRunningAsFrame = window.self !== window.top;
 
 const lastRead = {};
 
-const sourcemapScript = 'https://unpkg.com/source-map@0.7.3/dist/source-map.js';
-const fetchDependency = () => {
-  return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
-
-    s.setAttribute('src', sourcemapScript);
-    s.addEventListener('load', resolve);
-    s.addEventListener('error', reject);
-
-    document.head.appendChild(s);
-  });
-};
-const initializeConsumer = async () => await fetchDependency() && window.sourceMap.SourceMapConsumer.initialize({
-  'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
-});
 const dependencyReady = initializeConsumer();
 
 const applyFromLocalStorage = (key) => {
