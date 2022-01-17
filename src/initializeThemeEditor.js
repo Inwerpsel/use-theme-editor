@@ -110,6 +110,26 @@ export const setupThemeEditor = async (config) => {
     renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
   }
 
+  const customizeMenu = document.getElementById('wp-admin-bar-customize');
+
+  if (customizeMenu) {
+    const notice = document.createElement('span');
+    notice.textContent = ' (using CSS)';
+    notice.className = 'wp-customize-notice';
+
+    customizeMenu.firstChild.appendChild(notice);
+
+    const button = document.createElement('a');
+    button.id = 'wp-customize-opener';
+    button.onclick = () => {
+      document.documentElement.classList.add('hide-wp-admin-bar');
+      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+    };
+    button.textContent = 'Customize (using experimental theme editor)';
+    button.className = 'ab-item';
+    customizeMenu.appendChild(button);
+  }
+
   document.addEventListener('click', async event => {
     if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
       return;
