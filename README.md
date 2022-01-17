@@ -7,10 +7,9 @@ with no configuration needed to add a new setting. It works in the following way
 - When you alt + click an element it is matched against all selectors of all variables. This can be done efficiently by
   combining all selectors for a variable with `,` and doing a single `element.match(selectors)`. To ensure we match all
   variables of parents too, each selector is also tested with ` *` appended.
-- Next it travels up the DOM tree by testing doing the same matching on each parent. This only needs to match against
-  the variables we previously filtered, and not against all known variables like the first element. Each time a jump to
-  a parent matches less variables than the sibling we just visited, this means those "missing" variables can be
-  attributed to that previous sibling.
+- Next it travels up the DOM tree, doing the same matching on each parent. This only needs to match against the
+  variables we previously filtered. Each time a jump to a parent matches fewer variables than the sibling we just
+  visited, this means those "missing" variables can be attributed to that previous sibling.
 
 TODO:
 
@@ -32,8 +31,7 @@ TODO:
   position.
 - Better organizing of themes.
 - Personal editor settings that are applied regardless of which theme is being edited.
-- Fix frame click behavior setting not applied when navigating inside the iframe.
-- Check whether source maps can allow us to locate the exact line of each declaration. This makes the reasonable
-  assumption that a CSS declaration will be on one line and the only thing on the line, regardless of the preprocessor
-  "dialect". If it's reliable enough, could be used to auto generate a PR.
+- Use sourcemap location and edits to auto generate a PR.
 - List all elements that were hidden with `display: none`, currently no easy way to unhide after control loses focus.
+- Make keyboard shortcuts work when focus is inside the frame.
+- Ensure button elements are used where appropriate.
