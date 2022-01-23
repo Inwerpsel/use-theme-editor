@@ -3,6 +3,17 @@ body {
   scroll-behavior: auto !important;
 }
 
+.theme-editor {
+  button, input {
+    margin-right: 2px;
+    border: 1px solid black;
+    padding: 4px 7px;
+    border-radius: 6px;
+    font-size: 18px;
+  }
+}
+
+
 .theme-length-controls {
   display: flex;
   flex-wrap: wrap;
@@ -137,6 +148,11 @@ html.hide-wp-admin-bar {
 
 .server-theme {
   background: white;
+
+  button {
+    font-size: 14px;
+    padding: 2px;
+  }
 }
 
 .server-theme-current _-- {
