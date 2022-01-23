@@ -23,21 +23,13 @@ const matchVar = async ( cssVar, target ) => {
   return [];
 };
 
-// Todo: make dynamic.
-const excludedVars = [
-  '--bs-gutter-x',
-  '--bs-gutter-y',
-  '--bs-font-sans-serif',
-  '--bs-font-monospace',
-  '--bs-aspect-ratio',
-  '--bs-gradient',
-];
+const BS_PATTERN = /^--bs-/;
 
 export const getMatchingVars = async ( { cssVars, target } ) => {
 
   const startTime = performance.now();
   const uniqueVars = cssVars.reduce( ( carry, cssVar ) => {
-    if (!excludedVars.includes(cssVar.name) && !carry.some(collected => collected.name === cssVar.name)) {
+    if (!BS_PATTERN.test(cssVar.name) && !carry.some(collected => collected.name === cssVar.name)) {
       carry.push( cssVar );
     }
     return carry;
