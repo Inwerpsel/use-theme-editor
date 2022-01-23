@@ -1,8 +1,9 @@
 import {SketchPicker as ColorPicker} from 'react-color';
 import {THEME_ACTIONS} from '../../hooks/useThemeEditor';
 import {TextControl} from '@wordpress/components';
-import {Fragment} from 'react';
+import {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
@@ -44,26 +45,17 @@ const byHexValue = ({color1}, { color2}) => {
 
 
 export const ColorControl = props => {
-  const {onChange, value, theme, cssVar, dispatch} = props;
+  const {onChange, value, cssVar} = props;
+
+  const [hideColorPicker, setHideColorPicker] = useState(true);
+
+  const {
+    theme, dispatch,
+  } = useContext(ThemeEditorContext);
 
   const colorUsages = extractColorUsages(theme);
 
   return <Fragment>
-    <ColorPicker
-      styles={{
-        picker: {
-          width: 'calc(100%)',
-        }
-      }}
-      color={ value }
-      onChange={ color => {
-        const hasTransparency = color.rgb.a !== 1;
-
-        const { r, g, b, a } = color.rgb;
-
-        onChange(hasTransparency ? `rgba(${ r } , ${ g }, ${ b }, ${ a })` : color.hex);
-      } }
-    />
     {colorUsages.sort(byHexValue).map(({color, usages}) => <span
       key={color}
       onClick={() => {
@@ -88,14 +80,47 @@ export const ColorControl = props => {
         marginTop: '2px',
         fontSize: '8px',
         cursor: 'pointer',
+        boxSizing: 'border-box',
       }}>
       <span key={`${color}---usages`} style={{backgroundColor: 'white'}}>{usages.length}</span>
     </span>)}
-    <div>
-      <TextControl style={{marginTop: '6px'}}
-        value={ value }
-        onChange={ value=>onChange(value, true) }
+    <button
+      onClick={() => setHideColorPicker(!hideColorPicker)}
+      title={ hideColorPicker ? 'Add a new color' : 'Hide color picker'}
+      style={{
+        // float: 'right',
+        clear: 'both',
+        width: !hideColorPicker ? 'auto' : `${PREVIEW_SIZE}`,
+        height: `${PREVIEW_SIZE}`,
+        verticalAlign: 'bottom',
+        marginBottom: '2px',
+      }}
+    >
+      {!hideColorPicker ? 'Hide picker' : '+'}
+    </button>
+    { !hideColorPicker && <Fragment>
+      <ColorPicker
+        styles={{
+          picker: {
+            width: 'calc(100%)',
+          }
+        }}
+        color={ value }
+        onChange={ color => {
+          const hasTransparency = color.rgb.a !== 1;
+
+          const { r, g, b, a } = color.rgb;
+
+          onChange(hasTransparency ? `rgba(${ r } , ${ g }, ${ b }, ${ a })` : color.hex);
+        } }
       />
-    </div>
+      <div>
+        <TextControl
+          style={{marginTop: '6px'}}
+          value={value}
+          onChange={value => onChange(value, true)}
+        />
+      </div>
+    </Fragment>}
   </Fragment>;
 };
