@@ -1,4 +1,4 @@
-import { useState, Fragment } from 'react';
+import {useState, Fragment, useContext} from 'react';
 import {TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
@@ -6,6 +6,7 @@ import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import mediaQuery from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
+import {ThemeEditorContext} from './ThemeEditor';
 
 const uniqueUsages = usages => {
   const obj =  usages.reduce((usages, usage) => ({
@@ -143,18 +144,14 @@ function IdeLink(props) {
 
 export const VariableControl = (props) => {
   const {
-    theme,
     cssVar,
     onChange,
     onUnset,
     defaultValue,
-    dispatch,
     initialOpen,
-    screenWidth,
-    screenOptions,
-    setWidth,
-    setHeight,
   } = props;
+
+  const {theme, dispatch, width: screenWidth } = useContext(ThemeEditorContext);
 
   const {
     name,
@@ -202,14 +199,7 @@ export const VariableControl = (props) => {
       cursor: isOpen ? 'auto' : 'pointer',
     } }
   >
-    {!matchesScreen && <VariableScreenSwitcher {...{
-      cssVar,
-      media,
-      screenOptions,
-      screenWidth,
-      setWidth,
-      setHeight,
-    }}/>}
+    {!matchesScreen && <VariableScreenSwitcher {...{cssVar, media}}/>}
     { previewValue(value, cssVar, toggleOpen, isDefault) }
     <h5
       style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
@@ -242,12 +232,18 @@ export const VariableControl = (props) => {
           } }
         >unset</button>}
         <br/>
-        <TypedControl { ...{
-          cssVar, theme, value, dispatch, onChange,
-        } }/>
-        <div>{name}</div>
-        <button onClick={toggleSelectors}>{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})</button>
-        {showSelectors && showUsages(uniqueUsages(usages))}
+        <TypedControl {...{cssVar, value, onChange}}/>
+        <div>
+          <button
+            onClick={toggleSelectors}
+            style={{fontSize: '15px'}}
+          >{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})
+          </button>
+          {showSelectors && <Fragment>
+            <div>{name}</div>
+            {showSelectors && showUsages(uniqueUsages(usages))}
+          </Fragment>}
+        </div>
       </div>
     ) }
   </li>;

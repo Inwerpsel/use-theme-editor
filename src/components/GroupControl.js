@@ -1,23 +1,23 @@
 import {addHighlight, removeHighlight} from "../highlight";
 import {VariableControl} from "./VariableControl";
 import {THEME_ACTIONS} from "../hooks/useThemeEditor";
+import {useContext} from 'react';
+import {ThemeEditorContext} from './ThemeEditor';
 
 export const GroupControl = props => {
   const {
-    frameRef,
     isOpen,
     element,
     vars,
     toggleGroup,
     label,
+  } = props;
+
+  const {
+    frameRef,
     defaultValues,
     dispatch,
-    theme,
-    screenWidth,
-    screenOptions,
-    setWidth,
-    setHeight,
-  } = props;
+  } = useContext(ThemeEditorContext);
 
   return <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
     <div
@@ -99,14 +99,8 @@ export const GroupControl = props => {
 
           return <VariableControl
             {...{
-              theme,
               cssVar,
               defaultValue,
-              dispatch,
-              screenWidth,
-              screenOptions,
-              setWidth,
-              setHeight,
             }}
             initialOpen={vars.length === 1}
             key={cssVar.name}

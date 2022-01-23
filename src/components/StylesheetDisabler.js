@@ -1,5 +1,6 @@
-import {useEffect, useState} from 'react';
+import {useContext, useEffect, useState} from 'react';
 import {useLocalStorage} from '../hooks/useLocalStorage';
+import {ThemeEditorContext} from './ThemeEditor';
 
 const useSameOriginStylesheets = () => {
   const [sheets, setSheets] = useState(null);
@@ -26,7 +27,8 @@ const useDisabledStyleSheets = (disabledSheets, frameRef) => {
 };
 
 export const StylesheetDisabler = props => {
-  const {frameRef, collapsed} = props;
+  const {collapsed} = props;
+  const {frameRef} = useContext(ThemeEditorContext);
   const [disabledSheets, setDisabledSheets] = useLocalStorage('set-disabled-sheets', {});
 
   const sheets = useSameOriginStylesheets();

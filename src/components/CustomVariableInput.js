@@ -1,10 +1,11 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import {CheckboxControl} from '@wordpress/components';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ThemeEditorContext} from './ThemeEditor';
 
-export const CustomVariableInput = props => {
+export const CustomVariableInput = () => {
   const [collapsed, setCollapsed] = useState(true);
-  const {dispatch, theme} = props;
+  const {dispatch, theme} = useContext(ThemeEditorContext);
   const [overwriteExisting, setOverwriteExisting] = useState(false);
   const [name, setName] = useState('');
   const [value, setValue] = useState('');

@@ -1,6 +1,8 @@
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {diffSummary} from '../diffThemes';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {useContext} from 'react';
+import {ThemeEditorContext} from './ThemeEditor';
 
 export const ServerThemesList = props => {
   const {
@@ -9,10 +11,13 @@ export const ServerThemesList = props => {
     fileName,
     setFileName,
     activeThemeRef,
-    theme: currentTheme,
     modifiedServerVersion,
-    dispatch,
   } = props;
+
+  const {
+    theme: currentTheme,
+    dispatch,
+  } = useContext(ThemeEditorContext);
 
   const [
     serverThemesHeight,

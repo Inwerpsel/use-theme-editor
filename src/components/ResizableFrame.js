@@ -1,7 +1,8 @@
 import {  createPortal } from 'react-dom';
-import { Fragment, useEffect } from 'react';
+import {Fragment, useContext, useEffect} from 'react';
 import { RadioControl, RangeControl } from '@wordpress/components';
 import { useLocalStorage } from '../hooks/useLocalStorage';
+import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
 
@@ -10,13 +11,16 @@ export const ResizableFrame = props => {
     src,
     frameRef,
     width,
-    setWidth,
     height,
-    setHeight,
-    setIsSimpleSizes,
-    isSimpleSizes,
-    screenOptions,
   } = props;
+
+  const {
+    setWidth,
+    setHeight,
+    isSimpleSizes,
+    setIsSimpleSizes,
+    screenOptions,
+  } = useContext(ThemeEditorContext);
 
   const [
     scales,

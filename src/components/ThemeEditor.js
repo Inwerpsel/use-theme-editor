@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, Fragment} from 'react';
+import {useEffect, useRef, useState, Fragment, createContext} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -17,6 +17,8 @@ import {allScreenOptions, simpleScreenOptions} from './screenOptions';
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
 }
+
+export const ThemeEditorContext = createContext({});
 
 export const ThemeEditor = (props) => {
   const {
@@ -131,19 +133,26 @@ export const ThemeEditor = (props) => {
 
   }, [frameClickBehavior, frameRef.current, isResponsive])
 
-  return <div
+  return <ThemeEditorContext.Provider value={{
+    theme,
+    dispatch,
+    defaultValues,
+    frameRef,
+    width,
+    setWidth,
+    height,
+    setHeight,
+    isSimpleSizes,
+    setIsSimpleSizes,
+    screenOptions,
+  }}><div
     className='theme-editor'
   >
     {!!isResponsive &&
       <ResizableFrame {...{
         frameRef,
         width,
-        setWidth,
         height,
-        setHeight,
-        isSimpleSizes,
-        setIsSimpleSizes,
-        screenOptions,
       }} src={window.location.href}/>}
 
     {!!isResponsive && createPortal(<Fragment>
@@ -174,7 +183,7 @@ export const ThemeEditor = (props) => {
         { 'Responsive view' }
       </label>
     </div>
-    <StylesheetDisabler collapsed={sheetsDisablerCollapsed}{...{frameRef}}/>
+    <StylesheetDisabler collapsed={sheetsDisablerCollapsed}/>
 
     { !importCollapsed && <div
       style={{position: 'fixed', left: 'var(--theme-editor--ul--width, 360px)', background: 'white'}}
@@ -232,11 +241,9 @@ export const ThemeEditor = (props) => {
       fileName,
       setFileName,
       activeThemeRef,
-      theme,
       modifiedServerVersion,
-      dispatch,
     }}/>}
-    <CustomVariableInput {...{dispatch, theme}}/>
+    <CustomVariableInput/>
     <div>
       <button
         style={{float: 'right'}}
@@ -261,17 +268,9 @@ export const ThemeEditor = (props) => {
           label,
           vars,
           toggleGroup,
-          defaultValues,
-          theme,
-          frameRef,
-          dispatch,
-          screenWidth: width,
-          screenOptions,
-          setWidth,
-          setHeight,
         }}
         isOpen={openGroups.includes(label)}
       />) }
     </ul>
-  </div>;
+  </div></ThemeEditorContext.Provider>;
 };

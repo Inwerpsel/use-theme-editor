@@ -1,4 +1,6 @@
 import mediaQuery from 'css-mediaquery';
+import {useContext} from 'react';
+import {ThemeEditorContext} from './ThemeEditor';
 
 // Whether a variable is overridden by a later media query.
 export const isOverridden = ({media, width, cssVar}) => {
@@ -23,11 +25,14 @@ export const VariableScreenSwitcher = props => {
   const {
     cssVar,
     media,
+  } = props;
+
+  const {
+    width: screenWidth,
     screenOptions,
-    screenWidth,
     setWidth,
     setHeight,
-  } = props;
+  } = useContext(ThemeEditorContext);
 
   return <ul className={'variable-screen-switcher'}>
     {screenOptions

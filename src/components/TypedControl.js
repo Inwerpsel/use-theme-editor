@@ -7,13 +7,13 @@ import {SizeControl, sizeLikeProperties} from './properties/SizeControl';
 
 const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
-export const TypedControl = ({ cssVar, theme, value, onChange, dispatch }) => {
+export const TypedControl = ({ cssVar, value, onChange}) => {
 
   if (cssVar.usages.some(usage =>
     !!usage.property.match(/color$/)
     || ['background', 'fill', 'stroke'].includes(usage.property)
   )) {
-    return <ColorControl {...{onChange, value, theme, cssVar, dispatch}}/>;
+    return <ColorControl {...{onChange, value, cssVar}}/>;
   }
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
