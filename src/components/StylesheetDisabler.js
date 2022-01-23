@@ -26,17 +26,12 @@ const useDisabledStyleSheets = (disabledSheets, frameRef) => {
   }, [disabledSheets, frameRef]);
 };
 
-export const StylesheetDisabler = props => {
-  const {collapsed} = props;
+export const StylesheetDisabler = () => {
   const {frameRef} = useContext(ThemeEditorContext);
   const [disabledSheets, setDisabledSheets] = useLocalStorage('set-disabled-sheets', {});
 
   const sheets = useSameOriginStylesheets();
   useDisabledStyleSheets(disabledSheets, frameRef);
-
-  if (collapsed) {
-    return null;
-  }
 
   if (sheets === null) {
     return <div>Loading...</div>;

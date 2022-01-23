@@ -158,10 +158,14 @@ export const ThemeEditor = (props) => {
     {!!isResponsive && createPortal(<Fragment>
       <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
         setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
-      }}>{frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}</button>
+      }}>
+        {frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}
+      </button>
       <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '380px'}} onClick={() => {
         setResponsiveSticky(responsiveSticky === 'true' ? 'false' : 'true');
-      }}>{responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}</button>
+      }}>
+        {responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}
+      </button>
     </Fragment>, document.body)}
 
     <div className={'theme-editor-menu'}>
@@ -183,7 +187,7 @@ export const ThemeEditor = (props) => {
         { 'Responsive view' }
       </label>
     </div>
-    <StylesheetDisabler collapsed={sheetsDisablerCollapsed}/>
+    {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
 
     { !importCollapsed && <div
       style={{position: 'fixed', left: 'var(--theme-editor--ul--width, 360px)', background: 'white'}}
