@@ -146,8 +146,17 @@ html.hide-wp-admin-bar {
   }
 }
 
+.server-theme-list {
+  flex-shrink: 0;
+}
+
 .server-theme {
   background: white;
+  text-align: center;
+  font-size: 14px;
+  height: 21px;
+  margin-bottom: 4px;
+  clear: both;
 
   button {
     font-size: 14px;

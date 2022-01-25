@@ -25,6 +25,7 @@ export const ServerThemesList = props => {
   ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
 
   return <ul
+    className={'server-theme-list'}
     onMouseUp={event => {
       setServerThemesHeight(event.target.closest('ul').style.height);
     }}
@@ -35,7 +36,6 @@ export const ServerThemesList = props => {
       ref={name === fileName ? activeThemeRef : null}
       title={diffSummary(serverTheme, currentTheme)}
       className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
-      style={{textAlign: 'center', fontSize: '14px', height: '21px', marginBottom: '4px', clear: 'both'}}
     >
       {name} {modifiedServerVersion && name === fileName && '(*)'}
       {name !== 'default' && <button
