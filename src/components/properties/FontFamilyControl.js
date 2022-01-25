@@ -20,7 +20,7 @@ export const FontFamilyControl = props => {
     const loadFonts = async () => {
       const tStart = performance.now();
       const loaded = await getAllDefinedFonts();
-      console.log(`Loaded ${loaded.length} fonts in ms`, performance.now() - tStart);
+      console.info(`Loaded ${loaded.length} fonts in ms`, performance.now() - tStart);
       setFonts(loaded);
     };
     loadFonts();

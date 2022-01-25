@@ -51,7 +51,6 @@ const sheetLines = {};
 
 const getSheetLines = async sheetUrl => {
   if (!(sheetUrl in sheetLines)) {
-    console.warn('getting sheet lines');
     const sheetText = await (await fetch(sheetUrl)).text();
 
     sheetLines[sheetUrl] = sheetText.split('\n').reduce((linesWithVar, line, index) => {
@@ -69,13 +68,12 @@ const warmupLines = sheets => sheets.map(sheet=>getSheetLines(sheet));
 
 const getVarPositions = (sheet, varName, sourceMapConsumer) => {
   if (!sheet) {
-    console.log(varName, 'NO SHEET');
     return [];
   }
   const lines = sheetLines[sheet];
   if (!lines) {
     // Shouldn't happen but just in case.
-    console.log('no lines', sheet, Object.keys(sheetLines));
+    console.warn('no lines', sheet, Object.keys(sheetLines));
     return [];
   }
 
@@ -130,7 +128,7 @@ export const extractPageVariables = async() => {
   const results = await Promise.allSettled( promises );
   Object.values(sourceMapConsumers).forEach(consumer => consumer.destroy());
   const duration = performance.now() - startTime;
-  console.log(`Extracted data in ${duration}ms`);
+  console.info(`Extracted data in ${duration}ms`);
 
   return await results.filter(wasFulfilled).map(result => result.value);
 };

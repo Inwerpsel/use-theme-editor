@@ -40,11 +40,11 @@ export const getMatchingVars = async ( { cssVars, target } ) => {
   const results = await Promise.allSettled( promises );
 
   const failed = results.filter(wasRejected);
-  failed.length && console.log(failed);
+  failed.length && console.warn('Failed testing some selectors.', failed);
 
   const arrays = results.filter( wasFulfilled ).map( result => result.value );
 
-  console.log('matched vars in', performance.now() - startTime);
+  console.info('matched vars in', performance.now() - startTime);
 
   return [].concat( ...arrays );
 };

@@ -28,7 +28,6 @@ export const CustomVariableInput = () => {
       <form
         onSubmit={event => {
           dispatch({type: THEME_ACTIONS.SET, payload: {name, value}});
-          console.log('dispatched');
           event.preventDefault();
 
           return false;

@@ -236,7 +236,7 @@ export const VariableControl = (props) => {
         <div>
           <button
             onClick={toggleSelectors}
-            style={{fontSize: '15px'}}
+            style={{fontSize: '15px', marginTop: '8px'}}
           >{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})
           </button>
           {showSelectors && <Fragment>
