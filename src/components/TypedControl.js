@@ -4,21 +4,32 @@ import {ShadowPicker} from 'react-shadow-picker';
 import {FontFamilyControl} from './properties/FontFamilyControl';
 import {ColorControl} from './properties/ColorControl';
 import {SizeControl, sizeLikeProperties} from './properties/SizeControl';
+import {timeLikeProperties, TimeControl} from './properties/TimeControl';
 
-const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
+export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
+
+export const isColorProperty = property => {
+  if (typeof property !== 'string') {
+    console.log(property);
+  }
+  return !!property && property.match(/color$/)
+    || ['background', 'fill', 'stroke'].includes(property);
+};
 
 export const TypedControl = ({ cssVar, value, onChange}) => {
 
-  if (cssVar.usages.some(usage =>
-    !!usage.property.match(/color$/)
-    || ['background', 'fill', 'stroke'].includes(usage.property)
-  )) {
+  if (cssVar.usages.some(usage => isColorProperty(usage.property))) {
     return <ColorControl {...{onChange, value, cssVar}}/>;
   }
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
 
     return <SizeControl{...{value, onChange}}/>;
+  }
+
+  if (cssVar.usages.some(usage => timeLikeProperties.includes(usage.property))) {
+
+    return <TimeControl{...{value, onChange}}/>;
   }
 
   if (cssVar.usages.some(usage => usage.property === 'font-weight')) {
