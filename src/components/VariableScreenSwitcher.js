@@ -47,7 +47,7 @@ export const VariableScreenSwitcher = props => {
         // This var matches the screen, let's check if it's being overridden by another one.
         return !isOverridden({media, width, cssVar});
       }, [])
-      .map(({label, dims: [width, height]}) => <li>
+      .map(({label, dims: [width, height]}) => <li key={label}>
         <button
           title={`Switch to ${label}`}
           onClick={event => {
