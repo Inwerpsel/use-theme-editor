@@ -17,6 +17,7 @@ export const GroupControl = props => {
     frameRef,
     defaultValues,
     dispatch,
+    propertyFilter,
   } = useContext(ThemeEditorContext);
 
   return <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
@@ -91,6 +92,8 @@ export const GroupControl = props => {
         onClick={() => toggleGroup(label)}
       >
         {label} ({vars.length})
+        {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
+        >{propertyFilter}</span>}
       </h4>
     </div>
     {isOpen && <ul>

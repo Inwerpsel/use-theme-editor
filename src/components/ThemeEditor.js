@@ -1,4 +1,4 @@
-import {useEffect, useRef, useState, Fragment, createContext} from 'react';
+import {createContext, Fragment, useEffect, useMemo, useRef, useState} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -13,6 +13,10 @@ import {readFromUploadedFile} from './readFromUploadedFile';
 import {CustomVariableInput} from './CustomVariableInput';
 import {StylesheetDisabler} from './StylesheetDisabler';
 import {allScreenOptions, simpleScreenOptions} from './screenOptions';
+import {PropertyCategoryFilter} from './PropertyCategoryFilter';
+import {isColorProperty} from './TypedControl';
+import {PropertySearch} from './PropertySearch';
+import {filterSearched} from '../filterSearched';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -23,7 +27,7 @@ export const ThemeEditorContext = createContext({});
 export const ThemeEditor = (props) => {
   const {
     config,
-    groups,
+    groups: unfilteredGroups,
     allVars,
   } = props;
   const [openGroups, setOpenGroups] = useState([]);
@@ -35,9 +39,9 @@ export const ThemeEditor = (props) => {
     setOpenGroups(newGroups);
   };
   const openFirstGroup = () => {
-    setOpenGroups([groups[0]?.label]);
+    setOpenGroups([unfilteredGroups[0]?.label]);
   }
-  useEffect(openFirstGroup, [groups]);
+  useEffect(openFirstGroup, [unfilteredGroups]);
 
   const [
     {
@@ -53,11 +57,22 @@ export const ThemeEditor = (props) => {
   const [storedServerThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const serverThemesCollapsed = !!storedServerThemesCollapsed && storedServerThemesCollapsed !== 'false';
   const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
+  const [propertyFilter, setPropertyFilter] = useLocalStorage('property-filter', 'all');
+  const [propertySearch, setPropertySearch] = useLocalStorage('property-search', null);
+
+  const groups = useMemo(() => {
+    const searched = filterSearched(unfilteredGroups, propertySearch);
+    if (propertyFilter === 'all') {
+      return searched;
+    }
+    return searched.map(group => ({
+      ...group,
+      vars: group.vars.filter(cssVar => cssVar.usages.some(usage => isColorProperty(usage.property)))
+    }))
+  }, [unfilteredGroups, propertyFilter, propertySearch])
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
-
   const [storedIsResponsive, setResponsive] = useLocalStorage('p4-theme-responsive', false);
-
   const isResponsive = !!storedIsResponsive && storedIsResponsive !== 'false';
 
   const [
@@ -145,6 +160,10 @@ export const ThemeEditor = (props) => {
     isSimpleSizes,
     setIsSimpleSizes,
     screenOptions,
+    propertyFilter,
+    setPropertyFilter,
+    propertySearch,
+    setPropertySearch,
   }}><div
     className='theme-editor'
   >
@@ -247,6 +266,10 @@ export const ThemeEditor = (props) => {
       activeThemeRef,
       modifiedServerVersion,
     }}/>}
+    <div style={{display: 'flex'}}>
+      <PropertyCategoryFilter/>
+      <PropertySearch/>
+    </div>
     <CustomVariableInput/>
     <div>
       <button
