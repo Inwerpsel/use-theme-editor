@@ -107,7 +107,6 @@ export const TypedControl = ({ cssVar, value, onChange}) => {
     const options = [
       'none',
       'underline',
-      'center',
     ].map(valuesAsLabels);
     return <SelectControl
       {...{value, onChange, options}}
