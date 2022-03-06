@@ -16,6 +16,11 @@ const unset = prop => {
 // Slice to preserve up to 1001 last entries to have some upper limit.
 const pushHistory = (history, entry) => [entry, ...history.slice(-1000)];
 
+const sortObject = o => Object.keys(o).sort().reduce((sorted, k) => {
+  sorted[k] = o[k];
+  return sorted;
+}, {});
+
 // I created these as an optimization, but not sure if it's really needed or even improving things.
 const lastWritten = {};
 const keysToRemove = {};
@@ -279,7 +284,7 @@ export const useThemeEditor = (
     localStorage.setItem(LOCAL_STORAGE_PREVIEWS_KEY, serialized);
   }, [serialized]);
 
-  const sorted = Object.keys(theme).sort().reduce((t, k) => ({ ...t, [k]: theme[k] }), {});
+  const sorted = sortObject(theme);
 
   const themeJson = JSON.stringify(sorted);
   useEffect(() => {
