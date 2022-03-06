@@ -118,6 +118,9 @@ function IdeLink(props) {
     line,
     generated: {sheet},
   } = props;
+  if (!source) {
+    return null;
+  }
   const path = source.replace('webpack://', '').replace(/home\/circleci\/[\w-]+\//, '').replace('/root/project/', '');
   // No setter for now, enter manually in local storage.
   const [customReplacements] = useLocalStorage('repo-paths', null);
@@ -225,7 +228,7 @@ export const VariableControl = (props) => {
       >
         { isDefault && <span style={{float: 'right', marginBottom: '14.5px', color: 'grey'}}>default</span>}
         { name in theme && <button
-          style={ { float: 'right', marginBottom: '14.5px' } }
+          style={ { float: 'right', marginBottom: '14.5px', fontSize: '12px' } }
           title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
           onClick={ () => {
             onUnset();
