@@ -21,7 +21,6 @@ export const CustomVariableInput = () => {
     {!collapsed && <div>
       <CheckboxControl
         label={'Overwrite existing'}
-        // value={overwriteExisting}
         checked={overwriteExisting}
         onChange={() => setOverwriteExisting(!overwriteExisting)}
       />
