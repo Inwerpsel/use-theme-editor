@@ -47,6 +47,8 @@ const byHexValue = ({color1}, { color2}) => {
 export const ColorControl = props => {
   const {onChange, value, cssVar} = props;
 
+  const {name} = cssVar;
+
   const [hideColorPicker, setHideColorPicker] = useState(true);
 
   const {
@@ -62,10 +64,10 @@ export const ColorControl = props => {
         onChange(color, true);
       }}
       onMouseEnter={() => {
-        dispatch({type: THEME_ACTIONS.START_PREVIEW, payload: {name: cssVar.name, value: color}});
+        dispatch({type: THEME_ACTIONS.START_PREVIEW, payload: {name, value: color}});
       }}
       onMouseLeave={() => {
-        dispatch({type: THEME_ACTIONS.END_PREVIEW, payload: {name: cssVar.name}});
+        dispatch({type: THEME_ACTIONS.END_PREVIEW, payload: {name}});
       }}
       title={`${color}\nUsed for:\n` + usages.join('\n')}
       style={{
@@ -121,6 +123,21 @@ export const ColorControl = props => {
           onChange={value => onChange(value, true)}
         />
       </div>
+      <button
+        onClick={() => {
+          value === 'transparent'
+            ? dispatch({type: THEME_ACTIONS.UNSET, payload: {name}})
+            : dispatch({type: THEME_ACTIONS.SET, payload: {name, value: 'transparent'}});
+        }}
+        style={ {
+          fontSize: '12px',
+          float: 'right',
+          width: PREVIEW_SIZE,
+          opacity: value === 'transparent' ? 1 : .4,
+        }}
+      >
+        👻
+      </button>
     </Fragment>}
   </Fragment>;
 };
