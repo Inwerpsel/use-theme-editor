@@ -113,19 +113,14 @@ export const setupThemeEditor = async (config) => {
   const customizeMenu = document.getElementById('wp-admin-bar-customize');
 
   if (customizeMenu) {
-    const notice = document.createElement('span');
-    notice.textContent = ' (using CSS)';
-    notice.className = 'wp-customize-notice';
-
-    customizeMenu.firstChild.appendChild(notice);
+    customizeMenu.removeChild(customizeMenu.firstChild);
 
     const button = document.createElement('a');
-    button.id = 'wp-customize-opener';
     button.onclick = () => {
       document.documentElement.classList.add('hide-wp-admin-bar');
       renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
     };
-    button.textContent = 'Customize (using experimental theme editor)';
+    button.textContent = 'Customize';
     button.className = 'ab-item';
     customizeMenu.appendChild(button);
   }

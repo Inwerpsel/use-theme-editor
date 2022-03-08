@@ -120,32 +120,6 @@ html.hide-wp-admin-bar {
   }
 }
 
-#wp-customize-opener {
-  display: none !important;
-  cursor: pointer;
-}
-
-.wp-customize-notice {
-  display: none;
-}
-
-#wp-admin-bar-customize {
-  &:hover, &:focus-within {
-    .wp-customize-notice {
-      display: inline;
-    }
-    .ab-item {
-      position: relative;
-      top: 30px;
-      pointer-events: auto;
-    }
-
-    #wp-customize-opener {
-      display: block !important;
-    }
-  }
-}
-
 .server-theme-list {
   flex-shrink: 0;
 }
