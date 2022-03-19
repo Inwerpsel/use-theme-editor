@@ -123,7 +123,7 @@ function IdeLink(props) {
   }
   const path = source.replace('webpack://', '').replace(/home\/circleci\/[\w-]+\//, '').replace('/root/project/', '');
   // No setter for now, enter manually in local storage.
-  const [customReplacements] = useLocalStorage('repo-paths', {});
+  const [customReplacements] = useLocalStorage('repo-paths', null, 'object');
 
   let basePath;
   const replacements = customReplacements || defaultReplacements;
