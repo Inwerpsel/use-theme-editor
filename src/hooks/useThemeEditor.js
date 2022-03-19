@@ -2,6 +2,7 @@ import { useReducer, useEffect } from 'react';
 import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from '../initializeThemeEditor';
 import {applyPseudoPreviews} from '../applyPseudoPreviews';
 import {getAllDefaultValues} from '../getAllDefaultValues';
+import {reducerOf} from '../functions/reducerOf';
 
 const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;
@@ -49,7 +50,7 @@ const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
   }).forEach(k => keysToRemove[k] = true);
 };
 
-const ACTIONS = {
+export const THEME_ACTIONS = {
   SET: (state, { name, value }) => {
     const { theme } = state;
     if (name === '' || theme[name] === value) {
@@ -68,7 +69,7 @@ const ACTIONS = {
     };
   },
   UNSET: (state, { name }) => {
-    if (!state.theme.hasOwnProperty(name)) {
+    if (!(name in state.theme)) {
       return state;
     }
     keysToRemove[name] = true;
@@ -138,7 +139,7 @@ const ACTIONS = {
         return;
       }
 
-      if (!state.theme.hasOwnProperty(k)) {
+      if (!(k in state.theme)) {
         keysToRemove[k] = true;
       }
       // Unset the regular property so that it gets set again.
@@ -202,24 +203,7 @@ const ACTIONS = {
   }
 };
 
-// Experimenting with exporting the reducers themselves as ACTION keys. If you pass a function to the "main" reducer,
-// it will use the name of the function to locate the action. This has some benefits: no need to have a separate ACTIONS
-// constant each time you want to use a reducer, which you need to update it each time you add a new action. Only 1
-// symbol to rename instead of 3. It also makes it easier to navigate from the dispatch directly to the function that
-// handles it. This can be easily switched back to strings if needed by changing the import only.
-export const THEME_ACTIONS = ACTIONS;
-
-function reducer(state, { type, payload }) {
-  state.verbose && console.log('Received action', type, 'with payload', payload);
-
-  const action = typeof type === 'function' ? type.name : type;
-
-  if (typeof ACTIONS[action] !== 'function') {
-    throw new Error(`No handler for action ${ action }`);
-  }
-
-  return ACTIONS[action](state, payload);
-}
+const reducer = reducerOf(THEME_ACTIONS);
 
 const writeNewValues = theme => {
   Object.keys(theme).forEach((k) => {
