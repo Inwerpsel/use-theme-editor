@@ -20,7 +20,14 @@ export const ResizableFrame = props => {
     isSimpleSizes,
     setIsSimpleSizes,
     screenOptions,
+    frameClickBehavior,
+    setFrameClickBehavior,
   } = useContext(ThemeEditorContext);
+
+  const [
+    responsiveSticky,
+    setResponsiveSticky
+  ] = useLocalStorage('responsive-on-load', false);
 
   const [
     scales,
@@ -140,5 +147,21 @@ export const ResizableFrame = props => {
         { ...{ src, width: parseInt(width) + 12, height: parseInt(height) + 12 } }
       />
     </div>
+    <button
+      style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}}
+      onClick={() => {
+        setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
+      }}
+    >
+      {frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}
+    </button>
+    <button
+      style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '380px'}}
+      onClick={() => {
+        setResponsiveSticky(!responsiveSticky);
+      }}
+    >
+      {responsiveSticky ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}
+    </button>
   </Fragment>, document.body);
 };

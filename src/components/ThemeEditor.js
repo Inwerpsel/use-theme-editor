@@ -133,8 +133,6 @@ export const ThemeEditor = (props) => {
 
   const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
 
-  const [responsiveSticky, setResponsiveSticky] = useLocalStorage('responsive-on-load', false);
-
   useHotkeys('alt+a', () => {
     setFrameClickBehavior(value => value=== 'alt' ? 'any' : 'alt');
   }, [frameClickBehavior]);
@@ -164,6 +162,8 @@ export const ThemeEditor = (props) => {
     setPropertyFilter,
     propertySearch,
     setPropertySearch,
+    frameClickBehavior,
+    setFrameClickBehavior,
   }}><div
     className='theme-editor'
   >
@@ -175,16 +175,6 @@ export const ThemeEditor = (props) => {
       }} src={window.location.href}/>}
 
     {!!isResponsive && createPortal(<Fragment>
-      <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '150px'}} onClick={() => {
-        setFrameClickBehavior(frameClickBehavior === 'alt' ? 'any' : 'alt');
-      }}>
-        {frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}
-      </button>
-      <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '380px'}} onClick={() => {
-        setResponsiveSticky(!responsiveSticky);
-      }}>
-        {responsiveSticky ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}
-      </button>
     </Fragment>, document.body)}
 
     <div className={'theme-editor-menu'}>
