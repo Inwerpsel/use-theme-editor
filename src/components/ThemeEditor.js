@@ -54,11 +54,10 @@ export const ThemeEditor = (props) => {
   ] = useThemeEditor({allVars});
 
   const [importCollapsed, setImportCollapsed] = useState(true);
-  const [storedServerThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
-  const serverThemesCollapsed = !!storedServerThemesCollapsed && storedServerThemesCollapsed !== 'false';
+  const [serverThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
   const [propertyFilter, setPropertyFilter] = useLocalStorage('property-filter', 'all');
-  const [propertySearch, setPropertySearch] = useLocalStorage('property-search', null);
+  const [propertySearch, setPropertySearch] = useLocalStorage('property-search', '');
 
   const groups = useMemo(() => {
     const searched = filterSearched(unfilteredGroups, propertySearch);
@@ -72,8 +71,7 @@ export const ThemeEditor = (props) => {
   }, [unfilteredGroups, propertyFilter, propertySearch])
 
   const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
-  const [storedIsResponsive, setResponsive] = useLocalStorage('p4-theme-responsive', false);
-  const isResponsive = !!storedIsResponsive && storedIsResponsive !== 'false';
+  const [isResponsive, setResponsive] = useLocalStorage('p4-theme-responsive', false);
 
   const [
     width,
@@ -121,7 +119,9 @@ export const ThemeEditor = (props) => {
   }, [serverThemes, serverThemesCollapsed])
 
   const existsOnServer = serverThemes && fileName in serverThemes;
-  const modifiedServerVersion = existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
+  const modifiedServerVersion = useMemo(() => {
+    return existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
+  }, [serverThemes, fileName, theme]);
 
   useHotkeys('alt+s', () => {
     if (fileName && fileName !== 'default' && modifiedServerVersion) {
@@ -133,7 +133,7 @@ export const ThemeEditor = (props) => {
 
   const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
 
-  const [responsiveSticky, setResponsiveSticky] = useLocalStorage('responsive-on-load', 'false');
+  const [responsiveSticky, setResponsiveSticky] = useLocalStorage('responsive-on-load', false);
 
   useHotkeys('alt+a', () => {
     setFrameClickBehavior(value => value=== 'alt' ? 'any' : 'alt');
@@ -181,9 +181,9 @@ export const ThemeEditor = (props) => {
         {frameClickBehavior === 'alt' ? 'Require ALT for inspect (ON)' : 'Require ALT for inspect (OFF)'}
       </button>
       <button style={{zIndex: 1003, position: 'fixed', bottom: 0, right: '380px'}} onClick={() => {
-        setResponsiveSticky(responsiveSticky === 'true' ? 'false' : 'true');
+        setResponsiveSticky(!responsiveSticky);
       }}>
-        {responsiveSticky === 'true' ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}
+        {responsiveSticky ? 'Sticky responsive (ON)' : 'Sticky responsive (OFF)'}
       </button>
     </Fragment>, document.body)}
 

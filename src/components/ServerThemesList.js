@@ -37,7 +37,7 @@ export const ServerThemesList = props => {
       title={diffSummary(serverTheme, currentTheme)}
       className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
     >
-      {name} {modifiedServerVersion && name === fileName && '(*)'}
+      {name} {Object.keys(serverTheme).length > 0 && `(${Object.keys(serverTheme).length})`}{modifiedServerVersion && name === fileName && '(*)'}
       {name !== 'default' && <button
         style={{float: 'right'}}
         onClick={async () => {
