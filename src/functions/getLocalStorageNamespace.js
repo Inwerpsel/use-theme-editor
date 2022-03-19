@@ -1,15 +1,7 @@
-export const getLocalStorageNamespace = () => {
-  const base = `${document.documentElement.dataset.base}`;
+let localStorageNamespace = '';
 
-  if (!base) {
-    return '';
-  }
+export function setLocalStorageNamespace(namespace) {
+  localStorageNamespace = namespace;
+}
 
-  const [, rawNs] = base.split(window.location.origin);
-
-  if (!rawNs || rawNs === '/') {
-    return '';
-  }
-
-  return rawNs.replace(/^\//, '').replace(/\/*$/, '') + '/';
-};
+export const getLocalStorageNamespace = () => localStorageNamespace;

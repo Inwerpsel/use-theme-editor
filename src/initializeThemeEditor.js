@@ -4,7 +4,7 @@ import { addHighlight, removeHighlight } from './functions/highlight';
 import { groupVars } from './functions/groupVars';
 import { extractPageVariables } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
-import {getLocalStorageNamespace} from './functions/getLocalStorageNamespace';
+import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
@@ -62,6 +62,8 @@ const toggleStylesheets = (disabledSheets) => {
 };
 
 export const setupThemeEditor = async (config) => {
+  setLocalStorageNamespace(config.localStorageNamespace);
+
   applyFromLocalStorage(LOCAL_STORAGE_KEY);
 
   if (isRunningAsFrame) {

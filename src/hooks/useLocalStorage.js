@@ -1,8 +1,6 @@
 import { useEffect, useState } from 'react';
 import {getLocalStorageNamespace} from '../functions/getLocalStorageNamespace';
 
-const namespace = getLocalStorageNamespace();
-
 function apply(type, value) {
   switch (type) {
   case 'object': {
@@ -25,7 +23,7 @@ function apply(type, value) {
 
 // Use _type only if you want nullable things.
 export const useLocalStorage = (key, defaultValue, _type = null) => {
-  const scopedKey = namespace + key;
+  const scopedKey = getLocalStorageNamespace() + key;
   // This means the default value's type determines whether an object can be stored.
   // Care should be taken with this argument, ideally it's a literal value.
   const type = _type || typeof defaultValue;
