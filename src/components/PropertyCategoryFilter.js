@@ -1,6 +1,6 @@
 import {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
-import {RadioControl, SelectControl} from '@wordpress/components';
+import {SelectControl} from '@wordpress/components';
 import {isColorProperty} from './TypedControl';
 
 const filters = {
