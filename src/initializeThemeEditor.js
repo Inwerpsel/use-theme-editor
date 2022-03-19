@@ -6,50 +6,14 @@ import { extractPageVariables } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
 import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
+import {applyFromLocalStorage} from './functions/applyFromLocalStorage';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
 export const LOCAL_STORAGE_PREVIEWS_KEY = `${getLocalStorageNamespace()}theme-with-previews`;
 
 const isRunningAsFrame = window.self !== window.top;
 
-const lastRead = {};
-
 const dependencyReady = initializeConsumer();
-
-const applyFromLocalStorage = (key) => {
-  let storedVars;
-  const json = localStorage.getItem( key );
-
-  if (lastRead[key] === json) {
-    return;
-  }
-
-  try {
-    storedVars = JSON.parse(json);
-  } catch (e) {
-    console.log(json);
-  }
-
-  if (!storedVars) {
-    return;
-  }
-
-  Object.keys(storedVars).forEach(name => {
-    const value = storedVars[name];
-    document.documentElement.style.setProperty(name, value);
-  });
-
-  const customProps = Object.entries(document.documentElement.style).filter(([, k]) => {
-    return !!('string' === typeof k && k.match(/^--/));
-  });
-
-  customProps.forEach(([, k]) => {
-    if (!Object.keys(storedVars).includes(k)) {
-      document.documentElement.style.removeProperty(k);
-    }
-  });
-  lastRead[key] = json;
-};
 
 const toggleStylesheets = (disabledSheets) => {
   [...document.styleSheets].forEach(sheet => {
@@ -63,7 +27,6 @@ const toggleStylesheets = (disabledSheets) => {
 
 export const setupThemeEditor = async (config) => {
   setLocalStorageNamespace(config.localStorageNamespace);
-
   applyFromLocalStorage(LOCAL_STORAGE_KEY);
 
   if (isRunningAsFrame) {
@@ -107,9 +70,13 @@ export const setupThemeEditor = async (config) => {
 
   }, false);
 
-  if (!isRunningAsFrame && localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
+  const renderEmptyEditor = () => {
     document.documentElement.classList.add('hide-wp-admin-bar');
     renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+  };
+
+  if (!isRunningAsFrame && localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
+    renderEmptyEditor();
   }
 
   const customizeMenu = document.getElementById('wp-admin-bar-customize');
@@ -119,8 +86,7 @@ export const setupThemeEditor = async (config) => {
 
     const button = document.createElement('a');
     button.onclick = () => {
-      document.documentElement.classList.add('hide-wp-admin-bar');
-      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+      renderEmptyEditor();
     };
     button.textContent = 'Customize';
     button.className = 'ab-item';
