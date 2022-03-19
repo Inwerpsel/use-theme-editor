@@ -1,10 +1,10 @@
 import { renderSelectedVars } from './renderSelectedVars';
-import { getMatchingVars } from './getMatchingVars';
-import { addHighlight, removeHighlight } from './highlight';
-import { groupVars } from './groupVars';
-import { extractPageVariables } from './extractPageVariables';
-import { filterMostSpecific } from './getOnlyMostSpecific';
-import {getLocalStorageNamespace} from './getLocalStorageNamespace';
+import { getMatchingVars } from './functions/getMatchingVars';
+import { addHighlight, removeHighlight } from './functions/highlight';
+import { groupVars } from './functions/groupVars';
+import { extractPageVariables } from './functions/extractPageVariables';
+import { filterMostSpecific } from './functions/getOnlyMostSpecific';
+import {getLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;

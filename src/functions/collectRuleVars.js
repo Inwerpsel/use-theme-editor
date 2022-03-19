@@ -1,4 +1,4 @@
-import balancedVar from './balancedVar';
+import {balancedVar} from './balancedVar';
 
 export const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {

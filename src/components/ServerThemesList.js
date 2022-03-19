@@ -1,5 +1,5 @@
 import {useLocalStorage} from '../hooks/useLocalStorage';
-import {diffSummary} from '../diffThemes';
+import {diffSummary} from '../functions/diffThemes';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
 import {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';

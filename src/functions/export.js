@@ -1,4 +1,4 @@
-import { LOCAL_STORAGE_KEY } from './initializeThemeEditor';
+import { LOCAL_STORAGE_KEY } from '../initializeThemeEditor';
 
 export const exportJson = (fileName) => {
   const raw = localStorage.getItem(LOCAL_STORAGE_KEY);

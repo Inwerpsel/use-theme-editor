@@ -3,7 +3,7 @@ const balanced = require( 'balanced-match' );
 
 // Check for balanced `var(` and `)` pairs inside `value`, and return the 3 fragments:
 // `body` (inside), `pre` (before), `post` (after) of the found wrapper
-function balancedVar(value) {
+export function balancedVar(value) {
   const match = balanced( '(', ')', value );
   if ( !match ) {
     return;
@@ -38,5 +38,3 @@ function balancedVar(value) {
     };
   }
 }
-
-module.exports = balancedVar;

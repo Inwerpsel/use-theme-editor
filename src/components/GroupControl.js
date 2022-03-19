@@ -1,4 +1,4 @@
-import {addHighlight, removeHighlight} from "../highlight";
+import {addHighlight, removeHighlight} from "../functions/highlight";
 import {VariableControl} from "./VariableControl";
 import {THEME_ACTIONS} from "../hooks/useThemeEditor";
 import {useContext} from 'react';

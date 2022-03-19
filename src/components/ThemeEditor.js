@@ -3,20 +3,20 @@ import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
-import {diffSummary, diffThemes} from '../diffThemes';
+import {diffSummary, diffThemes} from '../functions/diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {createPortal} from 'react-dom';
 import {ServerThemesList} from './ServerThemesList';
-import {exportCss, exportJson} from '../export';
+import {exportCss, exportJson} from '../functions/export';
 import {GroupControl} from './GroupControl';
-import {readFromUploadedFile} from './readFromUploadedFile';
+import {readFromUploadedFile} from '../functions/readFromUploadedFile';
 import {CustomVariableInput} from './CustomVariableInput';
 import {StylesheetDisabler} from './StylesheetDisabler';
-import {allScreenOptions, simpleScreenOptions} from './screenOptions';
+import {allScreenOptions, simpleScreenOptions} from '../screenOptions';
 import {PropertyCategoryFilter} from './PropertyCategoryFilter';
 import {isColorProperty} from './TypedControl';
 import {PropertySearch} from './PropertySearch';
-import {filterSearched} from '../filterSearched';
+import {filterSearched} from '../functions/filterSearched';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],

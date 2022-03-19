@@ -1,7 +1,7 @@
 import { useReducer, useEffect } from 'react';
 import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from '../initializeThemeEditor';
-import {applyPseudoPreviews} from '../applyPseudoPreviews';
-import {getAllDefaultValues} from '../getAllDefaultValues';
+import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
+import {getAllDefaultValues} from '../functions/getAllDefaultValues';
 import {reducerOf} from '../functions/reducerOf';
 
 const PROP_REGEX = /\w+(-\w+)*$/;

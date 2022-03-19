@@ -1,5 +1,5 @@
 import { compare } from 'specificity';
-import {sortForUI} from "./groupVars";
+import {sortForUI} from './groupVars';
 
 const pseudoStateRegex = /(:(hover|focus|active|disabled|visited))/g;
 
