@@ -192,18 +192,17 @@ export const ThemeEditor = (props) => {
       <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
       <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
       <label
-        onClick={ () => {
-          setResponsive(!isResponsive);
-        } }
         style={ { marginBottom: '2px' } }
       >
         <input
           type="checkbox"
           readOnly
           checked={ isResponsive }
-          onClick={ () => { setResponsive(!isResponsive); } }
+          onClick={() => {
+            setResponsive(!isResponsive);
+          }}
         />
-        { 'Responsive view' }
+        Responsive view
       </label>
     </div>
     {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
