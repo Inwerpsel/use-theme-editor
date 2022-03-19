@@ -9,9 +9,6 @@ import {timeLikeProperties, TimeControl} from './properties/TimeControl';
 export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
 export const isColorProperty = property => {
-  if (typeof property !== 'string') {
-    console.log(property);
-  }
   return !!property && property.match(/color$/)
     || ['background', 'fill', 'stroke'].includes(property);
 };
