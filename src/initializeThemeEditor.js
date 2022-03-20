@@ -58,6 +58,31 @@ export const setupThemeEditor = async (config) => {
     ),
   ], []);
 
+  if (!isRunningAsFrame) {
+    const renderEmptyEditor = () => {
+      document.documentElement.classList.add('hide-wp-admin-bar');
+      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+    };
+
+    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
+      renderEmptyEditor();
+    }
+
+    const customizeMenu = document.getElementById('wp-admin-bar-customize');
+
+    if (customizeMenu) {
+      const button = document.createElement('a');
+      button.textContent = 'Customize';
+      button.className = 'ab-item fake-wp-button';
+      button.onclick = () => {
+        renderEmptyEditor();
+      };
+      customizeMenu.removeChild(customizeMenu.firstChild);
+      customizeMenu.appendChild(button);
+    }
+
+  }
+
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
   let lastGroups = [];
 
@@ -69,29 +94,6 @@ export const setupThemeEditor = async (config) => {
     renderSelectedVars(editorRoot, payload.matchedVars, null, payload.groups, payload.rawGroups, cssVars, config);
 
   }, false);
-
-  const renderEmptyEditor = () => {
-    document.documentElement.classList.add('hide-wp-admin-bar');
-    renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
-  };
-
-  if (!isRunningAsFrame && localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
-    renderEmptyEditor();
-  }
-
-  const customizeMenu = document.getElementById('wp-admin-bar-customize');
-
-  if (customizeMenu) {
-    customizeMenu.removeChild(customizeMenu.firstChild);
-
-    const button = document.createElement('a');
-    button.onclick = () => {
-      renderEmptyEditor();
-    };
-    button.textContent = 'Customize';
-    button.className = 'ab-item';
-    customizeMenu.appendChild(button);
-  }
 
   document.addEventListener('click', async event => {
     if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
