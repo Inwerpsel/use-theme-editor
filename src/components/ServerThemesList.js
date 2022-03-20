@@ -1,28 +1,33 @@
 import {useLocalStorage} from '../hooks/useLocalStorage';
-import {diffSummary} from '../functions/diffThemes';
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
-import {useContext} from 'react';
+import {useContext, useEffect, useRef} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
+import {ServerThemesListItem} from './ServerThemesListItem';
 
 export const ServerThemesList = props => {
   const {
     serverThemes,
-    deleteTheme,
-    fileName,
-    setFileName,
-    activeThemeRef,
-    modifiedServerVersion,
   } = props;
 
+  const activeThemeRef = useRef();
+
   const {
-    theme: currentTheme,
-    dispatch,
+    serverThemesCollapsed,
   } = useContext(ThemeEditorContext);
 
   const [
     serverThemesHeight,
     setServerThemesHeight
   ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
+
+  useEffect(() => {
+    const timeout = window.setTimeout(() => {
+      activeThemeRef.current?.scrollIntoView();
+    }, 200);
+
+    return () => {
+      window.clearTimeout(timeout);
+    };
+  }, [serverThemes, serverThemesCollapsed])
 
   return <ul
     className={'server-theme-list'}
@@ -31,34 +36,8 @@ export const ServerThemesList = props => {
     }}
     style={{resize: 'vertical', height: serverThemesHeight}}
   >
-    {Object.entries(serverThemes).map(([name, serverTheme]) => <li
-      key={name}
-      ref={name === fileName ? activeThemeRef : null}
-      title={diffSummary(serverTheme, currentTheme)}
-      className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
-    >
-      {name} {Object.keys(serverTheme).length > 0 && `(${Object.keys(serverTheme).length})`}{modifiedServerVersion && name === fileName && '(*)'}
-      {name !== 'default' && <button
-        style={{float: 'right'}}
-        onClick={async () => {
-          if (!confirm('Delete theme from server?')) {
-            return;
-          }
-          deleteTheme(name);
-        }}
-      >Delete</button>}
-
-      <button
-        style={{float: 'right'}}
-        onClick={() => {
-          if (modifiedServerVersion && !confirm('You have some local changes that are not on the server. Cancel if you want to save changes.')) {
-            return;
-          }
-          setFileName(name);
-          dispatch({type: THEME_ACTIONS.LOAD_THEME, payload: {theme: serverTheme}});
-        }}
-      >Switch
-      </button>
-    </li>)}
+    {Object.entries(serverThemes).map(([name, serverTheme]) =>
+      <ServerThemesListItem {...{name, serverTheme, activeThemeRef}}/>
+    )}
   </ul>;
 };

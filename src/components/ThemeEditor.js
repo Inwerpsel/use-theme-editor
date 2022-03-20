@@ -106,18 +106,6 @@ export const ThemeEditor = (props) => {
     deleteTheme,
   } = useServerThemes(config.serverThemes);
 
-  const activeThemeRef = useRef();
-
-  useEffect(() => {
-    const timeout = window.setTimeout(() => {
-      activeThemeRef.current?.scrollIntoView();
-    }, 200);
-
-    return () => {
-      window.clearTimeout(timeout);
-    };
-  }, [serverThemes, serverThemesCollapsed])
-
   const existsOnServer = serverThemes && fileName in serverThemes;
   const modifiedServerVersion = useMemo(() => {
     return existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
@@ -164,6 +152,11 @@ export const ThemeEditor = (props) => {
     setPropertySearch,
     frameClickBehavior,
     setFrameClickBehavior,
+    modifiedServerVersion,
+    deleteTheme,
+    fileName,
+    setFileName,
+
   }}><div
     className='theme-editor'
   >
@@ -247,14 +240,10 @@ export const ThemeEditor = (props) => {
 
     { !serverThemesCollapsed && serverThemesLoading && <div>Loading server themes...</div> }
 
-    { !serverThemesCollapsed && !!serverThemes && !serverThemesLoading && <ServerThemesList { ...{
-      serverThemes,
-      deleteTheme,
-      fileName,
-      setFileName,
-      activeThemeRef,
-      modifiedServerVersion,
-    }}/>}
+    {!serverThemesCollapsed && !!serverThemes && !serverThemesLoading &&
+      <ServerThemesList {...{serverThemes}}/>
+    }
+
     <div style={{display: 'flex'}}>
       <PropertyCategoryFilter/>
       <PropertySearch/>
