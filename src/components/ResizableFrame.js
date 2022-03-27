@@ -1,10 +1,36 @@
 import {  createPortal } from 'react-dom';
-import {Fragment, useContext, useEffect} from 'react';
+import {Fragment, memo, useContext, useEffect} from 'react';
 import { RadioControl, RangeControl } from '@wordpress/components';
 import { useLocalStorage } from '../hooks/useLocalStorage';
 import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
+
+const WrapRangeControl = ({scale, setScales, scales, width, height}) =>
+  <RangeControl
+    value={scale}
+    onChange={value => {
+      setScales({...scales, [`${width}x${height}`]: value});
+    }}
+    min={.2}
+    max={1}
+    step={.02}
+    initialPosition={scale}
+  />;
+
+const MemoedRangeControl = memo(WrapRangeControl);
+
+const WrapRadioControl = ({screenOptions, width, height, setWidth, setHeight}) => <RadioControl
+  options={screenOptions}
+  selected={ [width, height].join() }
+  onChange={ value => {
+    const [newWidth, newHeight] = value.split(',');
+    setWidth(parseInt(newWidth));
+    setHeight(parseInt(newHeight));
+  } }
+/>;
+
+const MemoedRadioControl = memo(WrapRadioControl);
 
 export const ResizableFrame = props => {
   const {
@@ -76,16 +102,7 @@ export const ResizableFrame = props => {
         zIndex: 1000,
       } }
     >
-      <RangeControl
-        value={scale}
-        onChange={ value => {
-          setScales({...scales, [`${width}x${height}`]: value});
-        } }
-        min={.2}
-        max={1}
-        step={.02}
-        initialPosition={scale}
-      />
+      <MemoedRangeControl {...{scale, setScales, scales, width, height}}/>
       <span>Dimensions: <input
         type="number" onChange={ event => setWidth(parseInt(event.target.value)) } value={ width }
       /> x <input
@@ -104,15 +121,7 @@ export const ResizableFrame = props => {
           setIsSimpleSizes(!isSimpleSizes);
         }}
       >{ isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes' }</button>
-      <RadioControl
-        options={screenOptions}
-        selected={ [width, height].join() }
-        onChange={ value => {
-          const [newWidth, newHeight] = value.split(',');
-          setWidth(parseInt(newWidth));
-          setHeight(parseInt(newHeight));
-        } }
-      />
+      <MemoedRadioControl {...{screenOptions, width, height, setWidth, setHeight}} />
     </div>
 
     <div
