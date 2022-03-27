@@ -17,6 +17,7 @@ import {PropertyCategoryFilter} from './PropertyCategoryFilter';
 import {isColorProperty} from './TypedControl';
 import {PropertySearch} from './PropertySearch';
 import {filterSearched} from '../functions/filterSearched';
+import {flipDebugMode} from './RenderInfo';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -90,6 +91,10 @@ export const ThemeEditor = (props) => {
   useHotkeys('alt+v', () => {
     setResponsive(!isResponsive);
   }, [isResponsive]);
+
+  useHotkeys('alt+r', () => {
+    flipDebugMode();
+  }, []);
 
   useHotkeys('ctrl+z,cmd+z', () => {
     dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD});

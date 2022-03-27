@@ -342,3 +342,10 @@ div[id^=font-picker] ul {
 .fake-wp-button:hover {
   cursor: pointer;
 }
+
+.render-info {
+  --bg-opacity: calc(var(--current-renders, 1) / max(var(--max-tracked-renders, 1), 2));
+  // Uncomment if the var breaks your IDE color picker.
+  //background-color: rgba(255, 240, 17);
+  background-color: rgba(255, 240, 17, var(--bg-opacity));
+}
