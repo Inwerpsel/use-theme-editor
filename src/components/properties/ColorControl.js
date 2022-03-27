@@ -10,26 +10,23 @@ export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 
 const PREVIEW_SIZE = '30px';
 
-const extractUsage = (colors = [] , [name, color]) => {
+const extractUsage = (colors , [name, color]) => {
   if (COLOR_VALUE_REGEX.test(color) || GRADIENT_REGEX.test(color)) {
-    const alreadyUsed = colors.find(colorUsage => colorUsage.color === color);
-
-    if (!alreadyUsed) {
-      colors.push({ color, usages: [name] });
-    } else {
-      alreadyUsed.usages.push(name);
+    if (!(color in colors)) {
+      colors[color] = {color, usages: []};
     }
+    colors[color].usages.push(name);
   }
 
   return colors;
 };
 
-const extractColorUsages = theme => {
+export const extractColorUsages = theme => {
   if (null === theme) {
     return [];
   }
 
-  return Object.entries(theme).reduce(extractUsage, []);
+  return Object.values(Object.entries(theme).reduce(extractUsage, {}));
 };
 
 const byHexValue = ({color1}, { color2}) => {
@@ -52,10 +49,9 @@ export const ColorControl = props => {
   const [hideColorPicker, setHideColorPicker] = useState(true);
 
   const {
-    theme, dispatch,
+    dispatch,
+    colorUsages,
   } = useContext(ThemeEditorContext);
-
-  const colorUsages = extractColorUsages(theme);
 
   return <Fragment>
     {colorUsages.sort(byHexValue).map(({color, usages}) => <span
@@ -90,15 +86,13 @@ export const ColorControl = props => {
       onClick={() => setHideColorPicker(!hideColorPicker)}
       title={ hideColorPicker ? 'Add a new color' : 'Hide color picker'}
       style={{
-        // float: 'right',
         clear: 'both',
-        width: !hideColorPicker ? 'auto' : `${PREVIEW_SIZE}`,
         height: `${PREVIEW_SIZE}`,
         verticalAlign: 'bottom',
         marginBottom: '2px',
       }}
     >
-      {!hideColorPicker ? 'Hide picker' : '+'}
+      {!hideColorPicker ? 'Hide picker' : 'New color'}
     </button>
     { !hideColorPicker && <Fragment>
       <ColorPicker

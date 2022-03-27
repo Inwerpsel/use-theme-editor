@@ -18,6 +18,7 @@ import {isColorProperty} from './TypedControl';
 import {PropertySearch} from './PropertySearch';
 import {filterSearched} from '../functions/filterSearched';
 import {flipDebugMode} from './RenderInfo';
+import {extractColorUsages} from './properties/ColorControl';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -139,6 +140,10 @@ export const ThemeEditor = (props) => {
 
   }, [frameClickBehavior, frameRef.current, isResponsive])
 
+  const colorUsages = useMemo(() => {
+    extractColorUsages(theme);
+  }, [theme]);
+
   return <ThemeEditorContext.Provider value={{
     theme,
     dispatch,
@@ -161,7 +166,7 @@ export const ThemeEditor = (props) => {
     deleteTheme,
     fileName,
     setFileName,
-
+    colorUsages,
   }}><div
     className='theme-editor'
   >
