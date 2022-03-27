@@ -34,8 +34,10 @@ export const sizeLikeProperties = [
   'outline-offset',
 ];
 
-const convertRemToPixels = (rem) => rem * parseFloat(getComputedStyle(document.documentElement).fontSize);
-const convertPixelsToRem = (px) => px / parseFloat(getComputedStyle(document.documentElement).fontSize);
+const remSize = 16;
+
+const convertRemToPixels = (rem) => rem * remSize;
+const convertPixelsToRem = (px) => px / remSize;
 
 const isPx = value => value && value.match(/[\d.]+px$/);
 const isRem = value => value && value.match(/[\d.]+rem$/);
