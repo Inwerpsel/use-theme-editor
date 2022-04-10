@@ -141,7 +141,6 @@ export const ResizableFrame = props => {
         top: '100px',
         zIndex: 1000,
         resize: 'both',
-        overflow: 'scroll',
         minWidth: '200px',
         width: `${ wrapperMargin + parseInt(width) }px`,
         minHeight: '200px',

@@ -91,6 +91,7 @@ body {
 .responsive-frame-container {
   left: calc(var(--theme-editor--ul--width, 360px) + 24px) ;
   transform-origin: 0 0;
+  overflow: hidden;
 }
 
 .responsive-frame-container::-webkit-scrollbar {
