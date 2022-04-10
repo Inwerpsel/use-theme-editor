@@ -26,11 +26,7 @@ export function RenderInfo() {
   const [, forceRefresh] = useState();
 
   useEffect(() => {
-    const max = Math.max(...Object.values(stats));
-    document.documentElement.style.setProperty('--max-tracked-renders', `${max}`);
-  });
-
-  useEffect(() => {
+    handles[id] = forceRefresh;
     return () => {
       delete handles[id];
       delete stats[id];
@@ -44,8 +40,15 @@ export function RenderInfo() {
   } else {
     renderCount.current++;
   }
-  handles[id] = forceRefresh;
   stats[id] = renderCount.current;
+
+  useEffect(() => {
+    if (!getDebugMode()) {
+      return;
+    }
+    const max = Math.max(...Object.values(stats));
+    document.documentElement.style.setProperty('--max-tracked-renders', `${max}`);
+  });
 
   if (!getDebugMode()) {
     return null;
