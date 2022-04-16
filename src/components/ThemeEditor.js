@@ -6,9 +6,7 @@ import {useServerThemes} from '../hooks/useServerThemes';
 import {diffSummary, diffThemes} from '../functions/diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ServerThemesList';
-import {exportCss, exportJson} from '../functions/export';
 import {GroupControl} from './GroupControl';
-import {readFromUploadedFile} from '../functions/readFromUploadedFile';
 import {CustomVariableInput} from './CustomVariableInput';
 import {StylesheetDisabler} from './StylesheetDisabler';
 import {allScreenOptions, simpleScreenOptions} from '../screenOptions';
@@ -20,6 +18,7 @@ import {flipDebugMode} from './RenderInfo';
 import {byHexValue, extractColorUsages} from './properties/ColorControl';
 import {Checkbox} from './Checkbox';
 import {ToggleButton} from './ToggleButton';
+import {ImportExportTools} from './ImportExportTools';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -180,7 +179,7 @@ export const ThemeEditor = (props) => {
         Stylesheets
       </ToggleButton>
       <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
-        server
+        Server
       </ToggleButton>
       <Checkbox controls={[isResponsive, setResponsive]}>
         Responsive view
@@ -188,34 +187,7 @@ export const ThemeEditor = (props) => {
     </div>
     {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
 
-    { !importCollapsed && <div
-      style={{position: 'fixed', left: 'var(--theme-editor--ul--width, 360px)', background: 'white'}}
-      title='Click and hold to drag'
-      className="themer-controls">
-      <div>
-        <button onClick={() => exportJson(fileName)}>
-          Export JSON
-        </button>
-        <button onClick={() => exportCss(fileName)}>
-          Export CSS
-        </button>
-      </div>
-      <div>
-        <label
-          style={ {
-            background: 'rgba(255,255,255,.3)',
-            cursor: 'copy'
-          } }
-        > Upload JSON:
-          <input
-            type="file"
-            accept={ '.json' }
-            onChange={ event => { readFromUploadedFile(dispatch, event)} }
-            style={ { cursor: 'copy' } }
-          />
-        </label>
-      </div>
-    </div>}
+    {!importCollapsed && <ImportExportTools/>}
     <div>
       <input value={fileName} style={ { width: '130px', clear: 'both' } } placeholder='theme' type="text"
              onChange={ event => setFileName(event.target.value) }/>
