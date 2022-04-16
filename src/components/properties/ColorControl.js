@@ -77,19 +77,24 @@ export const ColorControl = props => {
 
   if (!nativeColorPicker) {
     return <Fragment>
-      <ThemePalettePicker {...{value, onChange, name}}/>
-      <button
-        onClick={() => setHideColorPicker(!hideColorPicker)}
-        title={ hideColorPicker ? 'Add a new color' : 'Hide color picker'}
-        style={{
-          clear: 'both',
-          height: `${PREVIEW_SIZE}`,
-          verticalAlign: 'bottom',
-          marginBottom: '2px',
-        }}
-      >
-        {!hideColorPicker ? 'Hide picker' : 'New color'}
-      </button>
+      <div style={{clear: 'both'}}>
+        <ThemePalettePicker {...{value, onChange, name}}/>
+        <button
+          onClick={() => setHideColorPicker(!hideColorPicker)}
+          title={ hideColorPicker ? 'Add a new color' : 'Hide color picker'}
+          style={{
+            width: '84px',
+            fontSize: '13px',
+            whiteSpace: 'nowrap',
+            clear: 'both',
+            height: `${PREVIEW_SIZE}`,
+            verticalAlign: 'bottom',
+            marginBottom: '2px',
+          }}
+        >
+          {!hideColorPicker ? 'Hide picker' : 'New color'}
+        </button>
+      </div>
       { !hideColorPicker && <Fragment>
         <ColorPicker
           styles={{

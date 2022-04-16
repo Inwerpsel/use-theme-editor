@@ -219,7 +219,6 @@ export const VariableControl = (props) => {
           });
         } }
       >
-        { isDefault && <span style={{float: 'right', marginBottom: '14.5px', color: 'grey'}}>default</span>}
         { name in theme && <button
           style={ { float: 'right', marginBottom: '14.5px', fontSize: '12px' } }
           title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
@@ -227,6 +226,7 @@ export const VariableControl = (props) => {
             onUnset();
           } }
         >unset</button>}
+        { isDefault && <span style={{float: 'right', margin: '6px 6px 15px', color: 'grey'}}>default </span>}
         <br/>
         <TypedControl {...{cssVar, value, onChange}}/>
         <div>
