@@ -19,6 +19,7 @@ import {filterSearched} from '../functions/filterSearched';
 import {flipDebugMode} from './RenderInfo';
 import {byHexValue, extractColorUsages} from './properties/ColorControl';
 import {Checkbox} from './Checkbox';
+import {ToggleButton} from './ToggleButton';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -153,39 +154,34 @@ export const ThemeEditor = (props) => {
     dispatch,
     defaultValues,
     frameRef,
-    width,
-    setWidth,
-    height,
-    setHeight,
-    isSimpleSizes,
-    setIsSimpleSizes,
+    width, setWidth,
+    height, setHeight,
+    isSimpleSizes, setIsSimpleSizes,
     screenOptions,
-    propertyFilter,
-    setPropertyFilter,
-    propertySearch,
-    setPropertySearch,
-    frameClickBehavior,
-    setFrameClickBehavior,
+    propertyFilter, setPropertyFilter,
+    propertySearch, setPropertySearch,
+    frameClickBehavior, setFrameClickBehavior,
     modifiedServerVersion,
     deleteTheme,
-    fileName,
-    setFileName,
+    fileName, setFileName,
     colorUsages,
     nativeColorPicker,
+    setSheetDisablerCollapsed,
   }}><div
     className='theme-editor'
   >
-    {!!isResponsive &&
-      <ResizableFrame {...{
-        frameRef,
-        width,
-        height,
-      }} src={window.location.href}/>}
+    {!!isResponsive && <ResizableFrame src={window.location.href} {...{frameRef, width, height}}/>}
 
     <div className={'theme-editor-menu'}>
-      <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
-      <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
-      <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
+      <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
+        Import/export
+      </ToggleButton>
+      <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
+        Stylesheets
+      </ToggleButton>
+      <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
+        server
+      </ToggleButton>
       <Checkbox controls={[isResponsive, setResponsive]}>
         Responsive view
       </Checkbox>
@@ -197,13 +193,11 @@ export const ThemeEditor = (props) => {
       title='Click and hold to drag'
       className="themer-controls">
       <div>
-        <button
-          onClick={ () => exportJson(fileName) }
-        >Export JSON
+        <button onClick={() => exportJson(fileName)}>
+          Export JSON
         </button>
-        <button
-          onClick={ () => exportCss(fileName) }
-        >Export CSS
+        <button onClick={() => exportCss(fileName)}>
+          Export CSS
         </button>
       </div>
       <div>

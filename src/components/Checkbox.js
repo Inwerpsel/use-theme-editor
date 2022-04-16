@@ -1,4 +1,4 @@
-export function Checkbox({controls: [value, setValue], children}) {
+export function Checkbox({controls: [enabled, setEnabled], children}) {
 
   return <label
     style={{marginBottom: '2px'}}
@@ -6,9 +6,9 @@ export function Checkbox({controls: [value, setValue], children}) {
     <input
       type="checkbox"
       readOnly
-      checked={value}
+      checked={enabled}
       onClick={() => {
-        setValue(!value);
+        setEnabled(!enabled);
       }}
     />
     {children}
