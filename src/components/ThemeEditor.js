@@ -18,7 +18,7 @@ import {isColorProperty} from './TypedControl';
 import {PropertySearch} from './PropertySearch';
 import {filterSearched} from '../functions/filterSearched';
 import {flipDebugMode} from './RenderInfo';
-import {extractColorUsages} from './properties/ColorControl';
+import {byHexValue, extractColorUsages} from './properties/ColorControl';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -140,9 +140,13 @@ export const ThemeEditor = (props) => {
 
   }, [frameClickBehavior, frameRef.current, isResponsive])
 
-  const colorUsages = useMemo(() => {
-    extractColorUsages(theme);
-  }, [theme]);
+  const [useDefaultsPalette, setUseDefaultsPalette] = useLocalStorage('use-defaults-palette', false);
+  const [nativeColorPicker, setNativeColorPicker] = useLocalStorage('native-color-picker', true);
+
+  const colorUsages = useMemo(
+    () => extractColorUsages(theme, !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
+    [theme, defaultValues, useDefaultsPalette],
+  );
 
   return <ThemeEditorContext.Provider value={{
     theme,
@@ -167,6 +171,7 @@ export const ThemeEditor = (props) => {
     fileName,
     setFileName,
     colorUsages,
+    nativeColorPicker,
   }}><div
     className='theme-editor'
   >
@@ -253,7 +258,34 @@ export const ThemeEditor = (props) => {
     {!serverThemesCollapsed && !!serverThemes && !serverThemesLoading &&
       <ServerThemesList {...{serverThemes}}/>
     }
-
+    <div style={{display: 'flex', gap: '4px'}}>
+      <label
+        style={ { marginBottom: '2px' } }
+      >
+        <input
+          type="checkbox"
+          readOnly
+          checked={ useDefaultsPalette }
+          onClick={() => {
+            setUseDefaultsPalette(!useDefaultsPalette);
+          }}
+        />
+        Include default palette
+      </label>
+      <label
+        style={ { marginBottom: '2px' } }
+      >
+        <input
+          type="checkbox"
+          readOnly
+          checked={ nativeColorPicker }
+          onClick={() => {
+            setNativeColorPicker(!nativeColorPicker);
+          }}
+        />
+        Native color picker
+      </label>
+    </div>
     <div style={{display: 'flex'}}>
       <PropertyCategoryFilter/>
       <PropertySearch/>

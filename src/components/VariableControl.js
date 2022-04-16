@@ -2,7 +2,7 @@ import {useState, Fragment, useContext} from 'react';
 import {TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
-import {COLOR_VALUE_REGEX, GRADIENT_REGEX} from './properties/ColorControl';
+import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from './properties/ColorControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import mediaQuery from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
@@ -14,13 +14,6 @@ const uniqueUsages = usages => {
     [usage.selector.replace(',', ',\n')]: usage,
   }), {});
   return Object.values(obj);
-  // return [
-  //   ...new Set(
-  //     cssVar.usages.map(
-  //       usage => usage.selector.replace(',', ',\n')
-  //     )
-  //   )
-  // ];
 };
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
@@ -52,7 +45,7 @@ const formatTitle = (name) => {
 };
 
 const previewValue = (value, cssVar, onClick, isDefault) => {
-  const size = '30px';
+  const size = PREVIEW_SIZE;
 
   const title = `${value}${ !isDefault ? '' : ' (default)' }`;
 
