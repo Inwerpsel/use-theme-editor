@@ -1,7 +1,8 @@
 import FontPicker from 'font-picker-react';
 import {Fragment, useEffect, useState} from 'react';
 import {getAllDefinedFonts} from '../../functions/getAllDefinedFonts';
-import {TextControl, SelectControl, CheckboxControl} from '@wordpress/components';
+import {TextControl, SelectControl} from '@wordpress/components';
+import {Checkbox} from '../Checkbox';
 const unquote = s => {
   return s.replace(/^"/, '').replace(/"$/, '');
 };
@@ -27,11 +28,9 @@ export const FontFamilyControl = props => {
   },[]);
 
   return <Fragment>
-    <CheckboxControl
-      label={'Use Google picker (might crash)'}
-      checked={googleOn}
-      onChange={() => setGoogleOn(!googleOn)}
-    />
+    <Checkbox controls={[googleOn, setGoogleOn]}>
+      Use Google picker (might crash)
+    </Checkbox>
     { !googleOn || fonts.length === 0 ? null : <FontPicker
       apiKey={googleApiKey}
       activeFontFamily={rawFamily(value)}

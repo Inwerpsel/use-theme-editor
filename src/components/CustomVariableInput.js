@@ -1,7 +1,7 @@
 import {useContext, useState} from 'react';
-import {CheckboxControl} from '@wordpress/components';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
 import {ThemeEditorContext} from './ThemeEditor';
+import {Checkbox} from './Checkbox';
 
 export const CustomVariableInput = () => {
   const [collapsed, setCollapsed] = useState(true);
@@ -19,11 +19,9 @@ export const CustomVariableInput = () => {
       }}
     >Add a custom variable{!collapsed && ' (collapse)'}</button>
     {!collapsed && <div>
-      <CheckboxControl
-        label={'Overwrite existing'}
-        checked={overwriteExisting}
-        onChange={() => setOverwriteExisting(!overwriteExisting)}
-      />
+      <Checkbox controls={[overwriteExisting, setOverwriteExisting]}>
+        Overwrite existing
+      </Checkbox>
       <form
         onSubmit={event => {
           dispatch({type: THEME_ACTIONS.SET, payload: {name, value}});

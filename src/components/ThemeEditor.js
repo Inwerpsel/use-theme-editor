@@ -1,11 +1,10 @@
-import {createContext, Fragment, useEffect, useMemo, useRef, useState} from 'react';
+import {createContext, useEffect, useMemo, useRef, useState} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {diffSummary, diffThemes} from '../functions/diffThemes';
 import {ResizableFrame} from './ResizableFrame';
-import {createPortal} from 'react-dom';
 import {ServerThemesList} from './ServerThemesList';
 import {exportCss, exportJson} from '../functions/export';
 import {GroupControl} from './GroupControl';
@@ -19,6 +18,7 @@ import {PropertySearch} from './PropertySearch';
 import {filterSearched} from '../functions/filterSearched';
 import {flipDebugMode} from './RenderInfo';
 import {byHexValue, extractColorUsages} from './properties/ColorControl';
+import {Checkbox} from './Checkbox';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -186,19 +186,9 @@ export const ThemeEditor = (props) => {
       <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
       <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
       <button onClick={() => setServerThemesCollapsed(!serverThemesCollapsed)}>server</button>
-      <label
-        style={ { marginBottom: '2px' } }
-      >
-        <input
-          type="checkbox"
-          readOnly
-          checked={ isResponsive }
-          onClick={() => {
-            setResponsive(!isResponsive);
-          }}
-        />
+      <Checkbox controls={[isResponsive, setResponsive]}>
         Responsive view
-      </label>
+      </Checkbox>
     </div>
     {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
 
@@ -256,32 +246,12 @@ export const ThemeEditor = (props) => {
       <ServerThemesList {...{serverThemes}}/>
     }
     <div style={{display: 'flex', gap: '4px'}}>
-      <label
-        style={ { marginBottom: '2px' } }
-      >
-        <input
-          type="checkbox"
-          readOnly
-          checked={ useDefaultsPalette }
-          onClick={() => {
-            setUseDefaultsPalette(!useDefaultsPalette);
-          }}
-        />
+      <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
         Include default palette
-      </label>
-      <label
-        style={ { marginBottom: '2px' } }
-      >
-        <input
-          type="checkbox"
-          readOnly
-          checked={ nativeColorPicker }
-          onClick={() => {
-            setNativeColorPicker(!nativeColorPicker);
-          }}
-        />
+      </Checkbox>
+      <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
         Native color picker
-      </label>
+      </Checkbox>
     </div>
     <div style={{display: 'flex'}}>
       <PropertyCategoryFilter/>
