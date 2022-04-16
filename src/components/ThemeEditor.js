@@ -182,9 +182,6 @@ export const ThemeEditor = (props) => {
         height,
       }} src={window.location.href}/>}
 
-    {!!isResponsive && createPortal(<Fragment>
-    </Fragment>, document.body)}
-
     <div className={'theme-editor-menu'}>
       <button onClick={() => setImportCollapsed(!importCollapsed)}>Import/export</button>
       <button onClick={() => setSheetDisablerCollapsed(!sheetsDisablerCollapsed)}>Stylesheets</button>
