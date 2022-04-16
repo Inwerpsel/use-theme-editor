@@ -37,21 +37,28 @@ const DEFAULT_STATE = {
 };
 
 const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
-  return Object.keys(fromState).filter(k => {
+  Object.keys(fromState).forEach(k => {
     if (Object.keys(previewProps).includes(k)) {
-      return false;
+      return;
     }
 
     if (Object.keys(previewPseudoVars).some(pseudo => k.includes(pseudo))) {
-      return false;
+      return;
     }
 
-    return !Object.keys(toState).includes(k);
-  }).forEach(k => keysToRemove[k] = true);
+    if (Object.keys(toState).includes(k)) {
+      return;
+    }
+    keysToRemove[k] = true;
+  });
 };
 
 export const THEME_ACTIONS = {
   SET: (state, { name, value }) => {
+    if (typeof value === 'object') {
+      console.log(value);
+      throw new Error('Called SET with an object');
+    }
     const { theme } = state;
     if (name === '' || theme[name] === value) {
       return state;
