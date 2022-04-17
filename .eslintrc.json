@@ -3,7 +3,9 @@
     "browser": true,
     "es6": true
   },
-  "extends": "eslint:recommended",
+  "extends": [
+    "plugin:react/recommended"
+  ],
   "rules": {
     "indent": [
       "error",
@@ -36,8 +38,10 @@
       {
         "ignoreRestSiblings": true
       }
-    ]
+    ],
+    "react/prop-types": "off"
   },
+  "parser": "@babel/eslint-parser",
   "parserOptions": {
     "ecmaVersion": 2018,
     "ecmaFeatures": {

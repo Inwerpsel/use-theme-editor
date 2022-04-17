@@ -1,4 +1,4 @@
-import {useState, Fragment, useContext} from 'react';
+import React, {useState, Fragment, useContext} from 'react';
 import {TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';

@@ -1,4 +1,4 @@
-import {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {ThemeEditorContext} from './ThemeEditor';
 

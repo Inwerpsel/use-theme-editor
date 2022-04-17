@@ -1,7 +1,7 @@
 import {SketchPicker as ColorPicker} from 'react-color';
 import {THEME_ACTIONS} from '../../hooks/useThemeEditor';
 import {TextControl} from '@wordpress/components';
-import {Fragment, useContext, useState} from 'react';
+import React, {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ThemePalettePicker} from '../ThemePalettePicker';
@@ -41,7 +41,9 @@ export const extractColorUsages = (theme, defaultValues) => {
     ...theme,
   };
 
-  return Object.values(Object.entries(combined).filter(([k]) => !INTERNAL_VARS_REGEX.test(k)).reduce(extractUsage, {}));
+  return Object.values(
+    Object.entries(combined).filter(([k]) => !INTERNAL_VARS_REGEX.test(k)).reduce(extractUsage, {})
+  );
 };
 
 export const byHexValue = ({color: color1}, { color: color2}) => {

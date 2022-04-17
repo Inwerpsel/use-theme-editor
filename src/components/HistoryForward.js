@@ -1,6 +1,6 @@
 import {diffSummary} from '../functions/diffThemes';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
 export function HistoryForward({future}) {

@@ -1,7 +1,7 @@
-import {  createPortal } from 'react-dom';
-import {Fragment, memo, useContext, useEffect} from 'react';
-import { RadioControl, RangeControl } from '@wordpress/components';
-import { useLocalStorage } from '../hooks/useLocalStorage';
+import {createPortal} from 'react-dom';
+import React, {Fragment, memo, useContext, useEffect} from 'react';
+import {RadioControl, RangeControl} from '@wordpress/components';
+import {useLocalStorage} from '../hooks/useLocalStorage';
 import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -63,7 +63,7 @@ export const ResizableFrame = props => {
 
   useEffect(() => {
     const orig = document.body.style.maxHeight;
-    const scrollPosition = window.pageYOffset;
+    const scrollPosition = window.scrollY;
     document.body.style.top = `-${ scrollPosition }px`;
     document.body.style.postition = 'sticky';
     document.body.style.maxHeight = '100vh';
@@ -71,7 +71,7 @@ export const ResizableFrame = props => {
     return () => {
       document.body.style.maxHeight = orig;
       document.body.style.position = 'static';
-      document.body.style.top = 0;
+      document.body.style.top = '0';
       window.scrollTo(0, scrollPosition);
       window.scrollTo({
         top: scrollPosition,

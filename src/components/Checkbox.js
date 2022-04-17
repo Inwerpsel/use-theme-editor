@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function Checkbox({controls: [enabled, setEnabled], children}) {
 
   return <label

@@ -1,7 +1,7 @@
-import {addHighlight, removeHighlight} from "../functions/highlight";
-import {VariableControl} from "./VariableControl";
-import {THEME_ACTIONS} from "../hooks/useThemeEditor";
-import {useContext} from 'react';
+import {addHighlight, removeHighlight} from '../functions/highlight';
+import {VariableControl} from './VariableControl';
+import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
 export const GroupControl = props => {
@@ -102,24 +102,24 @@ export const GroupControl = props => {
     </div>
     {isOpen && <ul>
       {vars.map(cssVar => {
-          const defaultValue = defaultValues[cssVar.name];
+        const defaultValue = defaultValues[cssVar.name];
 
-          return <VariableControl
-            {...{
-              cssVar,
-              defaultValue,
-            }}
-            initialOpen={vars.length === 1}
-            key={cssVar.name}
-            onChange={value => {
-              dispatch({type: THEME_ACTIONS.SET, payload: {name: cssVar.name, value}});
-            }}
-            onUnset={() => {
-              dispatch({type: THEME_ACTIONS.UNSET, payload: {name: cssVar.name}});
-            }}
-          />;
-        }
+        return <VariableControl
+          {...{
+            cssVar,
+            defaultValue,
+          }}
+          initialOpen={vars.length === 1}
+          key={cssVar.name}
+          onChange={value => {
+            dispatch({type: THEME_ACTIONS.SET, payload: {name: cssVar.name, value}});
+          }}
+          onUnset={() => {
+            dispatch({type: THEME_ACTIONS.UNSET, payload: {name: cssVar.name}});
+          }}
+        />;
+      }
       )}
     </ul>}
   </li>;
-}
+};

@@ -1,7 +1,6 @@
-import {RadioControl, SelectControl, TextControl} from '@wordpress/components';
-import {useState} from 'react';
+import {SelectControl} from '@wordpress/components';
+import React, {useState} from 'react';
 import {valuesAsLabels} from '../TypedControl';
-import button from '@wordpress/components/build/button';
 
 export const timeLikeProperties = [
   'transition-duration',
@@ -37,6 +36,7 @@ export const TimeControl = props => {
       } }
     />step
     {shortCuts.map(value => <button
+      key={value}
       disabled={number === value}
       onClick={() => {
         onChange(`${value}ms`);

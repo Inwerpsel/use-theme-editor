@@ -1,4 +1,4 @@
-import { compare } from 'specificity';
+import {compare} from 'specificity';
 import {sortForUI} from './groupVars';
 
 const pseudoStateRegex = /(:(hover|focus|active|disabled|visited))/g;
@@ -17,9 +17,7 @@ const getMaxMatchingSpecificity = (usages, element) => {
     const comparePart = (max, part) => {
       return element.matches(part) && compare(max, part) !== -1 ? part : max;
     };
-    const winningSelector = parts.reduce(comparePart);
-
-    usage.winningSelector = winningSelector;
+    usage.winningSelector = parts.reduce(comparePart);
 
     if (max === null) {
       return usage;

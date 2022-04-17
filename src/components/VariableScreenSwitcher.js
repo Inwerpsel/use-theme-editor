@@ -1,5 +1,5 @@
 import mediaQuery from 'css-mediaquery';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
 // Whether a variable is overridden by a later media query.
@@ -56,12 +56,13 @@ export const VariableScreenSwitcher = props => {
             event.preventDefault();
             event.stopPropagation();
           }}>
-          <span className={'variable-screen-switcher-screen'}
+          <span
+            className={'variable-screen-switcher-screen'}
             style={{
               width: `${width / 42}px`,
               height: `${height / 42}px`,
             }}
-          ></span>
+          />
         </button>
       </li>)}
   </ul>;

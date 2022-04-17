@@ -1,4 +1,4 @@
-import {Fragment, useContext, useRef} from 'react';
+import React, {Fragment, useContext, useRef} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 import {useHotkeys} from 'react-hotkeys-hook';
 
@@ -20,7 +20,7 @@ export function PropertySearch() {
         marginRight: !value ? '4px' : '24px',
         flexShrink: 1,
         maxWidth: '52%',
-    }}
+      }}
       autoComplete={'on'}
       placeholder={'search (cmd+/ or ctrl+/)'}
       type='text'

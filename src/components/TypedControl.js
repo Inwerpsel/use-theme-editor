@@ -1,5 +1,5 @@
 import {SelectControl, TextControl} from '@wordpress/components';
-import {Fragment} from 'react';
+import React, {Fragment} from 'react';
 import {ShadowPicker} from 'react-shadow-picker';
 import {FontFamilyControl} from './properties/FontFamilyControl';
 import {ColorControl} from './properties/ColorControl';

@@ -36,7 +36,7 @@ export const applyPseudoPreviews = (defaultValues, resolvedValues, previewPseudo
 
     const tmpValue = values[varToPreview] || defaultValues[varToPreview];
 
-    // Set the regular property to what the pseudo element's value is.
+    // Set the regular property to what the pseudo-element's value is.
     return {
       ...values,
       [k]: tmpValue,

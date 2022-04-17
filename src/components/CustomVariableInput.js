@@ -1,4 +1,4 @@
-import {useContext, useState} from 'react';
+import React, {useContext, useState} from 'react';
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
 import {ThemeEditorContext} from './ThemeEditor';
 import {Checkbox} from './Checkbox';

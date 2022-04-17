@@ -1,5 +1,5 @@
 import {THEME_ACTIONS} from '../hooks/useThemeEditor';
-import {useContext} from 'react';
+import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 import {PREVIEW_SIZE} from './properties/ColorControl';
 

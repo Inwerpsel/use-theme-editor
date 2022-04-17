@@ -19,7 +19,7 @@ const getGoogleSheetRules = async href => {
   } catch (e) {
     // Proceed with an empty style element, so it doesn't get retried over and over.
     css = '';
-    console.info(`Failed fetching sheet ${href}`)
+    console.info(`Failed fetching sheet ${href}`);
   }
 
   const style = document.createElement('style');
@@ -49,7 +49,7 @@ const collectFontVariant = async (fonts, {style: {fontFamily, fontWeight, fontSt
       }
     }
   };
-}
+};
 
 const extractFonts = async (fonts, sheet) => {
   const rules = sheet.href?.startsWith(GOOGLE_FONTS_URL) ? await getGoogleSheetRules(sheet.href) : sheet.rules;

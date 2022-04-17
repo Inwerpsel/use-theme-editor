@@ -1,4 +1,4 @@
-import {createContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, useEffect, useMemo, useRef, useState} from 'react';
 import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -37,7 +37,7 @@ export const ThemeEditor = (props) => {
     allVars,
   } = props;
 
-  const [openGroups, setOpenGroups] = useState([]);
+  const [openGroups, setOpenGroups] = useState(unfilteredGroups[0]?.label);
   const toggleGroup = id => {
     const newGroups = openGroups.includes(id)
       ? openGroups.filter(openId => openId !== id)
@@ -45,10 +45,12 @@ export const ThemeEditor = (props) => {
 
     setOpenGroups(newGroups);
   };
-  const openFirstGroup = () => {
-    setOpenGroups([!unfilteredGroups[0] ? null : unfilteredGroups[0].label]);
-  };
-  useEffect(openFirstGroup, [unfilteredGroups]);
+  // Open first group.
+  useEffect(() => {
+    if (unfilteredGroups.length > 0 && openGroups !== [unfilteredGroups[0].label]) {
+      setOpenGroups([unfilteredGroups[0]?.label]);
+    }
+  }, [unfilteredGroups]);
 
   const [
     {
@@ -139,7 +141,7 @@ export const ThemeEditor = (props) => {
     colorUsages,
     setSheetDisablerCollapsed,
     ...settings,
-  }}><div className='theme-editor' >
+  }}><div className="theme-editor">
     {!!isResponsive && <ResizableFrame src={window.location.href}/>}
 
     <div className={'theme-editor-menu'}>
@@ -162,10 +164,10 @@ export const ThemeEditor = (props) => {
 
     <ThemeUploadPanel/>
 
-    {!serverThemesCollapsed && serverThemesLoading
+    {!serverThemesCollapsed && (serverThemesLoading
       ? <div>Loading server themes...</div>
       : <ServerThemesList/>
-    }
+    )}
 
     <div style={{display: 'flex', gap: '4px'}}>
       <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
@@ -190,7 +192,7 @@ export const ThemeEditor = (props) => {
     </div>
 
     <ul className={'group-list'}>
-      {groups.map(group => <GroupControl isOpen={openGroups.includes(group.label)} {...{group, toggleGroup}} />)}
+      {groups.map(group => <GroupControl key={group.label} isOpen={openGroups.includes(group.label)} {...{group, toggleGroup}} />)}
     </ul>
   </div></ThemeEditorContext.Provider>;
 };

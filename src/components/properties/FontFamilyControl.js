@@ -1,5 +1,5 @@
 import FontPicker from 'font-picker-react';
-import {Fragment, useEffect, useState} from 'react';
+import React, {Fragment, useEffect, useState} from 'react';
 import {getAllDefinedFonts} from '../../functions/getAllDefinedFonts';
 import {TextControl, SelectControl} from '@wordpress/components';
 import {Checkbox} from '../Checkbox';
@@ -18,13 +18,12 @@ export const FontFamilyControl = props => {
   const [fonts, setFonts] = useState([]);
 
   useEffect(() => {
-    const loadFonts = async () => {
+    (async () => {
       const tStart = performance.now();
       const loaded = await getAllDefinedFonts();
       console.info(`Loaded ${loaded.length} fonts in ms`, performance.now() - tStart);
       setFonts(loaded);
-    };
-    loadFonts();
+    })();
   },[]);
 
   return <Fragment>

@@ -1,9 +1,9 @@
 import {useLocalStorage} from '../hooks/useLocalStorage';
-import {useContext, useEffect, useRef} from 'react';
+import React, {useContext, useEffect, useRef} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 import {ServerThemesListItem} from './ServerThemesListItem';
 
-export const ServerThemesList = props => {
+export const ServerThemesList = () => {
   const activeThemeRef = useRef();
 
   const {
@@ -23,7 +23,7 @@ export const ServerThemesList = props => {
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [serverThemes])
+  }, [serverThemes]);
 
   return <ul
     className={'server-theme-list'}
@@ -33,7 +33,7 @@ export const ServerThemesList = props => {
     style={{resize: 'vertical', height: serverThemesHeight}}
   >
     {Object.entries(serverThemes).map(([name, serverTheme]) =>
-      <ServerThemesListItem {...{name, serverTheme, activeThemeRef}}/>
+      <ServerThemesListItem key={name} {...{name, serverTheme, activeThemeRef}}/>
     )}
   </ul>;
 };
