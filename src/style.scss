@@ -350,3 +350,8 @@ div[id^=font-picker] ul {
   //background-color: rgba(255, 240, 17);
   background-color: rgba(255, 240, 17, var(--bg-opacity));
 }
+
+.theme-editor .history-button {
+  padding-left: 2px;
+  padding-right: 2px;
+}

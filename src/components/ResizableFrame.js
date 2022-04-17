@@ -35,13 +35,13 @@ const MemoedRadioControl = memo(WrapRadioControl);
 export const ResizableFrame = props => {
   const {
     src,
-    frameRef,
-    width,
-    height,
   } = props;
 
   const {
+    frameRef,
+    width,
     setWidth,
+    height,
     setHeight,
     isSimpleSizes,
     setIsSimpleSizes,

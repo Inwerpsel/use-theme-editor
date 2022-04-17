@@ -13,14 +13,16 @@ const filters = {
   },
 };
 
-const WrappedSelectControl = ({propertyFilter,setPropertyFilter  }) => <SelectControl
+const options = Object.entries(filters).map(([value, {label}]) => ({value, label}));
+
+const WrappedSelectControl = ({propertyFilter, setPropertyFilter}) => <SelectControl
   className={'property-category-filter'}
-  style={{
-    display: 'inline',
-  }}
+  title={'Filter by category'}
   value={propertyFilter || 'all'}
-  onChange={v => setPropertyFilter(v)}
-  options={Object.entries(filters).map(([value, {label}]) => ({value, label}))}
+  onChange={setPropertyFilter}
+  {...{
+    options,
+  }}
 />;
 
 const MemoedSelectControl = memo(WrappedSelectControl);
@@ -31,5 +33,5 @@ export function PropertyCategoryFilter() {
     setPropertyFilter,
   } = useContext(ThemeEditorContext);
 
-  return <MemoedSelectControl {...{propertyFilter, setPropertyFilter}}/>;
+  return <div style={{flexShrink: 0}}><MemoedSelectControl {...{propertyFilter, setPropertyFilter}}/></div>;
 }

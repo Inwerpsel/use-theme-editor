@@ -7,11 +7,15 @@ import {ThemeEditorContext} from './ThemeEditor';
 export const GroupControl = props => {
   const {
     isOpen,
-    element,
-    vars,
     toggleGroup,
-    label,
+    group,
   } = props;
+
+  const {
+    element,
+    label,
+    vars,
+  } = group;
 
   const {
     frameRef,

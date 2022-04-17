@@ -3,7 +3,7 @@ import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
-import {diffSummary, diffThemes} from '../functions/diffThemes';
+import {diffThemes} from '../functions/diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ServerThemesList';
 import {GroupControl} from './GroupControl';
@@ -20,10 +20,13 @@ import {Checkbox} from './Checkbox';
 import {ToggleButton} from './ToggleButton';
 import {ImportExportTools} from './ImportExportTools';
 import {ThemeUploadPanel} from './ThemeUploadPanel';
+import {HistoryBack} from './HistoryBack';
+import {HistoryForward} from './HistoryForward';
+import {useGlobalSettings} from '../hooks/useGlobalSettings';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
-}
+};
 
 export const ThemeEditorContext = createContext({});
 
@@ -33,6 +36,7 @@ export const ThemeEditor = (props) => {
     groups: unfilteredGroups,
     allVars,
   } = props;
+
   const [openGroups, setOpenGroups] = useState([]);
   const toggleGroup = id => {
     const newGroups = openGroups.includes(id)
@@ -42,8 +46,8 @@ export const ThemeEditor = (props) => {
     setOpenGroups(newGroups);
   };
   const openFirstGroup = () => {
-    setOpenGroups([unfilteredGroups[0]?.label]);
-  }
+    setOpenGroups([!unfilteredGroups[0] ? null : unfilteredGroups[0].label]);
+  };
   useEffect(openFirstGroup, [unfilteredGroups]);
 
   const [
@@ -56,11 +60,22 @@ export const ThemeEditor = (props) => {
     dispatch,
   ] = useThemeEditor({allVars});
 
+  const frameRef = useRef(null);
+  const settings = useGlobalSettings(frameRef);
+  const {
+    propertyFilter,
+    propertySearch,
+    fileName,
+    isResponsive, setResponsive,
+    isSimpleSizes,
+    useDefaultsPalette, setUseDefaultsPalette,
+    nativeColorPicker, setNativeColorPicker,
+  } = settings;
+
+  // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
   const [importCollapsed, setImportCollapsed] = useState(true);
   const [serverThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
-  const [propertyFilter, setPropertyFilter] = useLocalStorage('property-filter', 'all');
-  const [propertySearch, setPropertySearch] = useLocalStorage('property-search', '');
 
   const groups = useMemo(() => {
     const searched = filterSearched(unfilteredGroups, propertySearch);
@@ -70,29 +85,10 @@ export const ThemeEditor = (props) => {
     return searched.map(group => ({
       ...group,
       vars: group.vars.filter(cssVar => cssVar.usages.some(usage => isColorProperty(usage.property)))
-    }))
-  }, [unfilteredGroups, propertyFilter, propertySearch])
-
-  const [fileName, setFileName] = useLocalStorage('p4-theme-name', 'theme');
-  const [isResponsive, setResponsive] = useLocalStorage('p4-theme-responsive', false);
-
-  const [
-    width,
-    setWidth,
-  ] = useLocalStorage('responsive-width', 360);
-
-  const [
-    height,
-    setHeight,
-  ] = useLocalStorage('responsive-height', 640);
-
-  const [isSimpleSizes, setIsSimpleSizes] = useLocalStorage('responsive-simple-sizes', true);
+    }));
+  }, [unfilteredGroups, propertyFilter, propertySearch]);
 
   const screenOptions = isSimpleSizes ? simpleScreenOptions : allScreenOptions;
-
-  useHotkeys('alt+v', () => {
-    setResponsive(!isResponsive);
-  }, [isResponsive]);
 
   useHotkeys('alt+r', () => {
     flipDebugMode();
@@ -124,26 +120,6 @@ export const ThemeEditor = (props) => {
     }
   },hotkeysOptions, [fileName, modifiedServerVersion, theme]);
 
-  const frameRef = useRef(null);
-
-  const [frameClickBehavior, setFrameClickBehavior] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
-
-  useHotkeys('alt+a', () => {
-    setFrameClickBehavior(value => value=== 'alt' ? 'any' : 'alt');
-  }, [frameClickBehavior]);
-
-  useEffect(() => {
-    if (!isResponsive || !frameRef?.current) {
-      return;
-    }
-    const message = {type: 'theme-edit-alt-click', payload: {frameClickBehavior}};
-    frameRef.current.contentWindow.postMessage(message, window.location.origin);
-
-  }, [frameClickBehavior, frameRef.current, isResponsive])
-
-  const [useDefaultsPalette, setUseDefaultsPalette] = useLocalStorage('use-defaults-palette', false);
-  const [nativeColorPicker, setNativeColorPicker] = useLocalStorage('native-color-picker', true);
-
   const colorUsages = useMemo(
     () => extractColorUsages(theme, !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
     [theme, defaultValues, useDefaultsPalette],
@@ -154,25 +130,17 @@ export const ThemeEditor = (props) => {
     dispatch,
     defaultValues,
     frameRef,
-    width, setWidth,
-    height, setHeight,
-    isSimpleSizes, setIsSimpleSizes,
     screenOptions,
-    propertyFilter, setPropertyFilter,
-    propertySearch, setPropertySearch,
-    frameClickBehavior, setFrameClickBehavior,
     serverThemes,
+    uploadTheme,
+    deleteTheme,
     existsOnServer,
     modifiedServerVersion,
-    deleteTheme,
-    fileName, setFileName,
     colorUsages,
-    nativeColorPicker,
     setSheetDisablerCollapsed,
-  }}><div
-    className='theme-editor'
-  >
-    {!!isResponsive && <ResizableFrame src={window.location.href} {...{frameRef, width, height}}/>}
+    ...settings,
+  }}><div className='theme-editor' >
+    {!!isResponsive && <ResizableFrame src={window.location.href}/>}
 
     <div className={'theme-editor-menu'}>
       <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
@@ -192,13 +160,13 @@ export const ThemeEditor = (props) => {
 
     {!importCollapsed && <ImportExportTools/>}
 
-    <ThemeUploadPanel {...{uploadTheme, serverThemes}}/>
+    <ThemeUploadPanel/>
 
-    { !serverThemesCollapsed && serverThemesLoading && <div>Loading server themes...</div> }
-
-    {!serverThemesCollapsed && !!serverThemes && !serverThemesLoading &&
-      <ServerThemesList {...{serverThemes}}/>
+    {!serverThemesCollapsed && serverThemesLoading
+      ? <div>Loading server themes...</div>
+      : <ServerThemesList/>
     }
+
     <div style={{display: 'flex', gap: '4px'}}>
       <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
         Include default palette
@@ -207,38 +175,22 @@ export const ThemeEditor = (props) => {
         Native color picker
       </Checkbox>
     </div>
-    <div style={{display: 'flex'}}>
+    <CustomVariableInput/>
+    <div style={{
+      display: 'flex',
+      alignItems: 'flex-start',
+      width: 'var(--theme-editor--ul--width, 360px)',
+    }}>
       <PropertyCategoryFilter/>
       <PropertySearch/>
-    </div>
-    <CustomVariableInput/>
-    <div>
-      <button
-        style={{float: 'right'}}
-        disabled={future.length === 0}
-        title={future.length === 0 ? 'No future' : diffSummary(theme, future[0])}
-        onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_FORWARD})}
-      >redo
-      </button>
-      <button
-        style={{float: 'right'}}
-        disabled={history.length === 0}
-        title={history.length === 0 ? 'No history' : diffSummary(history[0], theme)}
-        onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD})}
-      >undo
-      </button>
+      <div>
+        <HistoryBack {...{history}}/>
+        <HistoryForward {...{future}}/>
+      </div>
     </div>
 
     <ul className={'group-list'}>
-      { groups.map(({ element, label, vars }) => <GroupControl
-        {...{
-          element,
-          label,
-          vars,
-          toggleGroup,
-        }}
-        isOpen={openGroups.includes(label)}
-      />) }
+      {groups.map(group => <GroupControl isOpen={openGroups.includes(group.label)} {...{group, toggleGroup}} />)}
     </ul>
   </div></ThemeEditorContext.Provider>;
 };

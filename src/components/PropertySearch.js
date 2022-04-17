@@ -1,4 +1,4 @@
-import {useContext, useRef} from 'react';
+import {Fragment, useContext, useRef} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 import {useHotkeys} from 'react-hotkeys-hook';
 
@@ -14,8 +14,13 @@ export function PropertySearch() {
     ref?.current?.focus();
   });
 
-  return <div>
+  return <Fragment>
     <input
+      style={{
+        marginRight: !value ? '4px' : '24px',
+        flexShrink: 1,
+        maxWidth: '52%',
+    }}
       autoComplete={'on'}
       placeholder={'search (cmd+/ or ctrl+/)'}
       type='text'
@@ -23,9 +28,9 @@ export function PropertySearch() {
       onChange={event => setPropertySearch(event.currentTarget.value)}
     />
     {!!value && <button
-      style={{position: 'relative', right: '27px'}}
+      style={{position: 'relative', right: '48px', width: '30px'}}
       title="clear"
       onClick={() => setPropertySearch('')}
     >x</button>}
-  </div>;
+  </Fragment>;
 }

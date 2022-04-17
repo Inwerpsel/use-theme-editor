@@ -13,9 +13,9 @@ export const CustomVariableInput = () => {
   const varExists = name in theme;
   const isValidName = /^--[a-zA-Z0-9][a-zA-Z0-9_-]+/.test(name);
 
-  return <div>
+  return <div style={{marginBottom: '8px'}}>
     <ToggleButton controls={[collapsed, setCollapsed]}>
-      Add a custom variable{!collapsed && ' (collapse)'}
+      Custom variable
     </ToggleButton>
     {!collapsed && <div>
       <form
@@ -30,7 +30,7 @@ export const CustomVariableInput = () => {
           type="text"
           value={name || '--'}
           onChange={({target: {value}}) => {
-            setName(value.replace(/^-*/, '--'));
+            setName(value.replace(' ', '-').replace(/^-*/, '--'));
           }}
         />
         <br/>
@@ -41,14 +41,16 @@ export const CustomVariableInput = () => {
         >Add
         </button>
       </form>
-      {varExists && <button onClick={() => {
-        dispatch({type: THEME_ACTIONS.UNSET, payload: {name}});
-      }}>Unset</button>}
-      {varExists && <Checkbox controls={[overwriteExisting, setOverwriteExisting]}>
-        Overwrite existing
-      </Checkbox>}
       {varExists && <div>
-        Current value: {theme[name]}
+        <button onClick={() => {
+          dispatch({type: THEME_ACTIONS.UNSET, payload: {name}});
+        }}>Unset</button>
+        <Checkbox controls={[overwriteExisting, setOverwriteExisting]}>
+          Confirm overwrite existing
+        </Checkbox>
+        <div>
+          Current value: {theme[name]}
+        </div>
       </div>}
     </div>}
   </div>;

@@ -2,12 +2,14 @@ import {diffSummary} from '../functions/diffThemes';
 import {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
-export function ThemeUploadPanel({uploadTheme, serverThemes}) {
+export function ThemeUploadPanel() {
   const {
     fileName,
     setFileName,
     existsOnServer,
     modifiedServerVersion,
+    serverThemes,
+    uploadTheme,
     theme,
   } = useContext(ThemeEditorContext);
 

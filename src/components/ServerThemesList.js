@@ -4,14 +4,10 @@ import {ThemeEditorContext} from './ThemeEditor';
 import {ServerThemesListItem} from './ServerThemesListItem';
 
 export const ServerThemesList = props => {
-  const {
-    serverThemes,
-  } = props;
-
   const activeThemeRef = useRef();
 
   const {
-    serverThemesCollapsed,
+    serverThemes,
   } = useContext(ThemeEditorContext);
 
   const [
@@ -27,7 +23,7 @@ export const ServerThemesList = props => {
     return () => {
       window.clearTimeout(timeout);
     };
-  }, [serverThemes, serverThemesCollapsed])
+  }, [serverThemes])
 
   return <ul
     className={'server-theme-list'}
