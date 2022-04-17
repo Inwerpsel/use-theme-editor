@@ -37,18 +37,14 @@ export const ThemeEditor = (props) => {
     allVars,
   } = props;
 
-  const [openGroups, setOpenGroups] = useState([unfilteredGroups[0]?.label]);
-  const toggleGroup = id => {
-    const newGroups = openGroups.includes(id)
-      ? openGroups.filter(openId => openId !== id)
-      : [...openGroups, id];
-
-    setOpenGroups(newGroups);
-  };
+  const [openGroups, setOpenGroups] = useState({[unfilteredGroups[0]?.label]: true});
+  const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
   useEffect(() => {
-    if (unfilteredGroups.length > 0 && openGroups !== [unfilteredGroups[0].label]) {
-      setOpenGroups([unfilteredGroups[0]?.label]);
+    if (unfilteredGroups.length > 0) {
+      setOpenGroups({
+        [unfilteredGroups[0].label]: true,
+      });
     }
   }, [unfilteredGroups]);
 
@@ -191,10 +187,7 @@ export const ThemeEditor = (props) => {
       </div>
 
       <ul className={'group-list'}>
-        {groups.map(group => <GroupControl key={group.label} isOpen={openGroups.includes(group.label)} {...{
-          group,
-          toggleGroup,
-        }} />)}
+        {groups.map(group => <GroupControl key={group.label} {...{group, toggleGroup, openGroups}} />)}
       </ul>
     </div>
   </ThemeEditorContext.Provider>;

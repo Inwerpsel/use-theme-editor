@@ -6,9 +6,9 @@ import {ThemeEditorContext} from './ThemeEditor';
 
 export const GroupControl = props => {
   const {
-    isOpen,
     toggleGroup,
     group,
+    openGroups,
   } = props;
 
   const {
@@ -23,6 +23,8 @@ export const GroupControl = props => {
     dispatch,
     propertyFilter,
   } = useContext(ThemeEditorContext);
+
+  const isOpen = !!openGroups[group.label];
 
   return <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
     <div
