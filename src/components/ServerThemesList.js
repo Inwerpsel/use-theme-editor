@@ -8,6 +8,7 @@ export const ServerThemesList = () => {
 
   const {
     serverThemes,
+    serverThemesLoading,
   } = useContext(ThemeEditorContext);
 
   const [
@@ -16,6 +17,9 @@ export const ServerThemesList = () => {
   ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
 
   useEffect(() => {
+    if (serverThemesLoading) {
+      return;
+    }
     const timeout = window.setTimeout(() => {
       activeThemeRef.current?.scrollIntoView();
     }, 200);
@@ -24,6 +28,10 @@ export const ServerThemesList = () => {
       window.clearTimeout(timeout);
     };
   }, [serverThemes]);
+
+  if (serverThemesLoading) {
+    return <div style={{height: serverThemesHeight}}>Loading server themes...</div>;
+  }
 
   return <ul
     className={'server-theme-list'}

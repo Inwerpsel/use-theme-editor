@@ -25,7 +25,7 @@ export const useServerThemes = (config) => {
 
   return {
     serverThemes,
-    loading,
+    serverThemesLoading: loading,
     uploadTheme: async (name, theme) => {
       setLoading(true);
       await uploadTheme(name, theme);

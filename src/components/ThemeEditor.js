@@ -37,7 +37,7 @@ export const ThemeEditor = (props) => {
     allVars,
   } = props;
 
-  const [openGroups, setOpenGroups] = useState(unfilteredGroups[0]?.label);
+  const [openGroups, setOpenGroups] = useState([unfilteredGroups[0]?.label]);
   const toggleGroup = id => {
     const newGroups = openGroups.includes(id)
       ? openGroups.filter(openId => openId !== id)
@@ -106,7 +106,7 @@ export const ThemeEditor = (props) => {
 
   const {
     serverThemes,
-    loading: serverThemesLoading,
+    serverThemesLoading,
     uploadTheme,
     deleteTheme,
   } = useServerThemes(config.serverThemes);
@@ -134,6 +134,7 @@ export const ThemeEditor = (props) => {
     frameRef,
     screenOptions,
     serverThemes,
+    serverThemesLoading,
     uploadTheme,
     deleteTheme,
     existsOnServer,
@@ -141,58 +142,60 @@ export const ThemeEditor = (props) => {
     colorUsages,
     setSheetDisablerCollapsed,
     ...settings,
-  }}><div className="theme-editor">
-    {!!isResponsive && <ResizableFrame src={window.location.href}/>}
+  }}>
+    <div className="theme-editor">
+      {!!isResponsive && <ResizableFrame src={window.location.href}/>}
 
-    <div className={'theme-editor-menu'}>
-      <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
-        Import/export
-      </ToggleButton>
-      <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
-        Stylesheets
-      </ToggleButton>
-      <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
-        Server
-      </ToggleButton>
-      <Checkbox controls={[isResponsive, setResponsive]}>
-        Responsive view
-      </Checkbox>
-    </div>
-    {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
-
-    {!importCollapsed && <ImportExportTools/>}
-
-    <ThemeUploadPanel/>
-
-    {!serverThemesCollapsed && (serverThemesLoading
-      ? <div>Loading server themes...</div>
-      : <ServerThemesList/>
-    )}
-
-    <div style={{display: 'flex', gap: '4px'}}>
-      <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
-        Include default palette
-      </Checkbox>
-      <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
-        Native color picker
-      </Checkbox>
-    </div>
-    <CustomVariableInput/>
-    <div style={{
-      display: 'flex',
-      alignItems: 'flex-start',
-      width: 'var(--theme-editor--ul--width, 360px)',
-    }}>
-      <PropertyCategoryFilter/>
-      <PropertySearch/>
-      <div>
-        <HistoryBack {...{history}}/>
-        <HistoryForward {...{future}}/>
+      <div className={'theme-editor-menu'}>
+        <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
+          Import/export
+        </ToggleButton>
+        <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
+          Stylesheets
+        </ToggleButton>
+        <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
+          Server
+        </ToggleButton>
+        <Checkbox controls={[isResponsive, setResponsive]}>
+          Responsive view
+        </Checkbox>
       </div>
-    </div>
+      {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
 
-    <ul className={'group-list'}>
-      {groups.map(group => <GroupControl key={group.label} isOpen={openGroups.includes(group.label)} {...{group, toggleGroup}} />)}
-    </ul>
-  </div></ThemeEditorContext.Provider>;
+      {!importCollapsed && <ImportExportTools/>}
+
+      <ThemeUploadPanel/>
+
+      {!serverThemesCollapsed && <ServerThemesList/>}
+
+      <div style={{display: 'flex', gap: '4px'}}>
+        <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
+          Include default palette
+        </Checkbox>
+        <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
+          Native color picker
+        </Checkbox>
+      </div>
+      <CustomVariableInput/>
+      <div style={{
+        display: 'flex',
+        alignItems: 'flex-start',
+        width: 'var(--theme-editor--ul--width, 360px)',
+      }}>
+        <PropertyCategoryFilter/>
+        <PropertySearch/>
+        <div>
+          <HistoryBack {...{history}}/>
+          <HistoryForward {...{future}}/>
+        </div>
+      </div>
+
+      <ul className={'group-list'}>
+        {groups.map(group => <GroupControl key={group.label} isOpen={openGroups.includes(group.label)} {...{
+          group,
+          toggleGroup,
+        }} />)}
+      </ul>
+    </div>
+  </ThemeEditorContext.Provider>;
 };
