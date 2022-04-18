@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
-import {generateId} from './ServerThemesCount';
+import {generateId, useId} from '../hooks/useId';
 
 const stats = {};
 const handles = {};
@@ -21,7 +21,7 @@ export const flipDebugMode = () => {
 };
 
 export function RenderInfo() {
-  const [id] = useState(generateId);
+  const id = useId();
   const lastDebugMode = useRef(getDebugMode());
   const [, forceRefresh] = useState();
 
