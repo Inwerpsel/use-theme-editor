@@ -1,4 +1,4 @@
-const toSelectOptions = options => options.map(({ dims, label }) => ({
+export const toSelectOptions = options => options.map(({ dims, label }) => ({
   label: `${label} (${dims.join(' x ')})`,
   value: dims.join(),
   dims,
