@@ -1,5 +1,5 @@
 import React, {createContext, useEffect, useMemo, useRef, useState} from 'react';
-import {THEME_ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
+import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
@@ -93,11 +93,11 @@ export const ThemeEditor = (props) => {
   }, []);
 
   useHotkeys('ctrl+z,cmd+z', () => {
-    dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD});
+    dispatch({type: ACTIONS.historyBackward});
   }, hotkeysOptions);
 
   useHotkeys('ctrl+shift+z,cmd+shift+z', () => {
-    dispatch({type: THEME_ACTIONS.HISTORY_FORWARD});
+    dispatch({type: ACTIONS.historyForward});
   }, hotkeysOptions);
 
   const {

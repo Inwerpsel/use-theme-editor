@@ -53,11 +53,11 @@ const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
   });
 };
 
-export const THEME_ACTIONS = {
-  SET: (state, { name, value }) => {
+export const ACTIONS = {
+  set: (state, { name, value }) => {
     if (typeof value === 'object') {
       console.log(value);
-      throw new Error('Called SET with an object');
+      throw new Error('Called set with an object');
     }
     const { theme } = state;
     if (name === '' || theme[name] === value) {
@@ -75,7 +75,7 @@ export const THEME_ACTIONS = {
       lastSet: { ...state.lastSet, [name]: performance.now(), }
     };
   },
-  UNSET: (state, { name }) => {
+  unset: (state, { name }) => {
     if (!(name in state.theme)) {
       return state;
     }
@@ -93,7 +93,7 @@ export const THEME_ACTIONS = {
       future: [],
     };
   },
-  START_PREVIEW: (state, { name, value }) => {
+  startPreview: (state, { name, value }) => {
     return {
       ...state,
       previewProps: {
@@ -102,7 +102,7 @@ export const THEME_ACTIONS = {
       }
     };
   },
-  END_PREVIEW: (state, { name }) => {
+  endPreview: (state, { name }) => {
     const {
       [name]: previewedValue,
       ...otherProps
@@ -118,7 +118,7 @@ export const THEME_ACTIONS = {
       previewProps: { ...otherProps },
     };
   },
-  START_PREVIEW_PSEUDO_STATE: (state, { name }) => {
+  startPreviewPseudoState: (state, { name }) => {
     const element = name.replace(PSEUDO_REGEX, '--').replace(/\w+(-\w+)*$/, '');
 
     const pseudoState = (name.match(PSEUDO_REGEX) || [null])[0];
@@ -131,7 +131,7 @@ export const THEME_ACTIONS = {
       },
     };
   },
-  END_PREVIEW_PSEUDO_STATE: (state, { name }) => {
+  endPreviewPseudoState: (state, { name }) => {
     const elementToEnd = name.replace(PSEUDO_REGEX, '--').replace(PROP_REGEX, '');
 
     const {
@@ -158,7 +158,7 @@ export const THEME_ACTIONS = {
       previewPseudoVars: otherPseudos,
     };
   },
-  HISTORY_BACKWARD: (state) => {
+  historyBackward: (state) => {
     const { theme, history, future, previewProps, previewPseudoVars } = state;
 
     if (history.length === 0) {
@@ -177,7 +177,7 @@ export const THEME_ACTIONS = {
       ],
     };
   },
-  HISTORY_FORWARD: (state) => {
+  historyForward: (state) => {
     const { theme, history, future, previewProps, previewPseudoVars } = state;
     if (future.length === 0) {
       return state;
@@ -196,7 +196,7 @@ export const THEME_ACTIONS = {
       ]
     };
   },
-  LOAD_THEME: ({ defaultValues, history, theme: oldTheme }, { theme }) => {
+  loadTheme: ({ defaultValues, history, theme: oldTheme }, { theme }) => {
     dropProps(oldTheme, theme, {}, {});
     Object.keys(lastWritten).forEach(k => lastWritten[k] = null);
     Object.keys(theme).forEach(k => keysToRemove[k] = true);
@@ -210,7 +210,7 @@ export const THEME_ACTIONS = {
   }
 };
 
-const reducer = reducerOf(THEME_ACTIONS);
+const reducer = reducerOf(ACTIONS);
 
 const writeNewValues = theme => {
   Object.keys(theme).forEach((k) => {

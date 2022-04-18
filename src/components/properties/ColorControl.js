@@ -1,5 +1,5 @@
 import {SketchPicker as ColorPicker} from 'react-color';
-import {THEME_ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS} from '../../hooks/useThemeEditor';
 import {TextControl} from '@wordpress/components';
 import React, {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
@@ -123,8 +123,8 @@ export const ColorControl = props => {
         <button
           onClick={() => {
             value === 'transparent'
-              ? dispatch({type: THEME_ACTIONS.UNSET, payload: {name}})
-              : dispatch({type: THEME_ACTIONS.SET, payload: {name, value: 'transparent'}});
+              ? dispatch({type: ACTIONS.unset, payload: {name}})
+              : dispatch({type: ACTIONS.set, payload: {name, value: 'transparent'}});
           }}
           style={ {
             fontSize: '12px',
@@ -175,8 +175,8 @@ export const ColorControl = props => {
     <button
       onClick={() => {
         value === 'transparent'
-          ? dispatch({type: THEME_ACTIONS.UNSET, payload: {name}})
-          : dispatch({type: THEME_ACTIONS.SET, payload: {name, value: 'transparent'}});
+          ? dispatch({type: ACTIONS.unset, payload: {name}})
+          : dispatch({type: ACTIONS.set, payload: {name, value: 'transparent'}});
       }}
       style={ {
         fontSize: '12px',

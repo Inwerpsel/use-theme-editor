@@ -1,4 +1,4 @@
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 
 export const readFromUploadedFile = (dispatch, event) => {
   const reader = new FileReader();
@@ -6,7 +6,7 @@ export const readFromUploadedFile = (dispatch, event) => {
   reader.onload = event => {
     try {
       const theme = JSON.parse(event.target.result);
-      dispatch({ type: THEME_ACTIONS.LOAD_THEME, payload: { theme } });
+      dispatch({ type: ACTIONS.loadTheme, payload: { theme } });
     } catch (e) {
       console.log('File contents is not valid JSON.', event.target.result, event);
     }

@@ -1,6 +1,6 @@
 import React, {useState, Fragment, useContext} from 'react';
 import {TypedControl} from './TypedControl';
-import { PSEUDO_REGEX, THEME_ACTIONS} from '../hooks/useThemeEditor';
+import { PSEUDO_REGEX, ACTIONS} from '../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from './properties/ColorControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
@@ -208,13 +208,13 @@ export const VariableControl = (props) => {
       <div
         onMouseEnter={ () => {
           PSEUDO_REGEX.test(name) && dispatch({
-            type: THEME_ACTIONS.START_PREVIEW_PSEUDO_STATE,
+            type: ACTIONS.startPreviewPseudoState,
             payload: { name }
           });
         } }
         onMouseLeave={ () => {
           PSEUDO_REGEX.test(name) && dispatch({
-            type: THEME_ACTIONS.END_PREVIEW_PSEUDO_STATE,
+            type: ACTIONS.endPreviewPseudoState,
             payload: { name }
           });
         } }

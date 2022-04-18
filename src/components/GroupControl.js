@@ -1,6 +1,6 @@
 import {addHighlight, removeHighlight} from '../functions/highlight';
 import {VariableControl} from './VariableControl';
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
@@ -114,10 +114,10 @@ export const GroupControl = props => {
           initialOpen={vars.length === 1}
           key={cssVar.name}
           onChange={value => {
-            dispatch({type: THEME_ACTIONS.SET, payload: {name: cssVar.name, value}});
+            dispatch({type: ACTIONS.set, payload: {name: cssVar.name, value}});
           }}
           onUnset={() => {
-            dispatch({type: THEME_ACTIONS.UNSET, payload: {name: cssVar.name}});
+            dispatch({type: ACTIONS.unset, payload: {name: cssVar.name}});
           }}
         />;
       }

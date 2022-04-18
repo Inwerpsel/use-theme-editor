@@ -1,5 +1,5 @@
 import {diffSummary} from '../functions/diffThemes';
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
@@ -44,7 +44,7 @@ export const ServerThemesListItem = props => {
           return;
         }
         setFileName(name);
-        dispatch({type: THEME_ACTIONS.LOAD_THEME, payload: {theme: serverTheme}});
+        dispatch({type: ACTIONS.loadTheme, payload: {theme: serverTheme}});
       }}
     >Switch
     </button>

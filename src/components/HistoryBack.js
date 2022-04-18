@@ -1,5 +1,5 @@
 import {diffSummary} from '../functions/diffThemes';
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
@@ -13,7 +13,7 @@ export function HistoryBack({history}) {
     className={'history-button'}
     disabled={history.length === 0}
     title={history.length === 0 ? 'No history' : diffSummary(history[0], theme)}
-    onClick={() => dispatch({type: THEME_ACTIONS.HISTORY_BACKWARD})}
+    onClick={() => dispatch({type: ACTIONS.historyBackward})}
   >undo
   </button>;
 }

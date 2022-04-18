@@ -1,4 +1,4 @@
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 import {PREVIEW_SIZE} from './properties/ColorControl';
@@ -26,10 +26,10 @@ export function ThemePalettePicker(props) {
         onChange(color, true);
       }}
       onMouseEnter={() => {
-        dispatch({type: THEME_ACTIONS.START_PREVIEW, payload: {name, value: color}});
+        dispatch({type: ACTIONS.startPreview, payload: {name, value: color}});
       }}
       onMouseLeave={() => {
-        dispatch({type: THEME_ACTIONS.END_PREVIEW, payload: {name}});
+        dispatch({type: ACTIONS.endPreview, payload: {name}});
       }}
       title={`${color}\nUsed for:\n` + usages.join('\n')}
       style={{

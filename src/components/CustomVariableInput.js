@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import {THEME_ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../hooks/useThemeEditor';
 import {ThemeEditorContext} from './ThemeEditor';
 import {Checkbox} from './Checkbox';
 import {ToggleButton} from './ToggleButton';
@@ -20,7 +20,7 @@ export const CustomVariableInput = () => {
     {!collapsed && <div>
       <form
         onSubmit={event => {
-          dispatch({type: THEME_ACTIONS.SET, payload: {name, value}});
+          dispatch({type: ACTIONS.set, payload: {name, value}});
           event.preventDefault();
 
           return false;
@@ -43,7 +43,7 @@ export const CustomVariableInput = () => {
       </form>
       {varExists && <div>
         <button onClick={() => {
-          dispatch({type: THEME_ACTIONS.UNSET, payload: {name}});
+          dispatch({type: ACTIONS.unset, payload: {name}});
         }}>Unset</button>
         <Checkbox controls={[overwriteExisting, setOverwriteExisting]}>
           Confirm overwrite existing
