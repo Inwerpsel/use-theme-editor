@@ -6,29 +6,18 @@ export const refs = {};
 
 export const AreasContext = createContext({});
 
-function useMovablePanels() {
+export function MovablePanels({children}) {
   const [showMovers, setShowMovers] = useState(false);
   const [dragEnabled, setDragEnabled] = useState(true);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
-
-  return {
-    showMovers, setShowMovers,
-    dragEnabled, setDragEnabled,
-    panelMap,
-    movePanelTo: (id, hostId) => {
-      console.log(`####### MOVING PANEL "${id}" TO "${hostId}"`, panelMap);
-      setPanelMap({...panelMap, [id]: hostId});
-    },
-    resetPanels: () => {
-      setPanelMap({});
-    }
+  const movePanelTo = (id, hostId) => {
+    console.log(`####### MOVING PANEL "${id}" TO "${hostId}"`, panelMap);
+    setPanelMap({...panelMap, [id]: hostId});
   };
-}
+  const resetPanels = () => {
+    setPanelMap({});
+  };
 
-export function MovablePanels({children}) {
-  const {
-    panelMap, movePanelTo, resetPanels, showMovers, setShowMovers, dragEnabled, setDragEnabled,
-  } = useMovablePanels();
   const [order, setOrder] = useState({});
   const timeoutRef = useRef({element: null, area: null});
   const [overElement, setOverElement] = useState(null);
