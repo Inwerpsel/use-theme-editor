@@ -23,10 +23,12 @@ import {ThemeUploadPanel} from './ui/ThemeUploadPanel';
 import {HistoryBack} from './ui/HistoryBack';
 import {HistoryForward} from './ui/HistoryForward';
 import {useGlobalSettings} from '../hooks/useGlobalSettings';
-import {Area, MovablePanels, MoveControls} from './MovablePanels';
+import {MovablePanels} from './movable/MovablePanels';
 import {FrameSizeSettings} from './ui/FrameSizeSettings';
 import {ScreenSwitcher} from './ui/ScreenSwitcher';
 import {ThemeEditorExtraOptions} from './ui/ThemeEditorExtraOptions';
+import {MoveControls} from './movable/MoveControls';
+import {Area} from './movable/Area';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
