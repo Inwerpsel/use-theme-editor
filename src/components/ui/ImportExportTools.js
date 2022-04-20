@@ -1,7 +1,7 @@
-import {exportCss, exportJson} from '../functions/export';
-import {readFromUploadedFile} from '../functions/readFromUploadedFile';
+import {exportCss, exportJson} from '../../functions/export';
+import {readFromUploadedFile} from '../../functions/readFromUploadedFile';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export function ImportExportTools() {
   const {

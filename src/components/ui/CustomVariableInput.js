@@ -1,8 +1,8 @@
 import React, {useContext, useState} from 'react';
-import {ACTIONS} from '../hooks/useThemeEditor';
-import {ThemeEditorContext} from './ThemeEditor';
-import {Checkbox} from './Checkbox';
-import {ToggleButton} from './ToggleButton';
+import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
+import {Checkbox} from '../controls/Checkbox';
+import {ToggleButton} from '../controls/ToggleButton';
 
 export const CustomVariableInput = () => {
   const [collapsed, setCollapsed] = useState(true);

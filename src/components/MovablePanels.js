@@ -1,9 +1,9 @@
 import React, {createContext, useContext, useRef, useState, Children, useEffect, Fragment} from 'react';
 import {createPortal} from 'react-dom';
 import {SelectControl} from '@wordpress/components';
-import {valuesAsLabels} from './TypedControl';
+import {valuesAsLabels} from './inspector/TypedControl';
 import {useLocalStorage} from '../hooks/useLocalStorage';
-import {Checkbox} from './Checkbox';
+import {Checkbox} from './controls/Checkbox';
 import {RenderInfo} from './RenderInfo';
 
 const refs = {};

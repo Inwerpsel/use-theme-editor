@@ -1,6 +1,6 @@
-import {useLocalStorage} from '../hooks/useLocalStorage';
+import {useLocalStorage} from '../../hooks/useLocalStorage';
 import React, {useContext, useEffect, useRef} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 import {ServerThemesListItem} from './ServerThemesListItem';
 
 export const ServerThemesList = () => {

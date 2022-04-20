@@ -1,12 +1,12 @@
 import React, {useState, Fragment, useContext} from 'react';
 import {TypedControl} from './TypedControl';
-import { PSEUDO_REGEX, ACTIONS} from '../hooks/useThemeEditor';
+import { PSEUDO_REGEX, ACTIONS} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
-import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from './properties/ColorControl';
-import {useLocalStorage} from '../hooks/useLocalStorage';
+import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from '../properties/ColorControl';
+import {useLocalStorage} from '../../hooks/useLocalStorage';
 import mediaQuery from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 const uniqueUsages = usages => {
   const obj =  usages.reduce((usages, usage) => ({

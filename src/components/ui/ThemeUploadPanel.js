@@ -1,6 +1,6 @@
-import {diffSummary} from '../functions/diffThemes';
+import {diffSummary} from '../../functions/diffThemes';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export function ThemeUploadPanel() {
   const {

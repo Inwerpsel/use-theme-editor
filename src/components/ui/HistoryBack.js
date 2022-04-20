@@ -1,7 +1,7 @@
-import {diffSummary} from '../functions/diffThemes';
-import {ACTIONS} from '../hooks/useThemeEditor';
+import {diffSummary} from '../../functions/diffThemes';
+import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export function HistoryBack({history}) {
   const {

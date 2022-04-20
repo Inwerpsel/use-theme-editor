@@ -1,10 +1,10 @@
 import {SelectControl, TextControl} from '@wordpress/components';
 import React, {Fragment} from 'react';
 import {ShadowPicker} from 'react-shadow-picker';
-import {FontFamilyControl} from './properties/FontFamilyControl';
-import {ColorControl} from './properties/ColorControl';
-import {SizeControl, sizeLikeProperties} from './properties/SizeControl';
-import {timeLikeProperties, TimeControl} from './properties/TimeControl';
+import {FontFamilyControl} from '../properties/FontFamilyControl';
+import {ColorControl} from '../properties/ColorControl';
+import {SizeControl, sizeLikeProperties} from '../properties/SizeControl';
+import {timeLikeProperties, TimeControl} from '../properties/TimeControl';
 
 export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 

@@ -1,5 +1,5 @@
 import React, {memo, useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 import {RangeControl} from '@wordpress/components';
 
 

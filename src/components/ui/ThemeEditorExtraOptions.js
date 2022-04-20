@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export function ThemeEditorExtraOptions() {
   const {

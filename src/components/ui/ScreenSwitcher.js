@@ -1,5 +1,5 @@
 import React, {memo, useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 import {RadioControl} from '@wordpress/components';
 
 const WrapRadioControl = ({screenOptions, width, height, setWidth, setHeight}) => <RadioControl

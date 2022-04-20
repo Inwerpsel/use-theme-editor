@@ -1,6 +1,6 @@
 import mediaQuery from 'css-mediaquery';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 // Whether a variable is overridden by a later media query.
 export const isOverridden = ({media, width, cssVar}) => {

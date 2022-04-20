@@ -1,6 +1,6 @@
 import {SelectControl} from '@wordpress/components';
 import React, {useState} from 'react';
-import {valuesAsLabels} from '../TypedControl';
+import {valuesAsLabels} from '../inspector/TypedControl';
 
 export const timeLikeProperties = [
   'transition-duration',

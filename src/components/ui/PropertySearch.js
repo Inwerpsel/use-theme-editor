@@ -1,5 +1,5 @@
 import React, {Fragment, useContext, useRef} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 import {useHotkeys} from 'react-hotkeys-hook';
 
 export function PropertySearch() {

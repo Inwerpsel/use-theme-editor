@@ -1,8 +1,8 @@
-import {addHighlight, removeHighlight} from '../functions/highlight';
+import {addHighlight, removeHighlight} from '../../functions/highlight';
 import {VariableControl} from './VariableControl';
-import {ACTIONS} from '../hooks/useThemeEditor';
+import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 export const GroupControl = props => {
   const {

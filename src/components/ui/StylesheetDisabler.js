@@ -1,6 +1,6 @@
 import React, {useContext, useEffect, useState} from 'react';
-import {useLocalStorage} from '../hooks/useLocalStorage';
-import {ThemeEditorContext} from './ThemeEditor';
+import {useLocalStorage} from '../../hooks/useLocalStorage';
+import {ThemeEditorContext} from '../ThemeEditor';
 
 const useSameOriginStylesheets = () => {
   const [sheets, setSheets] = useState(null);
