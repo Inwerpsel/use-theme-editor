@@ -8,20 +8,16 @@ import {RenderInfo} from './RenderInfo';
 
 const refs = {};
 
-const TestPanel = ({children}) => <div>
-  TEST
-  {children}
-</div>;
-const TestPanel2 = () => <div style={{background: 'lightblue'}}>test 2</div>;
-
 const AreasContext = createContext({});
 
 function useMovablePanels() {
   const [showMovers, setShowMovers] = useState(false);
+  const [dragEnabled, setDragEnabled] = useState(true);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
 
   return {
     showMovers, setShowMovers,
+    dragEnabled, setDragEnabled,
     panelMap,
     movePanelTo: (id, hostId) => {
       console.log(`####### MOVING PANEL "${id}" TO "${hostId}"`, panelMap);
@@ -33,9 +29,28 @@ function useMovablePanels() {
   };
 }
 
+export function MoveControls() {
+  const {
+    panelMap,
+    resetPanels,
+    showMovers, setShowMovers,
+    dragEnabled, setDragEnabled,
+  } = useContext(AreasContext);
+
+  return <div>
+    <Checkbox controls={[showMovers, setShowMovers]}>
+      Move elements
+    </Checkbox>
+    <Checkbox controls={[dragEnabled, setDragEnabled]}>
+      Drag elements
+    </Checkbox>
+    {Object.keys(panelMap).length > 0 && <button onClick={resetPanels}>reset</button>}
+  </div>;
+}
+
 export function MovablePanels({children}) {
   const {
-    panelMap, movePanelTo, resetPanels, showMovers, setShowMovers,
+    panelMap, movePanelTo, resetPanels, showMovers, setShowMovers, dragEnabled, setDragEnabled,
   } = useMovablePanels();
   const [order, setOrder] = useState({});
   const timeoutRef = useRef({element: null, area: null});
@@ -49,24 +64,21 @@ export function MovablePanels({children}) {
   }, []);
 
   return <Fragment>
-    <Checkbox controls={[showMovers, setShowMovers]}>
-      Move elements
-    </Checkbox>
-    {Object.keys(panelMap).length > 0 && <button onClick={resetPanels}>reset</button>}
     <AreasContext.Provider value={{
       panelMap,
       movePanelTo,
+      resetPanels,
       showMovers,
+      setShowMovers,
       order, setOrder,
       overElement, setOverElement,
       overArea, setOverArea,
       timeoutRef,
-      draggedElement, setDraggedElement
+      draggedElement, setDraggedElement,
+      dragEnabled, setDragEnabled,
     }}>
       <div
-        className={draggedElement ? 'dragging-element' : ''}
-        // className={'dragging-element'}
-        style={{width: '100%'}}
+        className={'movable-container ' + (draggedElement ? 'dragging-element' : '')}
       >
         <RenderInfo/>
         {children}
@@ -79,6 +91,17 @@ const DispatchedElementContext = createContext({});
 
 const DRAG_LEAVE_TIMEOUT = 100;
 
+function getId(element) {
+  if (['div', 'p', 'span', 'ul', 'li'].includes(element.type)) {
+    // Use ID or first class.
+    return element.props.id || element.props.className?.split(' ')[0];
+  }
+
+  // Default to the element's type, which is assumed to be unique.
+  // Use the
+  return `${element.type.name}#${element.id || ''}`;
+}
+
 function DispatchedElement({areaId, element, index}) {
   const {
     panelMap,
@@ -89,15 +112,20 @@ function DispatchedElement({areaId, element, index}) {
     overElement, setOverElement,
     overArea,
     timeoutRef,
-    draggedElement, setDraggedElement
+    draggedElement, setDraggedElement,
+    dragEnabled,
   } = useContext(AreasContext);
-  const elementId = `${areaId}~~${index}`;
+
+  const elementId = `${areaId}~~${getId(element) || index}`;
+  useEffect(() => {
+    console.log('MOVABLE ELEMENT', element, elementId);
+  }, []);
   const hostId = panelMap[elementId];
   const showHere = !hostId || !refs[hostId]?.current;
 
   const withSwitcher = <div
     style={{position: 'relative', order: !order[hostId] ? '' : order[hostId][elementId]}}
-    draggable
+    draggable={dragEnabled}
     onDragStart={() => {
       setDraggedElement(elementId);
     }}
@@ -158,8 +186,8 @@ function DispatchedElement({areaId, element, index}) {
   </DispatchedElementContext.Provider>;
 }
 
-function Area({id, children = [], ...other}) {
-  const {setOverArea, timeoutRef, draggedElement} = useContext(AreasContext);
+export function Area({id, children = [], ...other}) {
+  const {setOverArea, timeoutRef} = useContext(AreasContext);
 
   const ref = useRef();
   if (!refs[id]) {
@@ -236,58 +264,4 @@ function AreaSwitcher() {
     }}>reset</button>}
 
   </div>;
-}
-
-export function Example() {
-
-  return <Fragment>
-
-    <MovablePanels>
-      <Area id='area-top'>
-        <TestPanel2/>
-        <TestPanel2/>
-      </Area>
-      <div style={{display: 'flex', justifyContent: 'stretch'}}>
-        <Area id='area-left'>
-          <div>
-            <label>
-              Move me please!
-            </label>
-            <br/>
-            I beg you
-            <br/>
-            Prease
-          </div>
-          <span>FOOBAR</span>
-          <button className="btn btn-primary">I am a primary<RenderInfo/></button>
-          <button className="btn btn-secondary">I am a secondary</button>
-          <button className="btn btn-danger">I am a danger</button>
-        </Area>
-        <div className={'content'} style={{flexGrow: 1}}>CONTENT</div>
-        <Area id='area-right'>
-          <TestPanel>
-            <div>
-              <button>
-                Also move me, chaps! <br/><RenderInfo/>
-              </button>
-            </div>
-          </TestPanel>
-        </Area>
-      </div>
-      <Area id='area-bottom'>
-        <div>
-          <h2>my areas</h2>
-          <p>before a</p>
-          {/*<MovablePanels>*/}
-          {/*  <Area id={'bottom-a'}><div><button>a</button></div></Area>*/}
-          {/*  <p>before b</p>*/}
-          {/*  <Area id={'bottom-b'}><div><button>b</button></div></Area>*/}
-          {/*  <p>before c</p>*/}
-          {/*  <Area id={'bottom-c'}><div><button>c</button></div></Area>*/}
-          {/*  <p>after c</p>*/}
-          {/*</MovablePanels>*/}
-        </div>
-      </Area>
-    </MovablePanels>
-  </Fragment>;
 }

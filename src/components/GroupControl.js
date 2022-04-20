@@ -102,7 +102,7 @@ export const GroupControl = props => {
         >{propertyFilter}</span>}
       </h4>
     </div>
-    {isOpen && <ul>
+    {isOpen && <ul className={'group-list'}>
       {vars.map(cssVar => {
         const defaultValue = defaultValues[cssVar.name];
 

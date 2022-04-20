@@ -43,8 +43,8 @@ export const StylesheetDisabler = () => {
   return <div
     style={{
       position: 'fixed',
-      top: 0,
-      right: 'calc(-100vw + var(--theme-editor--ul--width, 360px) + 10px)',
+      top: '32px',
+      right: 0,
       minWidth: '28vw',
       background: 'white',
       color: 'black',

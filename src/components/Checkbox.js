@@ -1,9 +1,10 @@
 import React from 'react';
 
-export function Checkbox({controls: [enabled, setEnabled], children}) {
+export function Checkbox({controls: [enabled, setEnabled], children, ...other}) {
 
   return <label
-    style={{marginBottom: '2px'}}
+    {...other}
+    style={{...other.style, marginBottom: '2px'}}
   >
     <input
       type="checkbox"

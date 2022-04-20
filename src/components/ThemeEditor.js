@@ -23,6 +23,10 @@ import {ThemeUploadPanel} from './ThemeUploadPanel';
 import {HistoryBack} from './HistoryBack';
 import {HistoryForward} from './HistoryForward';
 import {useGlobalSettings} from '../hooks/useGlobalSettings';
+import {Area, MovablePanels, MoveControls} from './MovablePanels';
+import {FrameSizeSettings} from './FrameSizeSettings';
+import {ScreenSwitcher} from './ScreenSwitcher';
+import {ThemeEditorExtraOptions} from './ThemeEditorExtraOptions';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -64,7 +68,6 @@ export const ThemeEditor = (props) => {
     propertyFilter,
     propertySearch,
     fileName,
-    isResponsive, setResponsive,
     isSimpleSizes,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
@@ -140,55 +143,59 @@ export const ThemeEditor = (props) => {
     ...settings,
   }}>
     <div className="theme-editor">
-      {!!isResponsive && <ResizableFrame src={window.location.href}/>}
+      <MovablePanels>
+        <Area id="area-top" style={{display: 'flex', justifyContent: 'flex-start'}}>
+          <FrameSizeSettings/>
+          <ScreenSwitcher/>
+          <MoveControls/>
+        </Area>
+        <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
+          <Area id="area-left">
+            <div className={'theme-editor-menu'}>
+              <ToggleButton controls={[importCollapsed, setImportCollapsed]}>Import/export</ToggleButton>
+              <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>Stylesheets</ToggleButton>
+              <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>Server</ToggleButton>
+            </div>
+            <div>
+              {!serverThemesCollapsed && <ServerThemesList/>}
+            </div>
+            <ThemeUploadPanel/>
+            <div style={{display: 'flex', gap: '4px'}}>
+              <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
+                Include default palette
+              </Checkbox>
+              <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
+                Native color picker
+              </Checkbox>
+            </div>
+            <CustomVariableInput/>
+            <div style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              width: 'var(--theme-editor--ul--width, 360px)',
+            }}>
+              <PropertyCategoryFilter/>
+              <PropertySearch/>
+              <div>
+                <HistoryBack {...{history}}/>
+                <HistoryForward {...{future}}/>
+              </div>
+            </div>
+            <ul className={'group-list'}>
+              {groups.map(group => <GroupControl key={group.label} {...{group, toggleGroup, openGroups}} />)}
+            </ul>
+          </Area>
+          <ResizableFrame src={window.location.href}/>
+          <Area id="area-right"></Area>
+        </div>
+        <Area id="area-bottom">
+          <ThemeEditorExtraOptions/>
+        </Area>
+      </MovablePanels>
 
-      <div className={'theme-editor-menu'}>
-        <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
-          Import/export
-        </ToggleButton>
-        <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
-          Stylesheets
-        </ToggleButton>
-        <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
-          Server
-        </ToggleButton>
-        <Checkbox controls={[isResponsive, setResponsive]}>
-          Responsive view
-        </Checkbox>
-      </div>
       {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
-
       {!importCollapsed && <ImportExportTools/>}
 
-      <ThemeUploadPanel/>
-
-      {!serverThemesCollapsed && <ServerThemesList/>}
-
-      <div style={{display: 'flex', gap: '4px'}}>
-        <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
-          Include default palette
-        </Checkbox>
-        <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
-          Native color picker
-        </Checkbox>
-      </div>
-      <CustomVariableInput/>
-      <div style={{
-        display: 'flex',
-        alignItems: 'flex-start',
-        width: 'var(--theme-editor--ul--width, 360px)',
-      }}>
-        <PropertyCategoryFilter/>
-        <PropertySearch/>
-        <div>
-          <HistoryBack {...{history}}/>
-          <HistoryForward {...{future}}/>
-        </div>
-      </div>
-
-      <ul className={'group-list'}>
-        {groups.map(group => <GroupControl key={group.label} {...{group, toggleGroup, openGroups}} />)}
-      </ul>
     </div>
   </ThemeEditorContext.Provider>;
 };
