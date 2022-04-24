@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useEffect} from 'react';
+import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
 import {RenderInfo} from '../RenderInfo';
 import {createPortal} from 'react-dom';
 import {AreasContext, DRAG_LEAVE_TIMEOUT, getId, refs} from './MovablePanels';
@@ -11,8 +11,6 @@ export function DispatchedElement({areaId, element, index}) {
     panelMap,
     showMovers,
     movePanelTo,
-    order,
-    setOrder,
     overElement, setOverElement,
     overArea,
     timeoutRef,
@@ -24,17 +22,26 @@ export function DispatchedElement({areaId, element, index}) {
   useEffect(() => {
     console.log('MOVABLE ELEMENT', element, elementId);
   }, []);
-  const hostId = panelMap[elementId];
-  const showHere = !hostId || !refs[hostId]?.current;
+  const [hostAreaId, order] = panelMap[elementId] || [];
+  const showHere = !hostAreaId || !refs[hostAreaId]?.current;
+  const [isDragged, setIsDragged] = useState(false);
+  const dragTimeoutRef = useRef();
+  const isDragHovered = !!overElement && overElement[1] === elementId;
 
   const wrappedElement = <div
-    style={{position: 'relative', order: !order[hostId] ? '' : order[hostId][elementId]}}
+    style={{position: 'relative', order: order || ''}}
+    className={isDragged ? 'is-dragged' : '' }
     draggable={dragEnabled}
     onDragStart={() => {
       setDraggedElement(elementId);
+      dragTimeoutRef.current = setTimeout(() => {
+        setIsDragged(true);
+      }, 120);
     }}
     onDragEnd={() => {
+      dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);
       setDraggedElement(null);
+      setIsDragged(false);
       console.log(`END ${elementId} over "${overElement || '(none)'}" over area "${overArea}"`);
       if (overElement) {
         if (timeoutRef.current.element) {
@@ -46,7 +53,7 @@ export function DispatchedElement({areaId, element, index}) {
           timeoutRef.current.area = null;
         }
         const [areaId, overElementId] = overElement;
-        movePanelTo(elementId, areaId);
+        movePanelTo(elementId, areaId, overElementId);
         setOverElement(null);
         return;
       }
@@ -59,23 +66,23 @@ export function DispatchedElement({areaId, element, index}) {
     <RenderInfo/>
     {showMovers && <AreaSwitcher/>}
     {draggedElement && draggedElement !== elementId && <div
-      className="dropzone"
+      className={'dropzone' + (isDragHovered ? ' drag-hovered' : '')}
       onDragEnter={() => {
-        console.log('ENTER', elementId, hostId, panelMap[elementId]);
+        // console.log('ENTER', elementId, hostAreaId);
         timeoutRef.current.lastEntered = elementId;
         if (timeoutRef.current.element) {
           clearTimeout(timeoutRef.current.element);
           timeoutRef.current.element = null;
         }
-        setOverElement([panelMap[elementId] || areaId, elementId]);
+        setOverElement([hostAreaId || areaId, elementId, order || index]);
       }}
       onDragLeave={() => {
-        console.log('LEAVE', elementId, hostId, areaId);
+        // console.log('LEAVE', elementId, hostAreaId, areaId);
         timeoutRef.current.element && clearTimeout(timeoutRef.current.element);
 
         if (timeoutRef.current.lastEntered === elementId) {
           timeoutRef.current.element = setTimeout(() => {
-            console.log('UNSET after', DRAG_LEAVE_TIMEOUT, 'ELEMENT', elementId, 'HOST', hostId, 'HOME', areaId);
+            console.log('UNSET after', DRAG_LEAVE_TIMEOUT, 'ELEMENT', elementId, 'HOST', hostAreaId, 'HOME', areaId);
             setOverElement(null);
           }, DRAG_LEAVE_TIMEOUT);
         }
@@ -85,7 +92,7 @@ export function DispatchedElement({areaId, element, index}) {
     </div>}
 
   </div>;
-  return <DispatchedElementContext.Provider value={{areaId, elementId, hostId}}>
-    {showHere ? wrappedElement : createPortal(wrappedElement, refs[hostId].current)}
+  return <DispatchedElementContext.Provider value={{areaId, elementId, hostId: hostAreaId}}>
+    {showHere ? wrappedElement : createPortal(wrappedElement, refs[hostAreaId].current)}
   </DispatchedElementContext.Provider>;
 }

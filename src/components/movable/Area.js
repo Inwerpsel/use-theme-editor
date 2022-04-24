@@ -3,7 +3,10 @@ import {DispatchedElement} from './DispatchedElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT, refs} from './MovablePanels';
 
 export function Area({id, children = [], ...other}) {
-  const {setOverArea, timeoutRef} = useContext(AreasContext);
+  const {overArea, setOverArea, timeoutRef} = useContext(AreasContext);
+
+  const isDragHovered = overArea === id;
+  console.log(id, isDragHovered);
 
   const ref = useRef();
   if (!refs[id]) {
@@ -21,9 +24,9 @@ export function Area({id, children = [], ...other}) {
       return <DispatchedElement {...{areaId: id, element, index}}/>;
     })}
     <div
-      className={'area-dropzone'}
+      className={'area-dropzone' + (isDragHovered ? ' drag-hovered' : '')}
       style={{
-        order: 1,
+        order: 1000,
         background: 'rgba(167,238,227,0.22)',
         outline: '2px dashed grey',
         outlineOffset: '-8px',

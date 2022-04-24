@@ -6,19 +6,61 @@ export const refs = {};
 
 export const AreasContext = createContext({});
 
+const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]]) => {
+  if (otherHostIdA === otherHostIdB) {
+    return otherOrderA > otherOrderB ? 1 : -1;
+  }
+  return otherHostIdA > otherHostIdB ? 1 : -1;
+};
+
 export function MovablePanels({children}) {
   const [showMovers, setShowMovers] = useState(false);
   const [dragEnabled, setDragEnabled] = useState(true);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
-  const movePanelTo = (id, hostId) => {
-    console.log(`####### MOVING PANEL "${id}" TO "${hostId}"`, panelMap);
-    setPanelMap({...panelMap, [id]: hostId});
+
+  const movePanelTo = (id, targetHostId, overElementId) => {
+    if (overElement) {
+      setOverElement(null);
+    }
+
+    console.log(`####### MOVING PANEL "${id}" TO "${targetHostId}"`, 'map before', panelMap, JSON.stringify(panelMap, null, 2));
+
+    let added = false;
+    const panelOrders = {};
+    const newPanelMap = Object.entries(panelMap).sort(sortMap).reduce( (newPanelMap, [otherElementId, [otherHostId, otherOrder]]) => {
+      let realOtherHost = otherHostId || otherElementId.replace(/~~.*/, '');
+
+      if (!panelOrders[otherHostId]) {
+        panelOrders[otherHostId] = 0;
+      }
+
+      if (overElementId === otherElementId && targetHostId === otherHostId) {
+        panelOrders[otherHostId]++;
+        newPanelMap[id] = [targetHostId, panelOrders[otherHostId]];
+        added = true;
+      }
+
+      if (otherElementId === id) {
+        return newPanelMap;
+      }
+      panelOrders[otherHostId]++;
+      const newOtherOrder = panelOrders[otherHostId];
+
+      return {
+        ...newPanelMap,
+        [otherElementId]: [otherHostId, newOtherOrder],
+      };
+    }, {});
+
+    setPanelMap(added ? newPanelMap : {
+      ...panelMap,
+      [id]: [targetHostId, 100],
+    });
   };
   const resetPanels = () => {
     setPanelMap({});
   };
 
-  const [order, setOrder] = useState({});
   const timeoutRef = useRef({element: null, area: null});
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
@@ -36,7 +78,6 @@ export function MovablePanels({children}) {
       resetPanels,
       showMovers,
       setShowMovers,
-      order, setOrder,
       overElement, setOverElement,
       overArea, setOverArea,
       timeoutRef,

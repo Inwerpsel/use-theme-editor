@@ -7,7 +7,7 @@ import {AreasContext, refs} from './MovablePanels';
 export function AreaSwitcher() {
   const {panelMap, movePanelTo} = useContext(AreasContext);
   const {areaId, elementId} = useContext(DispatchedElementContext);
-  const currentArea = panelMap[elementId] || areaId;
+  const [currentArea] = panelMap[elementId] || [areaId];
 
   return <div
     className={'area-switcher'}
@@ -15,7 +15,7 @@ export function AreaSwitcher() {
   >
     <SelectControl
       style={{
-        background: !panelMap[elementId] ? 'white' : 'lightyellow',
+        background: !currentArea ? 'lightyellow' : 'white',
       }}
       value={currentArea}
       options={Object.keys(refs).map(valuesAsLabels).map(({value, label}) => ({
@@ -26,7 +26,7 @@ export function AreaSwitcher() {
         movePanelTo(elementId, value === areaId ? null : value);
       }}
     />
-    {!!panelMap[elementId] && <button
+    {!currentArea && <button
       onClick={() => {
         movePanelTo(elementId, null);
       }}

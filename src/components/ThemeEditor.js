@@ -29,6 +29,7 @@ import {ScreenSwitcher} from './ui/ScreenSwitcher';
 import {ThemeEditorExtraOptions} from './ui/ThemeEditorExtraOptions';
 import {MoveControls} from './movable/MoveControls';
 import {Area} from './movable/Area';
+import {FrameScaleSlider} from './ui/FrameScaleSlider';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -146,11 +147,24 @@ export const ThemeEditor = (props) => {
   }}>
     <div className="theme-editor">
       <MovablePanels>
-        <Area id="area-top" style={{display: 'flex', justifyContent: 'flex-start'}}>
-          <FrameSizeSettings/>
-          <ScreenSwitcher/>
-          <MoveControls/>
-        </Area>
+        <div style={{display: 'flex', columns: 2, justifyContent: 'space-between'}}>
+          <Area id="area-top" style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
+            <FrameSizeSettings/>
+            <ScreenSwitcher/>
+            <MoveControls/>
+          </Area>
+          <Area
+            id="area-top-reverse"
+            style={{
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              justifyContent: 'flex-start',
+              flexGrow: 1,
+            }}
+          >
+            <FrameScaleSlider/>
+          </Area>
+        </div>
         <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
           <Area id="area-left">
             <div className={'theme-editor-menu'}>
@@ -190,9 +204,35 @@ export const ThemeEditor = (props) => {
           <ResizableFrame src={window.location.href}/>
           <Area id="area-right"></Area>
         </div>
-        <Area id="area-bottom">
-          <ThemeEditorExtraOptions/>
-        </Area>
+        <div style={{display: 'flex', columns: 2, justifyContent: 'space-between', flexGrow: 0}}>
+          <Area id="area-bottom"  style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
+            <ThemeEditorExtraOptions/>
+          </Area>
+          <Area
+            id="area-bottom-reverse"
+            style={{
+              display: 'flex',
+              flexDirection: 'row-reverse',
+              justifyContent: 'flex-start',
+              flexGrow: 1,
+            }}
+          >
+          </Area>
+          <div id={'drawer-wrapper'}>
+            <Area id="drawer">
+              <div className="cube-1 test-cube" style={{background: 'green'}}>A</div>
+              <div className="cube-2 test-cube" style={{background: 'yellow'}}>B</div>
+              <div className="cube-3 test-cube" style={{background: 'red'}}>C</div>
+              <div className="cube-4 test-cube" style={{background: 'blue'}}>D</div>
+              <div className="cube-5 test-cube" style={{background: 'orange'}}>E</div>
+              <div className="cube-6 test-cube" style={{background: 'purple'}}>F</div>
+            </Area>
+            <div id="drawer-opener">
+              Drawer
+            </div>
+          </div>
+        </div>
+
       </MovablePanels>
 
       {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
