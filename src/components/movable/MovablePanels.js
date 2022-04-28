@@ -14,7 +14,7 @@ const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]
 
 export function MovablePanels({children}) {
   const [showMovers, setShowMovers] = useState(false);
-  const [dragEnabled, setDragEnabled] = useState(true);
+  const [dragEnabled, setDragEnabled] = useState(false);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerHovered, setDrawerHovered] = useState(false);
