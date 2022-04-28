@@ -14,9 +14,6 @@ export function ImportExportTools() {
 
   return <div
     style={{
-      position: 'fixed',
-      top: '200px',
-      left: 'var(--theme-editor--ul--width, 360px)',
       background: 'white',
       padding: '16px',
     }}

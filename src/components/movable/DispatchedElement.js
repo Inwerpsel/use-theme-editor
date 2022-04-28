@@ -1,5 +1,4 @@
 import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
-import {RenderInfo} from '../RenderInfo';
 import {createPortal} from 'react-dom';
 import {AreasContext, DRAG_LEAVE_TIMEOUT, getId, refs} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
@@ -16,17 +15,23 @@ export function DispatchedElement({areaId, element, index}) {
     timeoutRef,
     draggedElement, setDraggedElement,
     dragEnabled,
+    showDrawer,
   } = useContext(AreasContext);
 
   const elementId = `${areaId}~~${getId(element) || index}`;
-  useEffect(() => {
-    console.log('MOVABLE ELEMENT', element, elementId);
-  }, []);
   const [hostAreaId, order] = panelMap[elementId] || [];
   const showHere = !hostAreaId || !refs[hostAreaId]?.current;
   const [isDragged, setIsDragged] = useState(false);
   const dragTimeoutRef = useRef();
   const isDragHovered = !!overElement && overElement[1] === elementId;
+
+  const isDefaultDrawerHidden = areaId === 'drawer' && !showDrawer && showHere;
+  const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
+  const hidden = isDefaultDrawerHidden || isMoveToDrawerHidden;
+
+  if (hidden && !draggedElement) {
+    return null;
+  }
 
   const wrappedElement = <div
     style={{position: 'relative', order: order || ''}}
@@ -36,13 +41,12 @@ export function DispatchedElement({areaId, element, index}) {
       setDraggedElement(elementId);
       dragTimeoutRef.current = setTimeout(() => {
         setIsDragged(true);
-      }, 120);
+      }, 100);
     }}
     onDragEnd={() => {
       dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);
       setDraggedElement(null);
       setIsDragged(false);
-      console.log(`END ${elementId} over "${overElement || '(none)'}" over area "${overArea}"`);
       if (overElement) {
         if (timeoutRef.current.element) {
           clearTimeout(timeoutRef.current.element);
@@ -63,12 +67,10 @@ export function DispatchedElement({areaId, element, index}) {
     }}
   >
     {element}
-    <RenderInfo/>
     {showMovers && <AreaSwitcher/>}
     {draggedElement && draggedElement !== elementId && <div
       className={'dropzone' + (isDragHovered ? ' drag-hovered' : '')}
       onDragEnter={() => {
-        // console.log('ENTER', elementId, hostAreaId);
         timeoutRef.current.lastEntered = elementId;
         if (timeoutRef.current.element) {
           clearTimeout(timeoutRef.current.element);
@@ -77,12 +79,10 @@ export function DispatchedElement({areaId, element, index}) {
         setOverElement([hostAreaId || areaId, elementId, order || index]);
       }}
       onDragLeave={() => {
-        // console.log('LEAVE', elementId, hostAreaId, areaId);
         timeoutRef.current.element && clearTimeout(timeoutRef.current.element);
 
         if (timeoutRef.current.lastEntered === elementId) {
           timeoutRef.current.element = setTimeout(() => {
-            console.log('UNSET after', DRAG_LEAVE_TIMEOUT, 'ELEMENT', elementId, 'HOST', hostAreaId, 'HOME', areaId);
             setOverElement(null);
           }, DRAG_LEAVE_TIMEOUT);
         }

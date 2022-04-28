@@ -1,4 +1,4 @@
-import React, {createContext, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, Fragment, useEffect, useMemo, useRef, useState} from 'react';
 import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -30,6 +30,7 @@ import {ThemeEditorExtraOptions} from './ui/ThemeEditorExtraOptions';
 import {MoveControls} from './movable/MoveControls';
 import {Area} from './movable/Area';
 import {FrameScaleSlider} from './ui/FrameScaleSlider';
+import {Drawer} from './movable/Drawer';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -172,9 +173,9 @@ export const ThemeEditor = (props) => {
               <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>Stylesheets</ToggleButton>
               <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>Server</ToggleButton>
             </div>
-            <div>
+            <Fragment>
               {!serverThemesCollapsed && <ServerThemesList/>}
-            </div>
+            </Fragment>
             <ThemeUploadPanel/>
             <div style={{display: 'flex', gap: '4px'}}>
               <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
@@ -188,7 +189,6 @@ export const ThemeEditor = (props) => {
             <div style={{
               display: 'flex',
               alignItems: 'flex-start',
-              width: 'var(--theme-editor--ul--width, 360px)',
             }}>
               <PropertyCategoryFilter/>
               <PropertySearch/>
@@ -202,11 +202,17 @@ export const ThemeEditor = (props) => {
             </ul>
           </Area>
           <ResizableFrame src={window.location.href}/>
-          <Area id="area-right"></Area>
+          <Area id="area-right">
+            <div>
+              {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
+            </div>
+            <div>
+              {!importCollapsed && <ImportExportTools/>}
+            </div>
+          </Area>
         </div>
         <div style={{display: 'flex', columns: 2, justifyContent: 'space-between', flexGrow: 0}}>
           <Area id="area-bottom"  style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
-            <ThemeEditorExtraOptions/>
           </Area>
           <Area
             id="area-bottom-reverse"
@@ -218,25 +224,12 @@ export const ThemeEditor = (props) => {
             }}
           >
           </Area>
-          <div id={'drawer-wrapper'}>
-            <Area id="drawer">
-              <div className="cube-1 test-cube" style={{background: 'green'}}>A</div>
-              <div className="cube-2 test-cube" style={{background: 'yellow'}}>B</div>
-              <div className="cube-3 test-cube" style={{background: 'red'}}>C</div>
-              <div className="cube-4 test-cube" style={{background: 'blue'}}>D</div>
-              <div className="cube-5 test-cube" style={{background: 'orange'}}>E</div>
-              <div className="cube-6 test-cube" style={{background: 'purple'}}>F</div>
-            </Area>
-            <div id="drawer-opener">
-              Drawer
-            </div>
-          </div>
+          <Drawer>
+            <ThemeEditorExtraOptions/>
+          </Drawer>
         </div>
 
       </MovablePanels>
-
-      {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
-      {!importCollapsed && <ImportExportTools/>}
 
     </div>
   </ThemeEditorContext.Provider>;

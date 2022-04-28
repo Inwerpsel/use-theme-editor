@@ -1,6 +1,5 @@
 import React, {createContext, Fragment, useEffect, useRef, useState} from 'react';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
-import {RenderInfo} from '../RenderInfo';
 
 export const refs = {};
 
@@ -17,6 +16,8 @@ export function MovablePanels({children}) {
   const [showMovers, setShowMovers] = useState(false);
   const [dragEnabled, setDragEnabled] = useState(true);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerHovered, setDrawerHovered] = useState(false);
 
   const movePanelTo = (id, targetHostId, overElementId) => {
     if (overElement) {
@@ -28,8 +29,6 @@ export function MovablePanels({children}) {
     let added = false;
     const panelOrders = {};
     const newPanelMap = Object.entries(panelMap).sort(sortMap).reduce( (newPanelMap, [otherElementId, [otherHostId, otherOrder]]) => {
-      let realOtherHost = otherHostId || otherElementId.replace(/~~.*/, '');
-
       if (!panelOrders[otherHostId]) {
         panelOrders[otherHostId] = 0;
       }
@@ -83,11 +82,13 @@ export function MovablePanels({children}) {
       timeoutRef,
       draggedElement, setDraggedElement,
       dragEnabled, setDragEnabled,
+      drawerOpen, setDrawerOpen,
+      drawerHovered, setDrawerHovered,
+      showDrawer: drawerOpen || drawerHovered
     }}>
       <div
         className={'movable-container ' + (draggedElement ? 'dragging-element' : '')}
       >
-        <RenderInfo/>
         {children}
       </div>
     </AreasContext.Provider>

@@ -6,7 +6,6 @@ export function Area({id, children = [], ...other}) {
   const {overArea, setOverArea, timeoutRef} = useContext(AreasContext);
 
   const isDragHovered = overArea === id;
-  console.log(id, isDragHovered);
 
   const ref = useRef();
   if (!refs[id]) {

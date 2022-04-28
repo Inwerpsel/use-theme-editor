@@ -42,13 +42,8 @@ export const StylesheetDisabler = () => {
 
   return <div
     style={{
-      position: 'fixed',
-      top: '32px',
-      right: 0,
-      minWidth: '28vw',
       background: 'white',
       color: 'black',
-      zIndex: 1010,
       border: '1px solid black',
       borderRadius: '6px',
       padding: '5px',

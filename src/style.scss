@@ -298,17 +298,6 @@ div[id^=font-picker] ul {
   position: static !important;
 }
 
-//#theme-editor-root {
-//  position: fixed;
-//  top: 0;
-//  left: 0;
-//  bottom: 0;
-//  z-index: 99999999;
-//  padding: 4px 1px 3px 4px;
-//  background: rgba(255, 255, 255, 0.1);
-//  backdrop-filter: blur(1px);
-//}
-
 .usages-wrapper {
   position: relative;
   max-height: 32px;
@@ -383,7 +372,7 @@ $switcher-width: 120px;
   align-items: stretch;
 }
 
-#area-top, #area-bottom {
+#area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
   .area-dropzone {
     transition: width, height .4s ease-in;
   }
@@ -513,9 +502,6 @@ $switcher-width: 120px;
   opacity: .99;
 }
 
-#theme-editor-root {
-}
-
 .test-cube {
   width: 100px;
   height: 100px;
@@ -539,7 +525,8 @@ $switcher-width: 120px;
   position: absolute !important;
   bottom: 40px;
   right: 0;
-  display: block;
+  display: flex;
+  flex-direction: column-reverse;
   transition: min-height 1s ease;
   transition-delay: .5s;
   align-self: flex-end;
@@ -548,16 +535,12 @@ $switcher-width: 120px;
 .dragging-element #drawer {
   align-self: stretch;
   border: 1px solid grey;
-}
+  min-height: 200px;
+  min-width: 200px;
 
-.movable-container:not(.dragging-element) #drawer-wrapper:not(:hover) {
-  #drawer {
-    > * {
-      display: none;
-    }
-    width: 0;
-    height: 0;
-    min-height: 0;
+  .area-dropzone {
+    min-height: 200px;
+    min-width: 200px;
   }
 }
 
