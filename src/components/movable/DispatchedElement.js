@@ -8,7 +8,7 @@ export const DispatchedElementContext = createContext({});
 function getId(element, index) {
   if (['div', 'p', 'span', 'ul', 'li'].includes(element.type)) {
     // Use ID or first class.
-    return element.props.id || element.props.className?.split(' ')[0];
+    return element.props.id || element.props.className?.split(' ')[0] || index;
   }
 
   // Default to the element's type, which is assumed to be unique.
