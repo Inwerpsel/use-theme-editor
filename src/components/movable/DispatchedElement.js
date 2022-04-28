@@ -1,9 +1,20 @@
-import React, {createContext, useContext, useEffect, useRef, useState} from 'react';
+import React, {createContext, useContext, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {AreasContext, DRAG_LEAVE_TIMEOUT, getId, refs} from './MovablePanels';
+import {AreasContext, DRAG_LEAVE_TIMEOUT, refs} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
 
 export const DispatchedElementContext = createContext({});
+
+function getId(element, index) {
+  if (['div', 'p', 'span', 'ul', 'li'].includes(element.type)) {
+    // Use ID or first class.
+    return element.props.id || element.props.className?.split(' ')[0];
+  }
+
+  // Default to the element's type, which is assumed to be unique.
+  // Use the
+  return `${element.type?.name}#${element.id || index}`;
+}
 
 export function DispatchedElement({areaId, element, index}) {
   const {
@@ -18,7 +29,7 @@ export function DispatchedElement({areaId, element, index}) {
     showDrawer,
   } = useContext(AreasContext);
 
-  const elementId = `${areaId}~~${getId(element) || index}`;
+  const elementId = `${areaId}~~${getId(element, index)}`;
   const [hostAreaId, order] = panelMap[elementId] || [];
   const showHere = !hostAreaId || !refs[hostAreaId]?.current;
   const [isDragged, setIsDragged] = useState(false);

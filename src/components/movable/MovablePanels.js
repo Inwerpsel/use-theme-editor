@@ -97,14 +97,3 @@ export function MovablePanels({children}) {
 
 export const DRAG_LEAVE_TIMEOUT = 100;
 
-export function getId(element) {
-  if (['div', 'p', 'span', 'ul', 'li'].includes(element.type)) {
-    // Use ID or first class.
-    return element.props.id || element.props.className?.split(' ')[0];
-  }
-
-  // Default to the element's type, which is assumed to be unique.
-  // Use the
-  return `${element.type.name}#${element.id || ''}`;
-}
-
