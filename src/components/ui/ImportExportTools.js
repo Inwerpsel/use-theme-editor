@@ -1,14 +1,18 @@
 import {exportCss, exportJson} from '../../functions/export';
-import {readFromUploadedFile} from '../../functions/readFromUploadedFile';
-import React, {useContext} from 'react';
+import {ensureValidCssVariables, readFromUploadedFile} from '../../functions/readFromUploadedFile';
+import React, {useContext, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
+import {ACTIONS} from '../../hooks/useThemeEditor';
+import {Checkbox} from '../controls/Checkbox';
 
 export function ImportExportTools() {
   const {
     dispatch,
-    fileName,
+    fileName, setFileName,
     theme,
   } = useContext(ThemeEditorContext);
+
+  const [shouldMerge, setShouldMerge] = useState(false);
 
   const themeEmpty = Object.keys(theme).length === 0;
 
@@ -18,6 +22,9 @@ export function ImportExportTools() {
       padding: '16px',
     }}
   >
+    <div>
+      <Checkbox controls={[shouldMerge, setShouldMerge]}>Merge into current theme</Checkbox>
+    </div>
     <div>
       <button disabled={themeEmpty} onClick={() => exportJson(fileName)}>
         Export JSON
@@ -37,11 +44,26 @@ export function ImportExportTools() {
           type="file"
           accept={'.json'}
           onChange={event => {
-            readFromUploadedFile(dispatch, event);
+            readFromUploadedFile(dispatch, event, shouldMerge, theme, setFileName);
           }}
           style={{cursor: 'copy'}}
         />
       </label>
     </div>
+    <input
+      type={'text'}
+      value={''}
+      placeholder={'Drop/paste JSON here to import as a new theme'}
+      style={{border: '1px dashed black', width: '100%'}}
+      onChange={event => {
+        try {
+          const dropped = JSON.parse(event.target.value);
+          const ensured = ensureValidCssVariables(dropped);
+          const newTheme = !shouldMerge ? ensured : {...theme, ...ensured};
+          dispatch({type: ACTIONS.loadTheme, payload: {theme: newTheme}});
+        } catch (e) {
+        }
+      }}
+    />
   </div>;
 }
