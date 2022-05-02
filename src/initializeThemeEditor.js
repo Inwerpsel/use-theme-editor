@@ -152,7 +152,7 @@ export const setupThemeEditor = async (config) => {
 
   window.addEventListener('message', event => {
     const {type, payload} = event.data;
-    const {name, index, selector} = payload;
+    const {index, selector} = payload || {};
     const group = lastGroups[index];
 
     switch (type) {
