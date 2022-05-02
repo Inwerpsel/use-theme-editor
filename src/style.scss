@@ -182,15 +182,17 @@ html.hide-wp-admin-bar {
 }
 
 .theme-editor-highlight {
-  outline: 2px solid #ffff00 !important;
+  outline: 3px solid #efef05 !important;
+  outline-offset: 8px !important;
 }
 
-.theme-editor-highlight _-- {
-  outline-style: solid;
-  outline-color: #ffff00;
-  outline-width: 2px;
-  outline-offset: 2px;
-}
+//
+//.theme-editor-highlight _-- {
+//  outline-style: solid;
+//  outline-color: #ffff00;
+//  outline-width: 2px;
+//  outline-offset: 2px;
+//}
 
 .shadow-picker {
   width: 100% !important;
@@ -359,6 +361,9 @@ $switcher-width: 120px;
 
 #area-left, #area-right {
   max-width: 400px;
+  max-height: calc(100vh - 270px);
+  border-bottom: 2px solid blue;
+  overflow-y: scroll;
   flex-direction: column;
 
   .area-dropzone {

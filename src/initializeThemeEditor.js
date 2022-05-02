@@ -147,9 +147,13 @@ export const setupThemeEditor = async (config) => {
     toggleStylesheets(disabledSheets);
   }
 
+  const locatedElements = {};
+  let timeout = null;
+
   window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    const group = lastGroups[payload.index];
+    const {type, payload} = event.data;
+    const {name, index, selector} = payload;
+    const group = lastGroups[index];
 
     switch (type) {
     case 'highlight-element-start':
@@ -159,17 +163,57 @@ export const setupThemeEditor = async (config) => {
       group && removeHighlight(group.element);
       break;
     case 'scroll-in-view':
-      group && group.element.scrollIntoView({
+      const element = selector ? locatedElements[selector][index] : group.element;
+
+      // Quick and dirty way to allow showing an element in the editor by assigning stuff to the ref.
+      let parent = element;
+      while (parent) {
+        parent = parent.parentNode;
+        if (parent && typeof parent.emerge === 'function') {
+          parent.emerge();
+        }
+      }
+
+      element.scrollIntoView({
         behavior: 'smooth',
-        block:  'nearest',
+        block: 'center',
         inline: 'end',
       });
+      addHighlight(element);
+      if (timeout) {
+        window.clearTimeout(timeout[0]);
+        if (timeout[2] !== element) {
+          timeout[1]();
+        }
+      }
+      const handler = () => removeHighlight(element);
+      timeout = [setTimeout(handler, 2000), handler, element];
       break;
     case 'theme-edit-alt-click':
       requireAlt = payload.frameClickBehavior !== 'any';
       break;
     case 'set-sheet-config':
       toggleStylesheets(JSON.parse(payload));
+      break;
+    case 'locate-elements':
+      const results = document.querySelectorAll(selector);
+      locatedElements[selector] = [...results].filter(el => {
+        return el.offsetParent !== null && window.getComputedStyle(el).visibility !== 'hidden';
+      });
+      window.parent.postMessage(
+        {
+          type: 'elements-located', payload: {
+            selector,
+            elements: locatedElements[selector].map((el, index) => ({
+              index,
+              tagName: `${el.tagName}`,
+              id: `${el.id}`,
+              className: `${el.className}`,
+            })),
+          },
+        },
+        window.location.href,
+      );
       break;
     }
   }, false);

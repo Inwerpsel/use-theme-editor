@@ -12,9 +12,8 @@ const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]
   return otherHostIdA > otherHostIdB ? 1 : -1;
 };
 
-export function MovablePanels({children}) {
+export function MovablePanels({children, dragEnabled}) {
   const [showMovers, setShowMovers] = useState(false);
-  const [dragEnabled, setDragEnabled] = useState(false);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [drawerHovered, setDrawerHovered] = useState(false);
@@ -81,7 +80,7 @@ export function MovablePanels({children}) {
       overArea, setOverArea,
       timeoutRef,
       draggedElement, setDraggedElement,
-      dragEnabled, setDragEnabled,
+      dragEnabled,
       drawerOpen, setDrawerOpen,
       drawerHovered, setDrawerHovered,
       showDrawer: drawerOpen || drawerHovered

@@ -3,10 +3,11 @@ import {TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, ACTIONS} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from '../properties/ColorControl';
-import {useLocalStorage} from '../../hooks/useLocalStorage';
 import mediaQuery from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
 import {ThemeEditorContext} from '../ThemeEditor';
+import {IdeLink} from './IdeLink';
+import {ElementLocator} from '../ui/ElementLocator';
 
 const uniqueUsages = usages => {
   const obj =  usages.reduce((usages, usage) => ({
@@ -90,53 +91,22 @@ const showUsages = usages => {
           {!!position && <IdeLink {...position}/>}
           <ul
             style={{listStyleType: 'none'}}
-          >{selectors.map(selector => <li key={selector}>{selector}</li>)}</ul>
+          >
+            {selectors.map(selector => <li key={selector}>
+              {selector}<br/>
+              <ElementLocator selector={selector} initialized={true}/>
+            </li>)}
+          </ul>
         </li>;
       }
 
-      return <li key={selectors}>{selector} {!!position && <IdeLink {...position}/>}</li>;
+      return <li key={selectors}>
+        {selector} {!!position && <IdeLink {...position}/>}
+        <ElementLocator selector={selector} initialized={true}/>
+      </li>;
     })}
   </ul>;
 };
-
-const myBasePath = '/home/pieter/github/planet4-docker-compose/persistence/app/public/wp-content/';
-const defaultReplacements = {
-  'planet4-master-theme': myBasePath + 'themes/planet4-master-theme/',
-  'planet4-plugin-gutenberg-blocks': myBasePath + 'plugins/planet4-plugin-gutenberg-blocks/',
-};
-
-function IdeLink(props) {
-  const {
-    source,
-    line,
-    generated: {sheet},
-  } = props;
-  if (!source) {
-    return null;
-  }
-  const path = source.replace('webpack://', '').replace(/home\/circleci\/[\w-]+\//, '').replace('/root/project/', '');
-  // No setter for now, enter manually in local storage.
-  const [customReplacements] = useLocalStorage('repo-paths', null, 'object');
-
-  let basePath;
-  const replacements = customReplacements || defaultReplacements;
-  for (const needle in replacements) {
-    if (sheet.includes(needle)) {
-      basePath = replacements[needle];
-      break;
-    }
-  }
-  if (!basePath) {
-    return null;
-  }
-
-  // This protocol requires installing a handler on your system.
-  return <a
-    href={`phpstorm://open?file=${basePath.replace(/\/+$/, '') + '/' + path.replace(/^\//, '')}&line=${line}`}
-    style={{color: 'blue', fontSize: '12px'}}
-    onClick={e => e.stopPropagation()}
-  >{path} {line}</a>;
-}
 
 export const VariableControl = (props) => {
   const {
@@ -169,7 +139,7 @@ export const VariableControl = (props) => {
   const toggleSelectors = () => setShowSelectors(!showSelectors);
   const value = theme[name] || defaultValue;
   const isDefault = value === defaultValue;
-  const {media} = maxSpecific;
+  const {media} = maxSpecific || {};
 
   const screen = {type: 'screen', width: screenWidth || window.screen.width};
   const {overridingMedia} = cssVar.allVar || cssVar;

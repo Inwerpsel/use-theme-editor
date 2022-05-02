@@ -1,6 +1,6 @@
 import {useLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
-import {useEffect} from 'react';
+import {useEffect, useState} from 'react';
 
 export function useGlobalSettings(frameRef) {
   const [
@@ -53,6 +53,8 @@ export function useGlobalSettings(frameRef) {
   ] = useLocalStorage('responsive-scales', {});
   const scale = scales[`${width}x${height}`] || 1;
 
+  const [dragEnabled, setDragEnabled] = useState(false);
+
   return {
     // I preserved this line though useSetting was removed. It would be very nice to define the options this terse,
     // however
@@ -69,5 +71,6 @@ export function useGlobalSettings(frameRef) {
     responsiveSticky, setResponsiveSticky,
     scales, setScales,
     scale,
+    dragEnabled, setDragEnabled,
   };
 }

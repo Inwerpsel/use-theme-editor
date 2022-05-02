@@ -31,6 +31,7 @@ import {MoveControls} from './movable/MoveControls';
 import {Area} from './movable/Area';
 import {FrameScaleSlider} from './ui/FrameScaleSlider';
 import {Drawer} from './movable/Drawer';
+import {CurrentTheme} from './ui/CurrentTheme';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -131,6 +132,7 @@ export const ThemeEditor = (props) => {
   );
 
   return <ThemeEditorContext.Provider value={{
+    allVars,
     theme,
     dispatch,
     defaultValues,
@@ -147,7 +149,7 @@ export const ThemeEditor = (props) => {
     ...settings,
   }}>
     <div className="theme-editor">
-      <MovablePanels>
+      <MovablePanels dragEnabled={settings.dragEnabled}>
         <div style={{display: 'flex', columns: 2, justifyContent: 'space-between'}}>
           <Area id="area-top" style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
             <FrameSizeSettings/>
@@ -200,6 +202,7 @@ export const ThemeEditor = (props) => {
             <ul className={'group-list'}>
               {groups.map(group => <GroupControl key={group.label} {...{group, toggleGroup, openGroups}} />)}
             </ul>
+            <CurrentTheme/>
           </Area>
           <ResizableFrame src={window.location.href}/>
           <Area id="area-right">

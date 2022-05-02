@@ -35,6 +35,7 @@ export function DispatchedElement({areaId, element, index}) {
   const [isDragged, setIsDragged] = useState(false);
   const dragTimeoutRef = useRef();
   const isDragHovered = !!overElement && overElement[1] === elementId;
+  const [overAreaId, overElementId] = overElement || [];
 
   const isDefaultDrawerHidden = areaId === 'drawer' && !showDrawer && showHere;
   const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
@@ -45,16 +46,22 @@ export function DispatchedElement({areaId, element, index}) {
   }
 
   const wrappedElement = <div
-    style={{position: 'relative', order: order || ''}}
+    style={{
+      position: 'relative',
+      order: order || '',
+    }}
     className={isDragged ? 'is-dragged' : '' }
     draggable={dragEnabled}
-    onDragStart={() => {
+    onDragStart={event => {
+      if (!dragEnabled) {
+        return;
+      }
       setDraggedElement(elementId);
       dragTimeoutRef.current = setTimeout(() => {
         setIsDragged(true);
       }, 100);
     }}
-    onDragEnd={() => {
+    onDragEnd={event => {
       dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);
       setDraggedElement(null);
       setIsDragged(false);
@@ -67,8 +74,7 @@ export function DispatchedElement({areaId, element, index}) {
           clearTimeout(timeoutRef.current.area);
           timeoutRef.current.area = null;
         }
-        const [areaId, overElementId] = overElement;
-        movePanelTo(elementId, areaId, overElementId);
+        movePanelTo(elementId, overAreaId, overElementId);
         setOverElement(null);
         return;
       }
