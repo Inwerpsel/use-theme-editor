@@ -1,8 +1,6 @@
 import React, {createContext, Fragment, useEffect, useRef, useState} from 'react';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 
-export const refs = {};
-
 export const AreasContext = createContext({});
 
 const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]]) => {
@@ -12,48 +10,78 @@ const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]
   return otherHostIdA > otherHostIdB ? 1 : -1;
 };
 
-export function MovablePanels({children, dragEnabled}) {
-  const [showMovers, setShowMovers] = useState(false);
-  const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerHovered, setDrawerHovered] = useState(false);
+const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
+  if (!overElementId) {
+    // Add behind last element.
+    const otherOrders = Object.values(panelMap)
+      .filter(([area]) => area === targetAreaId)
+      .map(([, order]) => order);
+    const lastAreaOrder = Math.max(...otherOrders);
+    return {
+      ...panelMap,
+      [id]: [targetAreaId, lastAreaOrder + 1]
+    };
+  }
 
-  const movePanelTo = (id, targetHostId, overElementId) => {
-    if (overElement) {
-      setOverElement(null);
-    }
-
-    console.log(`####### MOVING PANEL "${id}" TO "${targetHostId}"`, 'map before', panelMap, JSON.stringify(panelMap, null, 2));
-
-    let added = false;
-    const panelOrders = {};
-    const newPanelMap = Object.entries(panelMap).sort(sortMap).reduce( (newPanelMap, [otherElementId, [otherHostId, otherOrder]]) => {
-      if (!panelOrders[otherHostId]) {
-        panelOrders[otherHostId] = 0;
+  const panelOrders = {};
+  return Object.entries(panelMap).sort(sortMap).reduce(
+    (
+      newPanelMap,
+      [otherElementId, [otherAreaId]],
+    ) => {
+      if (!panelOrders[otherAreaId]) {
+        panelOrders[otherAreaId] = 0;
       }
 
-      if (overElementId === otherElementId && targetHostId === otherHostId) {
-        panelOrders[otherHostId]++;
-        newPanelMap[id] = [targetHostId, panelOrders[otherHostId]];
-        added = true;
+      if (overElementId === otherElementId && targetAreaId === otherAreaId) {
+        panelOrders[otherAreaId]++;
+        newPanelMap[id] = [targetAreaId, panelOrders[otherAreaId]];
       }
 
       if (otherElementId === id) {
         return newPanelMap;
       }
-      panelOrders[otherHostId]++;
-      const newOtherOrder = panelOrders[otherHostId];
+      panelOrders[otherAreaId]++;
+      const newOtherOrder = panelOrders[otherAreaId];
 
       return {
         ...newPanelMap,
-        [otherElementId]: [otherHostId, newOtherOrder],
+        [otherElementId]: [otherAreaId, newOtherOrder],
       };
-    }, {});
+    },
+    {},
+  );
+};
 
-    setPanelMap(added ? newPanelMap : {
-      ...panelMap,
-      [id]: [targetHostId, 100],
-    });
+export function MovablePanels({children, dragEnabled}) {
+  const areaRefs = useRef({});
+  const origLocationsRef = useRef({});
+  const [showMovers, setShowMovers] = useState(false);
+  const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
+  const [drawerOpen, setDrawerOpen] = useState(false);
+  const [drawerHovered, setDrawerHovered] = useState(false);
+
+  const movePanelTo = (id, targetAreaId, overElementId) => {
+    if (overElement) {
+      setOverElement(null);
+    }
+
+    console.log(`####### MOVING PANEL "${id}" TO "${targetAreaId}"`, 'map before', panelMap, JSON.stringify(panelMap, null, 2));
+
+    if (!Object.values(panelMap).some(([otherAreaId]) => otherAreaId === targetAreaId)) {
+      // Host not in map yet, create initial order for all element in target area.
+      let i = 0;
+      Object.entries(origLocationsRef.current).forEach(([element, area]) => {
+        if (area === targetAreaId) {
+          i += 1;
+          panelMap[element] = [area, i];
+        }
+      });
+    }
+
+    const newPanelMap = updateElementLocation(panelMap, id, overElementId, targetAreaId);
+
+    setPanelMap(newPanelMap);
   };
   const resetPanels = () => {
     setPanelMap({});
@@ -64,6 +92,7 @@ export function MovablePanels({children, dragEnabled}) {
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
   const [, refresh] = useState(0);
+
   // Do a refresh after first render so that each panel switcher has the right targets.
   useEffect(() => {
     refresh(1);
@@ -71,6 +100,8 @@ export function MovablePanels({children, dragEnabled}) {
 
   return <Fragment>
     <AreasContext.Provider value={{
+      areaRefs,
+      origLocationsRef,
       panelMap,
       movePanelTo,
       resetPanels,
@@ -86,7 +117,7 @@ export function MovablePanels({children, dragEnabled}) {
       showDrawer: drawerOpen || drawerHovered
     }}>
       <div
-        className={'movable-container ' + (draggedElement ? 'dragging-element' : '')}
+        className={'movable-container ' + (draggedElement ? 'is-dragging' : '')}
       >
         {children}
       </div>

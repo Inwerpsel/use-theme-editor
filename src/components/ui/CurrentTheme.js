@@ -7,42 +7,40 @@ import {ElementLocator} from './ElementLocator';
 import {ToggleButton} from '../controls/ToggleButton';
 import {allStateSelectorsRegexp} from '../../functions/getMatchingVars';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
+import {varMatchesTerm} from '../../functions/filterSearched';
+import {isColorProperty} from '../inspector/TypedControl';
 
 export function CurrentTheme() {
   const {
     theme,
     dispatch,
     allVars,
-    // propertyFilter,
-    // propertySearch,
+    defaultValues,
+    propertyFilter,
+    propertySearch,
   } = useContext(ThemeEditorContext);
   const [initialized, setInitialized] = useState(false);
 
   const [showObsolete, setShowObsolete] = useState(true);
   const [showActive, setShowActive] = useState(true);
+  const [useDefaultValues, setUseDefaultValues] = useState(false);
 
   const [isOpen, setIsOpen] = useLocalStorage('current-theme-open', true);
-
-  // const cleanedTheme = useMemo(() => {
-  //   return Object.entries(theme).reduce((cleanedTheme, [k, v]) => {
-  //     if (!allVars.find(allVar => allVar.name === k)) {
-  //       return cleanedTheme;
-  //     }
-  //     return {
-  //       ...cleanedTheme,
-  //       [k]: v,
-  //     };
-  //   }, {});
-  // }, [theme]);
   const UNFOUND = 'UNFOUND';
 
   const groupedBySelector = useMemo(() => {
     if (!isOpen) {
       return {};
     }
-    return Object.keys(theme).reduce((grouped, k) => {
+
+    const base = !useDefaultValues ? theme : {...defaultValues, ...theme};
+
+    return Object.keys(base).sort().reduce((grouped, k) => {
       const cssVar = allVars.find(allVar => allVar.name === k);
       if (!cssVar) {
+        if (propertySearch && k.replace(/-+/g, ' ').match(propertySearch)) {
+          return grouped;
+        }
         if (!grouped[UNFOUND]) {
           grouped[UNFOUND] = [];
         }
@@ -50,10 +48,23 @@ export function CurrentTheme() {
         return grouped;
       }
 
+      if (!varMatchesTerm(cssVar, propertySearch)) {
+        return grouped;
+      }
+
+      if (propertyFilter !== 'all' && !cssVar.usages.some(usage => isColorProperty(usage.property))) {
+        return grouped;
+      }
+
       const selector = [...new Set(cssVar.usages.map(usage => usage.selector))]
         .join()
         .replace(allStateSelectorsRegexp, '')
-        .replace(/:?:(before|after)/g, '');
+        .replace(/:?:(before|after)/g, '')
+        .split(',')
+        .map(s=>s.trim())
+        .filter((value,index,self) => self.indexOf(value) === index)
+        .join();
+
       if (!grouped[selector]) {
         grouped[selector] = [];
       }
@@ -61,7 +72,7 @@ export function CurrentTheme() {
 
       return grouped;
     }, {});
-  }, [theme, isOpen]);
+  }, [theme, isOpen, useDefaultValues, propertyFilter, propertySearch]);
 
   return <div>
     <h2>Current theme ({Object.keys(theme).length})</h2>
@@ -70,6 +81,9 @@ export function CurrentTheme() {
     </Checkbox>
     <Checkbox controls={[showObsolete, setShowObsolete]}>
       Show obsolete
+    </Checkbox>
+    <Checkbox controls={[useDefaultValues, setUseDefaultValues]}>
+      Include default values
     </Checkbox>
     <ToggleButton controls={[initialized, setInitialized]}>INIT {initialized ? '' : '*'}</ToggleButton>
     <ToggleButton controls={[isOpen, setIsOpen]}>{isOpen ? 'Close' : 'Open'}</ToggleButton>

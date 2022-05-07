@@ -1,7 +1,6 @@
-import React, {Fragment, useContext, useEffect, useMemo, useState} from 'react';
+import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {useId} from '../../hooks/useId';
-import {allStateSelectorsRegexp} from '../../functions/getMatchingVars';
 
 export function ElementLocator({selector, initialized}) {
   const {
@@ -49,7 +48,10 @@ export function ElementLocator({selector, initialized}) {
   }, [currentElement]);
 
   if (elements.length === 0) {
-    return null;
+    return <Fragment>
+      <span title={selector}>No elements found!</span>
+      <span style={{fontSize: '12px', color: 'grey'}}>{selector}</span>
+    </Fragment>;
   }
 
   const element = elements[currentElement];

@@ -1,7 +1,7 @@
 // const wasRejected = result => 'rejected' === result.status;
 const wasFulfilled = result => 'fulfilled' === result.status;
 const wasRejected = result => 'rejected' === result.status;
-const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled|:[\w-]+)/g;
+export const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled|:[\w-]+)/g;
 
 const matchVar = async ( cssVar, target ) => {
   const combinedSelector = cssVar.uniqueSelectors.map( selector => {

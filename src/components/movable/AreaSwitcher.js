@@ -2,10 +2,10 @@ import React, {useContext} from 'react';
 import {DispatchedElementContext} from './DispatchedElement';
 import {SelectControl} from '@wordpress/components';
 import {valuesAsLabels} from '../inspector/TypedControl';
-import {AreasContext, refs} from './MovablePanels';
+import {AreasContext} from './MovablePanels';
 
 export function AreaSwitcher() {
-  const {panelMap, movePanelTo} = useContext(AreasContext);
+  const {panelMap, movePanelTo, areaRefs} = useContext(AreasContext);
   const {areaId, elementId} = useContext(DispatchedElementContext);
   const [currentArea] = panelMap[elementId] || [areaId];
 
@@ -18,7 +18,7 @@ export function AreaSwitcher() {
         background: !currentArea ? 'lightyellow' : 'white',
       }}
       value={currentArea}
-      options={Object.keys(refs).map(valuesAsLabels).map(({value, label}) => ({
+      options={Object.keys(areaRefs.current).map(valuesAsLabels).map(({value, label}) => ({
         value,
         label: value === areaId && value !== currentArea ? `${label} (default)` : label,
       }))}

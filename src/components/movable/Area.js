@@ -1,15 +1,15 @@
 import React, {Children, useContext, useRef} from 'react';
 import {DispatchedElement} from './DispatchedElement';
-import {AreasContext, DRAG_LEAVE_TIMEOUT, refs} from './MovablePanels';
+import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 
 export function Area({id, children = [], ...other}) {
-  const {overArea, setOverArea, timeoutRef} = useContext(AreasContext);
+  const {overArea, setOverArea, timeoutRef, areaRefs} = useContext(AreasContext);
 
   const isDragHovered = overArea === id;
 
   const ref = useRef();
-  if (!refs[id]) {
-    refs[id] = ref;
+  if (!areaRefs.current[id]) {
+    areaRefs.current[id] = ref;
   }
 
   return <div
@@ -20,7 +20,7 @@ export function Area({id, children = [], ...other}) {
     className={'area'}
   >
     {!!children && Children.map(children, (element, index) => {
-      return <DispatchedElement {...{areaId: id, element, index}}/>;
+      return <DispatchedElement {...{homeAreaId: id, element, index}}/>;
     })}
     <div
       className={'area-dropzone' + (isDragHovered ? ' drag-hovered' : '')}

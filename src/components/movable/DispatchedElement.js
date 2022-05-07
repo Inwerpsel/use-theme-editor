@@ -1,23 +1,26 @@
 import React, {createContext, useContext, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
-import {AreasContext, DRAG_LEAVE_TIMEOUT, refs} from './MovablePanels';
+import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
+import classNames from 'classnames';
 
 export const DispatchedElementContext = createContext({});
 
 function getId(element, index) {
-  if (['div', 'p', 'span', 'ul', 'li'].includes(element.type)) {
+  // Assume string means a default DOM node.
+  if (typeof element.type === 'string') {
     // Use ID or first class.
     return element.props.id || element.props.className?.split(' ')[0] || index;
   }
 
   // Default to the element's type, which is assumed to be unique.
   // Use the
-  return `${element.type?.name}#${element.id || index}`;
+  return `${element.type?.name || 'component'}#${element.id || index}`;
 }
 
-export function DispatchedElement({areaId, element, index}) {
+export function DispatchedElement({homeAreaId, element, index}) {
   const {
+    origLocationsRef,
     panelMap,
     showMovers,
     movePanelTo,
@@ -27,17 +30,23 @@ export function DispatchedElement({areaId, element, index}) {
     draggedElement, setDraggedElement,
     dragEnabled,
     showDrawer,
+    areaRefs,
   } = useContext(AreasContext);
 
-  const elementId = `${areaId}~~${getId(element, index)}`;
+  const elementId = `${homeAreaId}~~${getId(element, index)}`;
+
+  if (!origLocationsRef.current[elementId]) {
+    origLocationsRef.current[elementId] = homeAreaId;
+  }
+
   const [hostAreaId, order] = panelMap[elementId] || [];
-  const showHere = !hostAreaId || !refs[hostAreaId]?.current;
+  const showHere = !hostAreaId || hostAreaId === homeAreaId || !areaRefs.current[hostAreaId]?.current;
   const [isDragged, setIsDragged] = useState(false);
   const dragTimeoutRef = useRef();
   const isDragHovered = !!overElement && overElement[1] === elementId;
   const [overAreaId, overElementId] = overElement || [];
 
-  const isDefaultDrawerHidden = areaId === 'drawer' && !showDrawer && showHere;
+  const isDefaultDrawerHidden = homeAreaId === 'drawer' && !showDrawer && showHere;
   const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
   const hidden = isDefaultDrawerHidden || isMoveToDrawerHidden;
 
@@ -50,7 +59,8 @@ export function DispatchedElement({areaId, element, index}) {
       position: 'relative',
       order: order || '',
     }}
-    className={isDragged ? 'is-dragged' : '' }
+    title={!dragEnabled ? null : elementId}
+    className={'dispatched-element' + (!isDragged ? '' : ' is-dragged')}
     draggable={dragEnabled}
     onDragStart={event => {
       if (!dragEnabled) {
@@ -83,9 +93,21 @@ export function DispatchedElement({areaId, element, index}) {
       }
     }}
   >
+    {draggedElement && draggedElement !== elementId && <span
+      style={{
+        color: 'yellowgreen',
+        position: 'absolute',
+        top: '-12px',
+        fontSize: '12px',
+        right: '0',
+        zIndex: 1001,
+        fontWeight: 'bold !important',
+      }}
+    >{elementId}</span>}
     {element}
     {showMovers && <AreaSwitcher/>}
     {draggedElement && draggedElement !== elementId && <div
+      style={{zIndex: 1000}}
       className={'dropzone' + (isDragHovered ? ' drag-hovered' : '')}
       onDragEnter={() => {
         timeoutRef.current.lastEntered = elementId;
@@ -93,7 +115,7 @@ export function DispatchedElement({areaId, element, index}) {
           clearTimeout(timeoutRef.current.element);
           timeoutRef.current.element = null;
         }
-        setOverElement([hostAreaId || areaId, elementId, order || index]);
+        setOverElement([hostAreaId || homeAreaId, elementId, order || index]);
       }}
       onDragLeave={() => {
         timeoutRef.current.element && clearTimeout(timeoutRef.current.element);
@@ -109,7 +131,7 @@ export function DispatchedElement({areaId, element, index}) {
     </div>}
 
   </div>;
-  return <DispatchedElementContext.Provider value={{areaId, elementId, hostId: hostAreaId}}>
-    {showHere ? wrappedElement : createPortal(wrappedElement, refs[hostAreaId].current)}
+  return <DispatchedElementContext.Provider value={{areaId: homeAreaId, elementId, hostId: hostAreaId}}>
+    {showHere ? wrappedElement : createPortal(wrappedElement, areaRefs.current[hostAreaId].current)}
   </DispatchedElementContext.Provider>;
 }
