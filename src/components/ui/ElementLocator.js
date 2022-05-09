@@ -2,7 +2,7 @@ import React, {Fragment, useContext, useEffect, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {useId} from '../../hooks/useId';
 
-export function ElementLocator({selector, initialized}) {
+export function ElementLocator({selector, initialized, hideIfNotFound, children}) {
   const {
     frameRef,
   } = useContext(ThemeEditorContext);
@@ -48,51 +48,61 @@ export function ElementLocator({selector, initialized}) {
   }, [currentElement]);
 
   if (elements.length === 0) {
+    if (hideIfNotFound && initialized) {
+      return null;
+    }
     return <Fragment>
       <span title={selector}>No elements found!</span>
       <span style={{fontSize: '12px', color: 'grey'}}>{selector}</span>
+      {children}
     </Fragment>;
   }
 
   const element = elements[currentElement];
 
-  return <div style={{display: 'flex', justifyContent: 'space-between', maxWidth: '372px', fontSize: '14px'}}>
-    <div style={{flexShrink: 1}}>
-      <span> {currentElement + 1}/{elements.length} </span>
-      <span style={{maxWidth: '120px'}}>
-        {element && ` ${element.tagName}.${element.className} ${!element.id ? '' : `#${element.id}`}`}
-      </span>
-    </div>
-    <div style={{flexShrink: 0}}>
-      {elements.length > 1 && <Fragment>
+  return <Fragment>
+    <div
+      title={selector}
+      style={{display: 'flex', justifyContent: 'space-between', maxWidth: '372px', fontSize: '14px'}}
+    >
+      <div style={{flexShrink: 1}}>
+        <span> {currentElement + 1}/{elements.length} </span>
+        <span style={{maxWidth: '120px'}}>
+          {element && ` ${element.tagName}.${element.className} ${!element.id ? '' : `#${element.id}`}`}
+        </span>
+      </div>
+      <div style={{flexShrink: 0}}>
+        {elements.length > 1 && <Fragment>
+          <button
+            onClick={() => {
+              const next = currentElement === 0 ? elements.length - 1 : currentElement - 1;
+              setCurrentElement(next);
+            }}
+          >↑
+          </button>
+          <button
+            onClick={() => {
+              const next = currentElement === elements.length - 1 ? 0 : currentElement + 1;
+              setCurrentElement(next);
+            }}
+          >↓
+          </button>
+        </Fragment>}
         <button
           onClick={() => {
-            const next = currentElement === 0 ? elements.length - 1 : currentElement - 1;
-            setCurrentElement(next);
+            if (frameRef.current && elements.length > 0) {
+              frameRef.current.contentWindow.postMessage(
+                {
+                  type: 'scroll-in-view', payload: {selector, index: currentElement},
+                },
+                window.location.href,
+              );
+            }
           }}
-        >↑
+        >Focus
         </button>
-        <button
-          onClick={() => {
-            const next = currentElement === elements.length - 1 ? 0 : currentElement + 1;
-            setCurrentElement(next);
-          }}
-        >↓
-        </button>
-      </Fragment>}
-      <button
-        onClick={() => {
-          if (frameRef.current && elements.length > 0) {
-            frameRef.current.contentWindow.postMessage(
-              {
-                type: 'scroll-in-view', payload: {selector, index: currentElement},
-              },
-              window.location.href,
-            );
-          }
-        }}
-      >Focus
-      </button>
+      </div>
     </div>
-  </div>;
+    {children}
+  </Fragment>;
 }
