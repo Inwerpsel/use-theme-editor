@@ -5,7 +5,7 @@ import React, {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ThemePalettePicker} from '../ThemePalettePicker';
-import {useDebounce} from '../../hooks/useDebounce';
+import {useThrottler} from '../../hooks/useThrottler';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
@@ -13,6 +13,7 @@ export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
 const INTERNAL_VARS_REGEX = /^(--var-control|--server-theme|--theme-editor)/;
 
 export const PREVIEW_SIZE = '39px';
+
 export const pickFormat = (color, opacity) =>
   opacity === 1
     ? color.toHexString()
@@ -74,7 +75,7 @@ export const ColorControl = props => {
     nativeColorPicker,
   } = useContext(ThemeEditorContext);
 
-  const debounce = useDebounce();
+  const throttle = useThrottler({ms: 50 });
   const opacity = tinycolor(value).getAlpha();
 
   if (!nativeColorPicker) {
@@ -110,6 +111,7 @@ export const ColorControl = props => {
 
             const { r, g, b, a } = color.rgb;
 
+            // Component throttles internally, adding it here too makes it unresponsive.
             onChange(hasTransparency ? `rgba(${ r } , ${ g }, ${ b }, ${ a })` : color.hex);
           } }
         />
@@ -141,26 +143,29 @@ export const ColorControl = props => {
 
   return <div style={{minHeight: '120px', clear: 'both'}}>
     <input
+      type='color'
       style={{
         width: pickerSize,
         height: pickerSize,
         float: 'right',
         opacity,
       }}
-      type='color'
       value={tinycolor(value).toHexString()}
       onChange={(event) => {
         const color = tinycolor(event.target.value);
         const newColor = pickFormat(color, opacity);
 
-        debounce(newColor, onChange);
+        // Native picker emits values much more frequently than can be distinguished when applied.
+        // Since most editor components re-render on changes to the theme, we apply a modest amount
+        // of throttling.
+        throttle(onChange, newColor);
       }}
     />
     <input
+      type='number'
       style={{
         float: 'right',
       }}
-      type='number'
       min={0}
       max={1}
       step={.05}

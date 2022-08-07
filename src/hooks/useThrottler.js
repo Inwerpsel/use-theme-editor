@@ -1,40 +1,39 @@
-import {useMemo, useRef} from 'react';
+import { useMemo, useRef } from 'react';
 
-const fps = 20;
-const frameTime = 1000 / fps;
-
-// Not really debounced, because this immediately executes the handler, then starts debouncing.
-//
-function debounced(ref, value, callback) {
+function throttledSetter(ref, onChange, value, options) {
+  const leading = options.leading !== false;
   ref.current.latest = value;
 
   if (ref.current.running) {
     return;
   }
 
-  const loop = () => {
-    if (ref.current.latest) {
-      // Call callback with latest and keep running.
-      callback(ref.current.latest);
-      setTimeout(loop, frameTime);
-      ref.current.running = true;
-      ref.current.latest = null;
-    } else {
-      ref.current.running = false;
+  const loop = (first = false) => {
+    ref.current.running = ref.current.latest !== null;
+
+    // No new value was added since last committed value so the loop can stop here.
+    if (!ref.current.running) {
+      return;
     }
+
+    // Call callback with latest and keep running.
+    if (!first || leading) {
+      onChange(ref.current.latest);
+      ref.current.latest = null;
+    }
+    setTimeout(loop, options.ms || 50);
   };
-  loop();
+
+  loop(true);
 }
 
 // This is useful in case you're not debouncing because the function itself is expensive, but if you want to avoid
 // triggering too many renders when manipulating state.
 //
-export const useDebounce = () => {
-  const debounceRef = useRef({});
+export const useThrottler = (options) => {
+  // tests
+  const ref = useRef({});
 
-  return useMemo(() => {
-    return (value, onChange) => {
-      debounced(debounceRef, value, onChange);
-    };
-  }, []);
+  // Memo is fine here as it's just an optimization. React de facto won't discard it, and if it would it's not a problem.
+  return useMemo(() => (onChange, value) => throttledSetter(ref, onChange, value, options), []);
 };
