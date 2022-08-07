@@ -2,7 +2,6 @@ import React, {createContext, useContext, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
-import classNames from 'classnames';
 
 export const DispatchedElementContext = createContext({});
 
@@ -62,7 +61,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
     title={!dragEnabled ? null : elementId}
     className={'dispatched-element' + (!isDragged ? '' : ' is-dragged')}
     draggable={dragEnabled}
-    onDragStart={event => {
+    onDragStart={() => {
       if (!dragEnabled) {
         return;
       }
@@ -71,7 +70,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
         setIsDragged(true);
       }, 100);
     }}
-    onDragEnd={event => {
+    onDragEnd={() => {
       dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);
       setDraggedElement(null);
       setIsDragged(false);

@@ -56,8 +56,8 @@ export function useGlobalSettings(frameRef) {
   const [dragEnabled, setDragEnabled] = useState(false);
 
   return {
-    // I preserved this line though useSetting was removed. It would be very nice to define the options this terse,
-    // however
+    // I preserved this line though useSetting code was removed. It would be very nice to define the options this terse.
+    // However not having the setter symbol picked up by IDE was prohibitive. Perhaps there's a fix for that.
     // ...useSetting({propertyFilter: 'all'}),
     propertyFilter, setPropertyFilter,
     propertySearch, setPropertySearch,
