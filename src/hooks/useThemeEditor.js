@@ -24,7 +24,7 @@ const sortObject = o => Object.keys(o).sort().reduce((sorted, k) => {
 
 // I created these as an optimization, but not sure if it's really needed or even improving things.
 const lastWritten = {};
-const keysToRemove = {};
+let keysToRemove = [];
 
 const DEFAULT_STATE = {
   theme: {},
@@ -37,19 +37,23 @@ const DEFAULT_STATE = {
 };
 
 const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
+  const previewPropnames = Object.keys(previewProps);
+  const pseudoPropnames = Object.keys(previewPseudoVars);
+  const toStatePropnames = Object.keys(toState);
+
   Object.keys(fromState).forEach(k => {
-    if (Object.keys(previewProps).includes(k)) {
+    if (previewPropnames.includes(k)) {
       return;
     }
 
-    if (Object.keys(previewPseudoVars).some(pseudo => k.includes(pseudo))) {
+    if (pseudoPropnames.some(pseudo => k.includes(pseudo))) {
       return;
     }
 
-    if (Object.keys(toState).includes(k)) {
+    if (toStatePropnames.includes(k)) {
       return;
     }
-    keysToRemove[k] = true;
+    keysToRemove.push(k)
   });
 };
 
@@ -79,7 +83,7 @@ export const ACTIONS = {
     if (!(name in state.theme)) {
       return state;
     }
-    keysToRemove[name] = true;
+    keysToRemove.push(name)
 
     const {
       [name]: oldValue,
@@ -111,7 +115,7 @@ export const ACTIONS = {
     if (
       !(name in state.theme)
       && !Object.keys(state.previewPseudoVars).map(s => s.replace(PSEUDO_REGEX, '--')).includes(name)) {
-      keysToRemove[name] = true;
+      keysToRemove.push(name)
     }
     return {
       ...state,
@@ -147,7 +151,7 @@ export const ACTIONS = {
       }
 
       if (!(k in state.theme)) {
-        keysToRemove[k] = true;
+        keysToRemove.push(k);
       }
       // Unset the regular property so that it gets set again.
       lastWritten[k] = null;
@@ -199,7 +203,7 @@ export const ACTIONS = {
   loadTheme: ({ defaultValues, history, theme: oldTheme }, { theme }) => {
     dropProps(oldTheme, theme, {}, {});
     Object.keys(lastWritten).forEach(k => lastWritten[k] = null);
-    Object.keys(theme).forEach(k => keysToRemove[k] = true);
+    keysToRemove.push(...Object.keys(theme))
 
     return {
       ...DEFAULT_STATE,
@@ -226,7 +230,7 @@ const writeNewValues = theme => {
 };
 
 const processRemovals = (defaultValues) => {
-  Object.keys(keysToRemove).forEach(k => {
+  keysToRemove.forEach(k => {
     if (defaultValues[k]) {
       write(k, defaultValues[k]);
       lastWritten[k] = defaultValues[k];
@@ -234,8 +238,9 @@ const processRemovals = (defaultValues) => {
       unset(k);
       delete lastWritten[k];
     }
-    delete keysToRemove[k];
   });
+  // All was processed.
+  keysToRemove = [];
 };
 
 export const useThemeEditor = (
@@ -244,7 +249,6 @@ export const useThemeEditor = (
     // baseTheme = null,
     allVars,
   }) => {
-  // Read
   const [{
     theme,
     defaultValues,
