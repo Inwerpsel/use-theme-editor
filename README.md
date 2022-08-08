@@ -19,8 +19,7 @@ TODO:
   we can do the same with the selector, and so locate it reliably regardless of naming scheme.
 - More tailored controls / group properties into single control?
 - Make hotkeys configurable in the UI
-- Move constant inline styles to CSS
-- Use more of available screen space in "responsive" view
+- Clean up internal style handling
 - Use `ResponsiveFrame` to render multiple themes / screen sizes at the same time
 - Write tests
 - Expand the color usages quick menu to allow picking all kinds of values. Maybe a textual widget ordered by how
