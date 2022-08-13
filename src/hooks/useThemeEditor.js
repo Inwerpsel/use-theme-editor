@@ -1,4 +1,4 @@
-import { useReducer, useEffect } from 'react';
+import { useReducer, useEffect, useLayoutEffect } from 'react';
 import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from '../initializeThemeEditor';
 import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
 import {getAllDefaultValues} from '../functions/getAllDefaultValues';
@@ -37,24 +37,18 @@ const DEFAULT_STATE = {
 };
 
 const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
-  const previewPropnames = Object.keys(previewProps);
   const pseudoPropnames = Object.keys(previewPseudoVars);
-  const toStatePropnames = Object.keys(toState);
 
-  Object.keys(fromState).forEach(k => {
-    if (previewPropnames.includes(k)) {
-      return;
+  for (const k in fromState) {
+    if (k in toState || k in previewProps) {
+      continue;
     }
 
     if (pseudoPropnames.some(pseudo => k.includes(pseudo))) {
-      return;
-    }
-
-    if (toStatePropnames.includes(k)) {
-      return;
+      continue;
     }
     keysToRemove.push(k)
-  });
+  }
 };
 
 export const ACTIONS = {
@@ -273,7 +267,7 @@ export const useThemeEditor = (
 
   const serialized = JSON.stringify(withPseudoPreviews);
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     processRemovals(defaultValues);
     writeNewValues(withPseudoPreviews);
     localStorage.setItem(LOCAL_STORAGE_PREVIEWS_KEY, serialized);
