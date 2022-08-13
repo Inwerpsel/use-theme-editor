@@ -148,7 +148,9 @@ export const setupThemeEditor = async (config) => {
   }
 
   const locatedElements = {};
-  let timeout = null;
+
+  // Keep 1 timeout as we only want to be highlighting 1 element at a time.
+  let lastHighlightTimeout = null;
 
   window.addEventListener('message', event => {
     const {type, payload} = event.data;
@@ -159,9 +161,11 @@ export const setupThemeEditor = async (config) => {
     case 'highlight-element-start':
       group && addHighlight(group.element);
       break;
+
     case 'highlight-element-end':
       group && removeHighlight(group.element);
       break;
+
     case 'scroll-in-view':
       const element = selector ? locatedElements[selector][index] : group.element;
 
@@ -180,18 +184,28 @@ export const setupThemeEditor = async (config) => {
         inline: 'end',
       });
       addHighlight(element);
-      if (timeout) {
-        window.clearTimeout(timeout[0]);
-        if (timeout[2] !== element) {
-          timeout[1]();
+      if (lastHighlightTimeout) {
+        const [timeout, handler, timeoutElement] = lastHighlightTimeout;
+
+        window.clearTimeout(timeout);
+        // If previous timeout was on another element, execute it immediately.
+        // Removes its focus border.
+        if (timeoutElement !== element) {
+          handler();
         }
       }
-      const handler = () => removeHighlight(element);
-      timeout = [setTimeout(handler, 2000), handler, element];
+      const handler = () => {
+        removeHighlight(element);
+        lastHighlightTimeout = null;
+      };
+
+      lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];
       break;
+
     case 'theme-edit-alt-click':
       requireAlt = payload.frameClickBehavior !== 'any';
       break;
+
     case 'set-sheet-config':
       toggleStylesheets(JSON.parse(payload));
       break;
