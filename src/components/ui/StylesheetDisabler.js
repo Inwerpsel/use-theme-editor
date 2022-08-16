@@ -33,7 +33,7 @@ export const StylesheetDisabler = () => {
   } = useContext(ThemeEditorContext);
   const [disabledSheets, setDisabledSheets] = useLocalStorage('set-disabled-sheets', {});
 
-  const sheets = useSameOriginStylesheets();
+  const sheets = [...document.styleSheets].filter(({href}) => !!href);
   useDisabledStyleSheets(disabledSheets, frameRef);
 
   if (sheets === null) {
@@ -72,6 +72,7 @@ export const StylesheetDisabler = () => {
           style={{
             fontSize: '14px',
             marginBottom: '8px',
+            wordBreak: 'break-all',
           }}
           onClick={() => {
             setDisabledSheets({...disabledSheets, [id]: !disabledSheets[id] || null});
