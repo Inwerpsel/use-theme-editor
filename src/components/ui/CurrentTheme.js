@@ -77,7 +77,7 @@ export function CurrentTheme() {
 
   return <div>
     <h4>
-      Current theme ({Object.keys(theme).length})
+      Current theme ({Object.keys(theme).length} out of {Object.keys(defaultValues).length})
       <ToggleButton style={{float: 'right'}} controls={[isOpen, setIsOpen]}>{isOpen ? 'Close' : 'Open'}</ToggleButton>
     </h4>
 
@@ -103,7 +103,7 @@ export function CurrentTheme() {
         paddingLeft: 0,
       }}
     >
-      {Object.entries(groupedBySelector).map(([selector, cssVars]) => <li key={selector}>
+      {Object.entries(groupedBySelector).map(([selector, cssVars]) => <li style={{marginTop: '12px'}} key={selector}>
         <ElementLocator hideIfNotFound={hideNotFound} {...{initialized, selector}}>
           <ul>
             {cssVars.map(cssVar => {
