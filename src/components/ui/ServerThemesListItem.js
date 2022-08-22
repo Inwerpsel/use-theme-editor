@@ -46,8 +46,9 @@ export const ServerThemesListItem = props => {
         setFileName(name);
         dispatch({type: ACTIONS.loadTheme, payload: {theme: serverTheme}});
       }}
-    >Switch
+    >{fileName === name ? 'Reset' : 'Switch'}
     </button>
+    
     {Object.keys(serverTheme).length > 0 &&
       <span style={{float: 'right'}}>
         ({Object.keys(serverTheme).length})
