@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {TextControl} from '@wordpress/components';
 
 export const sizeLikeProperties = [
@@ -33,6 +33,7 @@ export const sizeLikeProperties = [
   'right',
   'outline-width',
   'outline-offset',
+  'gap',
 ];
 
 const remSize = 16;
@@ -48,6 +49,7 @@ const isVw = value => value && value.match(/vw$/);
 
 export const SizeControl = props => {
   const {onChange, value} = props;
+  const [step, setStep] = useState(.1);
 
   const pxValue = isPx(value) ? value.replace('px', '') : isRem(value) ? convertRemToPixels(parseFloat(value.replace('rem', ''))) : '';
   const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
@@ -102,6 +104,26 @@ export const SizeControl = props => {
         } }
       />
       <span>vw</span>
+    </div>
+    <div className={'theme-length-control control-no-unit'}>
+      <input
+        {...{step}}
+        type={ 'number' }
+        value={ /(^\d+(\.\d*)?$|^\.\d+$)/.test(value) ? value : ''}
+        onChange={ event => {
+          onChange(event.currentTarget.value);
+        } }
+      />
+      <span>[no unit]</span>
+      <input
+        type={ 'number' }
+        value={ step }
+        style={{fontSize: '10px'}}
+        onChange={ event => {
+          setStep(event.currentTarget.value);
+        } }
+      />
+      step
     </div>
     <button
       disabled={value === 0 || value === '0'}
