@@ -1,4 +1,4 @@
-import React, {Fragment, useContext, useEffect} from 'react';
+import React, { useContext, useEffect } from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -37,18 +37,25 @@ export const ResizableFrame = props => {
     };
   }, []);
 
-  return <Fragment>
+  return <div
+      style={{
+        maxWidth: `${32 + wrapperMargin + scale * parseInt(width)}px`,
+        maxHeight: `${-12 + wrapperMargin + scale * parseInt(height)}px`,
+        overflow: 'hidden',
+      }}
+    className='responsive-frame-outer-container'
+  >
     <div
       className='responsive-frame-container'
       onMouseMove={ (event) => {
         if (event.buttons !== 1 || event.currentTarget.className !== 'responsive-frame-container') {
           return;
         }
-        const newHeight = parseInt(event.currentTarget.style.height.replace('px', ''));
-        const newWidth = parseInt(event.currentTarget.style.width.replace('px', ''));
-        setHeight(newHeight - wrapperMargin);
-        setWidth(newWidth - wrapperMargin);
-      } }
+        const newHeight = parseInt(event.currentTarget.style.height.replace('px', '')) - wrapperMargin;
+        const newWidth = parseInt(event.currentTarget.style.width.replace('px', '')) - wrapperMargin;
+        setHeight(newHeight);
+        setWidth(newWidth);
+      }}
       style={ {
         transform: `scale(${scale})`,
         resize: 'both',
@@ -56,6 +63,7 @@ export const ResizableFrame = props => {
         width: `${ wrapperMargin + parseInt(width) }px`,
         minHeight: '200px',
         height: `${ wrapperMargin + parseInt(height) }px`,
+        overflow: 'hidden',
         padding: '0',
         boxSizing: 'border-box',
       } }
@@ -66,5 +74,5 @@ export const ResizableFrame = props => {
         { ...{ src, width: parseInt(width) + 12, height: parseInt(height) + 12 } }
       />
     </div>
-  </Fragment>;
+  </div>;
 };
