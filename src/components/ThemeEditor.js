@@ -1,4 +1,4 @@
-import React, {createContext, Fragment, useEffect, useMemo, useRef, useState} from 'react';
+import React, {createContext, Fragment, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
@@ -49,7 +49,7 @@ export const ThemeEditor = (props) => {
   const [openGroups, setOpenGroups] = useState({[unfilteredGroups[0]?.label]: true});
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (unfilteredGroups.length > 0) {
       setOpenGroups({
         [unfilteredGroups[0].label]: true,
@@ -151,7 +151,7 @@ export const ThemeEditor = (props) => {
     <div className="theme-editor">
       <MovablePanels dragEnabled={settings.dragEnabled}>
         <div style={{display: 'flex', columns: 2, justifyContent: 'space-between'}}>
-          <Area id="area-top" style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
+          <Area id="area-top" style={{justifyContent: 'flex-start', flexGrow: 1}}>
             <FrameSizeSettings/>
             <ScreenSwitcher/>
             <MoveControls/>
@@ -159,7 +159,6 @@ export const ThemeEditor = (props) => {
           <Area
             id="area-top-reverse"
             style={{
-              display: 'flex',
               flexDirection: 'row-reverse',
               justifyContent: 'flex-start',
               flexGrow: 1,
@@ -200,7 +199,10 @@ export const ThemeEditor = (props) => {
               </div>
             </div>
             <ul className={'group-list'}>
-              {groups.map(group => <GroupControl key={group.label} {...{group, toggleGroup, openGroups}} />)}
+              {groups.map((group, index) => <GroupControl
+              key={group.label}
+              {...{group, toggleGroup, openGroups, index}} />
+              )}
             </ul>
             <CurrentTheme/>
           </Area>
@@ -231,9 +233,7 @@ export const ThemeEditor = (props) => {
             <ThemeEditorExtraOptions/>
           </Drawer>
         </div>
-
       </MovablePanels>
-
     </div>
   </ThemeEditorContext.Provider>;
 };
