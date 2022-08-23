@@ -1,13 +1,15 @@
 import React, {useState, Fragment, useContext} from 'react';
-import {TypedControl} from './TypedControl';
+import {isColorProperty, TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, ACTIONS} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
-import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from '../properties/ColorControl';
+import {PREVIEW_SIZE} from '../properties/ColorControl';
 import mediaQuery from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {IdeLink} from './IdeLink';
 import {ElementLocator} from '../ui/ElementLocator';
+import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
+import { allStateSelectorsRegexp } from '../../functions/getMatchingVars';
 
 const uniqueUsages = usages => {
   const obj =  usages.reduce((usages, usage) => ({
@@ -31,17 +33,14 @@ const format = name => {
 const formatTitle = (name) => {
   const [prefix, prop] = format(name);
   return <Fragment>
-    <span className={'var-control-property'}>{prop}</span>
-    <br/>
     <div
       style={{
         fontSize: '13px',
-        marginTop: '4px',
-        marginLeft: '24px',
         fontStyle: 'italic',
         color: 'black'
       }}
     >{capitalize(prefix)}</div>
+    <span className={'var-control-property'}>{prop}</span>
   </Fragment>;
 };
 
@@ -50,7 +49,9 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
 
   const title = `${value}${ !isDefault ? '' : ' (default)' }`;
 
-  if (value && `${value}`.match(COLOR_VALUE_REGEX) || `${value}`.match(GRADIENT_REGEX)) {
+  const shouldBeColor = isColorProperty(cssVar.usages[0].property);
+
+  if (value && shouldBeColor) {
     return <span
       key={ 1 }
       onClick={ onClick }
@@ -63,7 +64,7 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
         background: value,
         float: 'right',
         marginTop: '7px',
-      } }/>;
+      } }>{/^var\(/.test(value) && 'var'}</span>;
   }
 
   return <span
@@ -73,7 +74,6 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
     style={ {
       // width: size,
       fontSize: '14px',
-      height: size,
       float: 'right',
       marginTop: '2px'
     } }
@@ -84,7 +84,7 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
 
 const showUsages = usages => {
   return <ul>
-    {uniqueUsages(usages).map(({selector, position}) => {
+    {uniqueUsages(usages).map(({property, selector, position}) => {
       const selectors = selector.split(',');
       if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
         return <li key={selectors}>
@@ -93,16 +93,17 @@ const showUsages = usages => {
             style={{listStyleType: 'none'}}
           >
             {selectors.map(selector => <li key={selector}>
-              {selector}<br/>
-              <ElementLocator selector={selector} initialized={true}/>
+              <span> ({property})</span>
+              <ElementLocator selector={selector.replace(allStateSelectorsRegexp, '')} initialized={true}/>
             </li>)}
           </ul>
         </li>;
       }
 
       return <li key={selectors}>
-        {selector} {!!position && <IdeLink {...position}/>}
-        <ElementLocator selector={selector} initialized={true}/>
+        {!!position && <IdeLink {...position}/>}
+        <span> ({property})</span>
+        <ElementLocator selector={selector.replace(allStateSelectorsRegexp, '')} initialized={true}/>
       </li>;
     })}
   </ul>;
@@ -113,18 +114,27 @@ export const VariableControl = (props) => {
     cssVar,
     onChange,
     onUnset,
-    defaultValue,
     initialOpen,
+    nestingLevel,
   } = props;
 
-  const {theme, dispatch, width: screenWidth } = useContext(ThemeEditorContext);
+  const {
+    theme,
+    dispatch,
+    width,
+    defaultValues,
+    allVars,
+  } = useContext(ThemeEditorContext);
 
   const {
     name,
     usages,
     maxSpecific,
     positions,
+    properties,
   } = cssVar;
+
+  const defaultValue = definedValues[':root'][name] || defaultValues[name];
 
   const [
     isOpen, setIsOpen
@@ -136,15 +146,34 @@ export const VariableControl = (props) => {
     showSelectors, setShowSelectors
   ] = useState(false);
 
+  const [overwriteVariable, setOverwriteVariable] = useState(false);
+
   const toggleSelectors = () => setShowSelectors(!showSelectors);
   const value = theme[name] || defaultValue;
   const isDefault = value === defaultValue;
   const {media} = maxSpecific || {};
 
-  const screen = {type: 'screen', width: screenWidth || window.screen.width};
+  const varMatches = value && value.match(/^var\((\-\-[\w-]+)\s*[\,\)]/);
+  const referencedVariable = !varMatches || varMatches.length === 0 
+    ? null 
+    : allVars.find(cssVar => cssVar.name === varMatches[1].trim());
+
+  const screen = {type: 'screen', width: width || window.screen.width};
   const {overridingMedia} = cssVar.allVar || cssVar;
   const matchesQuery = !media || mediaQuery.match(media, screen);
-  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width: screenWidth}));
+  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width: width}));
+
+  const isAffectedByScope = !!scopesByProperty[name] && (
+    scopesByProperty[name].length > 1 || Object.keys(scopesByProperty[name])[0] !== ':root'
+  );
+
+  let currentLevel = nestingLevel || 0;
+
+  if (nestingLevel > 20) {
+    // Very long dependency chain, probably cyclic, let's break it here.
+    // I'll prevent setting cyclic references in the first place.
+    return null;
+  }
 
   return <li
     key={ name }
@@ -167,15 +196,56 @@ export const VariableControl = (props) => {
   >
     {!matchesScreen && <VariableScreenSwitcher {...{cssVar, media}}/>}
     { previewValue(value, cssVar, toggleOpen, isDefault) }
-    <h5
-      style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
-      onClick={ ()=> isOpen && toggleOpen() }
+    <div
+        onClick={ ()=> isOpen && toggleOpen() }
     >
-      { formatTitle(name) }
-    </h5>
+      <div>
+        {isAffectedByScope && <span
+          style={{
+            fontSize: '24px',
+            color: 'red',
+            fontWeight: 'bold',
+          }}
+          title={
+            'Property declared in a CSS selector, global overrides likely ineffective.\n'
+            + Object.entries(scopesByProperty[name]).map(([k,v])=> `${k}: ${v}`).join('\n')
+          }
+        >
+          !&nbsp;
+        </span>}
+
+        {Object.entries(properties).map(([property, isFullProperty]) => <span
+          key={property}
+          className='monospace-code'
+          style={{ fontSize: '14px' }}
+          title={isFullProperty ? '' : 'Does not set whole property! Most inputs likely will not work.'}
+        >{property}{!isFullProperty && <b style={{color: 'red'}}> *</b>}</span>)}
+
+      </div>
+      
+      <h5
+        style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
+      >
+        { formatTitle(name) }
+      </h5>
+    </div>
     {!!positions[0] && <IdeLink {...(positions[0] || {})}/>}
-    { isOpen && (
-      <div
+    { isOpen && <Fragment>
+      { !!referencedVariable && <ul><VariableControl
+        cssVar={referencedVariable}
+        onChange={(value) => {
+          dispatch({type: ACTIONS.set, payload: {name: referencedVariable.name, value}})
+        }}
+        onUnset={() => {
+          dispatch({type: ACTIONS.unset, payload: {name: referencedVariable.name}})
+        }}
+        initialOpen={false}
+        nestingLevel={++currentLevel}
+      /></ul>}
+      {referencedVariable && <button
+        onClick={() => {setOverwriteVariable(!overwriteVariable)}}
+      >{overwriteVariable? 'Close custom color' : 'Use custom color'}</button>}
+      { (!referencedVariable || overwriteVariable) && <div
         onMouseEnter={ () => {
           PSEUDO_REGEX.test(name) && dispatch({
             type: ACTIONS.startPreviewPseudoState,
@@ -199,18 +269,18 @@ export const VariableControl = (props) => {
         { isDefault && <span style={{float: 'right', margin: '6px 6px 15px', color: 'grey'}}>default </span>}
         <br/>
         <TypedControl {...{cssVar, value, onChange}}/>
-        <div>
-          <button
-            onClick={toggleSelectors}
-            style={{fontSize: '15px', marginTop: '8px'}}
-          >{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})
-          </button>
-          {showSelectors && <Fragment>
-            <div>{name}</div>
-            {showSelectors && showUsages(uniqueUsages(usages))}
-          </Fragment>}
-        </div>
+      </div>}
+      <div>
+        <button
+          onClick={toggleSelectors}
+          style={{fontSize: '15px', marginTop: '8px'}}
+        >{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})
+        </button>
       </div>
-    ) }
+      {showSelectors && <Fragment>
+        <div>{name}</div>
+        {showUsages(uniqueUsages(usages))}
+      </Fragment>}
+    </Fragment> }
   </li>;
 };

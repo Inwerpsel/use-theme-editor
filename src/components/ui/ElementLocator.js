@@ -52,8 +52,8 @@ export function ElementLocator({selector, initialized, hideIfNotFound, children}
       return null;
     }
     return <Fragment>
+      <div className='monospace-code'>{selector.replaceAll(/\,/g, ',\n')}</div>
       <span title={selector}>No elements found!</span>
-      <span style={{fontSize: '12px', color: 'grey'}}>{selector}</span>
       {children}
     </Fragment>;
   }
@@ -61,17 +61,30 @@ export function ElementLocator({selector, initialized, hideIfNotFound, children}
   const element = elements[currentElement];
 
   return <Fragment>
+    <div className='monospace-code'>{selector.replaceAll(/\,/g, ',\n')}</div>
     <div
-      title={selector}
-      style={{display: 'flex', justifyContent: 'space-between', maxWidth: '372px', fontSize: '14px'}}
+      style={{
+        display: 'flex',
+        justifyContent: 'flex-start',
+        maxWidth: '372px',
+        fontSize: '16px'
+      }}
     >
-      <div style={{flexShrink: 1}}>
-        <span> {currentElement + 1}/{elements.length} </span>
-        <span style={{maxWidth: '120px'}}>
-          {element && ` ${element.tagName}.${element.className} ${!element.id ? '' : `#${element.id}`}`}
-        </span>
-      </div>
       <div style={{flexShrink: 0}}>
+        <button
+          className='scroll-in-view'
+          onClick={() => {
+            if (frameRef.current && elements.length > 0) {
+              frameRef.current.contentWindow.postMessage(
+                {
+                  type: 'scroll-in-view', payload: {selector, index: currentElement},
+                },
+                window.location.href,
+              );
+            }
+          }}
+        >👁
+        </button>
         {elements.length > 1 && <Fragment>
           <button
             onClick={() => {
@@ -88,19 +101,12 @@ export function ElementLocator({selector, initialized, hideIfNotFound, children}
           >↓
           </button>
         </Fragment>}
-        <button
-          onClick={() => {
-            if (frameRef.current && elements.length > 0) {
-              frameRef.current.contentWindow.postMessage(
-                {
-                  type: 'scroll-in-view', payload: {selector, index: currentElement},
-                },
-                window.location.href,
-              );
-            }
-          }}
-        >Focus
-        </button>
+      </div>
+      <div style={{flexShrink: 1}}>
+        <span> {currentElement + 1}/{elements.length} </span>
+        <span style={{maxWidth: '120px'}}>
+          {element && ` ${element.tagName.toLowerCase()}.${element.className} ${!element.id ? '' : `#${element.id}`}`}
+        </span>
       </div>
     </div>
     {children}
