@@ -5,6 +5,7 @@ import {FontFamilyControl} from '../properties/FontFamilyControl';
 import {ColorControl} from '../properties/ColorControl';
 import {SizeControl, sizeLikeProperties} from '../properties/SizeControl';
 import {timeLikeProperties, TimeControl} from '../properties/TimeControl';
+import { selectOnlyOptions } from './SelectOnlyControl';
 
 export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
@@ -59,6 +60,14 @@ export const TypedControl = ({ cssVar, value, onChange}) => {
     const options = ['normal', 'italic'].map(valuesAsLabels);
     return <SelectControl
       {...{value, onChange, options}}
+    />;
+  }
+
+
+  const options = selectOnlyOptions(cssVar);
+  if (options) {
+    return <SelectControl
+      {...{value, onChange, options: options.map(valuesAsLabels)}}
     />;
   }
 
