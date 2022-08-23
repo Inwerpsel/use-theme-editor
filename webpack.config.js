@@ -4,13 +4,14 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 module.exports = {
     watch: true,
-    entry: [
-        './example/src/index.js',
-         './example/src/style.scss',
-        ],
+    entry: {
+        bundle: './example/src/index.js',
+        main: './example/src/style.scss',
+        halfmoon: './example/halfmoon/style.scss',
+    },
     output: {
+        filename: '[name].js',
         path: path.resolve(__dirname, 'example/dist'),
-        filename: 'bundle.js',
     },
     devtool: 'source-map',
     module: {

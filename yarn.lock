@@ -3217,6 +3217,11 @@
   "resolved" "https://registry.npmjs.org/gradient-parser/-/gradient-parser-0.1.5.tgz"
   "version" "0.1.5"
 
+"halfmoon@^1.1.1":
+  "integrity" "sha512-w/ydT3CixxxxdJP4a3sqSzUnCJFmhvcqE2vQOIsWCfevpqanKlbGQNUwKJH0nKvo13M89eetM3R0gsTOfNLGHA=="
+  "resolved" "https://registry.npmjs.org/halfmoon/-/halfmoon-1.1.1.tgz"
+  "version" "1.1.1"
+
 "hard-rejection@^2.1.0":
   "integrity" "sha512-VIZB+ibDhx7ObhAe7OVtoEbuP4h/MuOTHJ+J8h/eBXotJYl0fBgR72xDFCKgIh22OJZIOVNxBMWuhAr10r8HdA=="
   "resolved" "https://registry.npmjs.org/hard-rejection/-/hard-rejection-2.1.0.tgz"
