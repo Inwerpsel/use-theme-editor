@@ -4,7 +4,16 @@ body {
 }
 
 .theme-editor {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background-color: grey;
+  opacity: .99;
   max-height: 100vh;
+
   button, input {
     margin-right: 2px;
     border: 1px solid black;
@@ -13,7 +22,6 @@ body {
     font-size: 16px;
   }
 }
-
 
 .theme-length-controls {
   display: flex;
@@ -42,7 +50,7 @@ body {
   }
 }
 
-.theme-editor *:not(.font-button), .responsive-size-controls * {
+.theme-editor *:not(.font-button):not(.monospace-code), .responsive-size-controls * {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial !important;
@@ -142,6 +150,11 @@ html.hide-wp-admin-bar {
   background: rgba(246, 246, 89, 0.63);
 }
 
+.theme-editor ul {
+  margin-left: 0;
+  padding-left: 0;
+}
+
 .group-list, .server-theme-list {
   min-width: 360px;
   padding: 0;
@@ -206,7 +219,8 @@ html.hide-wp-admin-bar {
   border-radius: 7px !important;
   padding: 2px 7px 7px !important;
 
-  h5 {
+  h4, h5 {
+    clear: none;
     margin-bottom: 2px;
   }
 }
@@ -222,6 +236,7 @@ html.hide-wp-admin-bar {
   padding: 2px 7px 7px !important;
 
   h5 {
+    clear: none;
     margin-bottom: 2px;
   }
 
@@ -339,3 +354,32 @@ div[id^=font-picker] ul {
   min-height: 400px;
 }
 @import "css/movable";
+
+.monospace-code {
+  _-- {
+    display: inline-block;
+    font-size: 16px;
+    background: white;
+    border: 1px solid gray;
+    border-radius: 4px;
+    padding: 2px;
+    font-family: monospace !important;
+  }
+  white-space: pre-wrap;
+}
+
+.element-locator {
+  margin-top: 24px;
+}
+
+.theme-editor {
+  h4 {
+      font-size: 18px !important;
+      margin-top: 0 !important;
+  }
+
+  h5 {
+      font-size: 16px !important;
+      margin-top: 0 !important;
+  }
+}
