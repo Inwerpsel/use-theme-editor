@@ -8,6 +8,7 @@ export function ThemePalettePicker(props) {
     onChange,
     value,
     name,
+    allowGradients,
   } = props;
 
   const {
@@ -15,10 +16,13 @@ export function ThemePalettePicker(props) {
     colorUsages,
   } = useContext(ThemeEditorContext);
   
-  return colorUsages.map(({color, usages}) => {
+  return colorUsages.map(({color, usages, isGradient}) => {
     // if (color === value && usages.length === 1) {
     //   return null;
     // }
+    if (!allowGradients && isGradient) {
+      return null;
+    }
 
     return <span
       key={color}

@@ -25,7 +25,7 @@ const extractUsage = (colors , [name, color]) => {
   }
   if (COLOR_VALUE_REGEX.test(color) || GRADIENT_REGEX.test(color)) {
     if (!(color in colors)) {
-      colors[color] = {color, usages: []};
+      colors[color] = {color, usages: [], isGradient: GRADIENT_REGEX.test(color)};
     }
     colors[color].usages.push(name);
   }
@@ -66,7 +66,7 @@ const pickerSize = '80px';
 export const ColorControl = props => {
   const {onChange, value, cssVar} = props;
 
-  const {name} = cssVar;
+  const {name, usages} = cssVar;
 
   const [hideColorPicker, setHideColorPicker] = useState(true);
 
@@ -78,10 +78,13 @@ export const ColorControl = props => {
   const throttle = useThrottler({ms: 50 });
   const opacity = tinycolor(value).getAlpha();
 
+  // Disallow gradients if not all usages support it.
+  const allowGradients = !usages.some(({property}) => property !== 'background');
+
   if (!nativeColorPicker) {
     return <Fragment>
       <div style={{clear: 'both'}}>
-        <ThemePalettePicker {...{value, onChange, name}}/>
+        <ThemePalettePicker {...{value, onChange, name, allowGradients}}/>
         <button
           onClick={() => setHideColorPicker(!hideColorPicker)}
           title={ hideColorPicker ? 'Add a new color' : 'Hide color picker'}
@@ -193,7 +196,7 @@ export const ColorControl = props => {
       👻
     </button>
     <div style={{clear: 'both'}}>
-      <ThemePalettePicker {...{value, onChange, name}}/>
+      <ThemePalettePicker {...{value, onChange, name, allowGradients}}/>
     </div>
   </div>;
 };
