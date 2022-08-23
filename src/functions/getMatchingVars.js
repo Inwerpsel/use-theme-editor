@@ -1,51 +1,52 @@
-// const wasRejected = result => 'rejected' === result.status;
-const wasFulfilled = result => 'fulfilled' === result.status;
-const wasRejected = result => 'rejected' === result.status;
 export const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled|:[\w-]+)/g;
 
-const matchVar = async ( cssVar, target ) => {
-  const combinedSelector = cssVar.uniqueSelectors.map( selector => {
-    const isBodySelector = !!selector.match( /^body(\.[\w-]*)?$/ );
+const matchVar = (cssVar, target) => {
+  const combinedSelector = cssVar.uniqueSelectors.map(selector => {
+    const isBodySelector = !!selector.match(/^body(\.[\w-]*)?$/);
+    const isRootSelector = selector.trim() === ':root';
+    const isGlobalSelector = isBodySelector || isRootSelector;
+
+    if (!isRootSelector && /^:/.test(selector)) {
+      // Quick hack. These are filtered below.
+      return null;
+    }
 
     // Prevent body selector from always showing up, unless a body or paragraph was clicked.
-    const shouldIncludeStar = !isBodySelector || ['p', 'body'].includes(target.tagName.toLowerCase());
+    const shouldIncludeStar = !isGlobalSelector || ['p', 'body', 'h'].includes(target.tagName.toLowerCase().replace(/\d$/, ''));
     // const shouldIncludeStar = true;
 
-    return `${ selector }${ !shouldIncludeStar ? '' : `, ${ selector } *` }`;
+    return `${selector}${!shouldIncludeStar ? '' : `, ${selector} *`}`;
     // Remove any pseudo selectors that might not match the clicked element right now.
-  }).join().replace(allStateSelectorsRegexp, '').replace(/:?:(before|after)/g, '');
+  }).filter(v => v).join().replace(allStateSelectorsRegexp, '').replace(/:?:(before|after|first\-letter)/g, '');
 
 
-  if ( target.matches( combinedSelector ) ) {
-    return [ cssVar ];
+  if (combinedSelector === '') {
+    return false;
   }
 
-  return [];
+  if (typeof target.matches !== 'function') {
+    return false;
+  }
+
+  try {
+    // Remove residual empty not-selectors after removing pseudo states.
+    return target.matches(combinedSelector.replaceAll(/:not\(\)/g, ''));
+  } catch (e) {
+    if (!/^:/.test(combinedSelector)) {
+      console.log('Failed testing a selector, and it is not because it only matches a pseudo selector.', cssVar);
+      console.log(combinedSelector);
+    }
+    return false;
+  }
 };
 
-const BS_PATTERN = /^--bs-/;
+export const getMatchingVars = ({ cssVars, target }) => {
 
-export const getMatchingVars = async ( { cssVars, target } ) => {
-
-  const startTime = performance.now();
-  const uniqueVars = cssVars.reduce( ( carry, cssVar ) => {
-    if (!BS_PATTERN.test(cssVar.name) && !carry.some(collected => collected.name === cssVar.name)) {
-      carry.push( cssVar );
-    }
-    return carry;
-  }, [] );
-
-  const promises = uniqueVars.map( cssVar => matchVar(cssVar, target));
-
-  const results = await Promise.allSettled( promises );
-
-  const failed = results.filter(wasRejected);
-  failed.length && console.warn('Failed testing some selectors.', failed);
-
-  const arrays = results.filter( wasFulfilled ).map( result => result.value );
-
-  console.info('matched vars in', performance.now() - startTime);
-
-  return [].concat( ...arrays );
+  try {
+    return cssVars.filter(cssVar => matchVar(cssVar, target));
+  } catch (e) {
+    console.log(target, e);
+    return [];
+  }
 };
 

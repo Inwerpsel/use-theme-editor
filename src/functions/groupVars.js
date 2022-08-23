@@ -1,3 +1,4 @@
+import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 
 const toLabel = ({id, className, tagName}) => {
@@ -57,7 +58,7 @@ export const sortForUI = (
   return stateA < stateB ? -1 : 1;
 };
 
-export const groupVars = async (vars, target) => {
+export const groupVars = (vars, target) => {
   const groups = [];
   let current,
     previous = target,
@@ -70,13 +71,25 @@ export const groupVars = async (vars, target) => {
     if (previousMatches.length === 0) {
       break;
     }
-    const currentMatches = await getMatchingVars({ cssVars: previousMatches, target: current });
+    const currentMatches = getMatchingVars({ cssVars: previousMatches, target: current });
 
     if (currentMatches.length < previousMatches.length) {
+      const element = previous;
+      const inlineStyles = {};
+      if (element !== document.documentElement) {
+        for (const propname of element.style) {
+          inlineStyles[propname] = element.style[propname];
+        }
+      }
+      const vars = previousMatches.filter(match => !currentMatches.includes(match));
+      const scopes = getMatchingScopes(element, vars);
+
       groups.push({
-        element: previous,
-        label: toLabel(previous),
-        vars: previousMatches.filter(match => !currentMatches.includes(match)),
+        element,
+        label: toLabel(element),
+        vars,
+        scopes,
+        inlineStyles,
       });
       previousMatches = currentMatches;
     }

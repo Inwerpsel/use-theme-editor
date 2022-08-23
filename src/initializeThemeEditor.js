@@ -95,19 +95,19 @@ export const setupThemeEditor = async (config) => {
 
   }, false);
 
-  document.addEventListener('click', async event => {
+  document.addEventListener('click', event => {
     if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
       return;
     }
-
-    document.documentElement.classList.add('hide-wp-admin-bar');
     event.preventDefault();
 
-    const matchedVars = await getMatchingVars({ cssVars, target: event.target });
+    document.documentElement.classList.add('hide-wp-admin-bar');
 
-    const rawGroups = await groupVars(matchedVars, event.target);
+    const matchedVars = getMatchingVars({ cssVars, target: event.target });
 
-    const groups = await filterMostSpecific(rawGroups, event.target);
+    const rawGroups = groupVars(matchedVars, event.target);
+
+    const groups = filterMostSpecific(rawGroups, event.target);
 
     if (!isRunningAsFrame) {
       renderSelectedVars(editorRoot, matchedVars, event.target, groups, rawGroups, cssVars, config);
@@ -142,6 +142,9 @@ export const setupThemeEditor = async (config) => {
 
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
+  // This intentionally only runs on the frame.
+  // If this would go wrong in the main window,
+  // it might not be possible for a user to reach the settings to fix it.
   if (storedSheetConfig) {
     const disabledSheets = JSON.parse(storedSheetConfig);
     toggleStylesheets(disabledSheets);

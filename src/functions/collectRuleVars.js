@@ -1,42 +1,77 @@
 import {balancedVar} from './balancedVar';
 
+export const definedValues = {':root': {}};
+
+export const scopesByProperty = {};
+
 export const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
-    // Don't collect :root usages for now, it needs special handling and currently causes bugs in the editor.
-    if (rule.selectorText.includes(':root')) {
-      return collected;
-    }
     // Rule is a selector.
     // Parse cssText to get original declarations.
     const ruleBody = rule.cssText.trim().replace(/^.*{/, '').replace(/;?\s*}\s*$/, '');
     const decls = ruleBody.split(';').map(decl => decl.split(':'));
+    const selector = rule.selectorText.trim();
 
-    decls.forEach(([propertyRaw, ...value]) => {
+    decls.forEach(([propertyRaw, ...splitValue]) => {
       // Rejoin in case there could be more ":" inside the value.
-      let remainingValue = value.join(':');
+      let value = splitValue.join(':').trim();
       let match;
-      while ( (match = balancedVar( remainingValue )) ) {
+      const property = propertyRaw.trim();
+
+      if (/^--/.test(property)) {
+        // The rule is setting a custom property.
+        if (!definedValues[selector]) {
+          definedValues[selector] = {};
+        }
+
+        definedValues[selector][property] = value;
+
+        // Index them both ways, might pick just one later.
+        if (!scopesByProperty[property]) {
+          scopesByProperty[property] = {};
+        }
+        scopesByProperty[property][selector] = value;
+
+        return; // from decls.forEach
+      }
+
+      let first = true;
+      while ( (match = balancedVar( value )) ) {
         // Split at the comma to find variable name and fallback value.
         const varArguments = match.body.split( ',' ).map( str => str.trim() );
+        const isImportant = first && match.post.trim() === '!important';
+        const isFullProperty = first && match.pre.trim() === '' && (
+          match.post.trim() === ''
+          || isImportant
+          );
+        first = false;
 
         // There may be other commas in the values so this isn't necessarily just 2 pieces.
         // By spec everything after the first comma (including commas) is a single default value we'll join again.
-        const [variableName, ...defaultValue] = varArguments;
+        const [variableName, ...defaultValueSplit] = varArguments;
+
+        let defaultValue = defaultValueSplit.join(',');
+        if (defaultValue === '') {
+          defaultValue = definedValues[':root'][variableName];
+        }
 
         const usage = {
-          selector: rule.selectorText,
-          property: propertyRaw.trim(),
-          defaultValue: defaultValue.join(','),
+          selector,
+          property,
+          defaultValue,
           media,
           supports,
           sheet: sheet.href,
+          isFullProperty,
+          fullValue: value,
         };
         if (!(variableName in collected)) {
-          collected[variableName] = { usages: [] };
+          collected[variableName] = { properties: {}, usages: [] };
         }
         collected[variableName].usages.push(usage);
+        collected[variableName].properties[property] = isFullProperty;
         // Replace variable name (first occurrence only) from result, to avoid circular loop
-        remainingValue = (match.pre || '') + match.body.replace(variableName, '') + (match.post || '');
+        value = (match.pre || '') + match.body.replace(variableName, '') + (match.post || '');
       }
     });
   }
