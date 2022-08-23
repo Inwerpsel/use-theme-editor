@@ -1,4 +1,4 @@
-import React, {createContext, Fragment, useEffect, useRef, useState} from 'react';
+import React, {createContext, useLayoutEffect, useRef, useState} from 'react';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 
 export const AreasContext = createContext({});
@@ -94,12 +94,11 @@ export function MovablePanels({children, dragEnabled}) {
   const [, refresh] = useState(0);
 
   // Do a refresh after first render so that each panel switcher has the right targets.
-  useEffect(() => {
+  useLayoutEffect(() => {
     refresh(1);
   }, []);
 
-  return <Fragment>
-    <AreasContext.Provider value={{
+  return <AreasContext.Provider value={{
       areaRefs,
       origLocationsRef,
       panelMap,
@@ -115,14 +114,13 @@ export function MovablePanels({children, dragEnabled}) {
       drawerOpen, setDrawerOpen,
       drawerHovered, setDrawerHovered,
       showDrawer: drawerOpen || drawerHovered
-    }}>
-      <div
-        className={'movable-container ' + (draggedElement ? 'is-dragging' : '')}
-      >
-        {children}
-      </div>
-    </AreasContext.Provider>
-  </Fragment>;
+  }}>
+    <div
+      className={'movable-container ' + (draggedElement ? 'is-dragging' : '')}
+    >
+      {children}
+    </div>
+  </AreasContext.Provider>;
 }
 
 export const DRAG_LEAVE_TIMEOUT = 100;

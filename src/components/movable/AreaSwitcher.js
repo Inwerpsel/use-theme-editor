@@ -5,9 +5,8 @@ import {valuesAsLabels} from '../inspector/TypedControl';
 import {AreasContext} from './MovablePanels';
 
 export function AreaSwitcher() {
-  const {panelMap, movePanelTo, areaRefs} = useContext(AreasContext);
-  const {areaId, elementId} = useContext(DispatchedElementContext);
-  const [currentArea] = panelMap[elementId] || [areaId];
+  const { movePanelTo, areaRefs } = useContext(AreasContext);
+  const { homeAreaId, elementId, hostAreaId: currentArea } = useContext(DispatchedElementContext);
 
   return <div
     className={'area-switcher'}
@@ -20,10 +19,10 @@ export function AreaSwitcher() {
       value={currentArea}
       options={Object.keys(areaRefs.current).map(valuesAsLabels).map(({value, label}) => ({
         value,
-        label: value === areaId && value !== currentArea ? `${label} (default)` : label,
+        label: value === homeAreaId && value !== currentArea ? `${label} (default)` : label,
       }))}
       onChange={value => {
-        movePanelTo(elementId, value === areaId ? null : value);
+        movePanelTo(elementId, value === homeAreaId ? null : value);
       }}
     />
     {!currentArea && <button

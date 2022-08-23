@@ -5,6 +5,13 @@ import {AreaSwitcher} from './AreaSwitcher';
 
 export const DispatchedElementContext = createContext({});
 
+// Current best attempt at generating a stable ID.
+//
+// It always works because it defaults to the index within the home area,
+// however that's not resilient to changes in the source code order.
+// For that to work it also includes the home area in the ID,
+// which makes moving any component to another area in source mess up the location map.
+// Likely the ID logic should be flexible and configurable.
 function getId(element, index) {
   // Assume string means a default DOM node.
   if (typeof element.type === 'string') {
@@ -39,11 +46,16 @@ export function DispatchedElement({homeAreaId, element, index}) {
   }
 
   const [hostAreaId, order] = panelMap[elementId] || [];
+  // There are 3 cases where we want to render in its default place.
+  // 1) Element wasn't moved.
+  // 2) Element was moved to its home area.
+  // 3) The host area doesn't exist yet. A new render will get triggered after all areas have been rendered.
   const showHere = !hostAreaId || hostAreaId === homeAreaId || !areaRefs.current[hostAreaId]?.current;
+
   const [isDragged, setIsDragged] = useState(false);
   const dragTimeoutRef = useRef();
-  const isDragHovered = !!overElement && overElement[1] === elementId;
   const [overAreaId, overElementId] = overElement || [];
+  const isDragHovered = overElementId === elementId;
 
   const isDefaultDrawerHidden = homeAreaId === 'drawer' && !showDrawer && showHere;
   const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
@@ -103,8 +115,11 @@ export function DispatchedElement({homeAreaId, element, index}) {
         fontWeight: 'bold !important',
       }}
     >{elementId}</span>}
+
     {element}
-    {showMovers && <AreaSwitcher/>}
+
+    {showMovers && <AreaSwitcher />}
+
     {draggedElement && draggedElement !== elementId && <div
       style={{zIndex: 1000}}
       className={'dropzone' + (isDragHovered ? ' drag-hovered' : '')}
@@ -130,7 +145,13 @@ export function DispatchedElement({homeAreaId, element, index}) {
     </div>}
 
   </div>;
-  return <DispatchedElementContext.Provider value={{areaId: homeAreaId, elementId, hostId: hostAreaId}}>
+  return <DispatchedElementContext.Provider
+    value={{
+      homeAreaId,
+      elementId,
+      hostAreaId,
+    }}
+  >
     {showHere ? wrappedElement : createPortal(wrappedElement, areaRefs.current[hostAreaId].current)}
   </DispatchedElementContext.Provider>;
 }
