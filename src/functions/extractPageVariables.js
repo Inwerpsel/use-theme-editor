@@ -13,7 +13,11 @@ const warmupConsumers = sheets => sheets.map(sheet => getConsumer(sheet));
 const getConsumer = async sheetUrl => {
   if (!sourceMapConsumers[sheetUrl]) {
     const mapUrl = sheetUrl.split('?')[0] + '.map';
-    const data = await (await fetch(mapUrl)).json();
+    try {
+       data = await (await fetch(mapUrl)).json();
+    } catch (e) {
+      return;
+    }
     sourceMapConsumers[sheetUrl] = await new window.sourceMap.SourceMapConsumer(data);
   }
 
@@ -80,8 +84,19 @@ const getVarPositions = (sheet, varName, sourceMapConsumer) => {
   return lines.reduce(getLineVarPositions(varName, sourceMapConsumer, sheet), []);
 };
 
-const collectSheetVars = (vars, sheet) => {
-  return [...sheet.cssRules].reduce((sheetVars, rule) => collectRuleVars(sheetVars, rule, sheet), vars);
+const collectSheetVars = async (vars, sheet) => {
+  let rules;
+  if (isSameDomain(sheet)) {
+    rules = sheet.cssRules;
+  } else {
+    const sheetContent = await (await fetch(sheet.href)).text();
+    const style = document.createElement('style');
+    style.innerText = sheetContent;
+    document.head.appendChild(style);
+    rules = document.styleSheets[document.styleSheets.length - 1].cssRules;
+    document.head.removeChild(style);
+  }
+  return [...rules].reduce((sheetVars, rule) => collectRuleVars(sheetVars, rule, sheet), await vars);
 };
 
 const isUsed = (vars,sheet) => {
@@ -89,19 +104,24 @@ const isUsed = (vars,sheet) => {
 };
 
 const warmup = async (vars, sheets) => {
-  const promises = sheets.filter(s => s.href && isUsed(vars, s)).map(sheet => {
+  const promises = sheets.filter(s => s.href && isUsed(vars, s) && isSameDomain(s)).map(sheet => {
     return [
       ...warmupConsumers([sheet.href]),
       ...warmupLines([sheet.href])
     ];
   });
+  if (promises.length === 0) {
+    return await Promise.allSettled([]);
+  }
   return await Promise.allSettled(...promises);
 };
 
 export const extractPageVariables = async() => {
   const startTime = performance.now();
-  const sheets = [...document.styleSheets].filter(isSameDomain).filter(isNotCoreFile);
-  const asObject = sheets.reduce(collectSheetVars, {});
+  const sheets = [...document.styleSheets]
+    // .filter(isSameDomain)
+    .filter(isNotCoreFile);
+  const asObject = await sheets.reduce(collectSheetVars, {});
 
   const allVars = Object.entries(asObject).map(([k, v]) => ({name: k, ...v}));
 
@@ -113,6 +133,9 @@ export const extractPageVariables = async() => {
 
     const positions = await sheetsUsingIt.reduce(async (positions, sheet) => {
       const sourceMapConsumer = sourceMapConsumers[sheet];
+      if (!sourceMapConsumer) {
+        return await positions;
+      }
       const newPositions = getVarPositions(sheet, name, sourceMapConsumer);
 
       return [...await positions, ...await newPositions];
