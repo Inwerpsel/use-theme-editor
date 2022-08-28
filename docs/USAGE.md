@@ -1,8 +1,12 @@
 # Usage
 
-### Getting an element's settings
+## Getting an element's settings
 
-If you `alt + click` an element, you will get all variables that apply to the element you clicked or any of its parents.
+If you click an element in the content frame (or `alt + click` an element outside of it),
+you will get all variables that apply to the element or any of its parents.
+
+### Grouping
+
 These by default are grouped per HTML element.
 
 For example if your page has a header with a variable background color, within it a left section with also a variable
@@ -17,10 +21,11 @@ If there are elements in the tree that don't have any options, these will not be
 
 `header > div (with no options) > div (also no options) > div.header-left-side (with options) > button (with options)`
 
-This will display the same 3 groups as the first example. If new code is pushed that adds options to one of those 2
+This will display the same 3 groups as the first example. If new code is pushed that adds options to one of the 2
 elements that previously had none, the theme editor will start displaying a 4th group.
 
 If there are no options for the element you clicked or any of its parents, no groups will be shown.
+This doesn't happen frequently as most of the time there's at least some styles on the root element or body.
 
 ### Locating opened elements on the page
 
@@ -28,11 +33,16 @@ Hovering the title of each group will highlight the corresponding element on the
 element you last clicked (or parent of). The same options could also apply to other elements on the page, but these are
 not highlighted.
 
-This currently does not work in responsive mode, but can be fixed to do so.
+### Locating other elements affected by a variable
 
-It's a very quick implementation that just sets a border, so this is likely to make the whole layout jiggle. I'll
-replace it with something that doesn't change the layout, but for now this seems acceptable, given there's otherwise no
-way to locate the element again.
+To find other elements that may be affected by a certain variable, press the "Show selectors" button at the bottom.
+This will allow you to find all elements that would be affected by this variable on the page. Since this matches by
+selector, it can occur that elements are shown where there is a more specific variable overriding it. For example an 
+`a` selector will also match buttons (unless it's using `:not(.btn)`).
+
+Another way a variable can be used is in another variable. In that case these other references are shown as the first
+thing when you open the variable control. This way you're sure to not miss it before you start changing the value.
+Only in a few cases this usually has a long list.
 
 ### Undo/redo behavior
 
@@ -46,28 +56,35 @@ picker to a different color. While dragging you see the color applied immediatel
 "final" color you land on. This way the history stays manageable and navigable. This is done by using a 700ms timeout.
 
 Note that this is only local history and not saved on the server. Versioning of themes saved on the server is not
-included yet, but may be supported (to some degree) by this library at a later point.
+included yet, but may be supported (to some degree) by this library at a later point. Preferably in a VCS.
 
-### Draggable overlay
+### Resizable content frame
 
-If you click and hold the overlay (outside a list element), you can drag it around the screen. It will (try to) avoid
-going off-screen by adjusting the maximum height, however the implementation currently is a bit buggy. It doesn't take
-the resizable server themes into account so if you make that one too big it gets pushed off the bottom of the screen.
+If you need to work with a screen size bigger than your current screen, you can use the slider at the top to
+scale down this frame.
 
-### Responsive view
+On the right you have some preset screen sizes. You can also manually enter width and height, or use the bottom right
+square with your mouse to drag it to different dimensions.
 
-If you check the checkbox at the top (or press `alt + v`), you switch to a responsive mode where the site is displayed
-in an iframe with any dimensions. If you need to work with a screen size bigger than your current screen, you can use
-the slider at the top to scale down this frame. On the right you have some preset screen sizes. You can also manually
-enter width and height, or use the bottom right square with your mouse to drag it to different dimensions.
+The scale is stored per screen resolution. For now this results in buggy behavior while manually resizing the frame
+if it's scaled down. Most of the time you'll just want to use one of the preset options.
 
-### "Group by last clicked element" checkbox
+### Current theme view
 
-You can toggle off this checkbox to switch to another "mode", where all previously matched variables are displayed in a
-single list (instead of grouped). When clicking multiple elements, these are all appended to this list (as opposed to
-the "grouped" mode which only includes the last clicked element). You can individually close options in this list using
-the minus sign on the right. This was the first mode I created, the grouped mode is a lot more convenient, but I
-preserved it because it could be handy in some cases.
+The current theme component lists all individual values in the theme. These are grouped by selector, which works well
+most of the time, but only if the CSS doesn't use too much slightly different selectors (or different groupings).
+
+Pseudo selectors (and some other stuff) is also removed, which usually works as most people nest their state selectors
+witih SCSS. And even if it's not the case it's usually consistent, so removing them ends us with exactly the "normal"
+selector.
+
+For example, in most frameworks you'll find all button properties grouped together, but in some cases there's 10 or 
+more different groups matching `.btn`, because there were also other classes in the selector.
+
+You can make this list include every variable that is used by the page. Even large lists render fast, however changing
+a theme value quickly (e.g. dragging a color slider) while the whole list is open will cause stuttering. In my testing
+this only happened from upward of about 1000 controls being displayed, and it was still manageable. Still, for optimal
+performance it's best to not have this view open while making fluid changes.
 
 ## Saving a theme on the server
 
@@ -110,24 +127,38 @@ it's better than nothing for now :). This will be made more robust in a future i
 
 Just type something else in the theme name field, and upload it as a new theme.
 
+## Rearranging the UI
+
+The editor consists of multiple areas, arranged around the content frame.
+
+There's a checkbox somewhere allowing you to make the UI elements draggable.
+This allows you to drag any element from one of the areas to any other.
+
+On the whole page only 2 things can't be dragged:
+- content frame
+- drawer + button
+
+For now this is just a ring around the content with a limited width. The height also makes it impractical to put long
+controls in the upper or bottom areas, but you can do it.
+
+The "Drawer" is a special area that is closed by default. It opens automatically while dragging an element,
+allowing you to remove UI elements you don't use. As a bonus, elements in the drawer don't render at all,
+which allows for adding large amounts of optional UI elements.
+
+The arrangement is saved in local storage. However because of how it currently generates identifiers, code changes
+that change the structure will invalidate (parts of) this arrangement. In some cases it could cause existing elements
+to move to another area.
+
 ## Known limitations/bugs
 
 There are no known issues that prevent it from being unusable, but given this is an early version, there's a few things
 to watch out for, and a few things that for now require more "manual" work.
 
-- There is no local storage "namespace", so if multiple sites run on the same domain, it will currently read and apply
-  the last theme you edited to all sites that have the theme editor.
-- The selectors for a variable currently often increase the width of the overlay if they are long, resulting in the
-  overlay scrolling horizontally. Will be replaced with a better way of visualizing these.
-- The responsive view still uses the same overlay as the "embedded view". This is only because the responsive view was
-  created more recently, and will be replaced with a fixed UI that can more efficiently use available space.
 - Switching to a different theme can be "undone" like other actions, but it won't switch the theme name back to the
   previous one. This will likely be solved by adding a history per theme name if it was saved already. For now, you have
   to watch out a bit after you press undo after switching a theme, so that you don't accidentally overwrite a theme with
   another theme when saving.
-- In a few rare cases the logic for filtering the most specific property doesn't pick the right one. Because of that, I
-  preserved a checkbox at the top to disable this filtering ("Show only specific properties"). Once these cases are
-  solved, the checkbox will likely be removed.
+- In a few rare cases the logic for filtering the most specific variable doesn't pick the right one.
 - No Google Fonts integration. The font picker is currently disabled because it crashes when the value is not found in
   Google Fonts. Also picking a new font from Google Fonts doesn't ensure the font is actually available on the page.
   This integration will be finished later.
