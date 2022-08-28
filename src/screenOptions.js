@@ -7,7 +7,9 @@ export const toSelectOptions = options => options.map(({ dims, label }) => ({
 export const simpleScreenOptions = toSelectOptions([
   { dims: [360, 640], label: 'Phone' },
   { dims: [768, 1024], label: 'Tablet Portrait' },
+  { dims: [800, 1280], label: 'Tablet Large Portrait' },
   { dims: [1024, 768], label: 'Tablet Landscape' },
+  { dims: [1280, 800], label: 'Tablet Large Landscape' },
   { dims: [1536, 864], label: 'Laptop Wide' },
 ]);
 export const allScreenOptions = toSelectOptions([
@@ -15,9 +17,12 @@ export const allScreenOptions = toSelectOptions([
   { dims: [360, 780], label: 'Apple iPhone 12 mini' },
   { dims: [390, 844], label: 'Apple iPhone 12 Pro', },
   { dims: [768, 1024], label: 'Tablet Portrait' },
+  { dims: [800, 1280], label: 'Tablet Large Portrait' },
   { dims: [1024, 768], label: 'Tablet Landscape' },
+  { dims: [1280, 800], label: 'Tablet Large Landscape' },
   { dims: [1366, 768], label: 'Laptop Small' },
   { dims: [1440, 900], label: 'Laptop Medium' },
+  { dims: [900, 1440], label: 'Laptop Medium Portrait' },
   { dims: [1536, 864], label: 'Laptop Wide' },
   { dims: [1920, 1080], label: 'Full HD' },
   { dims: [2560, 1080], label: 'Ultrawide HD' },
