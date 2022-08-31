@@ -9,7 +9,7 @@ export function Checkbox({controls: [enabled, setEnabled], children, ...other}) 
     <input
       type="checkbox"
       readOnly
-      checked={enabled}
+      checked={!!enabled}
       onClick={() => {
         setEnabled(!enabled);
       }}
