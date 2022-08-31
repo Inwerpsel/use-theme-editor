@@ -34,36 +34,42 @@ export const VariableScreenSwitcher = props => {
     setHeight,
   } = useContext(ThemeEditorContext);
 
-  return <ul className={'variable-screen-switcher'}>
-    {screenOptions
-      .filter(({dims: [width]}) => {
-        if (width === screenWidth) {
-          return false;
-        }
-        if (media && !mediaQuery.match(media, {type: 'screen', width})) {
-          return false;
-        }
+  const filteredOptions = screenOptions
+    .filter(({ dims: [width] }) => {
+      if (width === screenWidth) {
+        return false;
+      }
+      if (media && !mediaQuery.match(media, {type: 'screen', width})) {
+        return false;
+      }
 
-        // This var matches the screen, let's check if it's being overridden by another one.
-        return !isOverridden({media, width, cssVar});
-      }, [])
-      .map(({label, dims: [width, height]}) => <li key={label}>
-        <button
-          title={`Switch to ${label}`}
-          onClick={event => {
-            setWidth(width);
-            setHeight(height);
-            event.preventDefault();
-            event.stopPropagation();
-          }}>
-          <span
-            className={'variable-screen-switcher-screen'}
-            style={{
-              width: `${width / 42}px`,
-              height: `${height / 42}px`,
+      // This var matches the screen, let's check if it's being overridden by another one.
+      return !isOverridden({ media, width, cssVar });
+    });
+
+  return (
+    <ul className={'variable-screen-switcher'}>
+      {filteredOptions.map(({ label, dims: [width, height] }) => (
+        <li key={label}>
+          <button
+            title={`Switch to ${label}`}
+            onClick={(event) => {
+              setWidth(width);
+              setHeight(height);
+              event.preventDefault();
+              event.stopPropagation();
             }}
-          />
-        </button>
-      </li>)}
-  </ul>;
+          >
+            <span
+              className={'variable-screen-switcher-screen'}
+              style={{
+                width: `${width / 42}px`,
+                height: `${height / 42}px`,
+              }}
+            />
+          </button>
+        </li>
+      ))}
+    </ul>
+  );
 };
