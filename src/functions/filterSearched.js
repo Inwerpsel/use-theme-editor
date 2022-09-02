@@ -19,10 +19,16 @@ export const filterSearched = (groups, term) => {
   if (!term) {
     return groups;
   }
+  const cleanedTerm = term.replace(/^\!/, '');
+  const isInverse = cleanedTerm.length !== term.length;
   try {
     return groups.map(group => ({
       ...group,
-      vars: group.vars.filter(cssVar => varMatchesTerm(cssVar, term)),
+      vars: group.vars.filter(cssVar => {
+        const matches = varMatchesTerm(cssVar, cleanedTerm);
+
+        return isInverse ? !matches : matches;
+      }),
     }));
   } catch (e) {
     // Catch wrong regexes.

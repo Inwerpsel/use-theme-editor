@@ -38,8 +38,10 @@ export function CurrentTheme() {
 
     return Object.keys(base).sort().reduce((grouped, k) => {
       const cssVar = allVars.find(allVar => allVar.name === k);
+      const term = propertySearch.replace(/^\!/, '');
+      const isInverse = term.length !== propertySearch.length
       if (!cssVar) {
-        if (propertySearch && k.replace(/-+/g, ' ').match(propertySearch)) {
+        if (term && k.replace(/-+/g, ' ').match(term) || isInverse) {
           return grouped;
         }
         if (!grouped[UNFOUND]) {
@@ -49,7 +51,7 @@ export function CurrentTheme() {
         return grouped;
       }
 
-      if (!varMatchesTerm(cssVar, propertySearch)) {
+      if (!varMatchesTerm(cssVar, term) || isInverse) {
         return grouped;
       }
 
