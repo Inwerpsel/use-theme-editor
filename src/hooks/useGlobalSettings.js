@@ -55,6 +55,19 @@ export function useGlobalSettings(frameRef) {
 
   const [dragEnabled, setDragEnabled] = useState(false);
 
+  const [annoyingPrefix, setAnnoyingPrefix] = useLocalStorage(
+    'annoying-prefix',
+    ''
+  );
+  const [nameReplacements, setNameReplacements] = useLocalStorage(
+    'name-replacements',
+    []
+  );
+  const [showCssProperties, setShowCssProperties] = useLocalStorage(
+    'hide-css-properties',
+    false
+  );
+
   return {
     // I preserved this line though useSetting code was removed. It would be very nice to define the options this terse.
     // However not having the setter symbol picked up by IDE was prohibitive. Perhaps there's a fix for that.
@@ -72,5 +85,8 @@ export function useGlobalSettings(frameRef) {
     scales, setScales,
     scale,
     dragEnabled, setDragEnabled,
+    annoyingPrefix, setAnnoyingPrefix,
+    showCssProperties, setShowCssProperties,
+    nameReplacements, setNameReplacements,
   };
 }
