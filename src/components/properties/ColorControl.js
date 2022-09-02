@@ -64,7 +64,7 @@ export const byHexValue = ({color: color1}, { color: color2}) => {
 const pickerSize = '80px';
 
 export const ColorControl = props => {
-  const {onChange, value, cssVar} = props;
+  const { onChange, onUnset, value, cssVar } = props;
 
   const {name, usages} = cssVar;
 
@@ -129,7 +129,7 @@ export const ColorControl = props => {
           onClick={() => {
             value === 'transparent'
               ? dispatch({type: ACTIONS.unset, payload: {name}})
-              : dispatch({type: ACTIONS.set, payload: {name, value: 'transparent'}});
+              : onChange('transparent');
           }}
           style={ {
             fontSize: '12px',
@@ -184,7 +184,7 @@ export const ColorControl = props => {
       onClick={() => {
         value === 'transparent'
           ? dispatch({type: ACTIONS.unset, payload: {name}})
-          : dispatch({type: ACTIONS.set, payload: {name, value: 'transparent'}});
+          : onChange('transparent');
       }}
       style={ {
         fontSize: '12px',
