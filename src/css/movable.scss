@@ -140,6 +140,12 @@ $switcher-width: 120px;
       border-top: 4px solid yellow !important;
     }
   }
+
+  #drawer {
+    .drag-hovered {
+      border-bottom: 4px solid yellow !important;
+    }
+  }
 }
 
 .movable-container {
@@ -205,6 +211,13 @@ $switcher-width: 120px;
   transition: min-height 1s ease;
   transition-delay: .5s;
   align-self: flex-end;
+
+  &[data-open=true] {
+    background: grey;
+    border: 2px solid black;
+    border-radius: 4px;
+    padding: 8px;
+  }
 }
 
 .is-dragging #drawer {
@@ -214,8 +227,8 @@ $switcher-width: 120px;
   min-width: 200px;
 
   .area-dropzone {
-    min-height: 200px;
-    min-width: 200px;
+    min-height: 32px;
+    min-width: 120px;
   }
 }
 

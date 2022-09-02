@@ -9,7 +9,7 @@ export function Drawer({children}) {
   } = useContext(AreasContext);
 
   return <div id={'drawer-wrapper'}>
-    <Area id="drawer">
+    <Area id="drawer" data-open={drawerOpen}>
       {children}
     </Area>
 
