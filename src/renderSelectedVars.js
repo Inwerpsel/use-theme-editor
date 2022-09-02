@@ -10,6 +10,7 @@ export const renderSelectedVars = (rootElement, cssVars = [], lastTarget, groups
       groups={ groups }
       lastTarget={ lastTarget }
       allVars={ allVars }
+      lastInspectTime={performance.now()}
     />,
     rootElement
   );
