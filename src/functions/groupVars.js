@@ -4,7 +4,7 @@ import { getMatchingVars } from './getMatchingVars';
 const toLabel = ({id, className, tagName}) => {
   const idPart = !id ? '' : `#${ id }`;
   const noClass = !className || typeof className !== 'string';
-  const classPart =  noClass ? '' : `.${ className.trim().replace(/ /g, '.') }`;
+  const classPart =  noClass ? '' : `.${ className.trim().replaceAll(/ /g, '.') }`;
 
   return tagName.toLowerCase() + idPart + classPart;
 };
@@ -86,6 +86,7 @@ export const groupVars = (vars, target) => {
 
       groups.push({
         element,
+        isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
         label: toLabel(element),
         vars,
         scopes,
