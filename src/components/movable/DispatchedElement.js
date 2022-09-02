@@ -61,7 +61,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
   const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
   const hidden = isDefaultDrawerHidden || isMoveToDrawerHidden;
 
-  if (hidden && !draggedElement) {
+  if (hidden) {
     return null;
   }
 
