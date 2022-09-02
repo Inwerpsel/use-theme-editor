@@ -13,6 +13,7 @@ body {
   background-color: grey;
   opacity: .99;
   max-height: 100vh;
+  text-align: start;
 
   button, input {
     margin-right: 2px;
@@ -21,6 +22,16 @@ body {
     border-radius: 6px;
     font-size: 16px;
   }
+  h4 {
+      font-size: 18px !important;
+      margin-top: 0 !important;
+  }
+
+  h5 {
+      font-size: 16px !important;
+      margin-top: 0 !important;
+  }
+
 }
 
 .theme-length-controls {
@@ -230,10 +241,11 @@ html.hide-wp-admin-bar {
     background-color: #e2e2e2;
   }
   clear: both;
+  min-height: 57px;
   border: 1px solid black !important;
   margin-bottom: 3px !important;
   border-radius: 7px !important;
-  padding: 2px 7px 7px !important;
+  padding: 0 7px 7px !important;
 
   h5 {
     clear: none;
@@ -262,6 +274,7 @@ html.hide-wp-admin-bar {
 }
 
 .variable-screen-switcher {
+  margin: 0 !important;
   opacity: .5;
 
   .var-control:hover &, .var-control:focus-within & {
@@ -372,14 +385,17 @@ div[id^=font-picker] ul {
   margin-top: 24px;
 }
 
-.theme-editor {
-  h4 {
-      font-size: 18px !important;
-      margin-top: 0 !important;
-  }
+.var-control:not([data-nesting-level="0"]):before {
+  content: "=";
+  font-size: 48px;
+  float: left;
+  margin-right: 6px;
+  margin-left: 3px;
+}
 
-  h5 {
-      font-size: 16px !important;
-      margin-top: 0 !important;
-  }
+.var-control .var-control {
+  border-radius: 2px !important;
+  padding: 0 !important;
+  border: none !important;
+  padding-bottom: 12px !important;
 }
