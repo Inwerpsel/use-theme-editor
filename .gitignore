@@ -3,3 +3,7 @@ node_modules
 build
 example/dist/*
 example/bs/*
+example/github/*
+example/salesforce/*
+example/coreui/*
+example/mozilladocs/*
