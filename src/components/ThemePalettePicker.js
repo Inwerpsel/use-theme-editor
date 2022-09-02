@@ -46,11 +46,11 @@ export function ThemePalettePicker(props) {
         background: color,
         display: 'inline-block',
         marginTop: '2px',
-        fontSize: '8px',
         cursor: 'pointer',
         boxSizing: 'border-box',
       }}>
-      <span key={`${color}---usages`} style={{backgroundColor: 'white'}}>{usages.length}</span>
+      <span key={`${color}---usages`} style={{fontSize: '10px', backgroundColor: 'white'}}>{usages.length}</span>
+      {/^var\(/.test(color) && 'var'}
     </span>;
   });
 }
