@@ -14,7 +14,6 @@ export function ScrollInViewButton(props) {
         style={{
             border: '1px solid gray',
             background: 'white',
-            margin: '4px 2px',
             borderRadius: '5px',
             padding: '4px',
             fontSize: '12px',
