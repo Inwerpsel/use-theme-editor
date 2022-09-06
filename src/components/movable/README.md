@@ -31,9 +31,8 @@ return <MoveablePanels>
         // Comes with components to control moving, which themselves can be moved between areas.
         <MoveControls/>
     </Area>
-    // This is a special area that has an open toggle.
+    // The Drawer is a special area that has an open toggle.
     // Components you move into here won't render at all, if the drawer is closed.
-    // The drawer is always open while you're dragging.
     // It's still WIP and might be replaced with per area visibility settings.
     <Drawer/>
 </MoveablePanels>
