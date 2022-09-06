@@ -11,7 +11,7 @@ export function PropertySearch() {
   const ref = useRef();
 
   useHotkeys('ctrl+/,cmd+/', () => {
-    ref?.current?.focus();
+    ref.current?.focus();
   });
 
   return <Fragment>
