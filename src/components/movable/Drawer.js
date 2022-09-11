@@ -14,7 +14,7 @@ export function Drawer({children}) {
     </Area>
 
     <ToggleButton id="drawer-opener" controls={[drawerOpen, setDrawerOpen]}>
-      Drawer {drawerOpen && '(pinned)'}
+      Drawer {!drawerOpen ? '(closed)' : '(pinned)'}
     </ToggleButton>
   </div>;
 }
