@@ -10,6 +10,9 @@ const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]
   return otherHostIdA > otherHostIdB ? 1 : -1;
 };
 
+// There's a bug in here that causes some elements to change arrangement but I'm always 
+// too late to catch it.
+// todo: cleanup
 const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
   if (!overElementId) {
     // Add behind last element.
@@ -24,6 +27,7 @@ const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
   }
 
   const panelOrders = {};
+
   return Object.entries(panelMap).sort(sortMap).reduce(
     (
       newPanelMap,
@@ -53,13 +57,13 @@ const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
   );
 };
 
-export function MovablePanels({children, dragEnabled}) {
+export function MovablePanels({children}) {
   const areaRefs = useRef({});
   const origLocationsRef = useRef({});
   const [showMovers, setShowMovers] = useState(false);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerHovered, setDrawerHovered] = useState(false);
+  const [dragEnabled, setDragEnabled] = useLocalStorage('drag-on', false);
 
   const movePanelTo = (id, targetAreaId, overElementId) => {
     if (overElement) {
@@ -91,11 +95,12 @@ export function MovablePanels({children, dragEnabled}) {
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
-  const [, refresh] = useState(0);
+  // Have all initial areas been rendered?
+  const [, setInitialized] = useState(false);
 
-  // Do a refresh after first render so that each panel switcher has the right targets.
+  // Trigger sync render so that each panel switcher has the right targets in the second pass.
   useLayoutEffect(() => {
-    refresh(1);
+    setInitialized(true);
   }, []);
 
   return <AreasContext.Provider value={{
@@ -110,18 +115,18 @@ export function MovablePanels({children, dragEnabled}) {
       overArea, setOverArea,
       timeoutRef,
       draggedElement, setDraggedElement,
-      dragEnabled,
+      dragEnabled, setDragEnabled,
       drawerOpen, setDrawerOpen,
-      drawerHovered, setDrawerHovered,
-      showDrawer: drawerOpen || drawerHovered
   }}>
     <div
-      className={'movable-container ' + (draggedElement ? 'is-dragging' : '')}
+      className={'movable-container' + (draggedElement ? ' is-dragging' : '')}
     >
       {children}
     </div>
   </AreasContext.Provider>;
 }
 
+// Wait for some time before actually considering the drag leave event as
+// having happened.
 export const DRAG_LEAVE_TIMEOUT = 100;
 

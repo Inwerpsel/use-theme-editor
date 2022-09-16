@@ -35,7 +35,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
     timeoutRef,
     draggedElement, setDraggedElement,
     dragEnabled,
-    showDrawer,
+    drawerOpen,
     areaRefs,
   } = useContext(AreasContext);
 
@@ -54,16 +54,17 @@ export function DispatchedElement({homeAreaId, element, index}) {
 
   const [isDragged, setIsDragged] = useState(false);
   const dragTimeoutRef = useRef();
-  const [overAreaId, overElementId] = overElement || [];
-  const isDragHovered = overElementId === elementId;
 
-  const isDefaultDrawerHidden = homeAreaId === 'drawer' && !showDrawer && showHere;
-  const isMoveToDrawerHidden = hostAreaId === 'drawer' && !showDrawer;
-  const hidden = isDefaultDrawerHidden || isMoveToDrawerHidden;
+  const hidden =
+    !drawerOpen &&
+    ((homeAreaId === 'drawer' && showHere) || hostAreaId === 'drawer');
 
   if (hidden) {
     return null;
   }
+
+  const [overAreaId, overElementId] = overElement || [];
+  const isDragHovered = overElementId === elementId;
 
   const wrappedElement = <div
     style={{
@@ -79,8 +80,10 @@ export function DispatchedElement({homeAreaId, element, index}) {
       }
       setDraggedElement(elementId);
       dragTimeoutRef.current = setTimeout(() => {
+        // We need to keep the element around for some time before hiding it.
+        // Else the browser is not in time to take the drag snapshot.
         setIsDragged(true);
-      }, 100);
+      }, 150);
     }}
     onDragEnd={() => {
       dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);

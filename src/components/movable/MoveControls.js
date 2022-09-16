@@ -1,18 +1,14 @@
 import React, {useContext} from 'react';
 import {Checkbox} from '../controls/Checkbox';
 import {AreasContext} from './MovablePanels';
-import {ThemeEditorContext} from '../ThemeEditor';
 
 export function MoveControls() {
   const {
     panelMap,
     resetPanels,
+    dragEnabled, setDragEnabled,
     showMovers, setShowMovers,
   } = useContext(AreasContext);
-
-  const {
-    dragEnabled, setDragEnabled,
-  } = useContext(ThemeEditorContext);
 
   return <div>
     <Checkbox controls={[showMovers, setShowMovers]}>
