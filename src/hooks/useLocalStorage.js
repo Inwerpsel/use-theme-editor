@@ -26,6 +26,7 @@ export const useLocalStorage = (key, defaultValue, _type = null) => {
   const scopedKey = getLocalStorageNamespace() + key;
   // This means the default value's type determines whether an object can be stored.
   // Care should be taken with this argument, ideally it's a literal value.
+  // In case of any doubt about the type use the third argument.
   const type = _type || typeof defaultValue;
   const isObject = typeof defaultValue === 'object';
 
@@ -40,14 +41,6 @@ export const useLocalStorage = (key, defaultValue, _type = null) => {
   useEffect(() => {
     localStorage.setItem(scopedKey, isObject ? JSON.stringify(value) : value);
   }, [value]);
-
-  // useEffect(() => {
-  //   const interval = window.setInterval(() => {
-  //     if (localStorage.getItem(scopedKey) !== value) {
-  //
-  //     }
-  //   }, 100);
-  // });
 
   return [
     value,

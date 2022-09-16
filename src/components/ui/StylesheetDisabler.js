@@ -2,17 +2,6 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {ThemeEditorContext} from '../ThemeEditor';
 
-const useSameOriginStylesheets = () => {
-  const [sheets, setSheets] = useState(null);
-
-  useEffect(() => {
-    const nonInlineSheets = [...document.styleSheets].filter(({href}) => href && href.includes(window.location.origin));
-    setSheets(nonInlineSheets);
-  }, []);
-
-  return sheets;
-};
-
 const useDisabledStyleSheets = (disabledSheets, frameRef) => {
 
   useEffect(() => {
