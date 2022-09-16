@@ -17,9 +17,9 @@ export function AreaSwitcher() {
         background: !currentArea ? 'lightyellow' : 'white',
       }}
       value={currentArea}
-      options={Object.keys(areaRefs.current).map(valuesAsLabels).map(({value, label}) => ({
+      options={Object.keys(areaRefs.current).map((value) => ({
         value,
-        label: value === homeAreaId && value !== currentArea ? `${label} (default)` : label,
+        label: value === homeAreaId && value !== currentArea ? `${value} (default)` : value,
       }))}
       onChange={value => {
         movePanelTo(elementId, value === homeAreaId ? null : value);
