@@ -1,4 +1,4 @@
-import React, {Children, useContext, useRef} from 'react';
+import React, {Children, useCallback, useContext, useRef} from 'react';
 import {DispatchedElement} from './DispatchedElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 
@@ -30,7 +30,7 @@ export function Area({id, children = [], ...other}) {
         outline: '2px dashed grey',
         outlineOffset: '-8px',
       }}
-      onDragEnter={() => {
+      onDragEnter={useCallback(() => {
         if (timeoutRef.current.area) {
           clearTimeout(timeoutRef.current.area);
           timeoutRef.current.area = null;
@@ -38,8 +38,8 @@ export function Area({id, children = [], ...other}) {
         timeoutRef.current.area && clearTimeout(timeoutRef.current.area);
         setOverArea(id);
         timeoutRef.current.lastEntered = id;
-      }}
-      onDragLeave={() => {
+      }, [])}
+      onDragLeave={useCallback(() => {
         if (timeoutRef.current.area) {
           clearTimeout(timeoutRef.current.area);
           timeoutRef.current.area = null;
@@ -49,7 +49,7 @@ export function Area({id, children = [], ...other}) {
             setOverArea(null);
           }, DRAG_LEAVE_TIMEOUT);
         }
-      }}
+      }, [])}
     />
   </div>;
 }
