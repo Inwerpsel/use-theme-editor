@@ -67,6 +67,7 @@ export const SizeControl = props => {
     </div>
     <div className={'theme-length-control control-rem'}  >
       <input
+        step={.1}
         type={ 'number' }
         value={remValue}
         onChange={ event => {
