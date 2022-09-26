@@ -70,11 +70,3 @@ export function selectOnlyOptions(cssVar) {
     const {property} = cssVar.usages[0];
     return lists[property];
 }
-
-export function SelectOnlyControl({}) {
-    const options = ['normal', 'italic'].map(valuesAsLabels);
-
-    return <SelectControl
-      {...{value, onChange, options}}
-    />;
-}
