@@ -23,15 +23,15 @@ export function VariableReferences(props) {
       </Checkbox>
       <ul style={{ marginTop: '0' }}>
         {references.map((cssVar) => (
-          <li>
+          <li key={cssVar.name}>
+            <div>
+              {formatTitle(cssVar.name, annoyingPrefix, nameReplacements)}
+            </div>
             <ElementLocator
               hideIfNotFound={filterFound}
               initialized
               selector={cssVar.usages.reduce((a, u) => a + u.selector, '')}
             >
-              <div>
-                {formatTitle(cssVar.name, annoyingPrefix, nameReplacements)}
-              </div>
             </ElementLocator>
           </li>
         ))}
