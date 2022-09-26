@@ -75,7 +75,7 @@ export const TypedControl = ({ cssVar, value, onChange}) => {
     return <FontFamilyControl {...{value, onChange}}/>;
   }
 
-  if ( cssVar.usages.some( usage => usage.property === 'box-shadow' ) ) {
+  if ( cssVar.usages.some( usage => usage.property === 'box-shadow' || usage.property === 'text-shadow' ) ) {
     return <Fragment>
       <ShadowPicker {...{value, onChange}}/>
       <TextControl {...{value, onChange}}/>
