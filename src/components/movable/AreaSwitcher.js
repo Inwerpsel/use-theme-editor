@@ -1,7 +1,6 @@
 import React, {useContext} from 'react';
 import {DispatchedElementContext} from './DispatchedElement';
 import {SelectControl} from '@wordpress/components';
-import {valuesAsLabels} from '../inspector/TypedControl';
 import {AreasContext} from './MovablePanels';
 
 export function AreaSwitcher() {
@@ -22,7 +21,7 @@ export function AreaSwitcher() {
         label: value === homeAreaId && value !== currentArea ? `${value} (default)` : value,
       }))}
       onChange={value => {
-        movePanelTo(elementId, value === homeAreaId ? null : value);
+        movePanelTo(elementId, value);
       }}
     />
     {!currentArea && <button
