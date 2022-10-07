@@ -1,4 +1,4 @@
-## "Movable" React Components
+# "Movable" React Components
 
 This will probably become a standalone package. It provides a way to drag and drop React elements into other parent elements, and persist the arrangement in local storage.
 
@@ -56,8 +56,8 @@ that goes very slow if they're on opposite sides of your screen.
 
 Most current React drag and drop implementations do either of these:
 
-* Focus on lists, where the components don't store the state for you. You need to provide event handlers.
-* Position freely using XY coordinates.
+- Focus on lists, where the components don't store the state for you. You need to provide event handlers.
+- Position freely using XY coordinates.
 
 What I really need was the ability to move a particular element into another place in the DOM tree. And some control over which elements can be dragged, and which elements can host other elements.
 
@@ -70,21 +70,55 @@ given the challenge of identifying the dragged components as new updates are rel
 
 ### React has no option to portal to a specific position
 
-As a result, portaled elements go into a random position (based on what other elements happen to be rendering). I assume React has no way of assuring the relative positions of elements, but I didn't thoroughly validate this assumption.
+As a result, portaled elements go into a random position (based on what other elements happen to be rendering before, during and after).
+I assume React has no way of assuring the relative positions of elements, but I didn't thoroughly validate this assumption.
 
 I got around this for now using the CSS `order` property. While it works relatively well, it has some not-so-nice side effects. For example the HTML structure not matching the page will definitely lead to confusion, especially if someone is not familiar with the `order` property.
+There's also a good chance that using the `order` property leads to bugs in edge cases, or cross browser differences, though I didn't yet observe any.
 
-Nevertheless these side effects stay limited to development, and with `order` the page looks and acts as though the HTML elements were in that order.
+For now these side effects stay limited to development, in the end the page looks and acts as though the HTML elements were in that order.
 
 ### Hard to avoid wrapper elements
 
-## Todo
+## Performance
 
-* Minimize the essential base CSS needed for the areas to work.
-* If a rule is required, but the value is opionated, use a CSS variable.
-* Move non required CSS rules to a "theme" file, if any.
-* Try reduce wrapper elements where possible.
-* Refactor hastily written ordering and positioning code.
-* Improve API for storing the position data
-* Handle changes to Area structure better. Ideally without requiring an ID be provided for each element in the area. Currently it uses the index + current area ID.
-* Write cha
+Even though these components were initially built just as a tool, with no focus on performance, I was happy to 
+discover it performs quite well in pretty much every aspect.
+
+This is because the `Area` components just pass through the children that are defined at the top leve of the app.
+The `MovablePanels` component lives just below this top level. As a result, changing the arrangement will properly
+be reflected in every part of the tree without needing to re-render the app component.
+
+So React doesn't need to start at the root of your tree to update the UI. But it also is able to avoid rendering
+all area elements, except ones that move to another location. Every element's wrapping `DispatchedElement` does
+trigger a render of each element, but React is able to instantly bailout on them with no performance cost. It's 
+literally the same object (referentially), with the same props it's getting from the app component (if any).
+
+There is a very small amount of overhead per element (< 0.1ms), which is there regardless of whether the element is shown or not.
+For the majority of cases this will be utterly negligible.
+But if there would be hundreds of hidden elements it could start adding up. But it's likely still negligible
+compared to the code that renders this many elements.
+
+There is also some amount of work that will be useless if the component never gets unhidden. This will add to
+the app's load time, however I can't imagine this being used in a context where first load is that crucial. In the 
+theme editor its impact is orders of magnitude smaller than the current performance bottlenecks.
+
+One positive effect of this is that it reduces the amount of work that still needs to happen if the component
+does get shown.
+
+
+## IN PROGRESS
+- Save and restore arrangements
+
+## TODO NEXT
+
+## TODO
+- Proper multi package repo setup
+- Minimize essential base CSS needed for Areas to work. If a rule is required, but the value is opionated, use a CSS variable.
+- Move non required CSS rules to a "theme" file, if any.
+- Reduce wrapper elements where preferable.
+- Refactor hastily written ordering and positioning code.
+- Improve API for storing the position data (decouple local storage)
+- Handle changes to Area structure better. Ideally without requiring an ID be provided for each element in the area. Currently it uses the index + current area ID.
+- Avoid jump when scrollbar appears
+- Shrinkable components (use context to allow early returning a compact version of a component)
