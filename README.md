@@ -75,11 +75,16 @@ with no configuration needed to add a new setting. It works in the following way
   - Additional constraints
     - Should be possible to force constraints beyond usage inference.
     - Or perhaps including a property access in code is a very simple way to achieve this?
+  - Fix handling of multiple variables on a single rule
 
 ### TODO NEXT
 - Use message to frame instead of polling local storage
-- Fix compound properties
-- Fix handling of multiple variables on a single rule
+- Fix shorthand properties
+- Support typing of variables surrounded by just 1 function
+  - It's apparently a common thing for frameworks to hard code which color function to use, and have the variables only
+    contain the arguments. (e.g. BS and derivatives)
+  - Even though this is a bad idea for multiple reasons, I don't expect common frameworks to change it soon.
+  - Can be somewhat generalized. Perhaps check type of function arguments in CSS syntax?
 
 ### TO FINISH
 - Decouple WordPress further (use other or no component lib)
@@ -133,3 +138,4 @@ with no configuration needed to add a new setting. It works in the following way
     - What about that? Maybe I mislooked.
   - Is using `body` selector better?
 - Move expensive logic (regex and searching lists) into initial data extraction where possible.
+- Configurable source URLs (protocol, Github, automatic detection?)
