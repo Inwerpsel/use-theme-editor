@@ -3,23 +3,20 @@ import {useLocalStorage} from '../../hooks/useLocalStorage';
 
 export const AreasContext = createContext({});
 
-const sortMap = ([, [otherHostIdA, otherOrderA]], [, [otherHostIdB, otherOrderB]]) => {
-  if (otherHostIdA === otherHostIdB) {
-    return otherOrderA > otherOrderB ? 1 : -1;
+const byHostAndOrder = ([, [hostIdA, orderA]], [, [hostIdB, orderB]]) => {
+  if (hostIdA === hostIdB) {
+    return orderA > orderB ? 1 : -1;
   }
-  return otherHostIdA > otherHostIdB ? 1 : -1;
+  return hostIdA > hostIdB ? 1 : -1;
 };
 
-// There's a bug in here that causes some elements to change arrangement but I'm always 
-// too late to catch it.
-// todo: cleanup
-const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
-  if (!overElementId) {
-    // Add behind last element.
+const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
+  if (!targetElementId) {
     const otherOrders = Object.values(panelMap)
       .filter(([area]) => area === targetAreaId)
       .map(([, order]) => order);
     const lastAreaOrder = Math.max(...otherOrders);
+    // Add behind last element in the area.
     return {
       ...panelMap,
       [id]: [targetAreaId, lastAreaOrder + 1]
@@ -28,7 +25,7 @@ const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
 
   const panelOrders = {};
 
-  return Object.entries(panelMap).sort(sortMap).reduce(
+  return Object.entries(panelMap).sort(byHostAndOrder).reduce(
     (
       newPanelMap,
       [otherElementId, [otherAreaId]],
@@ -37,7 +34,7 @@ const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
         panelOrders[otherAreaId] = 0;
       }
 
-      if (overElementId === otherElementId && targetAreaId === otherAreaId) {
+      if (targetElementId === otherElementId && targetAreaId === otherAreaId) {
         panelOrders[otherAreaId]++;
         newPanelMap[id] = [targetAreaId, panelOrders[otherAreaId]];
       }
@@ -60,57 +57,126 @@ const updateElementLocation = (panelMap, id, overElementId, targetAreaId) => {
 export function MovablePanels({children}) {
   const areaRefs = useRef({});
   const origLocationsRef = useRef({});
-  const [showMovers, setShowMovers] = useState(false);
+
+  const [overElement, setOverElement] = useState(null);
+  const [overArea, setOverArea] = useState(null);
+  const [draggedElement, setDraggedElement] = useState(null);
   const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
+
+  const [showMovers, setShowMovers] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [dragEnabled, setDragEnabled] = useLocalStorage('drag-on', false);
 
-  const movePanelTo = (id, targetAreaId, overElementId) => {
+  const movePanelTo = (id, areaId, overElementId) => {
     if (overElement) {
       setOverElement(null);
     }
 
-    console.log(`####### MOVING PANEL "${id}" TO "${targetAreaId}"`, 'map before', panelMap, JSON.stringify(panelMap, null, 2));
-
-    if (!Object.values(panelMap).some(([otherAreaId]) => otherAreaId === targetAreaId)) {
-      // Host not in map yet, create initial order for all element in target area.
+    // Create initial area order if the area wasn't used before.
+    if (!Object.values(panelMap).some(([otherAreaId]) => otherAreaId === areaId)) {
       let i = 0;
       Object.entries(origLocationsRef.current).forEach(([element, area]) => {
-        if (area === targetAreaId) {
+        if (area === areaId && !panelMap[element]) {
           i += 1;
           panelMap[element] = [area, i];
         }
       });
     }
 
-    const newPanelMap = updateElementLocation(panelMap, id, overElementId, targetAreaId);
+    const newPanelMap = updateElementLocation(panelMap, id, areaId, overElementId);
 
     setPanelMap(newPanelMap);
   };
+
+  // A 3 pass render is needed. Should not involve overhead.
+  // Contained elements won't get rendered more than once.
+  const [areasRendered, setAreasRendered] = useState(false);
+  const [elementsRendered, setElementsRendered] = useState(false);
+
+  useLayoutEffect(() => {
+    // After first pass all initial areas should have been rendered, allowing the second pass
+    // to render elements in places that didn't exist before.
+    if (!areasRendered) {
+      setAreasRendered(true);
+      return;
+    }
+
+    setElementsRendered(true);
+  }, [areasRendered]);
+
+  useLayoutEffect(() => {
+    // Reorder the elements according to their `order` property.
+    // Elements are assumed to be properly ordered by the panelmap with no duplicate indexes.
+    // Should work as React also doesn't care multiple elements are portaling to the same element.
+    //
+    // For now I keep the CSS order as it guarantees the elements are immediately "rendered" in the
+    // right place. It only affects the case where an inner layout effect would read calculated
+    // style, like the scroll offset.
+    if (!elementsRendered) {
+      return;
+    }
+    let insertTimes = 0;
+    console.time();
+
+    for (const {current: areaEl} of Object.values(areaRefs.current)) {
+      // Order should be on all elements, or none if no element was moved into the area.
+      // Hence we only need to check the first.
+      if (areaEl.children[0]?.style.order === '') {
+        continue;
+      }
+      const prevOrderIndexes = [];
+
+      for (const el of areaEl.children) {
+        const order = parseInt(el.style.order);
+        let spliceIndex, spliceEl;
+
+        let index = 0;
+        for (const [prevOrder, prevEl] of prevOrderIndexes) {
+          if (order < prevOrder) {
+            spliceIndex = index; 
+            spliceEl = prevEl;
+            break;
+          }
+          index++;
+        }
+
+        if (!spliceEl) {
+          prevOrderIndexes.push([order, el]);
+        } else {
+          prevOrderIndexes.splice(spliceIndex, 0, [order, el]);
+          areaEl.insertBefore(el, spliceEl);
+          insertTimes++;
+          // console.log('Moving Element', el, 'before', spliceEl);
+        }
+      }
+
+    }
+    console.log(`Called insertBefore ${insertTimes} time${insertTimes === 1 ? '' : 's'}`)
+    console.timeEnd();
+
+  }, [JSON.stringify(panelMap), elementsRendered]);
+
   const resetPanels = () => {
     setPanelMap({});
   };
 
   const timeoutRef = useRef({element: null, area: null});
-  const [overElement, setOverElement] = useState(null);
-  const [overArea, setOverArea] = useState(null);
-  const [draggedElement, setDraggedElement] = useState(null);
   // Have all initial areas been rendered?
-  const [, setInitialized] = useState(false);
 
-  // Trigger sync render so that each panel switcher has the right targets in the second pass.
+  // Trigger sync render, before which areaRefs should be fully populated by the first pass.
+  // This should incur no overhead, as all elements that don't need the 
+  // second pass are immediately bailed out of by React.
   useLayoutEffect(() => {
-    setInitialized(true);
+    setAreasRendered(true);
   }, []);
 
   return <AreasContext.Provider value={{
       areaRefs,
       origLocationsRef,
-      panelMap,
+      panelMap, setPanelMap,
       movePanelTo,
       resetPanels,
-      showMovers,
-      setShowMovers,
+      showMovers, setShowMovers,
       overElement, setOverElement,
       overArea, setOverArea,
       timeoutRef,
@@ -127,6 +193,5 @@ export function MovablePanels({children}) {
 }
 
 // Wait for some time before actually considering the drag leave event as
-// having happened.
-export const DRAG_LEAVE_TIMEOUT = 100;
-
+// having happened. Not sure why I did this really.
+export const DRAG_LEAVE_TIMEOUT = 10;

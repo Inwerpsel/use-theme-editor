@@ -3,7 +3,7 @@ import {DispatchedElement} from './DispatchedElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 
 export function Area({id, children = [], ...other}) {
-  const {overArea, setOverArea, timeoutRef, areaRefs} = useContext(AreasContext);
+  const {overArea, setOverArea, setOverElement, timeoutRef, areaRefs} = useContext(AreasContext);
 
   const isDragHovered = overArea === id;
 
@@ -37,6 +37,7 @@ export function Area({id, children = [], ...other}) {
         }
         timeoutRef.current.area && clearTimeout(timeoutRef.current.area);
         setOverArea(id);
+        setOverElement(null);
         timeoutRef.current.lastEntered = id;
       }, [])}
       onDragLeave={useCallback(() => {
@@ -44,11 +45,13 @@ export function Area({id, children = [], ...other}) {
           clearTimeout(timeoutRef.current.area);
           timeoutRef.current.area = null;
         }
-        if (timeoutRef.current.lastEntered === id) {
-          timeoutRef.current.area = setTimeout(() => {
+
+        timeoutRef.current.area = setTimeout(() => {
+          if (timeoutRef.current.lastEntered === id) {
+            // No other area was entered in the meanwhile.
             setOverArea(null);
-          }, DRAG_LEAVE_TIMEOUT);
-        }
+          }
+        }, DRAG_LEAVE_TIMEOUT);
       }, [])}
     />
   </div>;

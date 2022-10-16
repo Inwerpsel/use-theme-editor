@@ -1,7 +1,9 @@
-import React, {createContext, useContext, useRef, useState} from 'react';
+import React, {createContext, useContext, useLayoutEffect, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import classnames from 'classnames';
 
 export const DispatchedElementContext = createContext({});
 
@@ -24,6 +26,19 @@ function getId(element, index) {
   return `${element.type?.name || 'component'}#${element.id || index}`;
 }
 
+export function useCompactSetting() {
+  const {hasCompactMode, setHasCompactMode, isCompact} = useContext(DispatchedElementContext);
+
+  // Synchronously update state of dispatched element (causing a tiny additional render).
+  useLayoutEffect(() => {
+    !hasCompactMode && setHasCompactMode(true);
+  }, []);
+
+  // First render will always be done again with a yet unknown value.
+  // This may lead to a useless render in the wrong mode.
+  return !hasCompactMode || isCompact;
+}
+
 export function DispatchedElement({homeAreaId, element, index}) {
   const {
     origLocationsRef,
@@ -31,7 +46,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
     showMovers,
     movePanelTo,
     overElement, setOverElement,
-    overArea,
+    overArea, setOverArea,
     timeoutRef,
     draggedElement, setDraggedElement,
     dragEnabled,
@@ -53,7 +68,9 @@ export function DispatchedElement({homeAreaId, element, index}) {
   const showHere = !hostAreaId || hostAreaId === homeAreaId || !areaRefs.current[hostAreaId]?.current;
 
   const [isDragged, setIsDragged] = useState(false);
-  const dragTimeoutRef = useRef();
+  const [isCompact, setIsCompact] =  useLocalStorage(`compact::${elementId}`, false);
+  const [hasCompactMode, setHasCompactMode] = useState(false);
+  const [forceDrag, setForceDrag] = useState(false);
 
   const hidden =
     !drawerOpen &&
@@ -66,95 +83,125 @@ export function DispatchedElement({homeAreaId, element, index}) {
   const [overAreaId, overElementId] = overElement || [];
   const isDragHovered = overElementId === elementId;
 
-  const wrappedElement = <div
-    style={{
-      position: 'relative',
-      order: order || '',
-    }}
-    title={!dragEnabled ? null : elementId}
-    className={'dispatched-element' + (!isDragged ? '' : ' is-dragged')}
-    draggable={dragEnabled}
-    onDragStart={() => {
-      if (!dragEnabled) {
-        return;
-      }
-      setDraggedElement(elementId);
-      dragTimeoutRef.current = setTimeout(() => {
-        // We need to keep the element around for some time before hiding it.
-        // Else the browser is not in time to take the drag snapshot.
-        setIsDragged(true);
-      }, 150);
-    }}
-    onDragEnd={() => {
-      dragTimeoutRef.current && clearTimeout(dragTimeoutRef.current);
-      setDraggedElement(null);
-      setIsDragged(false);
-      if (overElement) {
-        if (timeoutRef.current.element) {
-          clearTimeout(timeoutRef.current.element);
-          timeoutRef.current.element = null;
-        }
-        if (timeoutRef.current.area) {
-          clearTimeout(timeoutRef.current.area);
-          timeoutRef.current.area = null;
-        }
-        movePanelTo(elementId, overAreaId, overElementId);
-        setOverElement(null);
-        return;
-      }
-      if (overArea) {
-        movePanelTo(elementId, overArea);
-      }
-    }}
-  >
-    {draggedElement && draggedElement !== elementId && <span
+  const draggable = dragEnabled || forceDrag;
+
+  const wrappedElement = (
+    <div
+      {...{draggable}}
       style={{
-        color: 'yellowgreen',
-        position: 'absolute',
-        top: '-12px',
-        fontSize: '12px',
-        right: '0',
-        zIndex: 1001,
-        fontWeight: 'bold !important',
+        position: 'relative',
+        order: order || '',
       }}
-    >{elementId}</span>}
-
-    {element}
-
-    {showMovers && <AreaSwitcher />}
-
-    {draggedElement && draggedElement !== elementId && <div
-      style={{zIndex: 1000}}
-      className={'dropzone' + (isDragHovered ? ' drag-hovered' : '')}
-      onDragEnter={() => {
-        timeoutRef.current.lastEntered = elementId;
-        if (timeoutRef.current.element) {
-          clearTimeout(timeoutRef.current.element);
-          timeoutRef.current.element = null;
+      title={!dragEnabled ? null : elementId}
+      className={classnames('dispatched-element', {
+        'is-dragged': isDragged,
+        'is-compact': isCompact,
+      })}
+      onDragStart={() => {
+        setDraggedElement(elementId);
+        forceDrag && setForceDrag(false);
+        setTimeout(() => {
+          // Without timeout there's no drag element snapshot.
+          setIsDragged(true);
+        }, 0);
+      }}
+      onDragEnd={() => {
+        setDraggedElement(null);
+        setIsDragged(false);
+        if (overElement) {
+          if (timeoutRef.current.element) {
+            clearTimeout(timeoutRef.current.element);
+            timeoutRef.current.element = null;
+          }
+          if (timeoutRef.current.area) {
+            clearTimeout(timeoutRef.current.area);
+            timeoutRef.current.area = null;
+          }
+          movePanelTo(elementId, overAreaId, overElementId);
+          setOverElement(null);
+          return;
         }
-        setOverElement([hostAreaId || homeAreaId, elementId, order || index]);
-      }}
-      onDragLeave={() => {
-        timeoutRef.current.element && clearTimeout(timeoutRef.current.element);
-
-        if (timeoutRef.current.lastEntered === elementId) {
-          timeoutRef.current.element = setTimeout(() => {
-            setOverElement(null);
-          }, DRAG_LEAVE_TIMEOUT);
+        if (overArea) {
+          movePanelTo(elementId, overArea);
         }
       }}
     >
+      {draggedElement && draggedElement !== elementId && (
+        <span
+          style={{
+            color: 'yellowgreen',
+            position: 'absolute',
+            top: '-12px',
+            fontSize: '12px',
+            right: '0',
+            zIndex: 1001,
+            fontWeight: 'bold !important',
+          }}
+        >
+          {elementId}
+        </span>
+      )}
 
-    </div>}
+      {hasCompactMode && (
+        <button
+          className="dispatched-element-collapse"
+          onClick={() => {
+            setIsCompact(!isCompact);
+          }}
+        >
+          {isCompact ? '+' : '-'}
+        </button>
+      )}
 
-  </div>;
-  return <DispatchedElementContext.Provider
-    value={{
-      homeAreaId,
-      elementId,
-      hostAreaId,
-    }}
-  >
-    {showHere ? wrappedElement : createPortal(wrappedElement, areaRefs.current[hostAreaId].current)}
-  </DispatchedElementContext.Provider>;
+      <DispatchedElementContext.Provider
+        value={{
+          homeAreaId,
+          elementId,
+          hostAreaId,
+          hasCompactMode, setHasCompactMode,
+          isCompact, setIsCompact,
+          forceDrag, setForceDrag,
+        }}
+      >
+        {element}
+      </DispatchedElementContext.Provider>
+
+      {showMovers && <AreaSwitcher />}
+
+      {draggedElement && draggedElement !== elementId && (
+        <div
+          style={{ zIndex: 1000 }}
+          className={classnames('dropzone', {
+            ' drag-hovered': isDragHovered ,
+          })}
+          onDragEnter={() => {
+            timeoutRef.current.lastEntered = elementId;
+            if (timeoutRef.current.element) {
+              clearTimeout(timeoutRef.current.element);
+              timeoutRef.current.element = null;
+            }
+            setOverArea(null);
+            setOverElement([
+              hostAreaId || homeAreaId,
+              elementId,
+              order // || index,
+            ]);
+          }}
+          onDragLeave={() => {
+            timeoutRef.current.element &&
+              clearTimeout(timeoutRef.current.element);
+
+            if (timeoutRef.current.lastEntered === elementId) {
+              timeoutRef.current.element = setTimeout(() => {
+                setOverElement(null);
+              }, DRAG_LEAVE_TIMEOUT);
+            }
+          }}
+        ></div>
+      )}
+    </div>
+  );
+  return showHere
+    ? wrappedElement
+    : createPortal(wrappedElement, areaRefs.current[hostAreaId].current);
 }
