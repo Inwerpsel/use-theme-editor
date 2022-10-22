@@ -1,15 +1,19 @@
 # Experimental CSS variables based theme editor
 
-This is a WIP theme editor that allows creating a theming UI for CSS variables based entirely on the built CSS files,
-with no configuration needed to add a new setting. It works in the following way:
+This is a WIP theme editor that allows creating a theming UI for CSS custom properties based entirely on the built CSS files,
+with no configuration needed to add a new setting.
 
-- Extract `var` usages from the accessible stylesheets. A usage has the selector, CSS property and default value.
-- When you alt + click an element it is matched against all selectors of all variables. This can be done efficiently by
-  combining all selectors for a variable with `,` and doing a single `element.match(selectors)`. To ensure we match all
-  variables of parents too, each selector is also tested with ` *` appended.
-- Next it travels up the DOM tree, doing the same matching on each parent. This only needs to match against the
-  variables we previously filtered. Each time a jump to a parent matches fewer variables than the sibling we just
-  visited, this means those "missing" variables can be attributed to that previous sibling.
+## Features
+* Plug and play: discover and design on any page of an app, removing the need for mockups
+* Get all relevant style attributes of an element with 1 click
+* Link variables to other variables to create a design system
+* Super fast access to contextual information
+* Screen switcher on variables with a media query
+* All changes applied instantly with no delay, regardless of the content size / amount of variables (on most sites on non potato devices)
+* Switch themes while deep inspecting
+* Reposition or hide any UI element with drag and drop
+
+## Status
 
 ### STALLED
 - Facilitate other variables as a value
@@ -78,8 +82,6 @@ with no configuration needed to add a new setting. It works in the following way
   - Fix handling of multiple variables on a single rule
 
 ### TODO NEXT
-- Use message to frame instead of polling local storage
-- Fix shorthand properties
 - Support typing of variables surrounded by just 1 function
   - It's apparently a common thing for frameworks to hard code which color function to use, and have the variables only
     contain the arguments. (e.g. BS and derivatives)
@@ -107,7 +109,7 @@ with no configuration needed to add a new setting. It works in the following way
 - Better organizing of themes.
 - Personal editor theme that is applied separately from the theme that is being edited. (detect own stylesheets?)
 - Use sourcemap location and edits to auto generate a PR.
-- List all elements that were hidden with `display: none`, currently no easy way to unhide after control loses focus.
+- Improve elements with a hidden or hard to access state
 - Make keyboard shortcuts work when focus is inside the frame.
 - Ensure button elements are used where appropriate.
 - Better text inputs (clear button, debounce where needed, reliably prevent capitalization)
@@ -139,3 +141,33 @@ with no configuration needed to add a new setting. It works in the following way
   - Is using `body` selector better?
 - Move expensive logic (regex and searching lists) into initial data extraction where possible.
 - Configurable source URLs (protocol, Github, automatic detection?)
+- Inspector as a separate package?
+- Drop tokens onto page like Figma tokens plugin
+  - Can reuse inspect function and auto apply the innermost fitting the token type.
+  - If multiple options possible
+    - Show dialog on nearest side of iframe (or configurable)
+    - Hover an option previews it
+
+
+## Future theme structure
+
+Currently themes are just a list of selectors with lists of properties.
+Eventually the theme should be a sort of "diff" compared to a current set of CSS files.
+New files can then be generated if the diff format allows to locate the source declaration
+for each item. It's unclear where the source code mapping should happen.
+
+#### Declarations
+Each item: selector + property (combined unique ID, this could be a single ID as well, anything that allows you to find the right source)
+* Updated decls (including adding properties, order by convention within selector)
+  * data: new value
+* Removed decls
+  * data: none
+
+#### Other
+* Added selectors
+  * data: selector text, source position, media query
+  * Translate to multiple source CSS dialects
+* Added media queries
+  * data: condition text (maybe parsed a bit), source position
+* Added animations
+* Added resources (links, images, fonts)

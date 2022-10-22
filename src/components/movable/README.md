@@ -44,6 +44,25 @@ you can drag them into any of the other areas, into any position relative to the
 
 You don't need to provide / call any functions or hooks for this to work. The state is managed internally in `MoveablePanels`.
 
+### Intended use case
+You just want the ability to re-arrange your UI and have it persist in local storage.
+You don't mind that the area component includes the HTML elements for you.
+This should work with any React component, regardless of how the state is managed (* see below for local state).
+
+If any of the following is not true, this d&d solution is probably not the right one.
+
+- You're OK with using the default bitmap drag image.
+  - It looks exactly like the component, and the transparency makes for a great UX.
+  - The performance is best case, and allows for much more other smooth animation.
+- Dragged components don't use local state, or it's ok to lose it when location changes.
+  - This just because of how React portals work. You can work around it by lifting up state. You probably 
+    want this kind of solution anyway to persist UI state between page refreshes.
+- It's expected that elements can live in any area.
+  - For simplicity there's no configurability yet.
+- You don't need the area context inside most elements.
+  - If you plan to use the UI state yourself a lot, it's probably better to integrate that with 
+    other state solutions, if any, and use a `ref` based library.
+
 ## Motivation
 
 The goal is to make drag and drop re-parenting as simple as possible.
@@ -73,12 +92,18 @@ given the challenge of identifying the dragged components as new updates are rel
 As a result, portaled elements go into a random position (based on what other elements happen to be rendering before, during and after).
 I assume React has no way of assuring the relative positions of elements, but I didn't thoroughly validate this assumption.
 
-I got around this for now using the CSS `order` property. While it works relatively well, it has some not-so-nice side effects. For example the HTML structure not matching the page will definitely lead to confusion, especially if someone is not familiar with the `order` property.
+I got around this at first using the CSS `order` property. While it works relatively well, it has some not-so-nice side effects.
+For example the HTML structure not matching the page will definitely lead to confusion, especially if someone is not familiar with the `order` property.
 There's also a good chance that using the `order` property leads to bugs in edge cases, or cross browser differences, though I didn't yet observe any.
 
-For now these side effects stay limited to development, in the end the page looks and acts as though the HTML elements were in that order.
+I then realized that if React isn't bothered by other portals coming into the same element, the same should go for manually changing
+the element's position in the parent. So this currently happens in a layout effect.
+
+I preserved the order for now as it causes the layout to immediately be accurate, instead of only when the layout effect has run.
 
 ### Hard to avoid wrapper elements
+
+It makes it easier to make certain things about drag and drop work.
 
 ## Performance
 
@@ -95,6 +120,8 @@ trigger a render of each element, but React is able to instantly bailout on them
 literally the same object (referentially), with the same props it's getting from the app component (if any).
 
 There is a very small amount of overhead per element (< 0.1ms), which is there regardless of whether the element is shown or not.
+This overhead is much more pronounced on the dev build of React.
+In fact on the production build the combined overhead of all elements doesn't exceed 0.1ms.
 For the majority of cases this will be utterly negligible.
 But if there would be hundreds of hidden elements it could start adding up. But it's likely still negligible
 compared to the code that renders this many elements.
