@@ -28,7 +28,7 @@ const getGoogleSheetRules = async href => {
   style.disabled = true;
   document.head.appendChild(style);
 
-  return style.sheet.rules;
+  return style.sheet.cssRules;
 };
 
 const collectFontVariant = async (fonts, {style: {fontFamily, fontWeight, fontStyle}}) => {

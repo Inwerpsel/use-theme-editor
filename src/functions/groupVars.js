@@ -1,7 +1,9 @@
+import { scopesByProperty } from './collectRuleVars';
+import { rootScopes } from './extractPageVariables';
 import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 
-const toLabel = ({id, className, tagName}) => {
+export const toLabel = ({id, className, tagName}) => {
   const idPart = !id ? '' : `#${ id }`;
   const noClass = !className || typeof className !== 'string';
   const classPart =  noClass ? '' : `.${ className.trim().replaceAll(/ /g, '.') }`;
@@ -60,6 +62,8 @@ export const sortForUI = (
 
 export const groupVars = (vars, target) => {
   const groups = [];
+  // 
+  const labelCounts = {};
   let current,
     previous = target,
     previousMatches = vars;
@@ -73,24 +77,48 @@ export const groupVars = (vars, target) => {
     }
     const currentMatches = getMatchingVars({ cssVars: previousMatches, target: current });
 
-    if (currentMatches.length < previousMatches.length) {
+    const previousInlineStyles = {};
+    let previousHasInlineStyles = false;
+    for (const propname of previous.style) {
+      previousHasInlineStyles = true;
+      previousInlineStyles[propname] = previous.style[propname];
+    }
+
+    const currentMatchesLess = currentMatches.length < previousMatches.length;
+
+    if (previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
-      const inlineStyles = {};
-      if (element !== document.documentElement) {
-        for (const propname of element.style) {
-          inlineStyles[propname] = element.style[propname];
-        }
-      }
-      const vars = previousMatches.filter(match => !currentMatches.includes(match));
-      const scopes = getMatchingScopes(element, vars);
+      const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
+      const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, vars);
+
+      const labelText = toLabel(element);
+      const count = labelCounts[labelText] || 0;
+      labelCounts[labelText] = count + 1;
+      const label = labelText + (count === 0 ? '' : `#${count}`);
 
       groups.push({
         element,
         isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
-        label: toLabel(element),
-        vars,
+        label,
+        vars: vars.map(v => {
+          let currentScope;
+          for (const key in scopesByProperty[v.name] || {}) {
+            if (
+              scopes && 
+              !rootScopes.includes(key) &&
+              scopes.some(s=>s.selector === key)
+            ) {
+              currentScope = key;
+            }
+          }
+
+          return ({
+            ...v,
+            currentScope,
+          });
+        }),
         scopes,
-        inlineStyles,
+        inlineStyles: previousInlineStyles,
       });
       previousMatches = currentMatches;
     }

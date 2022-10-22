@@ -15,7 +15,9 @@ export const useServerThemes = (config) => {
     const doApiCall = async () => {
       const themes = await fetchThemes();
       setServerThemes({
-        'default': {},
+        'default': {
+          scopes: {},
+        },
         ...themes,
       });
       setLoading(false);
@@ -26,9 +28,9 @@ export const useServerThemes = (config) => {
   return {
     serverThemes,
     serverThemesLoading: loading,
-    uploadTheme: async (name, theme) => {
+    uploadTheme: async (name, scopes) => {
       setLoading(true);
-      await uploadTheme(name, theme);
+      await uploadTheme(name, {name, scopes});
       setDirty(!dirty);
     },
     deleteTheme: async (name) => {

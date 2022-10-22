@@ -2,15 +2,16 @@ import {exportCss, exportJson} from '../../functions/export';
 import {ensureValidCssVariables, readFromUploadedFile} from '../../functions/readFromUploadedFile';
 import React, {useContext, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 
 export function ImportExportTools() {
   const {
     dispatch,
     fileName, setFileName,
-    theme,
+    scopes,
   } = useContext(ThemeEditorContext);
+  const theme = scopes[ROOT_SCOPE];
 
   const [shouldMerge, setShouldMerge] = useState(false);
 

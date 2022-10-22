@@ -6,13 +6,12 @@ import {ThemeEditorContext} from '../ThemeEditor';
 export function HistoryBack({history}) {
   const {
     dispatch,
-    theme,
   } = useContext(ThemeEditorContext);
 
   return <button
     className={'history-button'}
     disabled={history.length === 0}
-    title={history.length === 0 ? 'No history' : diffSummary(history[0], theme)}
+    title={history.length === 0 ? 'No history' : `${history.length}`}
     onClick={() => dispatch({type: ACTIONS.historyBackward})}
   >undo
   </button>;

@@ -1,5 +1,5 @@
 import {diffSummary} from '../../functions/diffThemes';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 
@@ -11,18 +11,19 @@ export const ServerThemesListItem = props => {
   } = props;
 
   const {
-    theme: currentTheme,
+    scopes,
     dispatch,
     fileName,
     setFileName,
     modifiedServerVersion,
     deleteTheme,
   } = useContext(ThemeEditorContext);
+  const currentTheme = scopes[ROOT_SCOPE];
 
   return <li
     key={name}
     ref={name === fileName ? activeThemeRef : null}
-    title={diffSummary(serverTheme, currentTheme)}
+    // title={diffSummary(serverTheme, currentTheme)}
     className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
   >
     {name} {modifiedServerVersion && name === fileName && '(*)'}

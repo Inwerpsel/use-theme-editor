@@ -14,20 +14,20 @@ export const ServerThemesList = () => {
   const [
     serverThemesHeight,
     setServerThemesHeight
-  ] = useLocalStorage('p4-theme-server-theme-height-list', '140px');
+  ] = useLocalStorage('theme-server-theme-height-list', '140px');
 
-  useEffect(() => {
-    if (serverThemesLoading) {
-      return;
-    }
-    const timeout = window.setTimeout(() => {
-      activeThemeRef.current?.scrollIntoView();
-    }, 200);
+  // useEffect(() => {
+  //   if (serverThemesLoading) {
+  //     return;
+  //   }
+  //   const timeout = window.setTimeout(() => {
+  //     activeThemeRef.current?.scrollIntoView();
+  //   }, 200);
 
-    return () => {
-      window.clearTimeout(timeout);
-    };
-  }, [serverThemes]);
+  //   return () => {
+  //     window.clearTimeout(timeout);
+  //   };
+  // }, [serverThemes]);
 
   if (serverThemesLoading) {
     return <div style={{height: serverThemesHeight}}>Loading server themes...</div>;

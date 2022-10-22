@@ -10,7 +10,7 @@ export function ThemeUploadPanel() {
     modifiedServerVersion,
     serverThemes,
     uploadTheme,
-    theme,
+    scopes,
   } = useContext(ThemeEditorContext);
 
   return <div>
@@ -21,14 +21,14 @@ export function ThemeUploadPanel() {
       type="text"
       onChange={ event => setFileName(event.target.value) }/>
     <button
-      title={existsOnServer ? `Save on server. Changes: ${diffSummary(serverThemes[fileName], theme)}` : 'Upload this theme to the server. You can upload as many as you want.'}
+      // title={existsOnServer ? `Save on server. Changes: ${diffSummary(serverThemes[fileName], theme)}` : 'Upload this theme to the server. You can upload as many as you want.'}
       style={{clear: 'both'}}
       disabled={!fileName || fileName === 'default'}
       onClick={ async () => {
         if (existsOnServer && !confirm('Overwrite theme on server?')) {
           return;
         }
-        uploadTheme(fileName, theme);
+        uploadTheme(fileName, scopes);
       }}
     >
       { existsOnServer ? `Save${ !modifiedServerVersion ? '' : ' (*)'}` : 'Upload'}

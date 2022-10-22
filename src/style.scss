@@ -4,14 +4,15 @@ body {
 }
 
 .theme-editor {
+  _-- {
+    background-color: grey;
+  }
   position: fixed;
   top: 0;
   bottom: 0;
   left: 0;
   right: 0;
   z-index: 9999;
-  background-color: grey;
-  opacity: .99;
   max-height: 100vh;
   text-align: start;
 
@@ -25,6 +26,7 @@ body {
   h4 {
       font-size: 18px !important;
       margin-top: 0 !important;
+      margin-bottom: 8px;
   }
 
   h5 {
@@ -35,6 +37,7 @@ body {
 }
 
 .theme-length-controls {
+  clear: both;
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
@@ -98,12 +101,6 @@ body {
 
   &::-webkit-scrollbar-thumb:window-inactive {
     background: rgba(140, 140, 140, 0.05);
-  }
-}
-
-.responsive-overlay {
-  _-- {
-    background: grey;
   }
 }
 
@@ -206,7 +203,7 @@ html.hide-wp-admin-bar {
 }
 
 .theme-editor-highlight {
-  outline: 3px solid #efef05 !important;
+  outline: 7px solid #efef05 !important;
   outline-offset: 8px !important;
 }
 
@@ -370,24 +367,25 @@ div[id^=font-picker] ul {
 
 .monospace-code {
   _-- {
-    display: inline-block;
     font-size: 16px;
     background: white;
     border: 1px solid gray;
     border-radius: 4px;
     padding: 2px;
-    font-family: monospace !important;
   }
+
+  display: inline-block;
   white-space: pre-wrap;
+  font-family: monospace !important;
 }
 
-.element-locator {
-  margin-top: 24px;
-}
-
+// Quick and dirty way to visualize linked variables.
+// The big old equal sign works well visually, but pseudo element is not properly clickable.
 .var-control:not([data-nesting-level="0"]):before {
-  content: "=";
-  font-size: 48px;
+  _-- {
+    content: "=";
+    font-size: 32px;
+  }
   float: left;
   margin-right: 6px;
   margin-left: 3px;

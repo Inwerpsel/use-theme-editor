@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useContext, useEffect} from 'react';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {ThemeEditorContext} from '../ThemeEditor';
 
@@ -8,11 +8,11 @@ const useDisabledStyleSheets = (disabledSheets, frameRef) => {
     [...document.styleSheets].forEach(sheet => {
       sheet.disabled = !!disabledSheets[sheet.href];
     });
-    frameRef.current && frameRef.current.contentWindow.postMessage({
+    frameRef.current?.contentWindow.postMessage({
       type: 'set-sheet-config',
       payload: JSON.stringify(disabledSheets),
     });
-  }, [disabledSheets, frameRef]);
+  }, [disabledSheets]);
 };
 
 export const StylesheetDisabler = () => {

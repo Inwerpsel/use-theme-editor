@@ -13,9 +13,15 @@ export const readFromUploadedFile = (dispatch, event, shouldMerge, prevTheme, se
     try {
       const theme = JSON.parse(event.target.result);
       const ensured = ensureValidCssVariables(theme);
-      const newTheme = !shouldMerge ? ensured : {...prevTheme, ...ensured};
-      dispatch({type: ACTIONS.loadTheme, payload: {theme: newTheme}});
-      name && setFileName(name.replace('.json', ''));
+      const isNewTheme = 'scopes' in theme;
+      let newScopes;
+      if (!isNewTheme) {
+        newScopes = !shouldMerge ? theme : {...prevTheme, ...ensured};
+        dispatch({type: ACTIONS.loadTheme, payload: {theme: newScopes}});
+        name && setFileName(name.replace('.json', ''));
+      } else {
+        alert('New themes not implemented');
+      }
     } catch (e) {
       console.log('File contents is not valid JSON.', event.target.result, event);
     }

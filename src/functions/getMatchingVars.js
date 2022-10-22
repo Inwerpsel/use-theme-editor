@@ -1,4 +1,6 @@
-export const allStateSelectorsRegexp = /:(active|focus|visited|hover|disabled|:[\w-]+)/g;
+export const allStateSelectorsRegexp = /:(active|focus(-(visible|within))?|visited|hover|disabled|:[\w-]+)/g;
+
+export const residualNotRegexp = /:not\([\s,\*]*\)/g;
 
 const matchVar = (cssVar, target) => {
   const combinedSelector = cssVar.uniqueSelectors.map(selector => {
@@ -6,16 +8,16 @@ const matchVar = (cssVar, target) => {
     const isRootSelector = selector.trim() === ':root';
     const isGlobalSelector = isBodySelector || isRootSelector;
 
-    if (!isRootSelector && /^:/.test(selector)) {
-      // Quick hack. These are filtered below.
-      return null;
-    }
+    // if (!isRootSelector && /^:/.test(selector)) {
+    //   // Quick hack. These are filtered below.
+    //   return null;
+    // }
 
     // Prevent body selector from always showing up, unless a body or paragraph was clicked.
-    const shouldIncludeStar = !isGlobalSelector || ['p', 'body', 'h'].includes(target.tagName.toLowerCase().replace(/\d$/, ''));
-    // const shouldIncludeStar = true;
+    // const shouldIncludeStar = !isGlobalSelector || ['p', 'body', 'h'].includes(target.tagName?.toLowerCase().replace(/\d$/, ''));
+    const shouldIncludeStar = true;
 
-    return `${selector}${!shouldIncludeStar ? '' : `, ${selector} *`}`;
+    return `${selector}${!shouldIncludeStar ? '' : `, ${selector.replace(',', ' *,')} *`}`;
     // Remove any pseudo selectors that might not match the clicked element right now.
   }).filter(v => v).join().replace(allStateSelectorsRegexp, '').replace(/:?:(before|after|first\-letter)/g, '');
 
@@ -28,13 +30,20 @@ const matchVar = (cssVar, target) => {
     return false;
   }
 
+  const cleanedSelector = combinedSelector
+    .replaceAll(residualNotRegexp, '')
+    .trim()
+    .replace(/^,/, '')
+    .replace(/,$/, '')
+    .replaceAll(/,(\s*,)+/g, ',');
+
   try {
     // Remove residual empty not-selectors after removing pseudo states.
-    return target.matches(combinedSelector.replaceAll(/:not\(\)/g, ''));
+    return target.matches(cleanedSelector);
   } catch (e) {
     if (!/^:/.test(combinedSelector)) {
       console.log('Failed testing a selector, and it is not because it only matches a pseudo selector.', cssVar);
-      console.log(combinedSelector);
+      console.log(cleanedSelector, combinedSelector);
     }
     return false;
   }

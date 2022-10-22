@@ -1,5 +1,5 @@
 import { useReducer, useEffect, useLayoutEffect } from 'react';
-import {LOCAL_STORAGE_KEY, LOCAL_STORAGE_PREVIEWS_KEY} from '../initializeThemeEditor';
+import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
 import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
 import {getAllDefaultValues} from '../functions/getAllDefaultValues';
 import {reducerOf} from '../functions/reducerOf';
@@ -18,262 +18,226 @@ const unset = prop => {
 const pushHistory = (history, entry) => [entry, ...history.slice(-1000)];
 
 const sortObject = o => Object.keys(o).sort().reduce((sorted, k) => {
-  sorted[k] = o[k];
+  sorted[k] = typeof o[k] === 'object' ? sortObject(o[k]): o[k];
   return sorted;
 }, {});
 
-// I created these as an optimization, but not sure if it's really needed or even improving things.
-const lastWritten = {};
-let keysToRemove = [];
-
 const DEFAULT_STATE = {
-  theme: {},
+  scopes: {},
   history: [],
   future: [],
   defaultValues: {},
+  lastRemoved: [],
   previewProps: {},
   previewPseudoVars: {},
   lastSet: {},
+  changeRequiresReset: false,
 };
 
-const dropProps = (fromState, toState, previewProps, previewPseudoVars) => {
-  const pseudoPropnames = Object.keys(previewPseudoVars);
-
-  for (const k in fromState) {
-    if (k in toState || k in previewProps) {
-      continue;
-    }
-
-    if (pseudoPropnames.some(pseudo => k.includes(pseudo))) {
-      continue;
-    }
-    keysToRemove.push(k)
-  }
-};
+// For some reason, updates using only `:root` resulted in more than double the amount
+// of elements reported by Chrome in the style recalculation, compared to using `html`.
+// Weird as both selectors target the same element, which should be only the root element.
+// However `:root` is more specific, so it's needed to win over source declarations and
+// we can't just use `html`. Using both still has the lower number of recalculations and fixes that.
+// Not sure where this number is coming from. The recalc does actually take longer, though not
+// by the same factor. 24ms vs 18ms on a quite complex page.
+export const ROOT_SCOPE = 'html:root';
 
 export const ACTIONS = {
-  set: (state, { name, value }) => {
-    if (typeof value === 'object') {
-      console.log(value);
-      throw new Error('Called set with an object');
-    }
-    const { theme } = state;
-    if (name === '' || theme[name] === value) {
+  set: (state, { name, value, scope = ROOT_SCOPE }) => {
+    const {
+      scopes,
+    } = state;
+
+    if (name === '') {
       return state;
     }
 
     // Only add a history entry if the same property wasn't set in the last 700ms.
     const shouldAddHistory = !state.lastSet[name] || performance.now() - state.lastSet[name] > 700;
 
+    const {[scope]: old, ...otherScopes} = scopes;
+    const newTheme = { ...old, [name]: value };
+
     return {
       ...state,
-      theme: { ...theme, [name]: value },
-      history: !shouldAddHistory ? state.history : pushHistory(state.history, state.theme),
+      history: !shouldAddHistory ? state.history : pushHistory(state.history, scopes),
       future: [],
-      lastSet: { ...state.lastSet, [name]: performance.now(), }
-    };
-  },
-  unset: (state, { name }) => {
-    if (!(name in state.theme)) {
-      return state;
-    }
-    keysToRemove.push(name)
-
-    const {
-      [name]: oldValue,
-      ...others
-    } = state.theme;
-
-    return {
-      ...state,
-      theme: others,
-      history: pushHistory(state.history, state.theme),
-      future: [],
-    };
-  },
-  startPreview: (state, { name, value }) => {
-    return {
-      ...state,
-      previewProps: {
-        ...state.previewProps,
-        [name]: value,
-      }
-    };
-  },
-  endPreview: (state, { name }) => {
-    const {
-      [name]: previewedValue,
-      ...otherProps
-    } = state.previewProps;
-
-    if (
-      !(name in state.theme)
-      && !Object.keys(state.previewPseudoVars).map(s => s.replace(PSEUDO_REGEX, '--')).includes(name)) {
-      keysToRemove.push(name)
-    }
-    return {
-      ...state,
-      previewProps: { ...otherProps },
-    };
-  },
-  startPreviewPseudoState: (state, { name }) => {
-    const element = name.replace(PSEUDO_REGEX, '--').replace(/\w+(-\w+)*$/, '');
-
-    const pseudoState = (name.match(PSEUDO_REGEX) || [null])[0];
-
-    return {
-      ...state,
-      previewPseudoVars: {
-        ...state.previewPseudoVars,
-        [element]: pseudoState,
+      lastSet: { ...state.lastSet, [name]: performance.now(), },
+      changeRequiresReset : false,
+      scopes: {
+        [scope]: newTheme,
+        ...otherScopes,
       },
     };
   },
-  endPreviewPseudoState: (state, { name }) => {
-    const elementToEnd = name.replace(PSEUDO_REGEX, '--').replace(PROP_REGEX, '');
+  unset: (state, { name, scope = ROOT_SCOPE }) => {
+    const { scopes } = state;
 
+    if (!(name in scopes[scope])) {
+      return state;
+    }
+
+    const {[scope]: old, ...otherScopes} = scopes;
+
+    // Apply updates the first time they are read.
     const {
-      [elementToEnd]: discard,
-      ...otherPseudos
-    } = state.previewPseudoVars;
-
-    Object.keys(state.defaultValues).forEach(k => {
-      const withoutElement = k.replace(elementToEnd, '');
-
-      if (withoutElement.replace(PROP_REGEX, '') !== '') {
-        return;
-      }
-
-      if (!(k in state.theme)) {
-        keysToRemove.push(k);
-      }
-      // Unset the regular property so that it gets set again.
-      lastWritten[k] = null;
-    });
+      [name]: oldValue,
+      ...others
+    } = old;
 
     return {
       ...state,
-      previewPseudoVars: otherPseudos,
+      history: pushHistory(state.history, scopes),
+      future: [],
+      lastRemoved: [{name, scope}],
+      changeRequiresReset : false,
+      scopes: {
+        [scope]: others,
+        ...otherScopes
+      },
     };
   },
+//  startPreview: (state, { name, value }) => {
+//     return {
+//       ...state,
+//       previewProps: {
+//         ...state.previewProps,
+//         [name]: value,
+//       }
+//     };
+//   },
+//   endPreview: (state, { name }) => {
+//     const {
+//       [name]: previewedValue,
+//       ...otherProps
+//     } = state.previewProps;
+
+//     if (
+//       !(name in state.theme)
+//       && !Object.keys(state.previewPseudoVars).some(s => s.replace(PSEUDO_REGEX, '--') === name)
+//     ) {
+//       keysToRemove.push(name)
+//     }
+//     return {
+//       ...state,
+//       previewProps: { ...otherProps },
+//     };
+//   },
+//   startPreviewPseudoState: (state, { name }) => {
+//     const element = name.replace(PSEUDO_REGEX, '--').replace(/\w+(-\w+)*$/, '');
+
+//     const pseudoState = (name.match(PSEUDO_REGEX) || [null])[0];
+
+//     return {
+//       ...state,
+//       previewPseudoVars: {
+//         ...state.previewPseudoVars,
+//         [element]: pseudoState,
+//       },
+//     };
+//   },
+//   endPreviewPseudoState: (state, { name }) => {
+//     const elementToEnd = name.replace(PSEUDO_REGEX, '--').replace(PROP_REGEX, '');
+
+//     const {
+//       [elementToEnd]: discard,
+//       ...otherPseudos
+//     } = state.previewPseudoVars;
+
+//     Object.keys(state.defaultValues).forEach(k => {
+//       const withoutElement = k.replace(elementToEnd, '');
+
+//       if (withoutElement.replace(PROP_REGEX, '') !== '') {
+//         return;
+//       }
+
+//       if (!(k in state.theme)) {
+//         keysToRemove.push(k);
+//       }
+//       // Unset the regular property so that it gets set again.
+//       lastWritten[k] = null;
+//     });
+
+//     return {
+//       ...state,
+//       previewPseudoVars: otherPseudos,
+//     };
+//   },
   historyBackward: (state) => {
-    const { theme, history, future, previewProps, previewPseudoVars } = state;
+    const { history, future, scopes } = state;
 
     if (history.length === 0) {
       return state;
     }
-    const [prevTheme, ...older] = history;
-    dropProps(theme, prevTheme, previewProps, previewPseudoVars);
+    const [prevState, ...older] = history;
 
     return {
       ...state,
-      theme: prevTheme,
       history: older,
       future: [
-        theme,
+        scopes,
         ...future,
       ],
+      scopes: prevState,
+      changeRequiresReset : true,
     };
   },
   historyForward: (state) => {
-    const { theme, history, future, previewProps, previewPseudoVars } = state;
+    const { history, future, scopes } = state;
     if (future.length === 0) {
       return state;
     }
 
-    const [nextTheme, ...newer] = future;
-    dropProps(theme, nextTheme, previewProps, previewPseudoVars);
+    const [nextState, ...newer] = future;
 
     return {
       ...state,
-      theme: nextTheme,
       future: newer,
       history: [
-        theme,
+        scopes,
         ...history
-      ]
+      ],
+      scopes: nextState,
+      changeRequiresReset : true,
     };
   },
-  loadTheme: ({ defaultValues, history, theme: oldTheme }, { theme }) => {
-    dropProps(oldTheme, theme, {}, {});
-    Object.keys(lastWritten).forEach(k => lastWritten[k] = null);
-    keysToRemove.push(...Object.keys(theme))
+  loadTheme: ({ defaultValues, history, scopes: oldScopes }, { theme = {} }) => {
+    const isNewTheme = 'scopes' in theme;
 
     return {
       ...DEFAULT_STATE,
       defaultValues,
-      theme,
-      history: pushHistory(history,oldTheme),
+      history: pushHistory(history, oldScopes),
+      scopes: isNewTheme ? theme.scopes : {
+        [ROOT_SCOPE]: theme,
+        // ...otherScopes,
+      },
+      changeRequiresReset : true,
     };
-  }
+  },
 };
 
 const reducer = reducerOf(ACTIONS);
 
-const writeNewValues = theme => {
-  Object.keys(theme).forEach((k) => {
-    // This will work as long as nothing else is setting the same properties. Perhaps there's no cost to setting
-    // properties to the same value and this can be simplified?
-    if (lastWritten[k] === theme[k]) {
-      return;
-    }
-
-    write(k, theme[k]);
-    lastWritten[k] = theme[k];
-  });
-};
-
-const processRemovals = (defaultValues) => {
-  keysToRemove.forEach(k => {
-    if (defaultValues[k]) {
-      write(k, defaultValues[k]);
-      lastWritten[k] = defaultValues[k];
-    } else {
-      unset(k);
-      delete lastWritten[k];
-    }
-  });
-  // All was processed.
-  keysToRemove = [];
-};
-
 export const useThemeEditor = (
   {
     initialState = DEFAULT_STATE,
-    // baseTheme = null,
     allVars,
   }) => {
   const [{
-    theme,
     defaultValues,
-    previewProps,
-    previewPseudoVars,
     history,
     future,
+    scopes,
+    changeRequiresReset,
   }, dispatch] = useReducer(reducer, initialState, s => ({
     ...s,
     defaultValues: getAllDefaultValues(allVars),
-    theme: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
+    scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
   }));
 
-  const resolvedValues = {
-    ...theme,
-    ...previewProps,
-  };
-
-  const withPseudoPreviews = previewPseudoVars.length === 0
-    ? resolvedValues
-    : applyPseudoPreviews(defaultValues, resolvedValues, previewPseudoVars);
-
-  const serialized = JSON.stringify(withPseudoPreviews);
-
-  useLayoutEffect(() => {
-    processRemovals(defaultValues);
-    writeNewValues(withPseudoPreviews);
-    localStorage.setItem(LOCAL_STORAGE_PREVIEWS_KEY, serialized);
-  }, [serialized]);
-
-  const sorted = sortObject(theme);
+  const sorted = sortObject(scopes);
 
   const themeJson = JSON.stringify(sorted);
   useEffect(() => {
@@ -282,10 +246,11 @@ export const useThemeEditor = (
 
   return [
     {
-      theme,
       defaultValues,
       history,
       future,
+      scopes,
+      changeRequiresReset,
     },
     dispatch,
   ];

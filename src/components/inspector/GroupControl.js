@@ -1,11 +1,14 @@
 import {addHighlight, removeHighlight} from '../../functions/highlight';
-import {VariableControl} from './VariableControl';
+import {getValueFromDefaultScopes, VariableControl} from './VariableControl';
 import {ACTIONS} from '../../hooks/useThemeEditor';
-import React, {Fragment, useContext} from 'react';
+import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
 import { ScopeControl } from './ScopeControl';
 import { isColorProperty } from './TypedControl';
+import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
+import { ScrollInViewButton } from './ScrollInViewButton';
+import { rootScopes } from '../../functions/extractPageVariables';
 
 export const GroupControl = props => {
   const {
@@ -19,7 +22,8 @@ export const GroupControl = props => {
     element,
     label,
     vars,
-    scopes,
+    scopes: elementScopes,
+    isRootElement,
   } = group;
 
   const {
@@ -27,20 +31,46 @@ export const GroupControl = props => {
     dispatch,
     propertyFilter,
     propertySearch, setPropertySearch,
-    theme,
     defaultValues,
+    scopes,
   } = useContext(ThemeEditorContext);
 
-  const groupColors = vars.reduce((colorVars, someVar) => {
-    if (isColorProperty(someVar.usages[0].property)) {
-      const {name} = someVar;
-      const value = theme[name] || defaultValues[name];
-      if (value) {
-        colorVars.push([someVar, value])
+  const groupColors = useMemo(() => {
+    return vars.reduce((colorVars, someVar) => {
+      if (isColorProperty(someVar.usages[0].property)) {
+        const { name } = someVar;
+
+        const propertyScopes = scopesByProperty[name];
+        let currentScope = null;
+        if (elementScopes) {
+          for (const key in propertyScopes || {}) {
+            if (!rootScopes.includes(key)) {
+              currentScope =
+                elementScopes.find((s) => s.selector === key) || currentScope;
+            }
+          }
+        }
+        const valueFromScope =
+          !scopes || !currentScope || !scopes[currentScope.selector]
+            ? null
+            : scopes[currentScope.selector][name];
+
+        const value =
+          valueFromScope ||
+          definedValues[':root'][name] ||
+          defaultValues[name] ||
+          getValueFromDefaultScopes(elementScopes, someVar)
+        if (value) {
+          colorVars.push([someVar, value]);
+        }
       }
-    }
-    return colorVars;
-  }, []);
+      return colorVars;
+    }, []);
+  }, [vars, elementScopes, scopes]);
+
+  if (vars.length === 0 && Object.keys(group.inlineStyles).length === 0 ) { 
+    return null;
+  }
 
   const previewSize = '20px';
 
@@ -53,11 +83,8 @@ export const GroupControl = props => {
           addHighlight(element);
           return;
         }
-        if (!frameRef?.current) {
-          return;
-        }
 
-        frameRef.current.contentWindow.postMessage(
+        frameRef.current?.contentWindow.postMessage(
           {
             type: 'highlight-element-start', payload: {index: element}
           },
@@ -65,15 +92,12 @@ export const GroupControl = props => {
         );
       }}
       onMouseLeave={() => {
-        if (element && element.classList) {
+        if (element?.classList) {
           removeHighlight(element);
           return;
         }
-        if (!frameRef?.current) {
-          return;
-        }
 
-        frameRef.current.contentWindow.postMessage(
+        frameRef.current?.contentWindow.postMessage(
           {
             type: 'highlight-element-end', payload: {index: element}
           },
@@ -81,38 +105,8 @@ export const GroupControl = props => {
         );
       }}
     >
-      <button
-        title='Scroll in view'
-        className='scroll-in-view'
-        style={{
-          border: '1px solid gray',
-          background: 'white',
-          margin: '4px 2px',
-          borderRadius: '5px',
-          padding: '4px',
-          fontSize: '12px',
-          float: 'right',
-          cursor: 'zoom-in',
-        }}
-        disabled={frameRef.current && isNaN(element)}
-        onClick={() => {
-          if (frameRef.current) {
-            frameRef.current.contentWindow.postMessage(
-              {
-                type: 'scroll-in-view', payload: {index: element}
-              },
-              window.location.href,
-            );
-            return;
-          }
-          element.scrollIntoView({
-            behavior: 'smooth',
-            block: 'nearest',
-            inline: 'end',
-          });
-        }}
-      >👁
-      </button>
+      {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{element}}/>}
+      
       <h4
         style={{fontWeight: 400, marginBottom: 0, cursor: 'pointer'}}
         onClick={() => toggleGroup(label, index)}
@@ -136,8 +130,9 @@ export const GroupControl = props => {
           >X</button>
            </span>}
 
-        {groupColors.length > 0 && groupColors.map(([{name}, value]) => {
-          return <div
+        {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
+          {groupColors.map(([{name}, value]) => {
+            return <div
               key={name}
               title={`${name}: ${value}`}
               style={{
@@ -152,24 +147,34 @@ export const GroupControl = props => {
                 marginLeft: '6px',
                 fontSize: '12px',
                 textAlign: 'center',
+                textShadow: 'white 0px 3px'
               }}>{/^var\(/.test(value) ? 'v' : <Fragment>&nbsp;</Fragment>}</div>
-        })}
+            })}
+        </ul>}
+        
       </h4>
     </div>
     {isOpen && <Fragment>
-      <ElementInlineStyles {...{group}}/>
-      <ScopeControl {...{scopes}}/>
+      <ElementInlineStyles {...{group, elementScopes}}/>
+      <ScopeControl {...{scopes: elementScopes, vars, element}}/>
       <ul className={'group-list'}>
-        {vars.map(cssVar => {
-
+        {vars.filter(v=>!v.currentScope).map(cssVar => {
           return <VariableControl
             {...{
               cssVar,
+              scopes: elementScopes,
+              element,
             }}
             initialOpen={vars.length === 1}
             key={cssVar.name}
             onChange={value => {
-              dispatch({ type: ACTIONS.set, payload: { name: cssVar.name, value } });
+              dispatch({
+                type: ACTIONS.set,
+                payload: {
+                  name: cssVar.name, 
+                  value,
+                }
+              });
             }}
             onUnset={() => {
               dispatch({ type: ACTIONS.unset, payload: { name: cssVar.name } });
@@ -177,6 +182,7 @@ export const GroupControl = props => {
           />;
         }
         )}
-      </ul></Fragment>}
+      </ul>
+    </Fragment>}
   </li>;
 };

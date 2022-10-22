@@ -1,5 +1,5 @@
-import React, {createContext, Fragment, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
+import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
+import {ACTIONS, ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
@@ -32,6 +32,10 @@ import {Area} from './movable/Area';
 import {FrameScaleSlider} from './ui/FrameScaleSlider';
 import {Drawer} from './movable/Drawer';
 import {CurrentTheme} from './ui/CurrentTheme';
+import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
+import { NameReplacements } from './inspector/NameReplacements';
+import { updateScopedVars } from '../initializeThemeEditor';
+import { UseEventExample } from './controls/SelectControl';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -44,31 +48,53 @@ export const ThemeEditor = (props) => {
     config,
     groups: unfilteredGroups,
     allVars,
+    lastInspectTime,
   } = props;
 
-  const [openGroups, setOpenGroups] = useState({[unfilteredGroups[0]?.label]: true});
+  const [openGroups, setOpenGroups] = useState({});
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
   useLayoutEffect(() => {
-    if (unfilteredGroups.length > 0) {
+    if (openFirstOnInspect && unfilteredGroups.length > 0) {
       setOpenGroups({
         [unfilteredGroups[0].label]: true,
       });
     }
-  }, [unfilteredGroups]);
+  }, [unfilteredGroups, openFirstOnInspect]);
 
   const [
     {
-      theme,
       defaultValues,
       history,
       future,
+      scopes,
+      changeRequiresReset,
     },
     dispatch,
   ] = useThemeEditor({allVars});
 
   const frameRef = useRef(null);
   const settings = useGlobalSettings(frameRef);
+
+  useLayoutEffect(() => {
+    updateScopedVars(scopes, changeRequiresReset);
+  }, [scopes]);
+
+  useEffect(() => {
+    if (!frameRef.current) {
+      console.log('Frameref not ready')
+      return;
+    }
+    
+    frameRef.current.contentWindow.postMessage(
+      {
+        type: 'set-scopes-styles',
+        payload: { scopes, resetAll: changeRequiresReset },
+      },
+      window.location.origin,
+      );
+  }, [scopes]);
+
   const {
     propertyFilter,
     propertySearch,
@@ -76,12 +102,15 @@ export const ThemeEditor = (props) => {
     isSimpleSizes,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
+    showCssProperties, setShowCssProperties,
+    showSourceLinks, setShowSourceLinks,
   } = settings;
 
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
   const [importCollapsed, setImportCollapsed] = useState(true);
   const [serverThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
   const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
+  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
 
   const groups = useMemo(() => {
     const searched = filterSearched(unfilteredGroups, propertySearch);
@@ -117,123 +146,166 @@ export const ThemeEditor = (props) => {
 
   const existsOnServer = serverThemes && fileName in serverThemes;
   const modifiedServerVersion = useMemo(() => {
-    return existsOnServer && diffThemes(serverThemes[fileName], theme).hasChanges;
-  }, [serverThemes, fileName, theme]);
+    return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
+  }, [serverThemes, fileName, scopes]);
 
   useHotkeys('alt+s', () => {
     if (fileName && fileName !== 'default' && modifiedServerVersion) {
-      uploadTheme(fileName, theme);
+      uploadTheme(fileName, scopes);
     }
-  },hotkeysOptions, [fileName, modifiedServerVersion, theme]);
+  },hotkeysOptions, [fileName, modifiedServerVersion, scopes]);
 
   const colorUsages = useMemo(
-    () => extractColorUsages(theme, !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
-    [theme, defaultValues, useDefaultsPalette],
+    () => extractColorUsages(scopes[ROOT_SCOPE], !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
+    [scopes, defaultValues, useDefaultsPalette],
   );
 
-  return <ThemeEditorContext.Provider value={{
-    allVars,
-    theme,
-    dispatch,
-    defaultValues,
-    frameRef,
-    screenOptions,
-    serverThemes,
-    serverThemesLoading,
-    uploadTheme,
-    deleteTheme,
-    existsOnServer,
-    modifiedServerVersion,
-    colorUsages,
-    setSheetDisablerCollapsed,
-    ...settings,
-  }}>
-    <div className="theme-editor">
-      <MovablePanels dragEnabled={settings.dragEnabled}>
-        <div style={{display: 'flex', columns: 2, justifyContent: 'space-between'}}>
-          <Area id="area-top" style={{justifyContent: 'flex-start', flexGrow: 1}}>
-            <FrameSizeSettings/>
-            <ScreenSwitcher/>
-            <MoveControls/>
-          </Area>
-          <Area
-            id="area-top-reverse"
+  return (
+    <ThemeEditorContext.Provider
+      value={{
+        allVars,
+        dispatch,
+        defaultValues,
+        frameRef,
+        screenOptions,
+        serverThemes,
+        serverThemesLoading,
+        uploadTheme,
+        deleteTheme,
+        existsOnServer,
+        modifiedServerVersion,
+        colorUsages,
+        setSheetDisablerCollapsed,
+        scopes,
+        lastInspectTime,
+        ...settings,
+      }}
+    >
+      <div className="theme-editor">
+        <MovablePanels>
+          <div
             style={{
-              flexDirection: 'row-reverse',
-              justifyContent: 'flex-start',
-              flexGrow: 1,
+              display: 'flex',
+              columns: 2,
+              justifyContent: 'space-between',
             }}
           >
-            <FrameScaleSlider/>
-          </Area>
-        </div>
-        <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
-          <Area id="area-left">
-            <div className={'theme-editor-menu'}>
-              <ToggleButton controls={[importCollapsed, setImportCollapsed]}>Import/export</ToggleButton>
-              <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>Stylesheets</ToggleButton>
-              <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>Server</ToggleButton>
-            </div>
-            <Fragment>
-              {!serverThemesCollapsed && <ServerThemesList/>}
-            </Fragment>
-            <ThemeUploadPanel/>
-            <div style={{display: 'flex', gap: '4px'}}>
-              <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
-                Include default palette
-              </Checkbox>
-              <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
-                Native color picker
-              </Checkbox>
-            </div>
-            <CustomVariableInput/>
-            <div style={{
-              display: 'flex',
-              alignItems: 'flex-start',
-            }}>
-              <PropertyCategoryFilter/>
-              <PropertySearch/>
-              <div>
-                <HistoryBack {...{history}}/>
-                <HistoryForward {...{future}}/>
+            <Area
+              id="area-top"
+              style={{ justifyContent: 'flex-start', flexGrow: 1 }}
+            >
+              <FrameSizeSettings />
+              <ScreenSwitcher />
+              <MoveControls />
+            </Area>
+            <Area
+              id="area-top-reverse"
+              style={{
+                flexDirection: 'row-reverse',
+                justifyContent: 'flex-start',
+                flexGrow: 1,
+              }}
+            >
+              <FrameScaleSlider/>
+            </Area>
+          </div>
+          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
+            <Area id="area-left">
+              <div className={'theme-editor-menu'}>
+                <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
+                  Import/export
+                </ToggleButton>
+                <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
+                  Stylesheets
+                </ToggleButton>
+                <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
+                  Server
+                </ToggleButton>
               </div>
-            </div>
-            <ul className={'group-list'}>
-              {groups.map((group, index) => <GroupControl
-              key={group.label}
-              {...{group, toggleGroup, openGroups, index}} />
-              )}
-            </ul>
-            <CurrentTheme/>
-          </Area>
-          <ResizableFrame src={window.location.href}/>
-          <Area id="area-right">
-            <div>
-              {!sheetsDisablerCollapsed && <StylesheetDisabler/>}
-            </div>
-            <div>
-              {!importCollapsed && <ImportExportTools/>}
-            </div>
-          </Area>
-        </div>
-        <div style={{display: 'flex', columns: 2, justifyContent: 'space-between', flexGrow: 0}}>
-          <Area id="area-bottom"  style={{display: 'flex', justifyContent: 'flex-start', flexGrow: 1}}>
-          </Area>
-          <Area
-            id="area-bottom-reverse"
+              <Fragment>
+                {!serverThemesCollapsed && <ServerThemesList/>}
+              </Fragment>
+              <ThemeUploadPanel/>
+              <div style={{display: 'flex', gap: '4px'}}>
+                <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
+                  Include default palette
+                </Checkbox>
+                <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
+                  Native color picker
+                </Checkbox>
+              </div>
+              <CustomVariableInput/>
+              <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                }}>
+                <PropertyCategoryFilter/>
+                <PropertySearch/>
+                <div>
+                  <HistoryBack {...{history}}/>
+                  <HistoryForward {...{future}}/>
+                </div>
+              </div>
+              <ul className={'group-list'}>
+                {groups.length === 0 && <li><span className='alert'>No results</span></li>}
+                {groups.map((group, index) => {
+                  // const index = groups.length - 1 - indexNormal;
+                  // const group = groups[index];
+                  return (
+                    <GroupControl
+                      key={group.label}
+                      {...{ group, toggleGroup, openGroups, index }} />
+                  );
+                })}
+              </ul>
+            </Area>
+            <ResizableFrame src={window.location.href} />
+            <Area id="area-right">
+              <div>{!sheetsDisablerCollapsed && <StylesheetDisabler />}</div>
+              <div>{!importCollapsed && <ImportExportTools />}</div>
+            </Area>
+          </div>
+          <div
             style={{
               display: 'flex',
-              flexDirection: 'row-reverse',
-              justifyContent: 'flex-start',
-              flexGrow: 1,
+              columns: 2,
+              justifyContent: 'space-between',
+              flexGrow: 0,
+              alignItems: 'flex-end',
             }}
           >
-          </Area>
-          <Drawer>
-            <ThemeEditorExtraOptions/>
-          </Drawer>
-        </div>
-      </MovablePanels>
-    </div>
-  </ThemeEditorContext.Provider>;
+            <Area id="area-bottom"></Area>
+            <Area
+              id="area-bottom-reverse"
+              style={{
+                flexDirection: 'row-reverse',
+              }}
+            ></Area>
+            <Drawer>
+              <ThemeEditorExtraOptions />
+              <RemoveAnnoyingPrefix />
+              <div style={{display: 'flex', gap: '4px'}}>
+                <Checkbox
+                  id={'remove-css-properties'}
+                  controls={[showCssProperties, setShowCssProperties]}
+                >Show CSS properties</Checkbox>
+                <Checkbox
+                  id={'show-source-links'}
+                  controls={[showSourceLinks, setShowSourceLinks]}
+                >Show source links</Checkbox>
+              </div>
+              {/* <ExampleTabs/> */}
+              <NameReplacements/>
+              <div style={{display: 'flex', gap: '4px'}}>
+                <Checkbox
+                  id={'remove-css-properties'}
+                  controls={[openFirstOnInspect, setOpenFirstOnInspect]}
+                >Auto open first group on inspect</Checkbox>
+              </div>
+            </Drawer>
+          </div>
+        </MovablePanels>
+      </div>
+    </ThemeEditorContext.Provider>
+  );
 };

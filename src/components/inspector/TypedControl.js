@@ -14,10 +14,10 @@ export const isColorProperty = property => {
     || ['background', 'fill', 'stroke'].includes(property);
 };
 
-export const TypedControl = ({ cssVar, value, onChange}) => {
+export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
 
   if (cssVar.usages.some(usage => isColorProperty(usage.property))) {
-    return <ColorControl {...{onChange, value, cssVar}}/>;
+    return <ColorControl {...{onChange, value, cssVar, cssFunc}}/>;
   }
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {

@@ -1,15 +1,17 @@
 import { compare } from 'specificity';
 import { definedValues } from './collectRuleVars';
+import { allStateSelectorsRegexp } from './getMatchingVars';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 
 export function getMatchingScopes(target, vars) {
-  const matchingSelectors = Object.keys(definedValues).filter((selector) => {
-    if (selector === ':root') {
+  const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
+    if (rawSelector === ':root') {
       // We're only interested in local scopes here.
       // Technically this should return true, as there may be definitions in the code for the global scope.
       // But so far the editor just considers these the same as default values.
       return false;
     }
+    const selector = rawSelector.replace(allStateSelectorsRegexp, '').replace(/:?:(before|after|first\-letter)/g, '');
     const withInnerElementsSelector = `${selector}, ${selector.replace(',', ' *,')} *`;
 
     try {
@@ -49,5 +51,12 @@ export function getMatchingScopes(target, vars) {
     return scope;
   });
 
-  return withMostSpecific.sort((a,b) => compare(a.matchingSelector, b.matchingSelector));
+  return withMostSpecific.sort((a,b) => {
+    const result = compare(a.matchingSelector, b.matchingSelector);
+    if (result === 0) {
+      return -1;
+    }
+    // Sort opposite direction.
+    return result * -1;
+  });
 };

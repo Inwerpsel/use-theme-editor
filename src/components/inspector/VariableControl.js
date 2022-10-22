@@ -1,23 +1,18 @@
-import React, {useState, Fragment, useContext} from 'react';
+import React, {useState, useMemo, Fragment, useContext} from 'react';
 import {isColorProperty, TypedControl} from './TypedControl';
-import { PSEUDO_REGEX, ACTIONS} from '../../hooks/useThemeEditor';
+import { PSEUDO_REGEX, ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
-import {PREVIEW_SIZE} from '../properties/ColorControl';
-import mediaQuery from 'css-mediaquery';
+import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from '../properties/ColorControl';
+import {match} from 'css-mediaquery';
 import {isOverridden, VariableScreenSwitcher} from './VariableScreenSwitcher';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {IdeLink} from './IdeLink';
-import {ElementLocator} from '../ui/ElementLocator';
-import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
-import { allStateSelectorsRegexp } from '../../functions/getMatchingVars';
-
-const uniqueUsages = usages => {
-  const obj =  usages.reduce((usages, usage) => ({
-    ...usages,
-    [usage.selector.replace(',', ',\n')]: usage,
-  }), {});
-  return Object.values(obj);
-};
+import { definedValues } from '../../functions/collectRuleVars';
+import { VariableReferences } from './VariableReferences';
+import { Checkbox } from "../controls/Checkbox";
+import { ScrollInViewButton } from './ScrollInViewButton';
+import { FilterableVariableList } from '../ui/FilterableVariableList';
+import { VariableUsages } from './VariableUsages';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -30,41 +25,82 @@ const format = name => {
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };
-const formatTitle = (name) => {
+export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
   const [prefix, prop] = format(name);
+  let formattedProp = prop.replaceAll(/-/g, ' ').trim();
+
+  if (annoyingPrefix) {
+    formattedProp = formattedProp.replace( new RegExp(`^${annoyingPrefix} `), '').trim();
+  }
+
+  formattedProp = !nameReplacements
+    ? formattedProp
+    : nameReplacements
+        .filter((r) => r.active && r.to.length > 0 && r.from.length > 1)
+        .reduce(
+          (prop, { from, to }) => prop.replace(new RegExp(from), to),
+          formattedProp
+        );
+
+  const annoyingRegex = new RegExp(`^${annoyingPrefix}\\s*\\—\\s*`);
+  const cleanedPrefix = prefix.trim().replace(annoyingRegex, '');
+
   return <Fragment>
-    <div
+    <span
       style={{
         fontSize: '13px',
         fontStyle: 'italic',
-        color: 'black'
+        color: 'black',
+        display: 'block',
       }}
-    >{capitalize(prefix)}</div>
-    <span className={'var-control-property'}>{prop}</span>
+    >{capitalize(annoyingPrefix ? cleanedPrefix : prefix)}</span>
+    <span style={{fontWeight: 'bold'}} className={'var-control-property'}>{formattedProp}</span>
   </Fragment>;
 };
 
-const previewValue = (value, cssVar, onClick, isDefault) => {
+const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isOpen) => {
   const size = PREVIEW_SIZE;
 
-  const title = `${value}${ !isDefault ? '' : ' (default)' }`;
+  const title = `${value}${!isDefault ? '' : ' (default)'}`;
 
-  const shouldBeColor = isColorProperty(cssVar.usages[0].property);
+  const isUrl = /url\(/.test(value);
+  const property = cssVar.usages && cssVar.usages[0]?.property;
+  const isColor =
+    isColorProperty(property) ||
+    COLOR_VALUE_REGEX.test(value) ||
+    GRADIENT_REGEX.test(value);
+  const presentable = isColor || isUrl;
 
-  if (value && shouldBeColor) {
-    return <span
-      key={ 1 }
-      onClick={ onClick }
-      title={ title }
-      style={ {
-        width: size,
-        height: size,
-        border: '1px solid black',
-        borderRadius: '6px',
-        background: value,
-        float: 'right',
-        marginTop: '7px',
-      } }>{/^var\(/.test(value) && 'var'}</span>;
+  if (value && presentable) {
+    if (!!referencedVariable && isOpen) {
+      // Both value and preview are shown on the referenced variable when open.
+      return null;
+    }
+    return (
+      <Fragment>
+        <span
+          key={1}
+          onClick={onClick}
+          title={title}
+          style={{
+            width: size,
+            height: size,
+            border: '1px solid black',
+            borderRadius: '6px',
+            background: `no-repeat left top/ cover ${value}`,
+            float: 'right',
+            textShadow: 'white 0px 10px',
+            // backgroundSize: 'cover',
+          }}
+        >
+          {/var\(/.test(value) && 'var'}
+        </span>
+        <span style={{ float: 'right', marginRight: '4px' }}>
+          {(referencedVariable?.name || '').replaceAll(/-+/g, ' ').trim() ||
+            (isUrl ? null : value)}
+        </span>
+      </Fragment>
+    );
   }
 
   return <span
@@ -75,56 +111,53 @@ const previewValue = (value, cssVar, onClick, isDefault) => {
       // width: size,
       fontSize: '14px',
       float: 'right',
-      marginTop: '2px'
     } }
   >
     { value }
   </span>;
 };
 
-const showUsages = usages => {
-  return <ul>
-    {uniqueUsages(usages).map(({property, selector, position}) => {
-      const selectors = selector.split(',');
-      if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
-        return <li key={selectors}>
-          {!!position && <IdeLink {...position}/>}
-          <ul
-            style={{listStyleType: 'none'}}
-          >
-            {selectors.map(selector => <li key={selector}>
-              <span> ({property})</span>
-              <ElementLocator selector={selector.replace(allStateSelectorsRegexp, '')} initialized={true}/>
-            </li>)}
-          </ul>
-        </li>;
-      }
+// Get values from specificity ordered scopes.
+export function getValueFromDefaultScopes(scopes, cssVar) {
+  if (!scopes) {
+    return null;
+  }
+  for (const {selector, scopeVars} of scopes) {
 
-      return <li key={selectors}>
-        {!!position && <IdeLink {...position}/>}
-        <span> ({property})</span>
-        <ElementLocator selector={selector.replace(allStateSelectorsRegexp, '')} initialized={true}/>
-      </li>;
-    })}
-  </ul>;
-};
+    if (!scopeVars) {
+      console.log('A scope with no vars?!', selector, cssVar)
+    }
+    if (scopeVars && scopeVars.some(v=>v.name === cssVar.name)) {
+      return definedValues[selector][cssVar.name];
+    }
+  }
+  return null;
+}
 
 export const VariableControl = (props) => {
   const {
     cssVar,
     onChange,
     onUnset,
-    initialOpen,
+    initialOpen = false,
     nestingLevel,
+    scopes: elementScopes,
+    parentVar,
+    element,
+    currentScope,
   } = props;
 
   const {
-    theme,
+    scopes,
     dispatch,
     width,
     defaultValues,
     allVars,
+    annoyingPrefix,
+    showCssProperties,
+    nameReplacements,
   } = useContext(ThemeEditorContext);
+  const theme = scopes[ROOT_SCOPE] || {};
 
   const {
     name,
@@ -134,11 +167,7 @@ export const VariableControl = (props) => {
     properties,
   } = cssVar;
 
-  const defaultValue = definedValues[':root'][name] || defaultValues[name];
-
-  const [
-    isOpen, setIsOpen
-  ] = useState(initialOpen);
+  const defaultValue = definedValues[':root'][name] || definedValues[':where(html)'][name] || defaultValues[name];
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -149,138 +178,282 @@ export const VariableControl = (props) => {
   const [overwriteVariable, setOverwriteVariable] = useState(false);
 
   const toggleSelectors = () => setShowSelectors(!showSelectors);
-  const value = theme[name] || defaultValue;
+
+  const valueFromScope = !scopes || !scopes[currentScope] ? null : scopes[currentScope][name];
+
+  const value = valueFromScope ||
+    getValueFromDefaultScopes(elementScopes, cssVar) ||
+    defaultValue;
   const isDefault = value === defaultValue;
   const {media} = maxSpecific || {};
 
-  const varMatches = value && value.match(/^var\((\-\-[\w-]+)\s*[\,\)]/);
-  const referencedVariable = !varMatches || varMatches.length === 0 
-    ? null 
-    : allVars.find(cssVar => cssVar.name === varMatches[1].trim());
-
-  const screen = {type: 'screen', width: width || window.screen.width};
+  const varMatches = value && value.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
+  const referencedVariable = useMemo(() => {
+    return !varMatches || varMatches.length === 0
+      ? null
+      : allVars.find((cssVar) => cssVar.name === varMatches[1]) || {
+          name: varMatches[1],
+          usages: [
+            {
+              property: cssVar.usages[0].property,
+              isFake: true,
+            },
+          ],
+          properties: {},
+          positions: [],
+        };
+  }, [value]);
   const {overridingMedia} = cssVar.allVar || cssVar;
-  const matchesQuery = !media || mediaQuery.match(media, screen);
-  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width: width}));
-
-  const isAffectedByScope = !!scopesByProperty[name] && (
-    scopesByProperty[name].length > 1 || Object.keys(scopesByProperty[name])[0] !== ':root'
-  );
+  const matchesQuery =
+    !media ||
+    match(media, { type: 'screen', width: width || window.screen.width });
+  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width}));
 
   let currentLevel = nestingLevel || 0;
 
-  if (nestingLevel > 20) {
+  const [
+    isOpen, setIsOpen
+    // Open all variables that refer to variables immediately.
+  ] = useState(initialOpen || (currentLevel > 0 && !!referencedVariable));
+
+  const excludedVarName = parentVar?.name;
+
+  const references = useMemo(() => {
+    // Prevent much unneeded work on large lists.
+    if (!isOpen) {
+      return null;
+    }
+    const regexp = new RegExp(
+      `var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
+    );
+
+    return allVars.filter(({ name, usages }) => {
+      if (name === excludedVarName) {
+        return false;
+      }
+      if (theme[name]) {
+        return regexp.test(theme[name]);
+      }
+      if (definedValues[name]) {
+        return regexp.test(definedValues[name]);
+      }
+      return regexp.test(usages[0].defaultValue);
+    });
+  }, [theme, excludedVarName, isOpen]);
+
+  const [showReferences, setShowReferences] = useState(false);
+  const [openVariablePicker, setOpenVariablePicker] = useState(false);
+
+  const cssFunc = cssVar.usages.find((u) => u.cssFunc !== null)?.cssFunc;
+
+  if (currentLevel > 20) {
     // Very long dependency chain, probably cyclic, let's break it here.
     // I'll prevent setting cyclic references in the first place.
+    // Though this could also be an error in the source CSS.
     return null;
   }
 
-  return <li
-    key={ name }
-    className={classnames(
-      'var-control',
-      {
-        'var-control-in-theme': name in theme,
+  const isInTheme = name in theme || name in (scopes[currentScope] || {});
+
+  return (
+    <li
+      data-nesting-level={currentLevel}
+      key={name}
+      className={classnames('var-control', {
+        'var-control-in-theme': isInTheme,
         'var-control-no-match-screen': !matchesScreen,
-      },
-    )}
-    onClick={ () => !isOpen && toggleOpen()}
-    style={ {
-      // userSelect: 'none',
-      position: 'relative',
-      listStyleType: 'none',
-      fontSize: '15px',
-      clear: 'both',
-      cursor: isOpen ? 'auto' : 'pointer',
-    } }
-  >
-    {!matchesScreen && <VariableScreenSwitcher {...{cssVar, media}}/>}
-    { previewValue(value, cssVar, toggleOpen, isDefault) }
-    <div
-        onClick={ ()=> isOpen && toggleOpen() }
+      })}
+      onClick={() => !isOpen && toggleOpen()}
+      style={{
+        // userSelect: 'none',
+        position: 'relative',
+        listStyleType: 'none',
+        fontSize: '15px',
+        clear: 'both',
+        cursor: isOpen ? 'auto' : 'pointer',
+        paddingTop: 0,
+      }}
     >
-      <div>
-        {isAffectedByScope && <span
+      {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media }} />}
+      <div style={{ paddingTop: '6px' }} onClick={() => isOpen && toggleOpen()}>
+        <h5
           style={{
-            fontSize: '24px',
-            color: 'red',
-            fontWeight: 'bold',
+            display: 'inline-block',
+            fontSize: '16px',
+            padding: '0 4px 0',
+            fontWeight: '400',
+            userSelect: 'none',
+            cursor: 'pointer',
+            clear: 'left',
           }}
-          title={
-            'Property declared in a CSS selector, global overrides likely ineffective.\n'
-            + Object.entries(scopesByProperty[name]).map(([k,v])=> `${k}: ${v}`).join('\n')
-          }
         >
-          !&nbsp;
-        </span>}
-
-        {Object.entries(properties).map(([property, isFullProperty]) => <span
-          key={property}
-          className='monospace-code'
-          style={{ fontSize: '14px' }}
-          title={isFullProperty ? '' : 'Does not set whole property! Most inputs likely will not work.'}
-        >{property}{!isFullProperty && <b style={{color: 'red'}}> *</b>}</span>)}
-
+          {formatTitle(name, annoyingPrefix, nameReplacements)}
+        </h5>
+        {previewValue(value, cssVar, toggleOpen, isDefault, referencedVariable, isOpen)}
+        <div>
+          {!!showCssProperties && <Fragment>
+            {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
+            {Object.entries(properties).map(([property, {isFullProperty, fullValue}]) => (
+              <span
+                key={property}
+                className="monospace-code"
+                style={{ fontSize: '14px' }}
+                title={
+                  isFullProperty
+                    ? ''
+                    : fullValue
+                }
+              >
+                {property}
+                {!isFullProperty && <b style={{ color: 'red' }}> *</b>}
+              </span>
+            ))}
+          </Fragment>}
+        </div>
       </div>
-      
-      <h5
-        style={ {  fontSize: '16px', padding: '2px 4px 0', fontWeight: '400', userSelect: 'none', cursor: 'pointer' } }
-      >
-        { formatTitle(name) }
-      </h5>
-    </div>
-    {!!positions[0] && <IdeLink {...(positions[0] || {})}/>}
-    { isOpen && <Fragment>
-      { !!referencedVariable && <ul><VariableControl
-        cssVar={referencedVariable}
-        onChange={(value) => {
-          dispatch({type: ACTIONS.set, payload: {name: referencedVariable.name, value}})
-        }}
-        onUnset={() => {
-          dispatch({type: ACTIONS.unset, payload: {name: referencedVariable.name}})
-        }}
-        initialOpen={false}
-        nestingLevel={++currentLevel}
-      /></ul>}
-      {referencedVariable && <button
-        onClick={() => {setOverwriteVariable(!overwriteVariable)}}
-      >{overwriteVariable? 'Close custom color' : 'Use custom color'}</button>}
-      { (!referencedVariable || overwriteVariable) && <div
-        onMouseEnter={ () => {
-          PSEUDO_REGEX.test(name) && dispatch({
-            type: ACTIONS.startPreviewPseudoState,
-            payload: { name }
-          });
-        } }
-        onMouseLeave={ () => {
-          PSEUDO_REGEX.test(name) && dispatch({
-            type: ACTIONS.endPreviewPseudoState,
-            payload: { name }
-          });
-        } }
-      >
-        { name in theme && <button
-          style={ { float: 'right', marginBottom: '14.5px', fontSize: '12px' } }
-          title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
-          onClick={ () => {
-            onUnset();
-          } }
-        >unset</button>}
-        { isDefault && <span style={{float: 'right', margin: '6px 6px 15px', color: 'grey'}}>default </span>}
-        <br/>
-        <TypedControl {...{cssVar, value, onChange}}/>
-      </div>}
-      <div>
-        <button
-          onClick={toggleSelectors}
-          style={{fontSize: '15px', marginTop: '8px'}}
-        >{ !showSelectors ? 'Show' : 'Hide'} selectors ({uniqueUsages(usages).length})
-        </button>
-      </div>
-      {showSelectors && <Fragment>
-        <div>{name}</div>
-        {showUsages(uniqueUsages(usages))}
-      </Fragment>}
-    </Fragment> }
-  </li>;
+      {!!positions[0] && <IdeLink {...(positions[0] || {})} />}
+      {isOpen && (
+        <Fragment>
+          {references.length > 0 && (
+            <div>
+              <Checkbox
+                title={references.map((r) => r.name).join('\n')}
+                style={{ fontSize: '14px' }}
+                controls={[showReferences, setShowReferences]}
+              >
+                Used by {references.length}
+              </Checkbox>
+              {showReferences && <VariableReferences {...{ references }} />}
+            </div>
+          )}
+          <div
+            style={{
+              display: 'flex',
+              clear: 'both',
+              justifyContent: 'space-between',
+            }}
+          >
+            {!usages[0].isFake && (
+              <button onClick={toggleSelectors}>
+                selectors ({usages.length})
+              </button>
+            )}
+
+            {referencedVariable && (
+              <button
+                onClick={() => {
+                  setOverwriteVariable(!overwriteVariable);
+                }}
+              >
+                Custom value
+              </button>
+            )}
+
+            <button onClick={(event) => {
+              setOpenVariablePicker(!openVariablePicker);
+              event.stopPropagation();
+            }}>
+              Replace
+            </button>
+
+            {typeof element !== 'undefined' && (
+              <span key="foobar">
+                <ScrollInViewButton {...{ element }} />
+              </span>
+            )}
+          </div>
+          {openVariablePicker && (
+            <FilterableVariableList
+              {...{value, elementScopes}}
+              onChange={(value) => {
+                // setOpenVariablePicker(false);
+                onChange(value);
+              }}
+            />
+          )}
+          {showSelectors && !usages[0].isFake && (
+            <Fragment>
+              <div>{name}</div>
+              <VariableUsages
+                {...{
+                  usages,
+                  maxSpecificSelector: maxSpecific?.selector,
+                  winningSelector: maxSpecific?.winningSelector,
+                }}
+              />
+            </Fragment>
+          )}
+          {(!referencedVariable || overwriteVariable) && !openVariablePicker && (
+            <div
+              // onMouseEnter={() => {
+              //   PSEUDO_REGEX.test(name) &&
+              //     dispatch({
+              //       type: ACTIONS.startPreviewPseudoState,
+              //       payload: { name },
+              //     });
+              // }}
+              // onMouseLeave={() => {
+              //   PSEUDO_REGEX.test(name) &&
+              //     dispatch({
+              //       type: ACTIONS.endPreviewPseudoState,
+              //       payload: { name },
+              //     });
+              // }}
+            >
+              {isInTheme && (
+                <button
+                  style={{
+                    float: 'right',
+                    marginBottom: '14.5px',
+                    fontSize: '12px',
+                  }}
+                  title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
+                  onClick={() => {
+                    onUnset();
+                  }}
+                >
+                  unset
+                </button>
+              )}
+              {isDefault && (
+                <span
+                  style={{
+                    float: 'right',
+                    margin: '6px 6px 15px',
+                    color: 'grey',
+                  }}
+                >
+                  default{' '}
+                </span>
+              )}
+              <br />
+              <TypedControl {...{ cssVar, value, onChange, cssFunc }} />
+            </div>
+          )}
+          {!!referencedVariable && !overwriteVariable && (
+            <ul style={{ margin: 0 }}>
+              <VariableControl
+                {...{ scopes: elementScopes }}
+                cssVar={referencedVariable}
+                onChange={(value) => {
+                  dispatch({
+                    type: ACTIONS.set,
+                    payload: { name: referencedVariable.name, value },
+                  });
+                }}
+                onUnset={() => {
+                  dispatch({
+                    type: ACTIONS.unset,
+                    payload: { name: referencedVariable.name },
+                  });
+                }}
+                nestingLevel={++currentLevel}
+                parentVar={cssVar}
+              />
+            </ul>
+          )}
+        </Fragment>
+      )}
+    </li>
+  );
 };

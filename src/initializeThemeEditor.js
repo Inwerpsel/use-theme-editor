@@ -6,13 +6,9 @@ import { extractPageVariables } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
 import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
-import {applyFromLocalStorage} from './functions/applyFromLocalStorage';
 
-export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}p4-theme`;
-export const LOCAL_STORAGE_PREVIEWS_KEY = `${getLocalStorageNamespace()}theme-with-previews`;
-
+export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
-
 const dependencyReady = initializeConsumer();
 
 const toggleStylesheets = (disabledSheets) => {
@@ -25,21 +21,70 @@ const toggleStylesheets = (disabledSheets) => {
   });
 };
 
-export const setupThemeEditor = async (config) => {
-  setLocalStorageNamespace(config.localStorageNamespace);
-  applyFromLocalStorage(LOCAL_STORAGE_KEY);
+let scopesStyleElement = scopesStyleElement = document.createElement('style');
+document.head.appendChild(scopesStyleElement);
 
-  if (isRunningAsFrame) {
-    document.documentElement.classList.add('simulating-touch-device');
-    document.documentElement.classList.add('hide-wp-admin-bar');
-    const refreshLoop = () => {
-      applyFromLocalStorage(LOCAL_STORAGE_PREVIEWS_KEY);
-    };
-    const fps = 60;
-    setInterval(refreshLoop, 1000 / fps);
+let ruleIndexes = {};
+
+function toPropertyString(properties) {
+    let propertyString = '';
+    for (const prop in properties) {
+      // Leading space on first is needed to match CSS formated by the browser.
+      propertyString += ` ${prop}: ${properties[prop]};`
+    }
+    return propertyString;
+}
+
+// To guarantee a consistent index, rules are not deleted, but emptied instead.
+function updateRule(selector, properties) {
+  // Leading space is included in first property. Trailing here to ensure right empty behavior of 1 space.
+  const cssText = `${selector} {${toPropertyString(properties, ruleIndexes[selector])} }`;
+
+  if (!(selector in ruleIndexes)) {
+    // New rule
+    ruleIndexes[selector] = scopesStyleElement.sheet.insertRule(cssText, Object.keys(ruleIndexes).length);
+    return;
   }
 
+  if (scopesStyleElement.sheet.cssRules[ruleIndexes[selector]].cssText === cssText) {
+    // Nothing to update.
+    return;
+  }
+  // Add new rule.
+  scopesStyleElement.sheet.insertRule(cssText, ruleIndexes[selector]);
+  // Remove previous, thereby restoring precarious order.
+  scopesStyleElement.sheet.deleteRule(ruleIndexes[selector] + 1)
+}
+
+// Throw away previous style elements and reconstruct new ones with the right values.
+export function updateScopedVars(scopes, resetAll = false) {
+  if (resetAll) {
+    [...scopesStyleElement.sheet.cssRules].forEach(() => scopesStyleElement.sheet.deleteRule(0))
+    ruleIndexes = {};
+  }
+  Object.entries(scopes).forEach( ([selector, scopeVars]) => {
+    updateRule(selector, scopeVars);
+ });
+}
+
+let destroyedDoc = false;
+function destroyDoc() {
+  [...document.body.childNodes].forEach(el => {
+    if (el.id === 'theme-editor-root' || ['STYLE', 'LINK', 'SCRIPT', ].includes(el.nodeName)) {
+      return;
+    }
+    document.body.removeChild(el);
+  });
+  destroyedDoc = true;
+}
+
+
+export const setupThemeEditor = async (config) => {
+  setLocalStorageNamespace(config.localStorageNamespace || '');
+
   const editorRoot = document.createElement( 'div' );
+
+  updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
 
   if (!isRunningAsFrame) {
     editorRoot.id = 'theme-editor-root';
@@ -62,6 +107,8 @@ export const setupThemeEditor = async (config) => {
     const renderEmptyEditor = () => {
       document.documentElement.classList.add('hide-wp-admin-bar');
       renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+      // Since the original page can be accessed with a refresh, destroy it to save resources.
+      destroyDoc();
     };
 
     if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
@@ -87,33 +134,32 @@ export const setupThemeEditor = async (config) => {
   let lastGroups = [];
 
   window.addEventListener('message', event => {
-    const { type, payload } = event.data;
-    if (type !== 'render-vars') {
-      return;
+    if (event.data.type === 'render-vars') {
+      const { payload } = event.data;
+      renderSelectedVars(editorRoot, payload.matchedVars, null, payload.groups, payload.rawGroups, cssVars, config);
     }
-    renderSelectedVars(editorRoot, payload.matchedVars, null, payload.groups, payload.rawGroups, cssVars, config);
-
   }, false);
 
-  document.addEventListener('click', event => {
-    if (!event.altKey && requireAlt && !event.target.classList.contains('opens-theme-editor')) {
-      return;
-    }
-    event.preventDefault();
+  function inspect(target) {
+    const matchedVars = getMatchingVars({ cssVars, target });
 
-    document.documentElement.classList.add('hide-wp-admin-bar');
+    const rawGroups = groupVars(matchedVars, target);
 
-    const matchedVars = getMatchingVars({ cssVars, target: event.target });
-
-    const rawGroups = groupVars(matchedVars, event.target);
-
-    const groups = filterMostSpecific(rawGroups, event.target);
+    const groups = filterMostSpecific(rawGroups, target);
 
     if (!isRunningAsFrame) {
-      renderSelectedVars(editorRoot, matchedVars, event.target, groups, rawGroups, cssVars, config);
+      renderSelectedVars(
+        editorRoot,
+        matchedVars,
+        target,
+        groups,
+        rawGroups,
+        cssVars,
+        config
+      );
     } else {
-      // It's not possible to sent a message including a reference to a DOM element to the parent window. Doing so
-      // results in an error. Instead, every time we update the shown groups, we keep track of the last groups. This
+      // It's not possible to send a message that includes a reference to a DOM element. 
+      // Instead, every time we update the groups, we store the last groups. This
       // way we still know which element to access when a message gets back from the parent window.
       lastGroups = groups;
       const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
@@ -121,18 +167,32 @@ export const setupThemeEditor = async (config) => {
 
       window.parent.postMessage(
         {
-          type: 'render-vars', payload: {
+          type: 'render-vars',
+          payload: {
             matchedVars,
             groups: withElementIndexes,
             rawGroups: rawWithElementIndexes,
-          }
+          },
         },
-        window.location.href,
+        window.location.href
       );
     }
+    if (groups.length > 0) {
+      addHighlight(groups[0].element);
+      setTimeout(() => removeHighlight(groups[0].element), 700);
+    }
+  }
 
-    addHighlight(event.target);
-    setTimeout(() => removeHighlight(event.target), 700);
+  document.addEventListener('click', event => {
+    const ignoreClick = requireAlt && !event.altKey;
+    if (ignoreClick) {
+      return;
+    }
+    event.preventDefault();
+
+    // document.documentElement.classList.add('hide-wp-admin-bar');
+
+    inspect(event.target);
   });
 
   // Below are only listeners for messages sent from the parent frame.
@@ -155,9 +215,9 @@ export const setupThemeEditor = async (config) => {
   // Keep 1 timeout as we only want to be highlighting 1 element at a time.
   let lastHighlightTimeout = null;
 
-  window.addEventListener('message', event => {
+  const messageListener = event => {
     const {type, payload} = event.data;
-    const {index, selector} = payload || {};
+    const {index, selector, scopes, resetAll} = payload || {};
     const group = lastGroups[index];
 
     switch (type) {
@@ -202,7 +262,7 @@ export const setupThemeEditor = async (config) => {
         lastHighlightTimeout = null;
       };
 
-      lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];
+      lastHighlightTimeout = [setTimeout(handler, 1500), handler, element];
       break;
 
     case 'theme-edit-alt-click':
@@ -226,13 +286,29 @@ export const setupThemeEditor = async (config) => {
               tagName: `${el.tagName}`,
               id: `${el.id}`,
               className: `${el.className}`,
+              isCurrentlyInspected: !!lastGroups && lastGroups.some(group => group.element === el),
             })),
           },
         },
         window.location.href,
       );
       break;
+      case 'inspect-located':
+        const toInspect = locatedElements[selector][index];
+        if (toInspect) {
+          inspect(toInspect);
+          toInspect.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'end',
+          });
+        }
+        break;
+      case 'set-scopes-styles': 
+        updateScopedVars(scopes, resetAll);
+        break;
     }
-  }, false);
+  };
+  window.addEventListener('message', messageListener, false);
 };
 

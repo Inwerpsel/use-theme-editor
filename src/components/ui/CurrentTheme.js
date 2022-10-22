@@ -21,7 +21,7 @@ export function CurrentTheme() {
   } = useContext(ThemeEditorContext);
   const [initialized, setInitialized] = useState(false);
 
-  const [showObsolete, setShowObsolete] = useState(true);
+  const [showObsolete, setShowObsolete] = useState(false);
   const [showActive, setShowActive] = useState(true);
   const [useDefaultValues, setUseDefaultValues] = useState(false);
   const [hideNotFound, setHideNotFound] = useState(false);
@@ -77,72 +77,104 @@ export function CurrentTheme() {
     }, {});
   }, [theme, isOpen, useDefaultValues, propertyFilter, propertySearch]);
 
-  return <div>
-    <h4>
-      Current theme ({Object.keys(theme).length} out of {Object.keys(defaultValues).length})
-      <ToggleButton style={{float: 'right'}} controls={[isOpen, setIsOpen]}>{isOpen ? 'Close' : 'Open'}</ToggleButton>
-    </h4>
+  return (
+    <div>
+      <h4>
+        Current theme ({Object.keys(theme).length} out of{' '}
+        {Object.keys(defaultValues).length})
+        <ToggleButton style={{ float: 'right' }} controls={[isOpen, setIsOpen]}>
+          {isOpen ? 'Close' : 'Open'}
+        </ToggleButton>
+      </h4>
 
-    {isOpen && <div>
-      <Checkbox controls={[showActive, setShowActive]}>
-        Show active
-      </Checkbox>
-      <Checkbox controls={[showObsolete, setShowObsolete]}>
-        Show obsolete
-      </Checkbox>
-      <Checkbox controls={[useDefaultValues, setUseDefaultValues]}>
-        Include default values
-      </Checkbox>
-      <Checkbox controls={[hideNotFound, setHideNotFound]}>
-        Hide not found
-      </Checkbox>
-      <ToggleButton controls={[initialized, setInitialized]}>INIT {initialized ? '' : '*'}</ToggleButton>
-    </div>}
-    {isOpen && <ul
-      style={{
-        background: 'white',
-        listStyleType: 'none',
-        paddingLeft: 0,
-      }}
-    >
-      {Object.entries(groupedBySelector).map(([selector, cssVars]) => <li style={{marginTop: '12px'}} key={selector}>
-        <ElementLocator hideIfNotFound={hideNotFound} {...{initialized, selector}}>
-          <ul>
-            {cssVars.map(cssVar => {
-              const k = cssVar.name;
+      {isOpen && (
+        <div>
+          <Checkbox controls={[showActive, setShowActive]}>
+            Show active
+          </Checkbox>
+          <Checkbox controls={[showObsolete, setShowObsolete]}>
+            Show unknown
+          </Checkbox>
+          <Checkbox controls={[useDefaultValues, setUseDefaultValues]}>
+            Include default values
+          </Checkbox>
+          <Checkbox controls={[hideNotFound, setHideNotFound]}>
+            Hide not found
+          </Checkbox>
+          <ToggleButton controls={[initialized, setInitialized]}>
+            INIT {initialized ? '' : '*'}
+          </ToggleButton>
+        </div>
+      )}
+      {isOpen && (
+        <ul
+          style={{
+            background: 'white',
+            listStyleType: 'none',
+            paddingLeft: 0,
+          }}
+        >
+          {Object.entries(groupedBySelector).map(([selector, cssVars]) => (
+            <li style={{ marginTop: '12px' }} key={selector}>
+              <ElementLocator
+                hideIfNotFound={hideNotFound}
+                {...{ initialized, selector }}
+              >
+                <ul>
+                  {cssVars.map((cssVar) => {
+                    const k = cssVar.name;
 
-              if (selector === UNFOUND && showObsolete) {
-                return <li key={k}>
-                  <p>
-                    <em>{k}</em> was not found.
-                    <button
-                      onClick={() => {
-                        dispatch({type: ACTIONS.unset, payload: {name: k}});
-                      }}
-                    >unset</button>
-                  </p>
-                </li>;
-              }
+                    if (selector === UNFOUND && showObsolete) {
+                      return (
+                        <li key={k}>
+                          <p>
+                            <em>{k}</em> was not found.
+                            <button
+                              onClick={() => {
+                                dispatch({
+                                  type: ACTIONS.unset,
+                                  payload: { name: k },
+                                });
+                              }}
+                            >
+                              unset
+                            </button>
+                          </p>
+                        </li>
+                      );
+                    }
 
-              if (!showActive || selector === UNFOUND) {
-                return null;
-              }
+                    if (!showActive || selector === UNFOUND) {
+                      return null;
+                    }
 
-              return <VariableControl
-                key={k}
-                onChange={value => {
-                  dispatch({type: ACTIONS.set, payload: {name: cssVar.name, value}});
-                }}
-                onUnset={() => {
-                  dispatch({type: ACTIONS.unset, payload: {name: cssVar.name}});
-                }}
-                {...{
-                  cssVar,
-                }}/>;
-            })}
-          </ul>
-        </ElementLocator>
-      </li>)}
-    </ul>}
-  </div>;
+                    return (
+                      <VariableControl
+                        key={k}
+                        onChange={(value) => {
+                          dispatch({
+                            type: ACTIONS.set,
+                            payload: { name: cssVar.name, value },
+                          });
+                        }}
+                        onUnset={() => {
+                          dispatch({
+                            type: ACTIONS.unset,
+                            payload: { name: cssVar.name },
+                          });
+                        }}
+                        {...{
+                          cssVar,
+                        }}
+                      />
+                    );
+                  })}
+                </ul>
+              </ElementLocator>
+            </li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
 }

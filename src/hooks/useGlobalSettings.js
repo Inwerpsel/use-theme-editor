@@ -1,6 +1,6 @@
 import {useLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
-import {useEffect, useState} from 'react';
+import {useEffect} from 'react';
 
 export function useGlobalSettings(frameRef) {
   const [
@@ -11,7 +11,7 @@ export function useGlobalSettings(frameRef) {
   ] = useLocalStorage('property-search', '');
   const [
     fileName, setFileName,
-  ] = useLocalStorage('p4-theme-name', 'theme');
+  ] = useLocalStorage('theme-name', 'theme');
   const [
     width, setWidth,
   ] = useLocalStorage('responsive-width', 360);
@@ -45,15 +45,13 @@ export function useGlobalSettings(frameRef) {
   const [
     responsiveSticky,
     setResponsiveSticky
-  ] = useLocalStorage('responsive-on-load', false);
+  ] = useLocalStorage('responsive-on-load', true);
 
   const [
     scales,
     setScales,
   ] = useLocalStorage('responsive-scales', {});
   const scale = scales[`${width}x${height}`] || 1;
-
-  const [dragEnabled, setDragEnabled] = useState(false);
 
   const [annoyingPrefix, setAnnoyingPrefix] = useLocalStorage(
     'annoying-prefix',
@@ -66,6 +64,14 @@ export function useGlobalSettings(frameRef) {
   const [showCssProperties, setShowCssProperties] = useLocalStorage(
     'hide-css-properties',
     false
+  );
+  const [showSourceLinks, setShowSourceLinks] = useLocalStorage(
+    'show-source-links',
+    false
+  );
+  const [windowArrangments, setWindowArrangments] = useLocalStorage(
+    'window-arrangements',
+    {}
   );
 
   return {
@@ -84,9 +90,10 @@ export function useGlobalSettings(frameRef) {
     responsiveSticky, setResponsiveSticky,
     scales, setScales,
     scale,
-    dragEnabled, setDragEnabled,
     annoyingPrefix, setAnnoyingPrefix,
     showCssProperties, setShowCssProperties,
     nameReplacements, setNameReplacements,
+    showSourceLinks, setShowSourceLinks,
+    windowArrangments, setWindowArrangments,
   };
 }

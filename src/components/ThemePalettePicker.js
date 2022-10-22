@@ -29,12 +29,12 @@ export function ThemePalettePicker(props) {
       onClick={() => {
         onChange(color, true);
       }}
-      onMouseEnter={() => {
-        dispatch({type: ACTIONS.startPreview, payload: {name, value: color}});
-      }}
-      onMouseLeave={() => {
-        dispatch({type: ACTIONS.endPreview, payload: {name}});
-      }}
+      // onMouseEnter={() => {
+      //   dispatch({type: ACTIONS.startPreview, payload: {name, value: color}});
+      // }}
+      // onMouseLeave={() => {
+      //   dispatch({type: ACTIONS.endPreview, payload: {name}});
+      // }}
       title={`${color}\nUsed for:\n` + usages.join('\n')}
       style={{
         width: PREVIEW_SIZE,
