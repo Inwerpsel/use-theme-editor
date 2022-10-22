@@ -1,7 +1,10 @@
-import React, {memo, useContext} from 'react';
+import React, {Fragment, memo, useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
-import {RadioControl} from '@wordpress/components';
+import {RadioControl, SelectControl} from '@wordpress/components';
+import { useCompactSetting } from '../movable/DispatchedElement';
+import { CompactModeButton } from '../inspector/CompactModeButton';
 
+// RadioControl needs to be replaced as perf is terrible. Hence memo.
 const WrapRadioControl = ({screenOptions, width, height, setWidth, setHeight}) => <RadioControl
   options={screenOptions}
   selected={ [width, height].join() }
@@ -24,12 +27,39 @@ export function ScreenSwitcher() {
     isSimpleSizes,
     setIsSimpleSizes,
   } = useContext(ThemeEditorContext);
-  return <div>
-    <button
-      onClick={() => {
-        setIsSimpleSizes(!isSimpleSizes);
+
+  const [isCompact, setIsCompact] = useCompactSetting();
+
+  const comp = isCompact ? (
+    <SelectControl
+      // Make it match with of select control. Might put button at start instead.
+      style={{ marginRight: '-9px' }}
+      options={screenOptions}
+      value={`${width},${height}`}
+      onChange={(value) => {
+        const [newWidth, newHeight] = value.split(',');
+        setWidth(parseInt(newWidth));
+        setHeight(parseInt(newHeight));
       }}
-    >{ isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes' }</button>
-    <MemoedRadioControl {...{screenOptions, width, height, setWidth, setHeight}} />
+    />
+  ) : (
+    <Fragment>
+      <button
+        onClick={() => {
+          setIsSimpleSizes(!isSimpleSizes);
+        }}
+      >
+        {isSimpleSizes ? 'Show all sizes' : 'Show only simple sizes'}
+      </button>
+      <MemoedRadioControl
+        {...{ screenOptions, width, height, setWidth, setHeight }}
+      />
+    </Fragment>
+  );
+
+
+  return <div>
+    <CompactModeButton {...{isCompact, setIsCompact}}/>
+    {comp}
   </div>;
 }

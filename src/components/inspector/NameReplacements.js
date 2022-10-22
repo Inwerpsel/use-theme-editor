@@ -1,7 +1,10 @@
 import React, { useState, useContext } from "react";
 import { generateId } from "../../hooks/useId";
 import { Checkbox } from "../controls/Checkbox";
+import { useCompactSetting } from "../movable/DispatchedElement";
+import { DragHandle } from "../movable/DragHandle";
 import { ThemeEditorContext } from "../ThemeEditor";
+import { CompactModeButton } from "./CompactModeButton";
 
 function addReplacement(replacements, newEntry) {
     return [
@@ -10,19 +13,15 @@ function addReplacement(replacements, newEntry) {
             ...newEntry,
             order: replacements.reduce((max,r) => Math.max(max,r), -1) + 1,
         },
-    ];
+    ].sort(byOrder);
+}
+
+function byOrder({ order: a }, { order: b }) {
+    return a - b;
 }
 
 function updateReplacement(replacements, updated) {
-    return replacements.map((r) => (r.id !== updated.id ? r : updated));
-}
-
-function deleteReplacement(replacements) {
-
-}
-
-export function byOrder({ order: a }, { order: b }) {
-    return a - b;
+    return replacements.map((r) => (r.id !== updated.id ? r : updated)).sort(byOrder);
 }
 
 export function NameReplacements() {
@@ -30,16 +29,17 @@ export function NameReplacements() {
 
     const [newFrom, setNewFrom] = useState('');
     const [newTo, setNewTo] = useState('');
+    const [isCompact, setIsCompact] = useCompactSetting();
 
     return (
       <div>
+        <DragHandle/>
+        <CompactModeButton {...{isCompact, setIsCompact}}/>
         <h4>
-            Replace strings in names.
+            Replace strings in names
         </h4>
-        <ul style={{maxHeight: '30vh', overflowY: 'auto'}}>
-          {nameReplacements
-            .sort(byOrder)
-            .map((replacement) => {
+        {!isCompact && <ul style={{maxHeight: '30vh', overflowY: 'auto'}}>
+          {nameReplacements.map((replacement) => {
               const { id, from, to, order, active } = replacement;
 
               return (
@@ -49,8 +49,8 @@ export function NameReplacements() {
                       value={from}
                       onChange={(event) => {
                         const value = event.target.value;
-                        setNameReplacements((nameReplacements) =>
-                          updateReplacement(nameReplacements, {
+                        setNameReplacements((r) =>
+                          updateReplacement(r, {
                             ...replacement,
                             from: value,
                           })
@@ -63,8 +63,8 @@ export function NameReplacements() {
                       value={to}
                       onChange={(event) => {
                         const value = event.target.value;
-                        setNameReplacements((nameReplacements) =>
-                          updateReplacement(nameReplacements, {
+                        setNameReplacements((r) =>
+                          updateReplacement(r, {
                             ...replacement,
                             to: value,
                           })
@@ -76,8 +76,8 @@ export function NameReplacements() {
                   </div>
                   <button
                     onClick={() => {
-                      setNameReplacements((nameReplacements) =>
-                        updateReplacement(nameReplacements, {
+                      setNameReplacements((r) =>
+                        updateReplacement(r, {
                           ...replacement,
                           order: order - 1,
                         })
@@ -88,8 +88,8 @@ export function NameReplacements() {
                   </button>
                   <button
                     onClick={() => {
-                      setNameReplacements((nameReplacements) =>
-                        updateReplacement(nameReplacements, {
+                      setNameReplacements((r) =>
+                        updateReplacement(r, {
                           ...replacement,
                           order: order + 1,
                         })
@@ -102,8 +102,8 @@ export function NameReplacements() {
                     controls={[
                       active,
                       () =>
-                        setNameReplacements((replacements) =>
-                          updateReplacement(replacements, {
+                        setNameReplacements((r) =>
+                          updateReplacement(r, {
                             ...replacement,
                             active: !active,
                           })
@@ -112,8 +112,8 @@ export function NameReplacements() {
                   />
                   <button
                     onClick={() => {
-                      setNameReplacements((nameReplacements) =>
-                        nameReplacements.filter((r) => r.id !== id)
+                      setNameReplacements((r) =>
+                        r.filter((r) => r.id !== id)
                       );
                     }}
                   >
@@ -122,8 +122,8 @@ export function NameReplacements() {
                 </li>
               );
             })}
-        </ul>
-        <div style={{display: 'flex'}}>
+        </ul>}
+        {!isCompact && <div style={{display: 'flex'}}>
             <div>
               <input
                 value={newFrom}
@@ -146,7 +146,7 @@ export function NameReplacements() {
               disabled={newFrom.length < 2 || newTo.length < 1}
               onClick={() => {
                 setNameReplacements(
-                  nameReplacements => addReplacement(nameReplacements, {
+                  r => addReplacement(r, {
                     id: generateId(),
                     to: newTo,
                     from: newFrom,
@@ -159,7 +159,7 @@ export function NameReplacements() {
             >
               Add
             </button>
-        </div>
+        </div>}
       </div>
     );
 }
