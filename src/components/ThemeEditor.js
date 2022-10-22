@@ -36,6 +36,7 @@ import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
 import { updateScopedVars } from '../initializeThemeEditor';
 import { UseEventExample } from './controls/SelectControl';
+import { TextControl } from '@wordpress/components';
 
 const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -104,6 +105,7 @@ export const ThemeEditor = (props) => {
     nativeColorPicker, setNativeColorPicker,
     showCssProperties, setShowCssProperties,
     showSourceLinks, setShowSourceLinks,
+    webpackHome, setWebpackHome,
   } = settings;
 
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
@@ -296,11 +298,12 @@ export const ThemeEditor = (props) => {
               </div>
               {/* <ExampleTabs/> */}
               <NameReplacements/>
-              <div style={{display: 'flex', gap: '4px'}}>
+              <div>
                 <Checkbox
                   id={'remove-css-properties'}
                   controls={[openFirstOnInspect, setOpenFirstOnInspect]}
                 >Auto open first group on inspect</Checkbox>
+                <TextControl value={webpackHome} onChange={v => setWebpackHome(v)} label='Webpack home'/>
               </div>
             </Drawer>
           </div>

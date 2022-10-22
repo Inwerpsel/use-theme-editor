@@ -2,6 +2,34 @@ import {useLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
 
+
+function useBooleanSetting(key, defaultValue, label = key) {
+  const [value, setValue] = useLocalStorage(key, defaultValue);
+
+  return [
+    value,
+    <Checkbox controls={[value, setValue]}>
+      {label}
+    </Checkbox>,
+  ];
+}
+
+function useStringSetting(key, defaultValue, label) {
+  const [value, setValue] = useLocalStorage(key, defaultValue);
+
+  return [
+    value,
+    <label>
+      {label}
+      <input
+        type="text"
+        {...{ value }}
+        onChange={(e) => setValue(e.target.value)}
+      />
+    </label>,
+  ];
+}
+
 export function useGlobalSettings(frameRef) {
   const [
     propertyFilter, setPropertyFilter,
@@ -73,6 +101,7 @@ export function useGlobalSettings(frameRef) {
     'window-arrangements',
     {}
   );
+  const [webpackHome, setWebpackHome] = useLocalStorage('webpack-home', '')
 
   return {
     // I preserved this line though useSetting code was removed. It would be very nice to define the options this terse.
@@ -95,5 +124,6 @@ export function useGlobalSettings(frameRef) {
     nameReplacements, setNameReplacements,
     showSourceLinks, setShowSourceLinks,
     windowArrangments, setWindowArrangments,
+    webpackHome, setWebpackHome,
   };
 }
