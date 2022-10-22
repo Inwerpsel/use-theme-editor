@@ -1,7 +1,7 @@
-import { SelectControl } from '@wordpress/components';
 import React, {useMemo, useContext} from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import {Checkbox} from '../controls/Checkbox';
+import { SelectControl } from '../controls/SelectControl';
 import { ThemeEditorContext } from '../ThemeEditor';
 import {AreasContext} from './MovablePanels';
 
@@ -33,7 +33,7 @@ export function MoveControls() {
           reset
         </button>
       )}
-      <div style={{ display: 'flex' }}>
+      <div>
         <input
           type="text"
           value={inputName}

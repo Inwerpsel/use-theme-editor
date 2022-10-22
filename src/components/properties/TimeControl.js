@@ -1,5 +1,5 @@
-import {SelectControl} from '@wordpress/components';
 import React, {useState} from 'react';
+import { SelectControl } from '../controls/SelectControl';
 import {valuesAsLabels} from '../inspector/TypedControl';
 
 export const timeLikeProperties = [

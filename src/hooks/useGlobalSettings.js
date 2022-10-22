@@ -2,34 +2,6 @@ import {useLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
 
-
-function useBooleanSetting(key, defaultValue, label = key) {
-  const [value, setValue] = useLocalStorage(key, defaultValue);
-
-  return [
-    value,
-    <Checkbox controls={[value, setValue]}>
-      {label}
-    </Checkbox>,
-  ];
-}
-
-function useStringSetting(key, defaultValue, label) {
-  const [value, setValue] = useLocalStorage(key, defaultValue);
-
-  return [
-    value,
-    <label>
-      {label}
-      <input
-        type="text"
-        {...{ value }}
-        onChange={(e) => setValue(e.target.value)}
-      />
-    </label>,
-  ];
-}
-
 export function useGlobalSettings(frameRef) {
   const [
     propertyFilter, setPropertyFilter,

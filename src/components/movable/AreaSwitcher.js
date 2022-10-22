@@ -1,5 +1,5 @@
 import React, {useContext} from 'react';
-import {SelectControl} from '@wordpress/components';
+import { SelectControl } from '../controls/SelectControl';
 import {AreasContext} from './MovablePanels';
 
 export function AreaSwitcher(props) {

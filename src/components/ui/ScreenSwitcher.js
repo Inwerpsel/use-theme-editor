@@ -1,8 +1,9 @@
 import React, {Fragment, memo, useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
-import {RadioControl, SelectControl} from '@wordpress/components';
+import {RadioControl} from '@wordpress/components';
 import { useCompactSetting } from '../movable/DispatchedElement';
 import { CompactModeButton } from '../inspector/CompactModeButton';
+import { SelectControl } from '../controls/SelectControl';
 
 // RadioControl needs to be replaced as perf is terrible. Hence memo.
 const WrapRadioControl = ({screenOptions, width, height, setWidth, setHeight}) => <RadioControl

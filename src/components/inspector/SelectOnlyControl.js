@@ -13,6 +13,7 @@ const alignOptions = [
         'unsafe center',
     ];
 
+// These should be all CSS properties that only allow keywords as a value.
 const lists = {
   'align-items': alignOptions,
   'align-content': alignOptions,
