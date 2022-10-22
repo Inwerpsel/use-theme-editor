@@ -8,7 +8,7 @@ import {ThemePalettePicker} from '../ThemePalettePicker';
 import {useThrottler} from '../../hooks/useThrottler';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
-export const GRADIENT_REGEX = /linear-gradient\(.+\)/;
+export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
 
 const INTERNAL_VARS_REGEX = /^(--var-control|--server-theme|--theme-editor)/;
 
@@ -65,6 +65,22 @@ const pickerSize = '80px';
 
 export const ColorControl = props => {
   const { onChange, onUnset, value, cssVar } = props;
+  // const { onChange: _onChange, onUnset, value: _value, cssVar, cssFunc } = props;
+
+  // const value = !cssFunc ? _value : `${cssFunc}(${value})`
+
+  // const onChange = !cssFunc ? _onChange : v => {
+  //   const color = tinycolor(v);
+
+  //   switch (cssFunc) {
+  //     case 'rgb':{
+  //       _onChange(color.toRgbString());
+  //     }
+  //     case 'hsl':{
+  //       _onChange(color.toHslString());
+  //     }
+  //   }
+  // }
 
   const {name, usages} = cssVar;
 
