@@ -1,10 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {getLocalStorageNamespace} from '../functions/getLocalStorageNamespace';
 
 function apply(type, value) {
   switch (type) {
   case 'object': {
-    if (value === 'null') {
+    if (value === 'null' || value === 'undefined') {
       return null;
     }
     return JSON.parse(value);
@@ -28,7 +28,7 @@ export const useLocalStorage = (key, defaultValue, _type = null) => {
   // Care should be taken with this argument, ideally it's a literal value.
   // In case of any doubt about the type use the third argument.
   const type = _type || typeof defaultValue;
-  const isObject = typeof defaultValue === 'object';
+  const isObject = type === 'object';
 
   const [value, setValue] = useState(() => {
     const stored = localStorage.getItem(scopedKey);
@@ -38,12 +38,15 @@ export const useLocalStorage = (key, defaultValue, _type = null) => {
     return apply(type, stored);
   });
 
-  useEffect(() => {
-    localStorage.setItem(scopedKey, isObject ? JSON.stringify(value) : value);
-  }, [value]);
-
   return [
     value,
-    setValue
+    arg => {
+      const newValue = typeof arg === 'function' ? arg(value) : arg;
+      localStorage.setItem(
+        scopedKey,
+        !isObject ? newValue : JSON.stringify(newValue)
+      );
+      setValue(newValue);
+    }
   ];
 };
