@@ -1,11 +1,10 @@
 import React, {useContext} from 'react';
-import {DispatchedElementContext} from './DispatchedElement';
 import {SelectControl} from '@wordpress/components';
 import {AreasContext} from './MovablePanels';
 
-export function AreaSwitcher() {
+export function AreaSwitcher(props) {
   const { movePanelTo, areaRefs } = useContext(AreasContext);
-  const { homeAreaId, elementId, hostAreaId: currentArea } = useContext(DispatchedElementContext);
+  const { homeAreaId, elementId, hostAreaId: currentArea } = props;
 
   return <div
     className={'area-switcher'}

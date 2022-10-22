@@ -1,6 +1,5 @@
 import { SelectControl } from '@wordpress/components';
 import React, {useMemo, useContext} from 'react';
-import { diffSummary } from '../../functions/diffThemes';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import {Checkbox} from '../controls/Checkbox';
 import { ThemeEditorContext } from '../ThemeEditor';

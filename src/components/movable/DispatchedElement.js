@@ -1,4 +1,4 @@
-import React, {createContext, useContext, useLayoutEffect, useRef, useState} from 'react';
+import React, {createContext, useContext, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {createPortal} from 'react-dom';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import {AreaSwitcher} from './AreaSwitcher';
@@ -14,6 +14,9 @@ export const DispatchedElementContext = createContext({});
 // For that to work it also includes the home area in the ID,
 // which makes moving any component to another area in source mess up the location map.
 // Likely the ID logic should be flexible and configurable.
+// Would be nice to use the component name, however this usually is not 
+// preserved in the prod build. I'll investigate if it's desirable to
+// make the code use it in prod anyway (impact on bundle size/perf in general, ease of config).
 function getId(element, index) {
   // Assume string means a default DOM node.
   if (typeof element.type === 'string') {
@@ -22,21 +25,13 @@ function getId(element, index) {
   }
 
   // Default to the element's type, which is assumed to be unique.
-  // Use the
   return `${element.type?.name || 'component'}#${element.id || index}`;
 }
 
 export function useCompactSetting() {
-  const {hasCompactMode, setHasCompactMode, isCompact} = useContext(DispatchedElementContext);
+  const {elementId} = useContext(DispatchedElementContext);
 
-  // Synchronously update state of dispatched element (causing a tiny additional render).
-  useLayoutEffect(() => {
-    !hasCompactMode && setHasCompactMode(true);
-  }, []);
-
-  // First render will always be done again with a yet unknown value.
-  // This may lead to a useless render in the wrong mode.
-  return !hasCompactMode || isCompact;
+  return useLocalStorage(`compact::${elementId}`, false);
 }
 
 export function DispatchedElement({homeAreaId, element, index}) {
@@ -54,7 +49,10 @@ export function DispatchedElement({homeAreaId, element, index}) {
     areaRefs,
   } = useContext(AreasContext);
 
-  const elementId = `${homeAreaId}~~${getId(element, index)}`;
+  const elementId = useMemo(
+    () => `${homeAreaId}~~${getId(element, index)}`,
+    []
+  );
 
   if (!origLocationsRef.current[elementId]) {
     origLocationsRef.current[elementId] = homeAreaId;
@@ -68,15 +66,10 @@ export function DispatchedElement({homeAreaId, element, index}) {
   const showHere = !hostAreaId || hostAreaId === homeAreaId || !areaRefs.current[hostAreaId]?.current;
 
   const [isDragged, setIsDragged] = useState(false);
-  const [isCompact, setIsCompact] =  useLocalStorage(`compact::${elementId}`, false);
-  const [hasCompactMode, setHasCompactMode] = useState(false);
+  // Allow dragging individually if not generally enabled in MovablePanels.
   const [forceDrag, setForceDrag] = useState(false);
 
-  const hidden =
-    !drawerOpen &&
-    ((homeAreaId === 'drawer' && showHere) || hostAreaId === 'drawer');
-
-  if (hidden) {
+  if (!drawerOpen && (hostAreaId || homeAreaId) === 'drawer') {
     return null;
   }
 
@@ -93,10 +86,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
         order: order || '',
       }}
       title={!dragEnabled ? null : elementId}
-      className={classnames('dispatched-element', {
-        'is-dragged': isDragged,
-        'is-compact': isCompact,
-      })}
+      className={classnames('dispatched-element', { 'is-dragged': isDragged })}
       onDragStart={() => {
         setDraggedElement(elementId);
         forceDrag && setForceDrag(false);
@@ -142,31 +132,18 @@ export function DispatchedElement({homeAreaId, element, index}) {
         </span>
       )}
 
-      {hasCompactMode && (
-        <button
-          className="dispatched-element-collapse"
-          onClick={() => {
-            setIsCompact(!isCompact);
-          }}
-        >
-          {isCompact ? '+' : '-'}
-        </button>
-      )}
-
       <DispatchedElementContext.Provider
         value={{
           homeAreaId,
           elementId,
           hostAreaId,
-          hasCompactMode, setHasCompactMode,
-          isCompact, setIsCompact,
           forceDrag, setForceDrag,
         }}
       >
         {element}
       </DispatchedElementContext.Provider>
 
-      {showMovers && <AreaSwitcher />}
+      {showMovers && <AreaSwitcher {...{elementId, homeAreaId, hostAreaId}}/>}
 
       {draggedElement && draggedElement !== elementId && (
         <div
@@ -184,7 +161,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
             setOverElement([
               hostAreaId || homeAreaId,
               elementId,
-              order // || index,
+              order || index,
             ]);
           }}
           onDragLeave={() => {
@@ -201,6 +178,8 @@ export function DispatchedElement({homeAreaId, element, index}) {
       )}
     </div>
   );
+
+  // Changing to another portal host will un- and then remount the component.
   return showHere
     ? wrappedElement
     : createPortal(wrappedElement, areaRefs.current[hostAreaId].current);

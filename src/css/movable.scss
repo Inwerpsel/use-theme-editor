@@ -18,42 +18,53 @@ $switcher-width: 120px;
   }
 }
 
+$area-speed: .2s;
+
 #area-left, #area-right {
+  // Todo: Best way to make widths user configurable.
   max-width: 400px;
-  max-height: calc(100vh - 250px);
-  overflow-y: scroll;
+  scrollbar-gutter: stable;
+  overflow-y: auto;
+  overflow-x: visible;
   flex-direction: column;
   flex-shrink: 0;
 
+  @media screen and (min-height: 350px) {
+    // Todo: properly constrain height depending on top and bottom areas.
+    max-height: calc(100vh - var(--top-area--height, 60px) - var(--bottom-area--height, 60px));
+  }
+
   .area-dropzone {
-    transition: width, height .4s ease-in;
+    transition: width, height $area-speed ease-in;
   }
 
   .area-switcher {
     top: 0;
+    right: 0;
   }
 
   align-items: stretch;
 }
+#drawer .area-switcher {
+  right: 0;
+  top: 0;
+  position: static !important;
+}
 
 #area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
   .area-dropzone {
-    transition: width, height .4s ease-in;
+    transition: width, height $area-speed ease-in;
   }
 }
 
-#area-left {
-  .area-switcher {
-    right: -$switcher-width;
+#area-bottom, #area-bottom-reverse {
+  flex-grow: 1;
+
+  > .dispatched-element {
+    background: grey;
   }
 }
 
-#area-right {
-  padding-top: 40px;
-  .area-switcher {
-    left: -$switcher-width;
-  }
-}
 #area-top {
   .area-switcher  {
     bottom: 0;
@@ -62,9 +73,23 @@ $switcher-width: 120px;
 }
 
 #area-bottom {
+  position: fixed !important;
+  bottom: 0;
+  left: 0;
+  z-index: 1000000;
+  align-items: flex-end;
+
   .area-switcher {
-    top: -$switcher-height;
-    left: 0;
+    z-index: 1000001;
+    top: 4px;
+    // top: -$switcher-height;
+    right: 0;
+  }
+
+  > * {
+    max-height: 50vh;
+    max-width: 50vw;
+    overflow-y: auto;
   }
 }
 
@@ -96,6 +121,7 @@ $switcher-width: 120px;
     align-self: stretch;
   }
 }
+
 
 .is-dragging {
   #area-top, #area-bottom {
@@ -187,7 +213,6 @@ $switcher-width: 120px;
     }
   }
   #area-top, #area-bottom {
-    min-height: 40px;
     transition: min-height;
     transition-delay: .1s;
     .dispatched-element:not(.is-dragged) {
@@ -197,8 +222,10 @@ $switcher-width: 120px;
 }
 
 #drawer-wrapper {
-  position: relative;
-  align-self: flex-end;
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  z-index: 10000;
 }
 
 #drawer {
@@ -211,6 +238,8 @@ $switcher-width: 120px;
   transition: min-height 1s ease;
   transition-delay: .5s;
   align-self: flex-end;
+  max-height: 70vh;
+  overflow-y: auto;
 
   &[data-open=true] {
     background: grey;
@@ -238,4 +267,25 @@ $switcher-width: 120px;
   font-size: 22px;
   text-align: center;
   background: lightblue;
+}
+
+.is-compact {
+  overflow: visible !important;
+}
+
+.dispatched-element-collapse {
+  position: absolute;
+
+  padding-top: 2px;
+
+  width: 24px;
+  height: 24px;
+
+  top: 0;
+  right: 0;
+
+  #area-bottom &, #area-bottom-reverse & {
+    top: auto;
+    bottom: 0;
+  }
 }
