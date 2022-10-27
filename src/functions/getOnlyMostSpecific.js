@@ -35,10 +35,6 @@ export function getMaxMatchingSpecificity(usages, element) {
       return max;
     }
 
-    if (typeof element.style[usage.property] !== 'undefined' && element.style[usage.property] !== '') {
-      return max;
-    }
-
     const parts = usage.selector.split(',');
     let lastIsOpen = false;
     const getActualParts = parts => parts.reduce((actual, part) => {
@@ -55,6 +51,7 @@ export function getMaxMatchingSpecificity(usages, element) {
       return actual;
     }, []);
     const pass1 = getActualParts(parts);
+    lastIsOpen = false;
     // Do a second pass to account for bracket mismatches that only became detectable
     // after the first pass.
     const actualParts = getActualParts(pass1);
@@ -77,9 +74,25 @@ export function getMaxMatchingSpecificity(usages, element) {
     };
     usage.winningSelector = actualParts.reduce(comparePart);
 
+    const hasInlineStyle = typeof element.style[usage.property] !== 'undefined' && element.style[usage.property] !== '';
+    const inlineIsImportant = hasInlineStyle && element.style.getPropertyPriority(usage.property) === 'important';
+
+    if (inlineIsImportant) {
+      return max;
+    }
+
+    if (usage.isImportant) {
+      return usage;
+    }
+
+    if (hasInlineStyle) {
+      return max;
+    }
+
     if (max === null) {
       return usage;
     }
+
     try {
       const result = compare(max.winningSelector, usage.winningSelector);
       if ( result !== 1) {
