@@ -6,9 +6,9 @@ import { getMatchingVars } from './getMatchingVars';
 export const toLabel = ({id, className, tagName}) => {
   const idPart = !id ? '' : `#${ id }`;
   const noClass = !className || typeof className !== 'string';
-  const classPart =  noClass ? '' : `.${ className.trim().replaceAll(/ /g, '.') }`;
+  const classPart =  noClass ? '' : `.${ className.trim().replaceAll(/ +/g, '\n.') }`;
 
-  return tagName.toLowerCase() + idPart + classPart;
+  return tagName.toLowerCase() + idPart + '\n' + classPart;
 };
 
 export const sortForUI = (
