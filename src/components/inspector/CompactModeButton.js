@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function CompactModeButton(props) {
   const { isCompact, setIsCompact } = props;
 

@@ -142,9 +142,7 @@ export const sourceReferences = {}
 
 export const extractPageVariables = async() => {
   const startTime = performance.now();
-  const sheets = [...document.styleSheets]
-    // .filter(isSameDomain)
-    .filter(isNotCoreFile);
+  const sheets = [...document.styleSheets];
   const asObject = await sheets.reduce(collectSheetVars, {});
 
   activeScopes = Object.keys(definedValues).filter(scopeSelector => document.querySelectorAll(scopeSelector).length > 0);

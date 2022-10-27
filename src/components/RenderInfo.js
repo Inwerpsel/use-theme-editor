@@ -1,4 +1,4 @@
-import React, {useEffect, useRef, useState} from 'react';
+import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
 import {generateId, useId} from '../hooks/useId';
 
 const stats = {};
@@ -42,7 +42,7 @@ export function RenderInfo() {
   }
   stats[id] = renderCount.current;
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!getDebugMode()) {
       return;
     }
