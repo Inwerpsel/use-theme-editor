@@ -5,7 +5,7 @@ import {Checkbox} from '../controls/Checkbox';
 import {ToggleButton} from '../controls/ToggleButton';
 
 export const CustomVariableInput = () => {
-  const [collapsed, setCollapsed] = useState(true);
+  const [displayed, setDisplayed] = useState(false);
   const {dispatch, scopes} = useContext(ThemeEditorContext);
   const theme = scopes[ROOT_SCOPE] || {};
   const [overwriteExisting, setOverwriteExisting] = useState(false);
@@ -15,10 +15,10 @@ export const CustomVariableInput = () => {
   const isValidName = /^--[a-zA-Z0-9][a-zA-Z0-9_-]+/.test(name);
 
   return <div style={{marginBottom: '8px'}}>
-    <ToggleButton controls={[collapsed, setCollapsed]}>
+    <ToggleButton controls={[displayed, setDisplayed]}>
       Custom variable
     </ToggleButton>
-    {!collapsed && <div>
+    {displayed && <div>
       <form
         onSubmit={event => {
           dispatch({type: ACTIONS.set, payload: {name, value}});

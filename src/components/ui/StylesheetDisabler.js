@@ -18,7 +18,7 @@ const useDisabledStyleSheets = (disabledSheets, frameRef) => {
 export const StylesheetDisabler = () => {
   const {
     frameRef,
-    setSheetDisablerCollapsed,
+    setSheetDisablerDisplayed,
   } = useContext(ThemeEditorContext);
   const [disabledSheets, setDisabledSheets] = useLocalStorage('set-disabled-sheets', {});
 
@@ -40,7 +40,7 @@ export const StylesheetDisabler = () => {
   >
     <button
       style={{float: 'right'}}
-      onClick={() => setSheetDisablerCollapsed(true)}
+      onClick={() => setSheetDisablerDisplayed(false)}
     >Close</button>
     <p>The following stylesheets are loaded on the page in the same order as they are shown.</p>
     <p>If you uncheck one it is disabled <b>while in the editor</b>.</p>

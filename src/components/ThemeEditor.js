@@ -69,7 +69,7 @@ export const ThemeEditor = (props) => {
       history,
       future,
       scopes,
-      changeRequiresReset,
+      changeRequiresReset, // false if change can't be done incrementally
     },
     dispatch,
   ] = useThemeEditor({allVars});
@@ -109,9 +109,9 @@ export const ThemeEditor = (props) => {
   } = settings;
 
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
-  const [importCollapsed, setImportCollapsed] = useState(true);
-  const [serverThemesCollapsed, setServerThemesCollapsed] = useLocalStorage('server-themes-collapsed', true);
-  const [sheetsDisablerCollapsed, setSheetDisablerCollapsed] = useState(true);
+  const [importDisplayed, setImportDisplayed] = useState(false);
+  const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
+  const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
 
   const groups = useMemo(() => {
@@ -177,7 +177,7 @@ export const ThemeEditor = (props) => {
         existsOnServer,
         modifiedServerVersion,
         colorUsages,
-        setSheetDisablerCollapsed,
+        setSheetDisablerDisplayed,
         scopes,
         lastInspectTime,
         ...settings,
@@ -214,18 +214,18 @@ export const ThemeEditor = (props) => {
           <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
             <Area id="area-left">
               <div className={'theme-editor-menu'}>
-                <ToggleButton controls={[importCollapsed, setImportCollapsed]}>
+                <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
                   Import/export
                 </ToggleButton>
-                <ToggleButton controls={[sheetsDisablerCollapsed, setSheetDisablerCollapsed]}>
+                <ToggleButton controls={[sheetsDisablerDisplayed, setSheetDisablerDisplayed]}>
                   Stylesheets
                 </ToggleButton>
-                <ToggleButton controls={[serverThemesCollapsed, setServerThemesCollapsed]}>
+                <ToggleButton controls={[serverThemesDisplayed, setServerThemesDisplayed]}>
                   Server
                 </ToggleButton>
               </div>
               <Fragment>
-                {!serverThemesCollapsed && <ServerThemesList/>}
+                {serverThemesDisplayed && <ServerThemesList/>}
               </Fragment>
               <ThemeUploadPanel/>
               <div style={{display: 'flex', gap: '4px'}}>
@@ -263,8 +263,8 @@ export const ThemeEditor = (props) => {
             </Area>
             <ResizableFrame src={window.location.href} />
             <Area id="area-right">
-              <div>{!sheetsDisablerCollapsed && <StylesheetDisabler />}</div>
-              <div>{!importCollapsed && <ImportExportTools />}</div>
+              <div>{sheetsDisablerDisplayed && <StylesheetDisabler />}</div>
+              <div>{importDisplayed && <ImportExportTools />}</div>
             </Area>
           </div>
           <div
