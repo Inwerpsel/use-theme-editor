@@ -144,8 +144,18 @@ export function MovablePanels({children}) {
           prevOrderIndexes.push([order, el]);
         } else {
           prevOrderIndexes.splice(spliceIndex, 0, [order, el]);
+          const focusedEl = el.querySelector(':focus');
           areaEl.insertBefore(el, spliceEl);
           insertTimes++;
+          if (focusedEl) {
+            // If you drag an element downwards, it won't be moved itself, instead
+            // other elements will be moved before it.
+            // If you drag upwards, the element itself is moved,
+            // causing it to lose focus, unlike the downward direction.
+            // Hence, check for a focused element and give it focus again after moving.
+            // This can only happen when starting a drag from within a focusable element.
+            focusedEl.focus();
+          }
           // console.log('Moving Element', el, 'before', spliceEl);
         }
       }
@@ -154,7 +164,7 @@ export function MovablePanels({children}) {
     console.log(`Called insertBefore ${insertTimes} time${insertTimes === 1 ? '' : 's'}`)
     console.timeEnd();
 
-  }, [JSON.stringify(panelMap), elementsRendered]);
+  }, [JSON.stringify(panelMap), elementsRendered, drawerOpen]);
 
   const resetPanels = () => {
     setPanelMap({});
