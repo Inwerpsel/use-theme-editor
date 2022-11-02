@@ -20,7 +20,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
 
     for (let property of rule.style) {
       const isCustomDeclaration = property.startsWith('--');
-      const couldBeValue = rule.style[property];
+      const couldBeValue = rule.style.getPropertyValue(property);
 
       // If empty value is returned, it should be from a shorthand.
       // A stylemap should not have any empty values where this is not the case.
@@ -65,7 +65,8 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
 
           if (shorthandValue === '') {
             // In some cases shorthand value can't be resolved, skip these for now.
-            // Happens when a longhand containing custom properties is used.
+            // Happens when a shorthand containing mulitple custom properties is used,
+            // and the syntax doesn't allow unambiguously determining the type of each.
            continue;
           }
 
@@ -75,15 +76,15 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
         }
 
         const fullValue = value;
+        const isImportant = rule.style.getPropertyPriority(property);
       
         while ((match = balancedVar(value))) {
           // Split at the comma to find variable name and fallback value.
           const varArguments = match.body.split(',').map((str) => str.trim());
-          const isImportant = first && match.post.trim() === '!important';
           const isFullProperty =
             first &&
             match.pre.trim() === '' &&
-            (match.post.trim() === '' || isImportant);
+            (match.post.replace(/\s*\!important$/, '') === '');
           // Does the variable represent all the arguments of a function?
           const isOnlyFunctionArgument = /^\s*\)/.test(match.post) && /\w+(-\w+)*\(\s*$/.test(match.pre);
           const cssFunc = !isOnlyFunctionArgument ? null : match.pre.match(/(\w+(-\w+)*)\(\s*$/)[1];
@@ -94,11 +95,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           // By spec everything after the first comma (including commas) is a single default value we'll join again.
           const [variableName, ...defaultValueSplit] = varArguments;
 
-          let defaultValue = defaultValueSplit.join(',');
-
-          if (defaultValue === '') {
-            defaultValue = definedValues[':root'][variableName];
-          }
+          const defaultValue = defaultValueSplit.join(',');
 
           const usage = {
             selector,
@@ -118,7 +115,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
             collected[variableName] = { properties: {}, usages: [] };
           }
           collected[variableName].usages.push(usage);
-          collected[variableName].properties[property] = {isFullProperty, fullValue};
+          collected[variableName].properties[property] = {isFullProperty, fullValue, isImportant};
 
           // Replace variable name (first occurrence only) from result, to avoid circular loop
           value =
