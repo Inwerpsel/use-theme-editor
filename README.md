@@ -58,9 +58,15 @@ with no configuration needed to add a new setting.
     - Media query
 
 - Support "locally" scoped custom properties
-  - Problem: Selector specificity when adding a rule after the existing rules. Any equally specific selector  occurring
-    in source after the one we're overriding in the theme will start being overridden (i.e. it's not after that selector
-    anymore). Hence, there's probably no choice but to figure out and repeat all rules that could be affected.
+  - Problem: Selector specificity when adding a rule after the existing rules
+    - Any equally specific selector  occurring in source after the one we're overriding in the theme
+      will start being overridden (i.e. it's not after that selector anymore).
+    - Hence, there's probably no choice but to figure out and repeat all rules that could be affected.
+    - Unless updates would actually change rules with a variable to their resolved value.
+      - No additional CSS
+      - Recalculations affect (potentially much) less elements, because cascading no longer needed
+      - No specificity challenges at all
+      - Also supports regular CSS
 
 - Determine / infer property types
   - examples + libs
@@ -95,13 +101,20 @@ with no configuration needed to add a new setting.
   in UI.
 
 ### TODO
-- Instead of searching for a corresponding regular property by removing `--hover` (or other state) from the name, try if
-  we can do the same with the selector, and so locate it reliably regardless of naming scheme.
+- Properly set up dependencies
+- Properly configure linting
+- Write tests
+- Variable actions:
+  - Convert a raw value to a variable
+    - First search for existing vars with same value
+    - Always show these options in case of raw values (unless they're not used in selectors)
+  - Search all equal raw values and replace with variable
+  - Split variable into multiple
+- Visualize some math functions
 - More tailored controls / group properties into single control?
 - Make hotkeys configurable in the UI
 - Clean up internal style handling (separate styles altogether?, )
 - Use `ResponsiveFrame` to render multiple themes / screen sizes at the same time
-- Write tests
 - Expand the color usages quick menu to allow picking all kinds of values. Maybe a textual widget ordered by how
   frequently used?
 - Hot reloading would be nice, as reloading the page to see your changes applied will reset the iframe's scroll
@@ -139,6 +152,9 @@ with no configuration needed to add a new setting.
   - More els recalculated when using CSS `:root` selector instead of setting the document element's inline style.
     - What about that? Maybe I mislooked.
   - Is using `body` selector better?
+  - Or change approach altogether to update the actual rules instead?
+    - Probably has the best performance
+    - Solves issues with scoped custom properties of equal selector specificity (i.e. order dependent)
 - Move expensive logic (regex and searching lists) into initial data extraction where possible.
 - Configurable source URLs (protocol, Github, automatic detection?)
 - Inspector as a separate package?
@@ -147,6 +163,15 @@ with no configuration needed to add a new setting.
   - If multiple options possible
     - Show dialog on nearest side of iframe (or configurable)
     - Hover an option previews it
+- Visualize overridden scope values, so that you can see what happens when removed from a scope.
+- Visualize spacing properties with overlay
+- Allow mapping hotkeys to any reducer action
+  - Since reducers are already collected for history, it should be a small step to list this
+    collection and allow setting a mapping.
+  - Perhaps handle actions with a payload?
+    - Some values can be entered manually (e.g. increment by a certain amount, choose a particular string like for panel layout)
+    - Other values could come from some sort of context (e.g. the currently focused variable control)
+    - Other approach is to tie it to event listeners. Might allow defining function once. Still need to check focus probably.
 
 
 ## Future theme structure
@@ -167,6 +192,8 @@ Each item: selector + property (combined unique ID, this could be a single ID as
 * Added selectors
   * data: selector text, source position, media query
   * Translate to multiple source CSS dialects
+  * Ideally a minimal description of the source position requirements. E.g. only say "after X". It's then up to
+    the code generating for a particular source to deterministically figure out the exact position.
 * Added media queries
   * data: condition text (maybe parsed a bit), source position
 * Added animations
