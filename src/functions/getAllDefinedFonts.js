@@ -31,9 +31,8 @@ const getGoogleSheetRules = async href => {
   return style.sheet.cssRules;
 };
 
-const collectFontVariant = async (fonts, {style: {fontFamily, fontWeight, fontStyle}}) => {
+const collectFontVariant = (previousFonts, {style: {fontFamily, fontWeight, fontStyle}}) => {
 
-  const previousFonts = await fonts;
   const previousVariants = previousFonts[fontFamily]?.variants || {};
 
   return {
@@ -56,7 +55,7 @@ const extractFonts = async (fonts, sheet) => {
 
   const fontFaces = [...rules].filter(rule => rule instanceof CSSFontFaceRule);
 
-  return await fontFaces.reduce(collectFontVariant, fonts);
+  return fontFaces.reduce(collectFontVariant, fonts);
 };
 const ourDomainOrGoogleFonts = sheet => isSameDomain(sheet) || sheet.href.startsWith(GOOGLE_FONTS_URL);
 
