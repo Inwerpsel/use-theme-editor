@@ -1,7 +1,7 @@
 import React, {memo, useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
-import {SelectControl} from '@wordpress/components';
 import {isColorProperty} from '../inspector/TypedControl';
+import { SelectControl } from '../controls/SelectControl';
 
 const filters = {
   all: {

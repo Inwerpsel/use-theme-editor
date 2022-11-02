@@ -1,4 +1,3 @@
-import {TextControl} from '@wordpress/components';
 import React, {Fragment} from 'react';
 import {ShadowPicker} from 'react-shadow-picker';
 import {FontFamilyControl} from '../properties/FontFamilyControl';
@@ -7,6 +6,7 @@ import {SizeControl, sizeLikeProperties} from '../properties/SizeControl';
 import {timeLikeProperties, TimeControl} from '../properties/TimeControl';
 import { selectOnlyOptions } from './SelectOnlyControl';
 import { SelectControl } from '../controls/SelectControl';
+import { TextControl } from '../controls/TextControl';
 
 export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 

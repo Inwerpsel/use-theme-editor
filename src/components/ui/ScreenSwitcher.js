@@ -61,6 +61,6 @@ export function ScreenSwitcher() {
 
   return <div>
     <CompactModeButton {...{isCompact, setIsCompact}}/>
-    {comp}
+    {/* {comp} */}
   </div>;
 }

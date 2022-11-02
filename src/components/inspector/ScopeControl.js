@@ -49,8 +49,7 @@ export function ScopeControl(props) {
                     )
                     .join('\n')}
                 >
-                  <button
-                    // onClick={() => {setShowLocator(!showLocator)}}
+                  <span
                     style={{
                       border:  '1px solid gray',
                     }}
@@ -62,7 +61,7 @@ export function ScopeControl(props) {
                       }
                       return selector;
                     })}
-                  </button>
+                  </span>
                   {showLocator && <ElementLocator
                     {...{ selector }}
                     initialized

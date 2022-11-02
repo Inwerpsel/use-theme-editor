@@ -1,9 +1,9 @@
 import FontPicker from 'font-picker-react';
 import React, {Fragment, useEffect, useState} from 'react';
 import {getAllDefinedFonts} from '../../functions/getAllDefinedFonts';
-import {TextControl} from '@wordpress/components';
 import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
+import { TextControl } from '../controls/TextControl';
 const unquote = s => {
   return s.replace(/^"/, '').replace(/"$/, '');
 };

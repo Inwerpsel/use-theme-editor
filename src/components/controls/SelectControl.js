@@ -14,7 +14,7 @@ export function SelectControl(props) {
     return (
       <select {...{ value, onChange }}>
         {options.map((o) => (
-          <option value={o.value}>{o.label}</option>
+          <option key={o.value} value={o.value}>{o.label}</option>
         ))}
       </select>
     );

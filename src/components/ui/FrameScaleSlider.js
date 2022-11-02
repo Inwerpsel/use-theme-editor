@@ -25,6 +25,6 @@ export function FrameScaleSlider() {
   } = useContext(ThemeEditorContext);
 
   return <div className={'frame-scale-slider'} style={{minWidth: '200px'}}>
-    <MemoedRangeControl {...{scales, setScales, scale, width, height}}/>
+    {/* <MemoedRangeControl {...{scales, setScales, scale, width, height}}/> */}
   </div>;
 }

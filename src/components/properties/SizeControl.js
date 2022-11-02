@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {TextControl} from '@wordpress/components';
+import { TextControl } from '../controls/TextControl';
 
 export const sizeLikeProperties = [
   'font-size',

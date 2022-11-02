@@ -11,7 +11,7 @@ export function ImportExportTools() {
     fileName, setFileName,
     scopes,
   } = useContext(ThemeEditorContext);
-  const theme = scopes[ROOT_SCOPE];
+  const theme = scopes[ROOT_SCOPE] || {};
 
   const [shouldMerge, setShouldMerge] = useState(false);
 
