@@ -11,7 +11,7 @@ const rootSelectors = [':root', ':where(html)', 'html']
 export function FilterableVariableList(props) {
     const {scopes} = useContext(ThemeEditorContext);
     const theme = scopes[ROOT_SCOPE] || {};
-    const {onChange, elementScopes = []} = props;
+    const {value, onChange, elementScopes = []} = props;
     const [filter, setFilter] = useState('');
     const [filterValue, setFilterValue] = useState('');
     const [includeRoot, setIncludeRoot] = useState(true);
@@ -44,7 +44,7 @@ export function FilterableVariableList(props) {
         <Checkbox controls={[includeRoot, setIncludeRoot]}>Global values</Checkbox>
         <div style={{ display: 'flex', width: '100%' }}>
           <input
-            autoCapitalize={false}
+            autoCapitalize="off"
             type="text"
             placeholder="Filter name..."
             value={filter}
@@ -64,54 +64,52 @@ export function FilterableVariableList(props) {
             overflowY: 'scroll',
           }}
         >
-          {filtered.map(([name, value]) => {
-            const varValue = `var(${name})`;
-              const isCurrent =  varValue === value;
+          {filtered.map(([name, optionValue]) => {
+              const varValue = `var(${name})`;
+              const isCurrent = varValue === value;
 
               const insides = (
                 <Fragment>
                   {name}
                   {/* Exclude some values that get too long. */}
-                  {!/url\(|gradient\(/.test(value) && (
-                    <span style={{ maxWidth: '30%' }}>{value}</span>
+                  {!/url\(|gradient\(/.test(optionValue) && (
+                    <span style={{ maxWidth: '30%' }}>{optionValue}</span>
                   )}
                   <span
                     key={name}
-                    title={value}
+                    title={optionValue}
                     style={{
                       width: PREVIEW_SIZE,
                       height: PREVIEW_SIZE,
                       border: '1px solid black',
                       borderRadius: '6px',
-                      background: `no-repeat left top/ cover ${value}`,
+                      background: `no-repeat left top/ cover ${optionValue}`,
                       float: 'right',
                       textShadow: 'white 0px 10px',
                       // backgroundSize: 'cover',
                     }}
                   >
-                    {/var\(/.test(value) && 'var'}
+                    {/var\(/.test(optionValue) && 'var'}
                   </span>{' '}
                 </Fragment>
               );
 
               return (
                 <li key={name}>
-                  {isCurrent && <div>{insides}</div>}
+                  <button
+                    onClick={() => {
+                      !isCurrent && onChange(varValue);
+                    }}
+                    style={{
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '100%',
+                      border: isCurrent ? '4px solid black' : '1px solid black',
+                    }}
+                  >
+                    {insides}
+                  </button>
 
-                  {!isCurrent && (
-                    <button
-                      onClick={() => {
-                        onChange(varValue);
-                      }}
-                      style={{
-                        display: 'flex',
-                        justifyContent: 'space-between',
-                        width: '100%',
-                      }}
-                    >
-                      {insides}
-                    </button>
-                  )}
                 </li>
               );
           })}
