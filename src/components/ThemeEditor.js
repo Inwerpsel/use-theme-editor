@@ -3,7 +3,6 @@ import {ACTIONS, ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
-import {diffThemes} from '../functions/diffThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
 import {GroupControl} from './inspector/GroupControl';
@@ -20,8 +19,6 @@ import {Checkbox} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
 import {ImportExportTools} from './ui/ImportExportTools';
 import {ThemeUploadPanel} from './ui/ThemeUploadPanel';
-import {HistoryBack} from './ui/HistoryBack';
-import {HistoryForward} from './ui/HistoryForward';
 import {useGlobalSettings} from '../hooks/useGlobalSettings';
 import {MovablePanels} from './movable/MovablePanels';
 import {FrameSizeSettings} from './ui/FrameSizeSettings';
@@ -36,9 +33,11 @@ import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
 import { updateScopedVars } from '../initializeThemeEditor';
 import { UseEventExample } from './controls/SelectControl';
-import { TextControl } from '@wordpress/components';
+import { HistoryControls } from './ui/HistoryControls';
+import { useResumableState } from '../hooks/useResumableReducer';
+import { TextControl } from './controls/TextControl';
 
-const hotkeysOptions = {
+export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
 };
 
@@ -52,24 +51,23 @@ export const ThemeEditor = (props) => {
     lastInspectTime,
   } = props;
 
-  const [openGroups, setOpenGroups] = useState({});
+  const [openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
+  console.log('GOT OPEN GROUPS', openGroups);
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
-  useLayoutEffect(() => {
-    if (openFirstOnInspect && unfilteredGroups.length > 0) {
-      setOpenGroups({
-        [unfilteredGroups[0].label]: true,
-      });
-    }
-  }, [unfilteredGroups, openFirstOnInspect]);
+  // useLayoutEffect(() => {
+  //   if (openFirstOnInspect && unfilteredGroups.length > 0) {
+  //     setOpenGroups({
+  //       [unfilteredGroups[0].label]: true,
+  //     });
+  //   }
+  // }, [unfilteredGroups, openFirstOnInspect]);
 
   const [
     {
       defaultValues,
-      history,
-      future,
       scopes,
-      changeRequiresReset, // false if change can't be done incrementally
+      changeRequiresReset,
     },
     dispatch,
   ] = useThemeEditor({allVars});
@@ -78,7 +76,7 @@ export const ThemeEditor = (props) => {
   const settings = useGlobalSettings(frameRef);
 
   useLayoutEffect(() => {
-    updateScopedVars(scopes, changeRequiresReset);
+    updateScopedVars(scopes, true);
   }, [scopes]);
 
   useEffect(() => {
@@ -90,7 +88,7 @@ export const ThemeEditor = (props) => {
     frameRef.current.contentWindow.postMessage(
       {
         type: 'set-scopes-styles',
-        payload: { scopes, resetAll: changeRequiresReset },
+        payload: { scopes, resetAll: true },
       },
       window.location.origin,
       );
@@ -130,14 +128,6 @@ export const ThemeEditor = (props) => {
   useHotkeys('alt+r', () => {
     flipDebugMode();
   }, []);
-
-  useHotkeys('ctrl+z,cmd+z', () => {
-    dispatch({type: ACTIONS.historyBackward});
-  }, hotkeysOptions);
-
-  useHotkeys('ctrl+shift+z,cmd+shift+z', () => {
-    dispatch({type: ACTIONS.historyForward});
-  }, hotkeysOptions);
 
   const {
     serverThemes,
@@ -243,10 +233,6 @@ export const ThemeEditor = (props) => {
                 }}>
                 <PropertyCategoryFilter/>
                 <PropertySearch/>
-                <div>
-                  <HistoryBack {...{history}}/>
-                  <HistoryForward {...{future}}/>
-                </div>
               </div>
               <ul className={'group-list'}>
                 {groups.length === 0 && <li><span className='alert'>No results</span></li>}
@@ -260,6 +246,7 @@ export const ThemeEditor = (props) => {
                   );
                 })}
               </ul>
+              <HistoryControls />
             </Area>
             <ResizableFrame src={window.location.href} />
             <Area id="area-right">

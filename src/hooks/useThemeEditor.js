@@ -1,21 +1,15 @@
-import { useReducer, useEffect, useLayoutEffect } from 'react';
+import { useEffect } from 'react';
 import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
 import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
 import {getAllDefaultValues} from '../functions/getAllDefaultValues';
 import {reducerOf} from '../functions/reducerOf';
+import { useResumableReducer } from './useResumableReducer';
 
 const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;
 
-const write = (prop, value) => {
-  document.documentElement.style.setProperty(prop, value);
-};
-const unset = prop => {
-  return document.documentElement.style.removeProperty(prop);
-};
-
 // Slice to preserve up to 1001 last entries to have some upper limit.
-const pushHistory = (history, entry) => [entry, ...history.slice(-1000)];
+// const pushHistory = (history, entry) => [entry, ...history.slice(-1000)];
 
 const sortObject = o => Object.keys(o).sort().reduce((sorted, k) => {
   sorted[k] = typeof o[k] === 'object' ? sortObject(o[k]): o[k];
@@ -24,13 +18,10 @@ const sortObject = o => Object.keys(o).sort().reduce((sorted, k) => {
 
 const DEFAULT_STATE = {
   scopes: {},
-  history: [],
-  future: [],
   defaultValues: {},
   lastRemoved: [],
   previewProps: {},
   previewPseudoVars: {},
-  lastSet: {},
   changeRequiresReset: false,
 };
 
@@ -53,17 +44,13 @@ export const ACTIONS = {
       return state;
     }
 
-    // Only add a history entry if the same property wasn't set in the last 700ms.
-    const shouldAddHistory = !state.lastSet[name] || performance.now() - state.lastSet[name] > 700;
 
     const {[scope]: old, ...otherScopes} = scopes;
     const newTheme = { ...old, [name]: value };
 
     return {
       ...state,
-      history: !shouldAddHistory ? state.history : pushHistory(state.history, scopes),
-      future: [],
-      lastSet: { ...state.lastSet, [name]: performance.now(), },
+      // lastSet: { ...state.lastSet, [name]: performance.now(), },
       changeRequiresReset : false,
       scopes: {
         [scope]: newTheme,
@@ -88,8 +75,6 @@ export const ACTIONS = {
 
     return {
       ...state,
-      history: pushHistory(state.history, scopes),
-      future: [],
       lastRemoved: [{name, scope}],
       changeRequiresReset : false,
       scopes: {
@@ -164,51 +149,12 @@ export const ACTIONS = {
 //       previewPseudoVars: otherPseudos,
 //     };
 //   },
-  historyBackward: (state) => {
-    const { history, future, scopes } = state;
-
-    if (history.length === 0) {
-      return state;
-    }
-    const [prevState, ...older] = history;
-
-    return {
-      ...state,
-      history: older,
-      future: [
-        scopes,
-        ...future,
-      ],
-      scopes: prevState,
-      changeRequiresReset : true,
-    };
-  },
-  historyForward: (state) => {
-    const { history, future, scopes } = state;
-    if (future.length === 0) {
-      return state;
-    }
-
-    const [nextState, ...newer] = future;
-
-    return {
-      ...state,
-      future: newer,
-      history: [
-        scopes,
-        ...history
-      ],
-      scopes: nextState,
-      changeRequiresReset : true,
-    };
-  },
-  loadTheme: ({ defaultValues, history, scopes: oldScopes }, { theme = {} }) => {
+  loadTheme: ({ defaultValues, scopes: oldScopes }, { theme = {} }) => {
     const isNewTheme = 'scopes' in theme;
 
     return {
       ...DEFAULT_STATE,
       defaultValues,
-      history: pushHistory(history, oldScopes),
       scopes: isNewTheme ? theme.scopes : {
         [ROOT_SCOPE]: theme,
         // ...otherScopes,
@@ -220,22 +166,18 @@ export const ACTIONS = {
 
 const reducer = reducerOf(ACTIONS);
 
-export const useThemeEditor = (
-  {
-    initialState = DEFAULT_STATE,
-    allVars,
-  }) => {
-  const [{
-    defaultValues,
-    history,
-    future,
-    scopes,
-    changeRequiresReset,
-  }, dispatch] = useReducer(reducer, initialState, s => ({
-    ...s,
-    defaultValues: getAllDefaultValues(allVars),
-    scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
-  }));
+export const useThemeEditor = ({ initialState = DEFAULT_STATE, allVars }) => {
+  const [{ defaultValues, scopes, changeRequiresReset }, dispatch] =
+    useResumableReducer(
+      reducer,
+      initialState,
+      (s) => ({
+        ...s,
+        defaultValues: getAllDefaultValues(allVars),
+        scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
+      }),
+      'THEME_EDITOR'
+    );
 
   const sorted = sortObject(scopes);
 
@@ -247,8 +189,6 @@ export const useThemeEditor = (
   return [
     {
       defaultValues,
-      history,
-      future,
       scopes,
       changeRequiresReset,
     },

@@ -1,18 +1,18 @@
-import {diffSummary} from '../../functions/diffThemes';
-import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {useContext} from 'react';
-import {ThemeEditorContext} from '../ThemeEditor';
+import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 
-export function HistoryForward({future}) {
-  const {
-    dispatch,
-  } = useContext(ThemeEditorContext);
+export function HistoryForward() {
+  const { dispatch, historyStack, historyOffset } = useContext(
+    HistoryNavigateContext
+  );
+
+  const noFuture = historyOffset === 0;
 
   return <button
     className={'history-button'}
-    disabled={future.length === 0}
-    title={future.length === 0 ? 'No future' : `${future.length}`}
-    onClick={() => dispatch({type: ACTIONS.historyForward})}
+    disabled={noFuture}
+    title={noFuture ? 'No future' : historyOffset}
+    onClick={() => dispatch({type: 'HISTORY_FORWARD'})}
   >redo
   </button>;
 }

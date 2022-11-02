@@ -13,6 +13,8 @@ import { Checkbox } from "../controls/Checkbox";
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
+import { rootScopes } from '../../functions/extractPageVariables';
+import { useResumableState } from '../../hooks/useResumableReducer';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -134,6 +136,10 @@ export function getValueFromDefaultScopes(scopes, cssVar) {
   return null;
 }
 
+function referenceChainKey(references, cssVar) {
+  return [...references, cssVar].map(v=>v.name).join();
+}
+
 export const VariableControl = (props) => {
   const {
     cssVar,
@@ -141,10 +147,11 @@ export const VariableControl = (props) => {
     onUnset,
     initialOpen = false,
     nestingLevel,
+    referenceChain = [],
     scopes: elementScopes,
     parentVar,
     element,
-    currentScope,
+    currentScope = ROOT_SCOPE,
   } = props;
 
   const {
@@ -167,7 +174,11 @@ export const VariableControl = (props) => {
     properties,
   } = cssVar;
 
-  const defaultValue = definedValues[':root'][name] || definedValues[':where(html)'][name] || defaultValues[name];
+  const defaultValue =
+    definedValues[':root'][name] ||
+    definedValues[':where(html)'][name] ||
+    defaultValues[name] ||
+    getValueFromDefaultScopes(elementScopes, cssVar);
 
   const toggleOpen = () => setIsOpen(!isOpen);
 
@@ -181,9 +192,7 @@ export const VariableControl = (props) => {
 
   const valueFromScope = !scopes || !scopes[currentScope] ? null : scopes[currentScope][name];
 
-  const value = valueFromScope ||
-    getValueFromDefaultScopes(elementScopes, cssVar) ||
-    defaultValue;
+  const value = valueFromScope || defaultValue;
   const isDefault = value === defaultValue;
   const {media} = maxSpecific || {};
 
@@ -209,12 +218,13 @@ export const VariableControl = (props) => {
     match(media, { type: 'screen', width: width || window.screen.width });
   const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width}));
 
-  let currentLevel = nestingLevel || 0;
+  let currentLevel = referenceChain.length;
+  const key = referenceChainKey(referenceChain, cssVar);
 
   const [
     isOpen, setIsOpen
     // Open all variables that refer to variables immediately.
-  ] = useState(initialOpen || (currentLevel > 0 && !!referencedVariable));
+  ] = useResumableState(initialOpen || (currentLevel > 0 && !!referencedVariable), key);
 
   const excludedVarName = parentVar?.name;
 
@@ -293,7 +303,7 @@ export const VariableControl = (props) => {
         <div>
           {!!showCssProperties && <Fragment>
             {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
-            {Object.entries(properties).map(([property, {isFullProperty, fullValue}]) => (
+            {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => (
               <span
                 key={property}
                 className="monospace-code"
@@ -305,7 +315,8 @@ export const VariableControl = (props) => {
                 }
               >
                 {property}
-                {!isFullProperty && <b style={{ color: 'red' }}> *</b>}
+                {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
+                {!!isImportant && <b style={{fontWeight: 'bold', color: 'darkorange'}}>!important</b>}
               </span>
             ))}
           </Fragment>}
@@ -330,31 +341,55 @@ export const VariableControl = (props) => {
             style={{
               display: 'flex',
               clear: 'both',
-              justifyContent: 'space-between',
+              justifyContent: 'flex-end',
             }}
           >
-            {!usages[0].isFake && (
-              <button onClick={toggleSelectors}>
-                selectors ({usages.length})
+            {isDefault && (
+              <span
+                style={{
+                  margin: '6px 6px 0',
+                  color: 'grey',
+                }}
+              >
+                default{' '}
+              </span>
+            )}
+            {isInTheme && (
+              <button
+               title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
+                onClick={() => {
+                  onUnset();
+                }}
+              >
+                Revert
               </button>
             )}
 
             {referencedVariable && (
               <button
+                style={{borderWidth: overwriteVariable ? '4px' : '1px'}}
                 onClick={() => {
                   setOverwriteVariable(!overwriteVariable);
                 }}
               >
-                Custom value
+                Raw
               </button>
             )}
 
-            <button onClick={(event) => {
+            <button
+              style={{borderWidth: openVariablePicker ? '4px' : '1px'}}
+              onClick={(event) => {
               setOpenVariablePicker(!openVariablePicker);
               event.stopPropagation();
             }}>
-              Replace
+              Link
             </button>
+
+            {!usages[0].isFake && (
+              <button onClick={toggleSelectors}>
+                Selectors ({usages.length})
+              </button>
+            )}
 
             {typeof element !== 'undefined' && (
               <span key="foobar">
@@ -400,32 +435,6 @@ export const VariableControl = (props) => {
               //     });
               // }}
             >
-              {isInTheme && (
-                <button
-                  style={{
-                    float: 'right',
-                    marginBottom: '14.5px',
-                    fontSize: '12px',
-                  }}
-                  title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
-                  onClick={() => {
-                    onUnset();
-                  }}
-                >
-                  unset
-                </button>
-              )}
-              {isDefault && (
-                <span
-                  style={{
-                    float: 'right',
-                    margin: '6px 6px 15px',
-                    color: 'grey',
-                  }}
-                >
-                  default{' '}
-                </span>
-              )}
               <br />
               <TypedControl {...{ cssVar, value, onChange, cssFunc }} />
             </div>
@@ -447,7 +456,7 @@ export const VariableControl = (props) => {
                     payload: { name: referencedVariable.name },
                   });
                 }}
-                nestingLevel={++currentLevel}
+                referenceChain={[...referenceChain, cssVar]}
                 parentVar={cssVar}
               />
             </ul>

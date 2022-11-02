@@ -1,11 +1,12 @@
 import {SketchPicker as ColorPicker} from 'react-color';
 import {ACTIONS} from '../../hooks/useThemeEditor';
-import {TextControl} from '@wordpress/components';
 import React, {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ThemePalettePicker} from '../ThemePalettePicker';
 import {useThrottler} from '../../hooks/useThrottler';
+import { useResumableState } from '../../hooks/useResumableReducer';
+import { TextControl } from '../controls/TextControl';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
@@ -84,7 +85,7 @@ export const ColorControl = props => {
 
   const {name, usages} = cssVar;
 
-  const [hideColorPicker, setHideColorPicker] = useState(true);
+  const [hideColorPicker, setHideColorPicker] = useResumableState(true, `color-picker~~${cssVar.name}`);
 
   const {
     dispatch,
