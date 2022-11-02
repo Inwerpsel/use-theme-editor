@@ -4,7 +4,12 @@ const balanced = require( 'balanced-match' );
 // Check for balanced `var(` and `)` pairs inside `value`, and return the 3 fragments:
 // `body` (inside), `pre` (before), `post` (after) of the found wrapper
 export function balancedVar(value) {
-  const match = balanced( '(', ')', value );
+  let match;
+  try {
+    match = balanced( '(', ')', value );
+  } catch (e) {
+    return;
+  }
   if ( !match ) {
     return;
   }
