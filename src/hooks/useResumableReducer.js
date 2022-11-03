@@ -1,13 +1,6 @@
+import { useState } from 'react';
 import { useSyncExternalStore } from 'react';
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useLayoutEffect,
-  useMemo,
-  useReducer,
-  useRef,
-} from 'react';
+import { createContext, useCallback, useLayoutEffect, useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { hotkeysOptions } from '../components/ThemeEditor';
 import { useId } from './useId';
@@ -15,6 +8,8 @@ import { useId } from './useId';
 export const SharedHistoryContext = createContext({});
 
 export const HistoryNavigateContext = createContext({});
+
+const emptyState = {};
 
 const INITIAL_STATE = {
   currentId: null,
@@ -26,6 +21,7 @@ const INITIAL_STATE = {
   states: {},
   oldStates: emptyState,
   initialStates: {},
+  direction: 'forward',
 };
 
 function historyReducer(state, action) {
@@ -73,17 +69,19 @@ function historyReducer(state, action) {
         ...state,
         oldStates,
         historyOffset: historyOffset + 1,
+        direction: 'backward',
      };
     }
     case 'HISTORY_FORWARD': {
       if (historyOffset === 0) {
-        return states;
+        return state;
       }
 
       return {
         ...state,
         historyOffset: historyOffset - 1,
         oldStates: historyStack[historyStack.length - historyOffset],
+        direction: 'forward',
      };
     }
     case 'CLEAR_HISTORY': {
@@ -91,6 +89,7 @@ function historyReducer(state, action) {
         ...state,
         historyStack: [],
         historyOffset: 0,
+        direction: 'forward'
       };
     }
     case 'PERFORM_ACTION': {
@@ -99,8 +98,10 @@ function historyReducer(state, action) {
         return state;
       }
 
-      const usesHistory = historyOffset > 0;
-      const baseStates =  !usesHistory ? states : historyStack[historyStack.length - historyOffset].states;
+      const currentlyInThePast = historyOffset > 0;
+      const baseStates = !currentlyInThePast
+        ? states
+        : historyStack[historyStack.length - historyOffset].states;
 
       const performedAction = action.payload.action;
       const newState = forwardedReducer(baseStates[id], performedAction);
@@ -108,6 +109,11 @@ function historyReducer(state, action) {
       const slowEnough =
         !state.lastSet[id] || performance.now() - state.lastSet[id] > 100;
       const skipHistory = !slowEnough || !!performedAction?.skipHistory;
+
+      const prevHistory =
+        !currentlyInThePast || skipHistory
+          ? historyStack
+          : historyStack.slice(0, historyStack.length - 1 * historyOffset);
 
       return {
         ...state,
@@ -120,7 +126,7 @@ function historyReducer(state, action) {
         historyStack: skipHistory
           ? historyStack
           : [
-              ...historyStack.slice(0, historyStack.length - 1 * historyOffset),
+              ...prevHistory,
               {
                 id,
                 states,
@@ -130,6 +136,7 @@ function historyReducer(state, action) {
         currentId: id,
         lastSet: { ...state.lastSet, [id]: performance.now() },
         lastAction: performedAction,
+        direction: 'forward',
       };
     }
   }
@@ -137,25 +144,70 @@ function historyReducer(state, action) {
   return state;
 }
 
-const emptyState = {};
+let state = INITIAL_STATE;
+
+let currentState = state;
+
+let forceHistoryRender = () => {};
+
+const notifiers = {};
+
+const historyDispatch = (action) => {
+  state = historyReducer(state, action); 
+  const {states, oldStates, direction, historyOffset, historyStack } = state;
+
+  currentState =
+    historyOffset > 0
+      ? historyStack[historyStack.length - historyOffset].states
+      : states;
+  if (oldStates === emptyState) {
+    return;
+  }
+  let anyChanged = false;
+  const noNotify = action.type === 'ADD_REDUCER' || action.type === 'REMOVE_REDUCER';
+  if (noNotify) {
+    return;
+  }
+  for (const id in states) {
+    // This should mean a mount of the component using state.
+    const isInitial = direction === 'forward' && !id in oldStates;
+    // For this to work it's important that unchanged state members
+    // are the same object reference.
+
+    const changed = !isInitial && oldStates[id] !== currentState[id];
+    if (changed) {
+      notifiers[id]?.forEach((n) => {
+        anyChanged = true;
+        return n();
+      });
+    }
+  }
+  anyChanged && forceHistoryRender();
+}
+
+const subscribe = (id) => (notify) => {
+  if (!notifiers[id]) {
+    notifiers[id] = new Set();
+  }
+  notifiers[id].add(notify);
+  return () => {
+    notifiers[id].delete(notify);
+  };
+};
 
 export function SharedActionHistory(props) {
-  const notifiers = useRef({});
   const { children } = props;
+  const [,forceRender] = useState();
 
-  const [
-    {
-      states,
-      oldStates = emptyState,
-      historyStack,
-      historyOffset,
-      currentId,
-      lastAction,
-    },
-    dispatch,
-  ] = useReducer(historyReducer, INITIAL_STATE);
+  const {
+    states,
+    historyStack,
+    historyOffset,
+    currentId,
+    lastAction,
+  } = state;
 
-  const statesRef = useRef(emptyState);
+  const dispatch = historyDispatch;
 
   useHotkeys(
     'ctrl+z,cmd+z',
@@ -173,20 +225,6 @@ export function SharedActionHistory(props) {
     hotkeysOptions
   );
 
-  const subscribe = (id) => (notify) => {
-    if (!notifiers.current[id]) {
-      notifiers.current[id] = new Set();
-    }
-    notifiers.current[id].add(notify);
-    return () => {
-      notifiers.current[id].delete(notify);
-    };
-  };
-  const historyParticipantsData = useMemo(
-    () => ({ subscribe, dispatch, statesRef }),
-    []
-  );
-
   const historyNavigationData = useMemo(
     () => ({
       historyStack,
@@ -199,34 +237,17 @@ export function SharedActionHistory(props) {
     [historyStack, historyOffset, currentId, lastAction, states]
   );
 
-  // Because triggering renders of the children is avoided, it's safe
-  // to use the reducer state in a layout effect in order to trigger
-  // the necessary renders.
   useLayoutEffect(() => {
-    statesRef.current =
-      historyOffset > 0
-        ? historyStack[historyStack.length - historyOffset].states
-        : states;
-    if (oldStates === emptyState) {
-      return;
-    }
-    for (const id in states) {
-      // For this to work it's important that unchanged state members
-      // are the same object reference.
-      const changed = oldStates[id] !== statesRef.current[id];
-      if (changed) {
-        // console.log('NOTIFYING', id);
-        notifiers.current[id]?.forEach((n) => n());
-      }
-    }
-  }, [states, oldStates, historyStack, historyOffset]);
+    forceHistoryRender = () => forceRender({});
+    return () => {
+      forceHistoryRender = () => {};
+    };
+  } ,[]); 
 
   return (
-    <SharedHistoryContext.Provider value={historyParticipantsData}>
-      <HistoryNavigateContext.Provider value={historyNavigationData}>
-        {children}
-      </HistoryNavigateContext.Provider>
-    </SharedHistoryContext.Provider>
+    <HistoryNavigateContext.Provider value={historyNavigationData}>
+      {children}
+    </HistoryNavigateContext.Provider>
   );
 }
 
@@ -239,15 +260,9 @@ export function useResumableReducer(
   const generatedId = useId();
   const id = manualId || generatedId;
 
-  const {
-    subscribe,
-    dispatch: historyDispatch,
-    statesRef,
-  } = useContext(SharedHistoryContext);
-
   const value = useSyncExternalStore(
     subscribe(id),
-    () => statesRef.current[id]
+    () => currentState[id]
   );
 
   const isInStore = typeof value !== 'undefined';

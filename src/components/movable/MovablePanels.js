@@ -1,5 +1,7 @@
-import React, {createContext, useLayoutEffect, useRef, useState} from 'react';
+import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { getLocalStorageNamespace } from '../../functions/getLocalStorageNamespace';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
+import { useResumableState } from '../../hooks/useResumableReducer';
 
 export const AreasContext = createContext({});
 
@@ -61,7 +63,11 @@ export function MovablePanels({children}) {
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
-  const [panelMap, setPanelMap] = useLocalStorage('panel-rearrangements', {});
+  const [_panelMap, _setPanelMap] = useLocalStorage('panel-rearrangements', {});
+  const [panelMap, setPanelMap] = useResumableState(_panelMap, 'PANEL_MAP');
+  useEffect(() => {
+    localStorage.setItem( getLocalStorageNamespace() + 'panel-rearrangements', JSON.stringify(panelMap));
+  }, [panelMap]);
 
   const [showMovers, setShowMovers] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);

@@ -8,7 +8,7 @@ import { HistoryVisualization } from "./HistoryVisualization";
 export function HistoryControls() { 
     const { dispatch } = useContext(HistoryNavigateContext);
 
-    const [visualize, setVissualize] = useState(true);
+    const [visualize, setVissualize] = useState(false);
 
     return (
       <div>

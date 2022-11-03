@@ -62,12 +62,12 @@ export function ScopeControl(props) {
                       return selector;
                     })}
                   </span>
-                  {showLocator && <ElementLocator
+                  {/* {showLocator && <ElementLocator
                     {...{ selector }}
                     initialized
                     // hideIfOne
                     showLabel={false}
-                  />}
+                  />} */}
                   
                   <ul style={{marginBottom: '24px'}}>
                     {elementScopeVars

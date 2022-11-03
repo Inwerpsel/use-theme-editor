@@ -52,7 +52,6 @@ export const ThemeEditor = (props) => {
   } = props;
 
   const [openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
-  console.log('GOT OPEN GROUPS', openGroups);
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
   // useLayoutEffect(() => {
