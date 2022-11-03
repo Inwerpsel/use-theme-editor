@@ -1,7 +1,8 @@
 {
   "name": "use-theme-editor",
-  "version": "3.0.0",
+  "version": "3.0.2",
   "description": "Zero configuration CSS variables based theme editor",
+  "homepage": "https://github.com/Inwerpsel/use-theme-editor",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
