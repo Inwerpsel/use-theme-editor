@@ -45,7 +45,7 @@ export function ScreenSwitcher() {
     />
   ) : (
     <Fragment>
-      <button
+      {/* <button
         onClick={() => {
           setIsSimpleSizes(!isSimpleSizes);
         }}
@@ -54,13 +54,13 @@ export function ScreenSwitcher() {
       </button>
       <MemoedRadioControl
         {...{ screenOptions, width, height, setWidth, setHeight }}
-      />
+      /> */}
     </Fragment>
   );
 
 
   return <div>
     <CompactModeButton {...{isCompact, setIsCompact}}/>
-    {/* {comp} */}
+    {comp}
   </div>;
 }
