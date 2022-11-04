@@ -1,20 +1,11 @@
-import React, {memo, useContext} from 'react';
-import {RangeControl} from '@wordpress/components';
+import React, { useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 
-const WrapRangeControl = ({scale, setScales, scales, width, height}) =>
-  <RangeControl
-    value={scale}
-    onChange={value => {
-      setScales({...scales, [`${width}x${height}`]: value});
-    }}
-    min={.2}
-    max={1}
-    step={.02}
-    initialPosition={scale}
-  />;
-
-const MemoedRangeControl = memo(WrapRangeControl);
+const config = {
+  min: 0.2,
+  max: 1,
+  step: 0.02,
+};
 
 export function FrameScaleSlider() {
   const {
@@ -24,7 +15,20 @@ export function FrameScaleSlider() {
     height,
   } = useContext(ThemeEditorContext);
 
-  return <div className={'frame-scale-slider'} style={{minWidth: '200px'}}>
-    {/* <MemoedRangeControl {...{scales, setScales, scale, width, height}}/> */}
-  </div>;
+  const updateScales = (e) => {
+    setScales({ ...scales, [`${width}x${height}`]: e.target.value });
+  };
+
+  return (
+    <div className={'frame-scale-slider'} style={{ minWidth: '200px' }}>
+      <input
+        type="range"
+        value={scale}
+        initialPosition={scale}
+        {...config}
+        onChange={updateScales}
+      />
+      <input type="number" value={scale} {...config} onChange={updateScales} />
+    </div>
+  );
 }
