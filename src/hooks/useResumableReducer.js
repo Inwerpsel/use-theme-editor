@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { useSyncExternalStore } from 'react';
 import { createContext, useCallback, useLayoutEffect, useMemo } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';

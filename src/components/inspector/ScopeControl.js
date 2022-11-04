@@ -45,7 +45,7 @@ export function ScopeControl(props) {
                   title={elementScopeVars
                     .map(
                       ({ name }) =>
-                        `${name}: ${scopesByProperty[name][selector]}`
+                        `${name}: ${(scopesByProperty[name] || {})[selector]}`
                     )
                     .join('\n')}
                 >

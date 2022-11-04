@@ -1,3 +1,5 @@
+import React from 'react';
+
 export function TextControl( { label, value, className, instanceId, onChange, type = 'text', ...props } ) {
 	const onChangeValue = ( event ) => onChange( event.target.value );
 
