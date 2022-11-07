@@ -1,69 +1,97 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { HistoryNavigateContext, SharedHistoryContext } from '../../hooks/useResumableReducer';
+import { Checkbox } from '../controls/Checkbox';
+
+function getName(action) {
+  // console.log(action);
+  return !action
+    ? ''
+    : typeof action.type === 'function'
+    ? action.type.name
+    : action.type;
+}
+
+function ActionList(props) {
+  const {actions, showPayloads} = props;
+
+  return (
+    <ul>
+      {actions.map(([id, action], key) => {
+        const isObject = typeof action === 'object';
+        const isFromReducer = isObject && 'type' in action;
+        const value = isFromReducer
+          ? JSON.stringify(action.payload, null, 2)
+          : isObject
+          ? JSON.stringify(action, null, 2)
+          : action;
+
+        const name = !isFromReducer ? '' : '::' + getName(action);
+        const isPayloadLess = value === '{}';
+        const isShortString = typeof value === 'number' || value.length < 40;
+
+        return (
+          <li {...{ key }}>
+            <b>{id}</b>{name}{isShortString && <pre style={{marginBottom: 0}} className="monospace-code">
+                {value}
+              </pre>}<br/> 
+            {!isPayloadLess && showPayloads && !isShortString && (
+              <pre className="monospace-code">
+                {value}
+              </pre>
+            )}
+          </li>
+        );
+      })}
+    </ul>
+  );
+}
 
 export function HistoryVisualization() {
-  const { states, historyStack, historyOffset, currentId, lastAction } =
+  const [showJson, setShowJson] = useState(false);
+  const [showPayloads, setShowPayloads] = useState(false);
+  const { states, historyStack, historyOffset, currentId, lastActions, currentStates } =
     useContext(HistoryNavigateContext);
 
-  const currentType = !lastAction
-    ? ''
-    : typeof lastAction.type === 'function'
-    ? lastAction.type.name
-    : lastAction.type;
 
-  const {THEME_EDITOR, ...otherState} = states;
+  // const {THEME_EDITOR, ...otherState} = states;
 
   const currentIndex = historyStack.length - historyOffset;
 
   return (
     <div>
-        <div title={JSON.stringify(states, null, 2)}>
-      Current: {currentId}
-      Last action: <b>{currentType}</b>
-        </div>
-      {/* <pre className='monospace-code'>
-        {JSON.stringify(otherState, null, 2)}
-      </pre> */}
+      <Checkbox controls={[showJson, setShowJson]}>
+        Inspect current state
+      </Checkbox>
+      <Checkbox controls={[showPayloads, setShowPayloads]}>
+        Show payloads
+      </Checkbox>
+      <button onClick={() => console.log(currentStates)}>console.log</button>
+      {showJson && (
+        <pre className="monospace-code">
+          {JSON.stringify(currentStates, null, 2)}
+        </pre>
+      )}
+
       <h2>History</h2>
       <ul>
-        {historyStack.map(({ id, lastAction, states }, index) => {
-          if (index > currentIndex) {
-            return null;
-          }
-          const _type = lastAction.type;
-          const type = typeof _type === 'function' ? _type.name : _type;
+        {historyStack.map(({ lastActions, states }, index) => {
           return (
-            <li key={Math.random()} style={{border: index === currentIndex ? '2px solid yellow' : 'none'}}>
-              {id}: <b>{type}</b>
-              <div>
-                {typeof lastAction === 'string'
-                  ? lastAction
-                  : typeof lastAction === 'string' ? lastAction : JSON.stringify(lastAction.payload || '', null, 2)}
-              </div>
+            <li
+              key={Math.random()}
+              style={{
+                border: index === currentIndex ? '2px solid yellow' : '2px solid black',
+              }}
+            >
+              <ActionList actions={Object.entries(lastActions)}  {...{showPayloads}}/>
             </li>
           );
         })}
-      </ul>
-      <h2>Future</h2>
-      <ul>
-        {historyStack.map(({ id, lastAction, states }, index) => {
-          if (index <= currentIndex) {
-            return null;
-          }
-          const _type = lastAction.type;
-          const type = typeof _type === 'function' ? _type.name : _type;
-
-          return (
-            <li key={Math.random()}>
-              {id}: <b>{type}</b>
-              <div>{typeof lastAction === 'string' ? lastAction : JSON.stringify(lastAction.payload || 'none', null, 2)}</div>
-            </li>
-          );
-        })}
-        {historyOffset > 0 && <li key={Math.random()}>
-              {currentId}: 
-              <div>{typeof lastAction === 'string' ? lastAction : JSON.stringify(lastAction.payload || 'none', null, 2)}</div>
-            </li>}
+          <li key={Math.random()} style={{
+                border: historyOffset === 0 ? '2px solid yellow' : 'none',
+          }}>
+            LATEST
+            <ActionList actions={Object.entries(lastActions)} {...{showPayloads}}/>
+          </li>
       </ul>
     </div>
   );
