@@ -56,18 +56,14 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
   );
 };
 
-export function MovablePanels({children}) {
+export function MovablePanels({stateHook, children}) {
   const areaRefs = useRef({});
   const origLocationsRef = useRef({});
 
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
-  const [_panelMap, _setPanelMap] = useLocalStorage('panel-rearrangements', {});
-  const [panelMap, setPanelMap] = useResumableState(_panelMap, 'PANEL_MAP');
-  useEffect(() => {
-    localStorage.setItem( getLocalStorageNamespace() + 'panel-rearrangements', JSON.stringify(panelMap));
-  }, [panelMap]);
+  const [panelMap, setPanelMap] = stateHook();
 
   const [showMovers, setShowMovers] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -121,8 +117,8 @@ export function MovablePanels({children}) {
     if (!elementsRendered) {
       return;
     }
-    let insertTimes = 0;
-    console.time();
+    // let insertTimes = 0;
+    // console.time();
 
     for (const {current: areaEl} of Object.values(areaRefs.current)) {
       // Order should be on all elements, or none if no element was moved into the area.
@@ -152,7 +148,7 @@ export function MovablePanels({children}) {
           prevOrderIndexes.splice(spliceIndex, 0, [order, el]);
           const focusedEl = el.querySelector(':focus');
           areaEl.insertBefore(el, spliceEl);
-          insertTimes++;
+          // insertTimes++;
           if (focusedEl) {
             // If you drag an element downwards, it won't be moved itself, instead
             // other elements will be moved before it.
@@ -167,8 +163,8 @@ export function MovablePanels({children}) {
       }
 
     }
-    console.log(`Called insertBefore ${insertTimes} time${insertTimes === 1 ? '' : 's'}`)
-    console.timeEnd();
+    // console.log(`Called insertBefore ${insertTimes} time${insertTimes === 1 ? '' : 's'}`)
+    // console.timeEnd();
 
   }, [JSON.stringify(panelMap), elementsRendered, drawerOpen]);
 

@@ -32,10 +32,10 @@ import {CurrentTheme} from './ui/CurrentTheme';
 import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
 import { updateScopedVars } from '../initializeThemeEditor';
-import { UseEventExample } from './controls/SelectControl';
 import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
 import { TextControl } from './controls/TextControl';
+import { useLocallyStoredPanel } from '../hooks/useLocallyStoredPanel';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -48,28 +48,31 @@ export const ThemeEditor = (props) => {
     config,
     groups: unfilteredGroups,
     allVars,
+    defaultValues,
     lastInspectTime,
   } = props;
 
   const [openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   // Open first group.
-  // useLayoutEffect(() => {
-  //   if (openFirstOnInspect && unfilteredGroups.length > 0) {
-  //     setOpenGroups({
-  //       [unfilteredGroups[0].label]: true,
-  //     });
-  //   }
-  // }, [unfilteredGroups, openFirstOnInspect]);
+  useLayoutEffect(() => {
+    if (openFirstOnInspect && unfilteredGroups.length > 0) {
+      setOpenGroups(
+        {
+          [unfilteredGroups[0].label]: true,
+        },
+        { skipHistory: true }
+      );
+    }
+  }, [unfilteredGroups, openFirstOnInspect]);
 
   const [
     {
-      defaultValues,
       scopes,
       changeRequiresReset,
     },
     dispatch,
-  ] = useThemeEditor({allVars});
+  ] = useThemeEditor({allVars, defaultValues});
 
   const frameRef = useRef(null);
   const settings = useGlobalSettings(frameRef);
@@ -79,11 +82,6 @@ export const ThemeEditor = (props) => {
   }, [scopes]);
 
   useEffect(() => {
-    if (!frameRef.current) {
-      console.log('Frameref not ready')
-      return;
-    }
-    
     frameRef.current.contentWindow.postMessage(
       {
         type: 'set-scopes-styles',
@@ -173,7 +171,7 @@ export const ThemeEditor = (props) => {
       }}
     >
       <div className="theme-editor">
-        <MovablePanels>
+        <MovablePanels stateHook={useLocallyStoredPanel}>
           <div
             style={{
               display: 'flex',

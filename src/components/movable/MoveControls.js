@@ -1,5 +1,5 @@
 import React, {useMemo, useContext} from 'react';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { useLocalStorage, useResumableLocalStorage } from '../../hooks/useLocalStorage';
 import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
 import { ThemeEditorContext } from '../ThemeEditor';
@@ -17,7 +17,7 @@ export function MoveControls() {
     windowArrangments, setWindowArrangments,
   } = useContext(ThemeEditorContext);
 
-  const [inputName, setInputName] = useLocalStorage('panel-arrangements-name', '');
+  const [inputName, setInputName] = useResumableLocalStorage('panel-arrangements-name', '');
   const isIdenticalToExisting = useMemo(() => {
     return JSON.stringify(panelMap) === windowArrangments[inputName];
   }, [windowArrangments, panelMap, inputName]);
@@ -63,7 +63,7 @@ export function MoveControls() {
           value={isIdenticalToExisting ? inputName : ''}
           options={[
             { label: '', value: '' },
-            ...Object.entries(windowArrangments).map(([name]) => ({
+            ...Object.entries(windowArrangments).filter(([name])=>!name.toLowerCase().includes('prod')).map(([name]) => ({
               label: name,
               value: name,
             })),
