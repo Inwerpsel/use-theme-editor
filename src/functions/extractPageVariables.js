@@ -1,5 +1,4 @@
 // eslint-disable-next-line no-undef
-import { OVERRIDE_STYLES } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 
 // For now only extract from the same domain.

@@ -1,26 +1,26 @@
-import {useLocalStorage} from './useLocalStorage';
+import {useLocalStorage, useResumableLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
 
 export function useGlobalSettings(frameRef) {
   const [
     propertyFilter, setPropertyFilter,
-  ] = useLocalStorage('property-filter', 'all');
+  ] = useResumableLocalStorage('property-filter', 'all');
   const [
     propertySearch, setPropertySearch,
-  ] = useLocalStorage('property-search', '');
+  ] = useResumableLocalStorage('property-search', '');
   const [
     fileName, setFileName,
-  ] = useLocalStorage('theme-name', 'theme');
+  ] = useResumableLocalStorage('theme-name', 'theme');
   const [
     width, setWidth,
-  ] = useLocalStorage('responsive-width', 360);
+  ] = useResumableLocalStorage('responsive-width', 360);
   const [
     height, setHeight,
-  ] = useLocalStorage('responsive-height', 640);
+  ] = useResumableLocalStorage('responsive-height', 640);
   const [
     isSimpleSizes, setIsSimpleSizes,
-  ] = useLocalStorage('responsive-simple-sizes', true);
+  ] = useResumableLocalStorage('responsive-simple-sizes', true);
   const [
     frameClickBehavior, setFrameClickBehavior,
   ] = useLocalStorage('theme-editor-frame-click-behavior', 'any');

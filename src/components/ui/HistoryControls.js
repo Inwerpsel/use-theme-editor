@@ -1,4 +1,5 @@
 import React, { useContext, useState } from 'react';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { HistoryBack} from "./HistoryBack";
@@ -8,7 +9,7 @@ import { HistoryVisualization } from "./HistoryVisualization";
 export function HistoryControls() { 
     const { dispatch } = useContext(HistoryNavigateContext);
 
-    const [visualize, setVissualize] = useState(false);
+    const [visualize, setVissualize] = useLocalStorage('visualize-history', false);
 
     return (
       <div>
