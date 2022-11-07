@@ -184,8 +184,6 @@ export const VariableControl = (props) => {
     defaultValues[name] ||
     getValueFromDefaultScopes(elementScopes, cssVar);
 
-  const toggleOpen = () => setIsOpen(!isOpen);
-
   const [
     showSelectors, setShowSelectors
   ] = useState(false);
@@ -229,6 +227,8 @@ export const VariableControl = (props) => {
     isOpen, setIsOpen
     // Open all variables that refer to variables immediately.
   ] = useResumableState(initialOpen || (currentLevel > 0 && !!referencedVariable), key);
+
+  const toggleOpen = () => setIsOpen(!isOpen );
 
   const excludedVarName = parentVar?.name;
 

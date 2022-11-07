@@ -24,7 +24,6 @@ export function FrameScaleSlider() {
       <input
         type="range"
         value={scale}
-        initialPosition={scale}
         {...config}
         onChange={updateScales}
       />

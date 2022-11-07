@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-undef
+import { OVERRIDE_STYLES } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 
 // For now only extract from the same domain.
@@ -12,7 +13,7 @@ const warmupConsumers = sheets => sheets.map(sheet => getConsumer(sheet));
 
 const failedConsumers = [];
 const getConsumer = async sheetUrl => {
-  console.log(sheetUrl)
+  // console.log(sheetUrl)
   if (failedConsumers.includes(sheetUrl)) {
     return;
   }
@@ -22,7 +23,7 @@ const getConsumer = async sheetUrl => {
       let data = await (await fetch(mapUrl)).json();
       sourceMapConsumers[sheetUrl] = await new window.sourceMap.SourceMapConsumer(data);
     } catch (e) {
-      console.log(e);
+      // console.log(e);
       failedConsumers.push(sheetUrl);
       return;
     }
@@ -120,7 +121,7 @@ const isUsed = (vars,sheet) => {
 
 const warmup = async (vars, sheets) => {
   const filteredSheets = sheets.filter(s => s.href && isUsed(vars, s) && isSameDomain(s));
-  console.log(filteredSheets)
+  // console.log(filteredSheets)
   const promises = filteredSheets.map(sheet => {
     return [
       ...warmupConsumers([sheet.href]),

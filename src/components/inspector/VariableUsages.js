@@ -20,6 +20,10 @@ export const VariableUsages = ({usages, maxSpecificSelector, winningSelector}) =
     return true;
   })
 
+  if (usages.length === 1 && !usages[0].selector) {
+    return null;
+  }
+
   return <ul>
     {uniqueUsages.map(({property, selector, position}) => {
       const selectors = selector.split(',');
