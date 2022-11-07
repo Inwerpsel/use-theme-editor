@@ -6,24 +6,32 @@ import { SharedActionHistory } from './hooks/useResumableReducer';
 
 let root;
 
-export const renderSelectedVars = (rootElement, cssVars = [], lastTarget, groups, rawGroups, allVars, config) => {
-  const el = <SharedActionHistory>
+export const renderSelectedVars = (
+  rootElement,
+  cssVars = [],
+  lastTarget,
+  groups,
+  rawGroups,
+  allVars,
+  config,
+  defaultValues
+) => {
+  const el = (
+    <SharedActionHistory>
       <ThemeEditor
-        {...{config, groups, lastTarget, allVars}}
+        {...{ config, groups, lastTarget, allVars, defaultValues }}
         selectedVars={cssVars}
         lastInspectTime={performance.now()}
       />
-    </SharedActionHistory>;
+    </SharedActionHistory>
+  );
 
   if (createRoot) {
     if (!root) {
       root = createRoot(rootElement);
     }
-    root.render(el)
+    root.render(el);
     return;
   }
-  render(
-    el,
-    rootElement
-  );
+  render(el, rootElement);
 };

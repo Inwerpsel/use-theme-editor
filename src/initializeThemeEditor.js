@@ -6,6 +6,7 @@ import { extractPageVariables } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
 import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
+import { getAllDefaultValues } from './functions/getAllDefaultValues';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -84,7 +85,6 @@ export const setupThemeEditor = async (config) => {
 
   const editorRoot = document.createElement( 'div' );
 
-  updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
 
   if (!isRunningAsFrame) {
     editorRoot.id = 'theme-editor-root';
@@ -93,6 +93,7 @@ export const setupThemeEditor = async (config) => {
 
   await dependencyReady;
   const allVars = await extractPageVariables();
+  updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   const cssVars = allVars.reduce((cssVars, someVar) => [
     ...cssVars,
     ...(
@@ -102,11 +103,12 @@ export const setupThemeEditor = async (config) => {
       }]
     ),
   ], []);
+  const defaultValues = getAllDefaultValues(cssVars);
 
   if (!isRunningAsFrame) {
     const renderEmptyEditor = () => {
       document.documentElement.classList.add('hide-wp-admin-bar');
-      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config);
+      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config, defaultValues);
       // Since the original page can be accessed with a refresh, destroy it to save resources.
       destroyDoc();
     };
@@ -136,7 +138,16 @@ export const setupThemeEditor = async (config) => {
   window.addEventListener('message', event => {
     if (event.data.type === 'render-vars') {
       const { payload } = event.data;
-      renderSelectedVars(editorRoot, payload.matchedVars, null, payload.groups, payload.rawGroups, cssVars, config);
+      renderSelectedVars(
+        editorRoot,
+        payload.matchedVars,
+        null,
+        payload.groups,
+        payload.rawGroups,
+        cssVars,
+        config,
+        defaultValues
+      );
     }
   }, false);
 
@@ -155,7 +166,8 @@ export const setupThemeEditor = async (config) => {
         groups,
         rawGroups,
         cssVars,
-        config
+        config, 
+        defaultValues
       );
     } else {
       // It's not possible to send a message that includes a reference to a DOM element. 
