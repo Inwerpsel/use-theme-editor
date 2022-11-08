@@ -5,6 +5,40 @@ import {ThemeEditor} from './components/ThemeEditor';
 import { SharedActionHistory } from './hooks/useResumableReducer';
 
 let root;
+const size = 22;
+
+export const previewComponents = {
+  THEME_EDITOR: {
+    set: ({ payload: { scope, name, value } }) => (
+      <div>
+        {scope && <pre className='monospace-code'>{scope}</pre>}<br/>
+        <b>{name}</b> = {value}
+        <span
+          style={{
+            width: size,
+            height: size,
+            border: '1px solid black',
+            borderRadius: '6px',
+            backgroundImage: `${value}`,
+            backgroundColor: `${value}`,
+            backgroundRepeat: `no-repeat`,
+            backgroundSize: 'cover',
+            display: 'inline-block',
+            textShadow: 'white 0px 10px',
+            // backgroundSize: 'cover',
+          }}
+        ></span>
+      </div>
+    ),
+    unset: ({ payload: { scope, name } }) => (
+      <div>
+        {scope && <pre className='monospace-code'>{scope}</pre>}<br/>
+        
+        Set <b>{name}</b> to default 
+      </div>
+    )
+  },
+};
 
 export const renderSelectedVars = (
   rootElement,
@@ -17,7 +51,7 @@ export const renderSelectedVars = (
   defaultValues
 ) => {
   const el = (
-    <SharedActionHistory>
+    <SharedActionHistory {...{previewComponents}}>
       <ThemeEditor
         {...{ config, groups, lastTarget, allVars, defaultValues }}
         selectedVars={cssVars}

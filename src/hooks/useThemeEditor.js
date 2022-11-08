@@ -16,7 +16,7 @@ const DEFAULT_STATE = {
   scopes: {},
   // previewProps: {},
   // previewPseudoVars: {},
-  changeRequiresReset: false,
+  // changeRequiresReset: false,
 };
 
 // For some reason, updates using only `:root` resulted in more than double the amount
@@ -44,7 +44,7 @@ export const ACTIONS = {
 
     return {
       ...state,
-      changeRequiresReset : false,
+      // changeRequiresReset : false,
       scopes: {
         [scope]: newTheme,
         ...otherScopes,
@@ -68,7 +68,7 @@ export const ACTIONS = {
 
     return {
       ...state,
-      changeRequiresReset : false,
+      // changeRequiresReset : false,
       scopes: {
         ...scopes,
         [scope]: others,
@@ -149,7 +149,7 @@ export const ACTIONS = {
       scopes: isNewTheme ? theme.scopes : {
         [ROOT_SCOPE]: theme,
       },
-      changeRequiresReset : true,
+      // changeRequiresReset : true,
     };
   },
 };
@@ -157,7 +157,7 @@ export const ACTIONS = {
 const reducer = reducerOf(ACTIONS);
 
 export const useThemeEditor = ({ initialState = DEFAULT_STATE}) => {
-  const [{ scopes, changeRequiresReset }, dispatch] =
+  const [{ scopes  }, dispatch] =
     useResumableReducer(
       reducer,
       initialState,
@@ -178,7 +178,7 @@ export const useThemeEditor = ({ initialState = DEFAULT_STATE}) => {
   return [
     {
       scopes,
-      changeRequiresReset,
+      // changeRequiresReset,
     },
     dispatch,
   ];

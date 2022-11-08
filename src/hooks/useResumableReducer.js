@@ -100,10 +100,16 @@ function historyReducer(state, action) {
      };
     }
     case 'CLEAR_HISTORY': {
+      const currentlyInThePast = historyOffset > 0;
+      const baseStates = !currentlyInThePast ? states :  historyStack[historyStack.length - historyOffset].states;
+      const lastActions = !currentlyInThePast ? state.lastActions : historyStack[historyStack.length - historyOffset].lastActions;
+
       return {
         ...state,
         historyStack: [],
         historyOffset: 0,
+        states: baseStates,
+        lastActions,
         // direction: 'forward'
       };
     }
@@ -118,28 +124,29 @@ function historyReducer(state, action) {
       const baseStates = !currentlyInThePast
         ? states
         : historyStack[baseIndex].states;
+      const {lastActions} = !currentlyInThePast ? state : historyStack[baseIndex];
 
       const performedAction = action.payload.action;
       const newState = forwardedReducer(
         id in baseStates ? baseStates[id] : state.initialStates[id],
         performedAction
       );
+      // const isNowDefaultState = newState === state.initialStates[id];
+      // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
+      // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
       const now = performance.now();
       const slowEnough =
-        !state.lastSet || now - state.lastSet > 300;
+        !state.lastSet || now - state.lastSet > 500;
       const skipHistory = !slowEnough || action.options.skipHistory;
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
-      if (skippedHistoryNowSameAsPrevious) {
-        console.log('skipHistoryNowSameAsPrevious', action);
-      }
 
       // Uses || skipHistory to take the cheapest path when prevHistory is not used.
       const prevHistory =
         !currentlyInThePast || skipHistory
           ? historyStack
-          : historyStack.slice(0, historyStack.length - 1 * historyOffset);
+          : historyStack.slice(0, -historyOffset);
 
       return {
         ...state,
@@ -151,13 +158,13 @@ function historyReducer(state, action) {
         historyOffset: skipHistory ? historyOffset : 0,
         historyStack: skipHistory
           ? skippedHistoryNowSameAsPrevious
-            ? historyStack.slice(0, -1 - historyOffset)
+            ? historyStack.slice(0, -1)
             : historyStack
           : [
               ...prevHistory,
               {
-                states,
-                lastActions: state.lastActions,
+                states: baseStates,
+                lastActions,
               },
             ],
         currentId: id,
@@ -331,7 +338,7 @@ const subscribe = (id) => (notify) => {
 };
 
 export function SharedActionHistory(props) {
-  const { children } = props;
+  const { previewComponents, children } = props;
   const [,forceRender] = useState();
 
   const {
@@ -368,7 +375,8 @@ export function SharedActionHistory(props) {
       lastActions,
       dispatch,
       states,
-      currentStates,
+      currentStates, 
+      previewComponents,
     }),
     [historyStack, historyOffset, currentId, lastActions, states]
   );

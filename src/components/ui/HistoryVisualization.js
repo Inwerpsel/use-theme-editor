@@ -13,6 +13,9 @@ function getName(action) {
 
 function ActionList(props) {
   const {actions, showPayloads} = props;
+  const {
+      previewComponents,
+  } = useContext(HistoryNavigateContext);
 
   return (
     <ul>
@@ -27,18 +30,32 @@ function ActionList(props) {
 
         const name = !isFromReducer ? '' : '::' + getName(action);
         const isPayloadLess = value === '{}';
-        const isShortString = typeof value === 'number' || value.length < 40;
+        const isShortString = !isFromReducer && (typeof value === 'boolean' || typeof value === 'number' || value.length < 40);
+
+        const previews = previewComponents[id];
+        const Preview =
+          typeof previews === 'function'
+            ? previews
+            : !(id in previewComponents)
+            ? null
+            : previewComponents[id][getName(action)];
 
         return (
           <li {...{ key }}>
-            <b>{id}</b>{name}{isShortString && <pre style={{marginBottom: 0}} className="monospace-code">
-                {value}
-              </pre>}<br/> 
-            {!isPayloadLess && showPayloads && !isShortString && (
-              <pre className="monospace-code">
-                {value}
+            <b>{id}</b>
+            {name}
+            <br />
+            {isShortString && (
+              <pre style={{ marginBottom: 0 }} className="monospace-code">
+                {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
+            {!isPayloadLess && showPayloads && !isShortString && (
+              <pre className="monospace-code">
+                {value === false ? 'false' : value === true ? 'true' : value}
+              </pre>
+            )}
+            {Preview && <Preview payload={action.payload} />}
           </li>
         );
       })}
@@ -58,7 +75,7 @@ export function HistoryVisualization() {
   const currentIndex = historyStack.length - historyOffset;
 
   return (
-    <div>
+    <div className='history'>
       <Checkbox controls={[showJson, setShowJson]}>
         Inspect current state
       </Checkbox>
@@ -73,7 +90,7 @@ export function HistoryVisualization() {
       )}
 
       <h2>History</h2>
-      <ul>
+      <ul style={{display: 'flex', flexDirection: 'column-reverse'}}>
         {historyStack.map(({ lastActions, states }, index) => {
           return (
             <li
@@ -86,12 +103,12 @@ export function HistoryVisualization() {
             </li>
           );
         })}
-          <li key={Math.random()} style={{
-                border: historyOffset === 0 ? '2px solid yellow' : 'none',
-          }}>
-            LATEST
-            <ActionList actions={Object.entries(lastActions)} {...{showPayloads}}/>
-          </li>
+        <li key={Math.random()} style={{
+              border: historyOffset === 0 ? '2px solid yellow' : '2px solid black',
+        }}>
+          LATEST
+          <ActionList actions={Object.entries(lastActions)} {...{showPayloads}}/>
+        </li>
       </ul>
     </div>
   );

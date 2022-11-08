@@ -63,10 +63,12 @@ export function MoveControls() {
           value={isIdenticalToExisting ? inputName : ''}
           options={[
             { label: '', value: '' },
-            ...Object.entries(windowArrangments).filter(([name])=>!name.toLowerCase().includes('prod')).map(([name]) => ({
-              label: name,
-              value: name,
-            })),
+            ...Object.entries(windowArrangments)
+              // .filter(([name]) => !name.toLowerCase().includes('prod'))
+              .map(([name]) => ({
+                label: name,
+                value: name,
+              })),
           ]}
           onChange={(name) => {
             setInputName(name);

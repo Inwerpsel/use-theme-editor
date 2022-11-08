@@ -44,7 +44,7 @@ export const ServerThemesListItem = props => {
         if (modifiedServerVersion && !confirm('You have some local changes that are not on the server. Cancel if you want to save changes.')) {
           return;
         }
-        setFileName(name);
+        name !== fileName && setFileName(name);
         dispatch({type: ACTIONS.loadTheme, payload: {theme: serverTheme}});
       }}
     >{fileName === name ? 'Reset' : 'Switch'}
