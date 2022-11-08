@@ -36,6 +36,7 @@ import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
 import { TextControl } from './controls/TextControl';
 import { useLocallyStoredPanel } from '../hooks/useLocallyStoredPanel';
+import { useInsertionEffect } from 'react';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -69,7 +70,7 @@ export const ThemeEditor = (props) => {
   const [
     {
       scopes,
-      changeRequiresReset,
+      // changeRequiresReset,
     },
     dispatch,
   ] = useThemeEditor({allVars, defaultValues});
@@ -77,7 +78,7 @@ export const ThemeEditor = (props) => {
   const frameRef = useRef(null);
   const settings = useGlobalSettings(frameRef);
 
-  useLayoutEffect(() => {
+  useInsertionEffect(() => {
     updateScopedVars(scopes, true);
   }, [scopes]);
 

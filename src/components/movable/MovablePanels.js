@@ -1,4 +1,5 @@
 import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import { useInsertionEffect } from 'react';
 import { getLocalStorageNamespace } from '../../functions/getLocalStorageNamespace';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import { useResumableState } from '../../hooks/useResumableReducer';
@@ -106,7 +107,7 @@ export function MovablePanels({stateHook, children}) {
     setElementsRendered(true);
   }, [areasRendered]);
 
-  useLayoutEffect(() => {
+  useInsertionEffect(() => {
     // Reorder the elements according to their `order` property.
     // Elements are assumed to be properly ordered by the panelmap with no duplicate indexes.
     // Should work as React also doesn't care multiple elements are portaling to the same element.
