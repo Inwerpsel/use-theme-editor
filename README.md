@@ -14,6 +14,15 @@ with no configuration needed to add a new setting.
 * Reposition or hide any UI element with drag and drop
 
 ## Status
+The theme editor should be usable in its current form, though given many features are currently under active development,
+some features temporarily don't work or work improperly. This can break some use cases.
+
+## Known issues
+- Current theme view not working (needs adaptation to selector scoped properties)
+- Expanded option of screen switcher not working
+- Edits not working on pages that use multiple root scope selectors
+- Equally specific (and so order dependent) selectors override too much (e.g. Bootstrap .btn background will override .btn-primary)
+- Multiple issues with `:where` and similar selectors
 
 ### STALLED
 - Facilitate other variables as a value
