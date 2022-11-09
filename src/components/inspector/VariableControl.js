@@ -23,7 +23,7 @@ const format = name => {
   const parts = raw.split(':');
 
   return [
-    parts.slice(0, parts.length - 1).join(' — '),
+    parts.slice(0, - 1).join(' — '),
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };

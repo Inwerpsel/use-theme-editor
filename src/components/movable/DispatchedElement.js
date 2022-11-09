@@ -149,7 +149,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
         <div
           style={{ zIndex: 1000 }}
           className={classnames('dropzone', {
-            ' drag-hovered': isDragHovered ,
+            'drag-hovered': isDragHovered ,
           })}
           onDragEnter={() => {
             timeoutRef.current.lastEntered = elementId;
