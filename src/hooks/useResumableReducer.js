@@ -1,9 +1,14 @@
-import React, { useState } from 'react';
-import { useSyncExternalStore } from 'react';
-import { createContext, useCallback, useLayoutEffect, useMemo } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useLayoutEffect,
+  useMemo,
+  useState,
+  useSyncExternalStore,
+  useId,
+} from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { hotkeysOptions } from '../components/ThemeEditor';
-import { useId } from './useId';
 
 export const SharedHistoryContext = createContext({});
 
@@ -41,7 +46,7 @@ function historyReducer(state, action) {
       // These are assumed to be unique.
       if (id in states) {
         return state;
-      };
+      }
 
       return {
         ...state,
@@ -84,7 +89,7 @@ function historyReducer(state, action) {
         oldStates,
         historyOffset: historyOffset + amount,
         // direction: 'backward',
-     };
+      };
     }
     case 'HISTORY_FORWARD': {
       if (historyOffset === 0) {
@@ -97,7 +102,7 @@ function historyReducer(state, action) {
         historyOffset: newOffset,
         oldStates: historyStack[historyStack.length - historyOffset],
         // direction: 'forward',
-     };
+      };
     }
     case 'CLEAR_HISTORY': {
       const currentlyInThePast = historyOffset > 0;
@@ -236,7 +241,7 @@ if (USE_BROWSER_HISTORY) {
 // const newLayoutEffects = new Set();
 
 const historyDispatch = (action) => {
-  state = historyReducer(state, action); 
+  state = historyReducer(state, action);
   const {states, oldStates,  historyOffset, historyStack } = state;
 
   currentStates =
@@ -290,7 +295,7 @@ const historyDispatch = (action) => {
   // const removed = [];
   // const diff = [];
   // const same = [];
-  // Not sure if it's good to keep all initial states but it's needed 
+  // Not sure if it's good to keep all initial states but it's needed
   // to avoid populating the state with initial values.
   for (const id in state.initialStates) {
     // For this to work it's important that unchanged state members
@@ -375,7 +380,7 @@ export function SharedActionHistory(props) {
       lastActions,
       dispatch,
       states,
-      currentStates, 
+      currentStates,
       previewComponents,
     }),
     [historyStack, historyOffset, currentId, lastActions, states]

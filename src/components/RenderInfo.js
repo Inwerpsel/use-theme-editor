@@ -1,5 +1,10 @@
-import React, {useEffect, useLayoutEffect, useRef, useState} from 'react';
-import {generateId, useId} from '../hooks/useId';
+import React, {
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+  useId,
+} from 'react';
 
 const stats = {};
 const handles = {};
@@ -55,6 +60,6 @@ export function RenderInfo() {
   }
 
   return <span className={'render-info'} style={{'--current-renders': `${renderCount.current}`}}>
-    [{renderCount.current}] {Math.round(performance.now())}
+      [{renderCount.current}] {Math.round(performance.now())}
   </span>;
 }

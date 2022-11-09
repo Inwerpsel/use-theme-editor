@@ -1,10 +1,13 @@
 import React, { useState, useContext } from "react";
-import { generateId } from "../../hooks/useId";
 import { Checkbox } from "../controls/Checkbox";
 import { useCompactSetting } from "../movable/DispatchedElement";
 import { DragHandle } from "../movable/DragHandle";
 import { ThemeEditorContext } from "../ThemeEditor";
 import { CompactModeButton } from "./CompactModeButton";
+
+function generateId () {
+  return '_' + Math.random().toString(36).substr(2, 9);
+}
 
 function addReplacement(replacements, newEntry) {
     return [

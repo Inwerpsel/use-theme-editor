@@ -1,13 +1,19 @@
-import React, {Fragment, useContext, useEffect, useMemo, useState} from 'react';
+import React, {
+  Fragment,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  useId,
+} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
-import {useId} from '../../hooks/useId';
 import { allStateSelectorsRegexp, residualNotRegexp } from '../../functions/getMatchingVars';
 
 function removeStateSelectors(selector) {
   return selector
-  .replaceAll(allStateSelectorsRegexp, '')
-  .replaceAll(/:?:(before|after)/g, '')
-  .replaceAll(residualNotRegexp, '')
+    .replaceAll(allStateSelectorsRegexp, '')
+    .replaceAll(/:?:(before|after)/g, '')
+    .replaceAll(residualNotRegexp, '')
   .trim()
 }
 
@@ -72,15 +78,15 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
     }
     return <Fragment>
       {showLabel && <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n').trim()}</div>}
-      
-      <span>No elements found!</span>
-      {children}
+
+        <span>No elements found!</span>
+        {children}
     </Fragment>;
   }
 
   if (hideIfOne && elements.length === 1) {
-  // If the locator is shown in the context of a selected element,
-  // it should be the same one if it's the only result.
+    // If the locator is shown in the context of a selected element,
+    // it should be the same one if it's the only result.
     return null;
   }
 
@@ -104,18 +110,18 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
         <div style={{flexShrink: 0}}>
           {elements.length > 0 && <button
             className='scroll-in-view'
-            onClick={() => {
-              frameRef.current?.contentWindow.postMessage(
-                {
-                  type: 'scroll-in-view',
-                  payload: {
-                    selector: strippedSelector,
-                    index: currentElement,
+              onClick={() => {
+                frameRef.current?.contentWindow.postMessage(
+                  {
+                    type: 'scroll-in-view',
+                    payload: {
+                      selector: strippedSelector,
+                      index: currentElement,
+                    },
                   },
-                },
-                window.location.href
-              );
-            }}
+                  window.location.href
+                );
+              }}
           >👁
           </button>}
           
