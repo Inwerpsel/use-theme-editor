@@ -132,9 +132,10 @@ function historyReducer(state, action) {
       const {lastActions} = !currentlyInThePast ? state : historyStack[baseIndex];
 
       const performedAction = action.payload.action;
+      const baseState = id in baseStates ? baseStates[id] : state.initialStates[id];
       const newState = forwardedReducer(
-        id in baseStates ? baseStates[id] : state.initialStates[id],
-        performedAction
+        baseState,
+        typeof performedAction === 'function ' ? performedAction(baseState) : performedAction
       );
       // const isNowDefaultState = newState === state.initialStates[id];
       // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
@@ -192,8 +193,6 @@ let currentStates = state.states;
 let forceHistoryRender = () => {};
 
 const notifiers = {};
-// const effects = {};
-// const layoutEffects = {};
 
 const USE_BROWSER_HISTORY = false;
 
@@ -237,10 +236,9 @@ if (USE_BROWSER_HISTORY) {
   };
 }
 
-// const newEffects = new Set();
-// const newLayoutEffects = new Set();
-
+// const dispatchTimes = {};
 const historyDispatch = (action) => {
+  // const start = performance.now();
   state = historyReducer(state, action);
   const {states, oldStates,  historyOffset, historyStack } = state;
 
@@ -317,10 +315,18 @@ const historyDispatch = (action) => {
     // }
     if (changed) {
       notifiers[id]?.forEach((n) => n());
-      // effects[id]?.forEach(effect => newEffects.add(effect));
-      // layoutEffects[id]?.forEach(effect => newLayoutEffects.add(effect));
     }
   }
+  // const duration = performance.now() - start;
+  // const key = `${action.payload?.id || action.type}~${
+  //   action.payload?.action?.type?.name || action.payload?.action?.type || ''
+  // }`;
+  // if (!dispatchTimes[key]) {
+  //   dispatchTimes[key] = [];
+  // }
+  // dispatchTimes[key].push(duration);
+  // console.log(dispatchTimes);
+  
   // console.log(JSON.parse(JSON.stringify(oldStates)), JSON.parse(JSON.stringify(currentStates)) );
   // console.log('neither', neither);
   // console.log('added', added);
@@ -385,20 +391,6 @@ export function SharedActionHistory(props) {
     }),
     [historyStack, historyOffset, currentId, lastActions, states]
   );
-
-  // useLayoutEffect(() => {
-  //   const cleanups = newLayoutEffects.map(effect => effect());
-  //   return () => {
-  //     cleanups.forEach((cleanup) => typeof cleanup === 'function' && cleanup());
-  //   }
-  // });
-
-  // useEffect(() => {
-  //   const cleanups = newEffects.map(effect => effect());
-  //   return () => {
-  //     cleanups.forEach((cleanup) => typeof cleanup === 'function' && cleanup());
-  //   }
-  // });
 
   useLayoutEffect(() => {
     forceHistoryRender = () => forceRender({});
@@ -474,30 +466,3 @@ export function useResumableState(initial = null, id) {
     id
   );
 }
-
-
-// export function useHistoryEffect(key, effect) {
-//   if (!effects[id]) {
-//     effects[id] = new Set();
-//   }
-//   effects[id].add(effect);
-//   return () => {
-//     effects[id].delete(effect);
-//     if (effects[id].size === 0) {
-//       delete effects[id];
-//     }
-//   };
-// }
-
-// export function useHistoryLayoutEffect(id, effect = state => {}) {
-//   if (!layoutEffects[id]) {
-//     layoutEffects[id] = new Set();
-//   }
-//   layoutEffects[id].add(effect);
-//   return () => {
-//     layoutEffects[id].delete(effect);
-//     if (layoutEffects[id].size === 0) {
-//       delete layoutEffects[id];
-//     }
-//   };
-// }
