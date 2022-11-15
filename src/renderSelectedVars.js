@@ -34,7 +34,7 @@ export const previewComponents = {
       <div>
         {scope && <pre className='monospace-code'>{scope}</pre>}<br/>
         
-        Set <b>{name}</b> to default 
+        <b>{name}</b> = default 
       </div>
     )
   },

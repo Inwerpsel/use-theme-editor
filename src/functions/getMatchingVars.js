@@ -2,11 +2,10 @@ export const allStateSelectorsRegexp = /:(active|focus(-(visible|within))?|visit
 
 export const residualNotRegexp = /:not\([\s,\*]*\)/g;
 
-const matchVar = (cssVar, target) => {
-  const combinedSelector = cssVar.uniqueSelectors.map(selector => {
-    const isBodySelector = !!selector.match(/^body(\.[\w-]*)?$/);
-    const isRootSelector = selector.trim() === ':root';
-    const isGlobalSelector = isBodySelector || isRootSelector;
+function includeDescendants(selector) {
+    // const isBodySelector = !!selector.match(/^body(\.[\w-]*)?$/);
+    // const isRootSelector = selector.trim() === ':root';
+    // const isGlobalSelector = isBodySelector || isRootSelector;
 
     // if (!isRootSelector && /^:/.test(selector)) {
     //   // Quick hack. These are filtered below.
@@ -15,27 +14,33 @@ const matchVar = (cssVar, target) => {
 
     // Prevent body selector from always showing up, unless a body or paragraph was clicked.
     // const shouldIncludeStar = !isGlobalSelector || ['p', 'body', 'h'].includes(target.tagName?.toLowerCase().replace(/\d$/, ''));
-    const shouldIncludeStar = true;
+    // const shouldIncludeStar = true;
 
-    return `${selector}${!shouldIncludeStar ? '' : `, ${selector.replace(',', ' *,')} *`}`;
     // Remove any pseudo selectors that might not match the clicked element right now.
-  }).filter(v => v).join().replace(allStateSelectorsRegexp, '').replace(/:?:(before|after|first\-letter)/g, '');
+    return `${selector}, ${selector.replace(',', ' *,')} *`;
+}
 
-
-  if (combinedSelector === '') {
-    return false;
-  }
-
+function matchVar (cssVar, target) {
   if (typeof target.matches !== 'function') {
     return false;
   }
 
+  const combinedSelector = cssVar.uniqueSelectors
+    .map(includeDescendants)
+    .join();
+
   const cleanedSelector = combinedSelector
+    .replace(allStateSelectorsRegexp, '')
+    .replace(/:?:(before|after|first\-letter)/g, '')
     .replaceAll(residualNotRegexp, '')
     .trim()
     .replace(/^,/, '')
     .replace(/,$/, '')
     .replaceAll(/,(\s*,)+/g, ',');
+
+  if (combinedSelector === '') {
+    return false;
+  }
 
   try {
     // Remove residual empty not-selectors after removing pseudo states.

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react';
-import { HistoryNavigateContext, SharedHistoryContext } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 
 function getName(action) {
@@ -44,9 +44,8 @@ function ActionList(props) {
           <li {...{ key }}>
             <b>{id}</b>
             {name}
-            <br />
             {isShortString && (
-              <pre style={{ marginBottom: 0 }} className="monospace-code">
+              <pre style={{ margin: 0, float: 'right' }} className="monospace-code">
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
@@ -94,7 +93,7 @@ export function HistoryVisualization() {
         {historyStack.map(({ lastActions, states }, index) => {
           return (
             <li
-              key={Math.random()}
+              key={index}
               style={{
                 border: index === currentIndex ? '2px solid yellow' : '2px solid black',
               }}
@@ -103,7 +102,7 @@ export function HistoryVisualization() {
             </li>
           );
         })}
-        <li key={Math.random()} style={{
+        <li key={'latest'} style={{
               border: historyOffset === 0 ? '2px solid yellow' : '2px solid black',
         }}>
           LATEST

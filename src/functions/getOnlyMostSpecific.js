@@ -120,7 +120,7 @@ const groupByMediaQueries = (all, usage) => {
 export const getOnlyMostSpecific = (vars, element) => {
   // Reduce to an object, then back to array. Easier to work with for this purpose.
   const varsWithOnlyMediaQueries = {};
-  const specificVars = vars.reduce((specificVars, cssVar)=> {
+  const specificVars = vars.reduce((specificVars, cssVar) => {
     const byMediaQueries = cssVar.usages.reduce(groupByMediaQueries, {all: []});
 
     let found = false;
@@ -183,8 +183,8 @@ export const getOnlyMostSpecific = (vars, element) => {
           return u.property === maxSpecific.property 
             && u.defaultValue
             && (
-              u.defaultValue.replaceAll(/var\(\s+/g, 'var(').includes(`var(${cssVar.name},`)
-              || u.defaultValue.replaceAll(/var\(\s+/g, 'var(').includes(`var(${cssVar.name})`)
+              u.defaultValue.includes(`var(${cssVar.name},`)
+              || u.defaultValue.includes(`var(${cssVar.name})`)
             )
         })) {
           const comparedUsage = getMaxMatchingSpecificity([specificVars[propName].maxSpecific, maxSpecific], element);

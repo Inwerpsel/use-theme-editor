@@ -1,10 +1,15 @@
 import React, { useCallback, useRef } from "react";
 
+function selectOption(o) {
+  return (
+    <option key={o.value} value={o.value}>
+      {o.label}
+    </option>
+  );
+}
+
 export function SelectControl(props) {
     const { value, options = [], onChange: propsOnChange } = props;
-
-    const latestHandlerRef = useRef();
-    latestHandlerRef.current = propsOnChange;
 
     const onChange = useCallback(e => {
         // latestHandlerRef.current(e.target.value);
@@ -12,10 +17,6 @@ export function SelectControl(props) {
     }, [])
 
     return (
-      <select {...{ value, onChange }}>
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
-      </select>
+      <select {...{ value, onChange }}>{options.map(selectOption)}</select>
     );
 }
