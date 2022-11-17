@@ -37,6 +37,7 @@ import { useResumableState } from '../hooks/useResumableReducer';
 import { TextControl } from './controls/TextControl';
 import { useLocallyStoredPanel } from '../hooks/useLocallyStoredPanel';
 import { useInsertionEffect } from 'react';
+import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -77,6 +78,7 @@ export const ThemeEditor = (props) => {
   ] = useThemeEditor({allVars, defaultValues});
 
   const frameRef = useRef(null);
+  const scrollFrameRef = useRef(null);
   const settings = useGlobalSettings(frameRef);
 
   useInsertionEffect(() => {
@@ -85,6 +87,14 @@ export const ThemeEditor = (props) => {
 
   useEffect(() => {
     frameRef.current.contentWindow.postMessage(
+      {
+        type: 'set-scopes-styles',
+        payload: { scopes, resetAll: true },
+      },
+      window.location.origin,
+      );
+    
+    scrollFrameRef.current?.contentWindow.postMessage(
       {
         type: 'set-scopes-styles',
         payload: { scopes, resetAll: true },
@@ -150,6 +160,7 @@ export const ThemeEditor = (props) => {
     () => extractColorUsages(scopes[ROOT_SCOPE], !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
     [scopes, defaultValues, useDefaultsPalette],
   );
+  const[fullPagePreview, setFullPagePreview]  = useLocalStorage('full-page-preview', false)
 
   return (
     <ThemeEditorContext.Provider
@@ -158,6 +169,7 @@ export const ThemeEditor = (props) => {
         dispatch,
         defaultValues,
         frameRef,
+        scrollFrameRef,
         screenOptions,
         serverThemes,
         serverThemesLoading,
@@ -248,6 +260,9 @@ export const ThemeEditor = (props) => {
               <HistoryControls />
             </Area>
             <ResizableFrame src={window.location.href} />
+            {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
+            {/* <SmallFullHeightFrame src={window.location.href} /> */}
+            
             <Area id="area-right">
               <div>{sheetsDisablerDisplayed && <StylesheetDisabler />}</div>
               <div>{importDisplayed && <ImportExportTools />}</div>
@@ -285,6 +300,11 @@ export const ThemeEditor = (props) => {
               {/* <ExampleTabs/> */}
               <NameReplacements/>
               <div>
+                <Checkbox
+                  id={'full-page-preview'}
+                  controls={[fullPagePreview, setFullPagePreview]}
+                  title='This does not work properly for pages that have different styles based on screen height.'
+                >Scroll preview</Checkbox>
                 <Checkbox
                   id={'remove-css-properties'}
                   controls={[openFirstOnInspect, setOpenFirstOnInspect]}

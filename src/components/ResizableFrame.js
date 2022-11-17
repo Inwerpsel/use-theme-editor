@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -16,26 +16,6 @@ export const ResizableFrame = props => {
     setHeight,
     scale,
   } = useContext(ThemeEditorContext);
-
-  useEffect(() => {
-    const orig = document.body.style.maxHeight;
-    const scrollPosition = window.scrollY;
-    document.body.style.top = `-${ scrollPosition }px`;
-    document.body.style.postition = 'sticky';
-    document.body.style.maxHeight = '100vh';
-
-    return () => {
-      document.body.style.maxHeight = orig;
-      document.body.style.position = 'static';
-      document.body.style.top = '0';
-      window.scrollTo(0, scrollPosition);
-      window.scrollTo({
-        top: scrollPosition,
-        behavior: 'auto'
-      });
-
-    };
-  }, []);
 
   return <div
       style={{
