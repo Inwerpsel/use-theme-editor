@@ -69,6 +69,17 @@ export function DispatchedElement({homeAreaId, element, index}) {
   // Allow dragging individually if not generally enabled in MovablePanels.
   const [forceDrag, setForceDrag] = useState(false);
 
+  const context = useMemo(
+    () => ({
+      homeAreaId,
+      elementId,
+      hostAreaId,
+      forceDrag,
+      setForceDrag,
+    }),
+    [hostAreaId, forceDrag]
+  );
+
   if (!drawerOpen && (hostAreaId || homeAreaId) === 'drawer') {
     return null;
   }
@@ -83,7 +94,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
       {...{draggable}}
       style={{
         position: 'relative',
-        order: order || '',
+        order: order || null,
       }}
       title={!dragEnabled ? null : elementId}
       className={classnames('dispatched-element', { 'is-dragged': isDragged })}
@@ -133,12 +144,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
       )}
 
       <DispatchedElementContext.Provider
-        value={{
-          homeAreaId,
-          elementId,
-          hostAreaId,
-          forceDrag, setForceDrag,
-        }}
+        value={context}
       >
         {element}
       </DispatchedElementContext.Provider>

@@ -1,6 +1,5 @@
-import React, {createContext, useEffect, useLayoutEffect, useRef, useState} from 'react';
+import React, {createContext, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import { useInsertionEffect } from 'react';
-import { getLocalStorageNamespace } from '../../functions/getLocalStorageNamespace';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import { useResumableState } from '../../hooks/useResumableReducer';
 
@@ -57,7 +56,19 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
   );
 };
 
-export function MovablePanels({stateHook, children}) {
+export const defaultHooks = {
+  showMovers() {
+    return useState(false);
+  },
+  drawerOpen() {
+    return useResumableState(false, 'drawer-open');
+  },
+  dragEnabled() {
+    return useLocalStorage('drag-on', false);
+  }
+};
+
+export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
   const areaRefs = useRef({});
   const origLocationsRef = useRef({});
 
@@ -66,22 +77,20 @@ export function MovablePanels({stateHook, children}) {
   const [draggedElement, setDraggedElement] = useState(null);
   const [panelMap, setPanelMap] = stateHook();
 
-  const [showMovers, setShowMovers] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [dragEnabled, setDragEnabled] = useLocalStorage('drag-on', false);
+  const [showMovers, setShowMovers] = hooks.showMovers();
+  const [drawerOpen, setDrawerOpen] = hooks.drawerOpen();
+  const [dragEnabled, setDragEnabled] = hooks.dragEnabled();
 
-  const movePanelTo = (id, areaId, overElementId) => {
-    if (overElement) {
-      setOverElement(null);
-    }
+  const movePanelTo = useCallback((id, areaId, overElementId) => {
+    setOverElement(null);
 
     // Create initial area order if the area wasn't used before.
     if (!Object.values(panelMap).some(([otherAreaId]) => otherAreaId === areaId)) {
       let i = 0;
       Object.entries(origLocationsRef.current).forEach(([element, area]) => {
-        if (area === areaId && !panelMap[element]) {
-          i += 1;
+        if (area === areaId && !(element in panelMap)) {
           panelMap[element] = [area, i];
+          i += 1;
         }
       });
     }
@@ -89,7 +98,7 @@ export function MovablePanels({stateHook, children}) {
     const newPanelMap = updateElementLocation(panelMap, id, areaId, overElementId);
 
     setPanelMap(newPanelMap);
-  };
+  }, [panelMap]);
 
   // A 3 pass render is needed. Should not involve overhead.
   // Contained elements won't get rendered more than once.
@@ -118,9 +127,16 @@ export function MovablePanels({stateHook, children}) {
     if (!elementsRendered) {
       return;
     }
-    // let insertTimes = 0;
-    // console.time();
 
+    // console.time('Rectify order');
+
+    // Naive algorithm for moving elements to the right position.
+    // Performs poorly when moving down, it moves all other elements
+    // individually above the moved element.
+    // The impact of this (around 2ms for moving 20 places down) is still rather limited
+    // as it only occurs when moving an element across a large distance (and down).
+    // Moving up is always 1 operation.
+    // Moving between completely different arrangements is also accounted for.
     for (const {current: areaEl} of Object.values(areaRefs.current)) {
       // Order should be on all elements, or none if no element was moved into the area.
       // Hence we only need to check the first.
@@ -147,9 +163,8 @@ export function MovablePanels({stateHook, children}) {
           prevOrderIndexes.push([order, el]);
         } else {
           prevOrderIndexes.splice(spliceIndex, 0, [order, el]);
-          const focusedEl = el.querySelector(':focus');
           areaEl.insertBefore(el, spliceEl);
-          // insertTimes++;
+          const focusedEl = el.querySelector(':focus');
           if (focusedEl) {
             // If you drag an element downwards, it won't be moved itself, instead
             // other elements will be moved before it.
@@ -164,9 +179,8 @@ export function MovablePanels({stateHook, children}) {
       }
 
     }
-    // console.log(`Called insertBefore ${insertTimes} time${insertTimes === 1 ? '' : 's'}`)
-    // console.timeEnd();
 
+    // console.timeEnd('Rectify order');
   }, [JSON.stringify(panelMap), elementsRendered, drawerOpen]);
 
   const resetPanels = () => {
