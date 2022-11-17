@@ -2,6 +2,14 @@ import React, {Fragment, useContext, useRef} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {useHotkeys} from 'react-hotkeys-hook';
 
+const zKey = 90;
+
+function preventUndoRedo(e) {
+  if ((e.keyCode == zKey && e.ctrlKey)) {
+    e.preventDefault();
+    return false;
+  }
+}
 export function PropertySearch() {
   const {
     propertySearch: value,
@@ -16,6 +24,7 @@ export function PropertySearch() {
 
   return <Fragment>
     <input
+      onKeyDown={preventUndoRedo}
       style={{
         marginRight: !value ? '4px' : '24px',
         flexShrink: 1,
