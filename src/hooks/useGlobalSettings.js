@@ -50,7 +50,7 @@ export function useGlobalSettings(frameRef) {
   const [
     scales,
     setScales,
-  ] = useLocalStorage('responsive-scales', {});
+  ] = useResumableLocalStorage('responsive-scales', {});
   const scale = scales[`${width}x${height}`] || 1;
 
   const [annoyingPrefix, setAnnoyingPrefix] = useLocalStorage(

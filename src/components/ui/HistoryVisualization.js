@@ -42,8 +42,9 @@ function ActionList(props) {
 
         return (
           <li {...{ key }}>
-            <b>{id}</b>
-            {name}
+            {!Preview && <span><b>{id}</b>{name}</span>}
+            
+            
             {isShortString && (
               <pre style={{ margin: 0, float: 'right' }} className="monospace-code">
                 {value === false ? 'false' : value === true ? 'true' : value}
