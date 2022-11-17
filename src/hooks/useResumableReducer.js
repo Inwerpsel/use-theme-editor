@@ -10,8 +10,6 @@ import React, {
 import { useHotkeys } from 'react-hotkeys-hook';
 import { hotkeysOptions } from '../components/ThemeEditor';
 
-export const SharedHistoryContext = createContext({});
-
 export const HistoryNavigateContext = createContext({});
 
 const emptyState = {};
@@ -35,7 +33,7 @@ const INITIAL_STATE = {
 };
 
 function historyReducer(state, action) {
-  const { states,  historyStack, historyOffset } = state;
+  const { states, historyStack, historyOffset } = state;
   const {
     payload: { id, reducer, initialState, amount = 1 } = {},
   } = action;
@@ -64,20 +62,20 @@ function historyReducer(state, action) {
         },
       };
     }
-    case 'REMOVE_REDUCER': {
-      const { [id]: old, ...otherReducers } = state.reducers;
+    // case 'REMOVE_REDUCER': {
+    //   const { [id]: old, ...otherReducers } = state.reducers;
 
-      return {
-        ...state,
-        reducers: otherReducers,
-      };
-    }
+    //   return {
+    //     ...state,
+    //     reducers: otherReducers,
+    //   };
+    // }
     case 'HISTORY_BACKWARD': {
-      if (historyStack.length - historyOffset < 1) {
+      const oldIndex = historyStack.length - historyOffset;
+      if (oldIndex < 1) {
         return state;
       }
 
-      const oldIndex = historyStack.length - 1 * historyOffset;
 
       const oldStates =
         historyOffset === 0
@@ -100,7 +98,7 @@ function historyReducer(state, action) {
       return {
         ...state,
         historyOffset: newOffset,
-        oldStates: historyStack[historyStack.length - historyOffset],
+        oldStates: historyStack[historyStack.length - historyOffset].states,
         // direction: 'forward',
       };
     }
@@ -126,15 +124,14 @@ function historyReducer(state, action) {
 
       const currentlyInThePast = historyOffset > 0;
       const baseIndex = historyStack.length - historyOffset;
-      const baseStates = !currentlyInThePast
-        ? states
-        : historyStack[baseIndex].states;
-      const {lastActions} = !currentlyInThePast ? state : historyStack[baseIndex];
+      const historyEntry = !currentlyInThePast ? state : historyStack[baseIndex];
+      const {states: baseStates, lastActions} = historyEntry;
 
       const performedAction = action.payload.action;
       const baseState = id in baseStates ? baseStates[id] : state.initialStates[id];
       const newState = forwardedReducer(
         baseState,
+        // Action can be a function in case of setState.
         typeof performedAction === 'function ' ? performedAction(baseState) : performedAction
       );
       // const isNowDefaultState = newState === state.initialStates[id];
@@ -161,7 +158,7 @@ function historyReducer(state, action) {
           [id]: newState,
         },
         oldStates: baseStates,
-        historyOffset: skipHistory ? historyOffset : 0,
+        historyOffset: 0,
         historyStack: skipHistory
           ? skippedHistoryNowSameAsPrevious
             ? historyStack.slice(0, -1)
@@ -171,10 +168,11 @@ function historyReducer(state, action) {
               {
                 states: baseStates,
                 lastActions,
+                // alternateFutures: [],
               },
             ],
         currentId: id,
-        lastSet: performance.now(),
+        lastSet: now,
         lastActions: !skipHistory
           ? { [id]: performedAction }
           : { ...state.lastActions, [id]: performedAction },
@@ -194,117 +192,33 @@ let forceHistoryRender = () => {};
 
 const notifiers = {};
 
-const USE_BROWSER_HISTORY = false;
+// const USE_BROWSER_HISTORY = false;
 
-if (USE_BROWSER_HISTORY) {
-  // Clean up old history.
-  // If the data in this state is accurate, it should remove all in page history,
-  // but still preserve prior history like the previous page.
-  if ((history.state?.length || 0) > 0) {
-    // Go to the state before
-    history.go(-history.state.length + history.state.historyOffset - 1);
-  }
-  const initialHistoryState = { historyOffset: 0, length: 0 };
-  if ('length' in (history.state || {})) {
-    history.pushState(initialHistoryState, '');
-  } else {
-    history.replaceState(initialHistoryState, '');
-  }
-  // Ignore the first popstate event.
-  let ignorePopstate = true;
-  window.onpopstate = ({ state: historyState }) => {
-    if (ignorePopstate) {
-      ignorePopstate = false;
-      return;
-    }
-    const { historyOffset } = state;
-    const diff =
-      state.historyStack.length - historyOffset - (historyState?.length || 0);
-    if (diff === 0) {
-      return;
-    }
-    const type = diff < 0 ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
-    console.log(type, diff);
-    historyDispatch({
-      type,
-      payload: {
-        fromBrowser: true,
-        amount: Math.abs(diff),
-      },
-    });
-    history.replaceState({ ...historyState, historyOffset }, '');
-  };
+function doNotify(notify) {
+  notify();
 }
 
-// const dispatchTimes = {};
-const historyDispatch = (action) => {
-  // const start = performance.now();
-  state = historyReducer(state, action);
-  const {states, oldStates,  historyOffset, historyStack } = state;
-
-  currentStates =
-    historyOffset > 0
-      ? historyStack[historyStack.length - historyOffset].states
-      : states;
-
-  if (oldStates === emptyState) {
-    return;
-  }
-  const isChangeReducer = action.type === 'ADD_REDUCER' || action.type === 'REMOVE_REDUCER';
-
-  if (!isChangeReducer) {
-    forceHistoryRender();
-  }
-
-  if (isChangeReducer || action.type === 'CLEAR_HISTORY') {
-    return;
-  }
-
-  if (USE_BROWSER_HISTORY) {
-    switch (action.type) {
-      case 'PERFORM_ACTION': {
-        if (!action.options.skipHistory) {
-          history.pushState(
-            { historyOffset: 0, length: historyStack.length },
-            ''
-          );
-        }
-        break;
-      }
-      case 'HISTORY_FORWARD': {
-        if (!action.payload?.fromBrowser) {
-          ignorePopstate = true;
-          history.forward();
-        }
-        break;
-      }
-      case 'HISTORY_BACKWARD': {
-        if (!action.payload?.fromBrowser) {
-          ignorePopstate = true;
-          history.back();
-        }
-        break;
-      }
-    }
-  }
-
+function notifyChanged() {
+  // console.log('NOTIFY');
+  const { oldStates, initialStates } = state;
+  // This is a temporary fix.
+  forceHistoryRender();
   // const neither = [];
   // const added = [];
   // const removed = [];
   // const diff = [];
   // const same = [];
-  // Not sure if it's good to keep all initial states but it's needed
-  // to avoid populating the state with initial values.
-  for (const id in state.initialStates) {
+  const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(currentStates)]);
+
+  for (const id of bothKeys.values()) {
     // For this to work it's important that unchanged state members
     // are the same object referentially.
     const inOld = id in oldStates, inNew = id in currentStates;
-    if (!(inOld || inNew)) {
-      // neither.push(id);
-      continue;
-    }
 
-    const changed = (!inOld || !inNew) ? true : oldStates[id] !== currentStates[id]; 
+    const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
+    const newValue = !inNew ? initialStates[id] : currentStates[id];
+
+    const changed = oldValue !== newValue; 
     // if (!inOld ) {
     //   added.push(id);
     // }
@@ -314,18 +228,9 @@ const historyDispatch = (action) => {
     //   changed ? diff.push(id) : same.push(id);
     // }
     if (changed) {
-      notifiers[id]?.forEach((n) => n());
+      notifiers[id]?.forEach(doNotify);
     }
   }
-  // const duration = performance.now() - start;
-  // const key = `${action.payload?.id || action.type}~${
-  //   action.payload?.action?.type?.name || action.payload?.action?.type || ''
-  // }`;
-  // if (!dispatchTimes[key]) {
-  //   dispatchTimes[key] = [];
-  // }
-  // dispatchTimes[key].push(duration);
-  // console.log(dispatchTimes);
   
   // console.log(JSON.parse(JSON.stringify(oldStates)), JSON.parse(JSON.stringify(currentStates)) );
   // console.log('neither', neither);
@@ -335,8 +240,106 @@ const historyDispatch = (action) => {
   // console.log('same', same);
 }
 
+// if (USE_BROWSER_HISTORY) {
+//   // Clean up old history.
+//   // If the data in this state is accurate, it should remove all in page history,
+//   // but still preserve prior history like the previous page.
+//   if ((history.state?.length || 0) > 0) {
+//     // Go to the state before
+//     history.go(-history.state.length + history.state.historyOffset - 1);
+//   }
+//   const initialHistoryState = { historyOffset: 0, length: 0 };
+//   if ('length' in (history.state || {})) {
+//     history.pushState(initialHistoryState, '');
+//   } else {
+//     history.replaceState(initialHistoryState, '');
+//   }
+//   // Ignore the first popstate event.
+//   let ignorePopstate = true;
+//   window.onpopstate = ({ state: historyState }) => {
+//     if (ignorePopstate) {
+//       ignorePopstate = false;
+//       return;
+//     }
+//     const { historyOffset } = state;
+//     const diff =
+//       state.historyStack.length - historyOffset - (historyState?.length || 0);
+//     if (diff === 0) {
+//       return;
+//     }
+//     const type = diff < 0 ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
+//     historyDispatch({
+//       type,
+//       payload: {
+//         fromBrowser: true,
+//         amount: Math.abs(diff),
+//       },
+//     });
+//     history.replaceState({ ...historyState, historyOffset }, '');
+//   };
+// }
+
+// const dispatchTimes = {};
+const historyDispatch = (action) => {
+  // const start = performance.now();
+  state = historyReducer(state, action);
+  const {states, historyOffset, historyStack } = state;
+
+  currentStates =
+    historyOffset > 0
+      ? historyStack[historyStack.length - historyOffset].states
+      : states;
+
+  // if (USE_BROWSER_HISTORY) {
+  //   switch (action.type) {
+  //     case 'PERFORM_ACTION': {
+  //       if (!action.options.skipHistory) {
+  //         history.pushState(
+  //           { historyOffset: 0, length: historyStack.length },
+  //           ''
+  //         );
+  //       }
+  //       break;
+  //     }
+  //     case 'HISTORY_FORWARD': {
+  //       if (!action.payload?.fromBrowser) {
+  //         ignorePopstate = true;
+  //         history.forward();
+  //       }
+  //       break;
+  //     }
+  //     case 'HISTORY_BACKWARD': {
+  //       if (!action.payload?.fromBrowser) {
+  //         ignorePopstate = true;
+  //         history.back();
+  //       }
+  //       break;
+  //     }
+  //   }
+  // }
+
+  // const duration = performance.now() - start;
+  // const key = `${action.payload?.id || action.type}~${
+  //   action.payload?.action?.type?.name || action.payload?.action?.type || ''
+  // }`;
+  // if (!dispatchTimes[key]) {
+  //   dispatchTimes[key] = [];
+  // }
+  if (action.type !== 'ADD_REDUCER') {
+    notifyChanged();
+  }
+  // dispatchTimes[key].push(duration);
+  // if (logTimeout) {
+  //   clearTimeout(logTimeout);
+  // }
+  // logTimeout = setTimeout(() => {
+  //   console.log(dispatchTimes);
+  // }, 1000)
+}
+// let logTimeout;
+
 const subscribe = (id) => (notify) => {
-  if (!notifiers[id]) {
+  if (!(id in notifiers)) {
     notifiers[id] = new Set();
   }
   notifiers[id].add(notify);
@@ -360,7 +363,10 @@ export function SharedActionHistory(props) {
     lastActions,
   } = state;
 
-  const dispatch = historyDispatch;
+  const dispatch = useCallback((action) => {
+    historyDispatch(action);
+    notifyChanged();
+  }, []);
 
   useHotkeys(
     'ctrl+z,cmd+z',
@@ -415,19 +421,18 @@ export function useResumableReducer(
   const instanceId = useId();
   const id = manualId || instanceId;
 
-  const value = useSyncExternalStore(
-    subscribe(id),
-    () => currentStates[id]
-  );
-
-  const isInStore = typeof value !== 'undefined';
-
   const initialState = useMemo(
-    () => (isInStore ? value : initializer(_initialState)),
+    () => (initializer(_initialState)),
     []
   );
 
-  const state = isInStore ? value : initialState;
+  const state = useSyncExternalStore(
+    subscribe(id),
+    () => {
+      // console.log('GETTING SNAPSHOT FOR', id, currentStates[id])
+      return !(id in currentStates) ? initialState : currentStates[id];
+    }
+  );
 
   useLayoutEffect(() => {
     historyDispatch({
