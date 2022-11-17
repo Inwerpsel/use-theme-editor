@@ -418,6 +418,7 @@ export const VariableControl = (props) => {
                   usages,
                   maxSpecificSelector: maxSpecific?.selector,
                   winningSelector: maxSpecific?.winningSelector,
+                  scope: currentScope,
                 }}
               />
             </Fragment>

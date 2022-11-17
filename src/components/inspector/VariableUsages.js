@@ -6,7 +6,28 @@ const currentSelectorStyle = {
   background: 'yellow',
 };
 
-export const VariableUsages = ({usages, maxSpecificSelector, winningSelector}) => {
+function Usage(props) {
+  const {scope, selector, highLightMatch, position, property} = props;
+
+  const locateSelector =
+    !scope || scope === selector
+      ? selector
+      : `${scope}${selector}, ${scope} ${selector}`;
+
+  return (
+    <li key={selector} style={!highLightMatch ? {} : currentSelectorStyle}>
+      {!!position && <IdeLink {...position} />}
+      <ElementLocator
+        selector={locateSelector}
+        initialized
+        showLabel={true}
+      />
+      <span> ({property})</span>
+    </li>
+  );
+}
+
+export const VariableUsages = ({usages, maxSpecificSelector, winningSelector, scope}) => {
   const [openSelectors, setOpenSelectors] = useState({});
   const visitedSelectors = {};
 
@@ -40,19 +61,12 @@ export const VariableUsages = ({usages, maxSpecificSelector, winningSelector}) =
             <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n').trim().substring(0, 100)}</div>
           </h4>
           {!!openSelectors[selector] && <ul style={{marginLeft: '16px'}}>
-            {selectors.map(selector => <li key={selector} style={selector !== winningSelector ? {} : currentSelectorStyle}>
-              <ElementLocator selector={selector} initialized showLabel={true}/>
-              <span className='monospace-code'> ({property})</span>
-            </li>)}
+            {selectors.map(selector => <Usage {...{scope, selector, highLightMatch, position, property}}/>)}
           </ul>}
         </li>;
       }
 
-      return <li key={selector} style={!highLightMatch ? {} : currentSelectorStyle}>
-        {!!position && <IdeLink {...position}/>}
-        <ElementLocator selector={selector} initialized showLabel={true}/>
-        <span> ({property})</span>
-      </li>;
+      return <Usage {...{scope, selector, highLightMatch, position, property}}/>
     })}
   </ul>;
 };
