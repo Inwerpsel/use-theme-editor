@@ -5,14 +5,14 @@ import {ThemeEditor} from './components/ThemeEditor';
 import { SharedActionHistory } from './hooks/useResumableReducer';
 
 let root;
-const size = 22;
+const size = 18;
 
 export const previewComponents = {
   THEME_EDITOR: {
     set: ({ payload: { scope, name, value } }) => (
       <div>
         {scope && <pre className='monospace-code'>{scope}</pre>}<br/>
-        <b>{name}</b> = {value}
+        <b>{name}</b> = 
         <span
           style={{
             width: size,
@@ -28,6 +28,7 @@ export const previewComponents = {
             // backgroundSize: 'cover',
           }}
         ></span>
+        {value}
       </div>
     ),
     unset: ({ payload: { scope, name } }) => (
@@ -42,19 +43,17 @@ export const previewComponents = {
 
 export const renderSelectedVars = (
   rootElement,
-  cssVars = [],
   lastTarget,
   groups,
-  rawGroups,
   allVars,
   config,
-  defaultValues
+  defaultValues,
+  inspectedIndex,
 ) => {
   const el = (
     <SharedActionHistory {...{previewComponents}}>
       <ThemeEditor
-        {...{ config, groups, lastTarget, allVars, defaultValues }}
-        selectedVars={cssVars}
+        {...{ config, groups, lastTarget, allVars, defaultValues, inspectedIndex }}
         lastInspectTime={performance.now()}
       />
     </SharedActionHistory>

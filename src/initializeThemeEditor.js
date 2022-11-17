@@ -108,7 +108,7 @@ export const setupThemeEditor = async (config) => {
   if (!isRunningAsFrame) {
     const renderEmptyEditor = () => {
       document.documentElement.classList.add('hide-wp-admin-bar');
-      renderSelectedVars(editorRoot, [], null, [], [], cssVars, config, defaultValues);
+      renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues);
       // Since the original page can be accessed with a refresh, destroy it to save resources.
       destroyDoc();
     };
@@ -133,17 +133,17 @@ export const setupThemeEditor = async (config) => {
   }
 
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
+  let inspectedIndex = 0;
+  let inspections = [];
   let lastGroups = [];
 
   window.addEventListener('message', event => {
-    if (event.data.type === 'render-vars') {
+    if (event.data?.type === 'render-vars') {
       const { payload } = event.data;
       renderSelectedVars(
         editorRoot,
-        payload.matchedVars,
         null,
         payload.groups,
-        payload.rawGroups,
         cssVars,
         config,
         defaultValues
@@ -151,23 +151,34 @@ export const setupThemeEditor = async (config) => {
     }
   }, false);
 
-  function inspect(target) {
+  const inspectedMap = new Map();
+
+  function cachedInspection(target) {
+    if (inspectedMap.has(target)) {
+      console.log('cached inspection');
+      return inspectedMap.get(target);
+    }
     const matchedVars = getMatchingVars({ cssVars, target });
-
     const rawGroups = groupVars(matchedVars, target);
-
     const groups = filterMostSpecific(rawGroups, target);
+    inspectedMap.set(target, groups);
+    return groups;
+  }
+
+  function inspect(target) {
+    inspections.push(target);
+    inspectedIndex++;
+    const groups = cachedInspection(target);
 
     if (!isRunningAsFrame) {
       renderSelectedVars(
         editorRoot,
-        matchedVars,
         target,
         groups,
-        rawGroups,
         cssVars,
         config, 
-        defaultValues
+        defaultValues,
+        inspectedIndex
       );
     } else {
       // It's not possible to send a message that includes a reference to a DOM element. 
@@ -175,15 +186,12 @@ export const setupThemeEditor = async (config) => {
       // way we still know which element to access when a message gets back from the parent window.
       lastGroups = groups;
       const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
-      const rawWithElementIndexes = rawGroups.map((group, index) => ({...group, element: index}));
 
       window.parent.postMessage(
         {
           type: 'render-vars',
           payload: {
-            matchedVars,
             groups: withElementIndexes,
-            rawGroups: rawWithElementIndexes,
           },
         },
         window.location.href
@@ -212,6 +220,8 @@ export const setupThemeEditor = async (config) => {
     return;
   }
 
+  let forwardScrollPosition = false;
+
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
   // This intentionally only runs on the frame.
@@ -226,6 +236,9 @@ export const setupThemeEditor = async (config) => {
 
   // Keep 1 timeout as we only want to be highlighting 1 element at a time.
   let lastHighlightTimeout = null;
+
+  let ignoreScroll = false;
+  let scrollDebounceTimeout = null;
 
   const messageListener = event => {
     const {type, payload} = event.data;
@@ -318,6 +331,45 @@ export const setupThemeEditor = async (config) => {
         break;
       case 'set-scopes-styles': 
         updateScopedVars(scopes, resetAll);
+        break;
+      case 'force-scroll':
+        ignoreScroll = true;
+        window.scrollTo({top: payload.position, behavior: payload.shouldSmoothScroll ? 'smooth' : 'auto' });
+        ignoreScroll = false;
+        break;
+      case 'emit-scroll': 
+        const notifyParent = () => {
+            window.parent.postMessage(
+              {
+                type: 'frame-scrolled', payload: {
+                  scrollPosition: document.documentElement.scrollTop,
+                },
+              },
+              window.location.href,
+            );
+            scrollDebounceTimeout = null;
+          }
+        document.addEventListener('scroll', () => {
+          if (ignoreScroll) {
+            return;
+          }
+          if (!scrollDebounceTimeout) {
+            scrollDebounceTimeout = setTimeout(notifyParent, 40);
+          }
+        }, {passive: true})
+        window.parent.postMessage(
+          {
+            type: 'window-height',
+            payload: Math.max(
+              document.body.scrollHeight,
+              document.body.offsetHeight,
+              document.documentElement.clientHeight,
+              document.documentElement.scrollHeight,
+              document.documentElement.offsetHeight
+            ),
+          },
+          window.location.href
+        );
         break;
     }
   };
