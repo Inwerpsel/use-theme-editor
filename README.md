@@ -13,16 +13,28 @@ with no configuration needed to add a new setting.
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
+## How to use
+
+Exact instructions are still to follow, so for now you need to be prepared to deal with unforeseen circumstances.
+
+Though the setups steps are easy and require no code. In essence all that needs to happen is build the script (currently in example),
+and load it in any HTML page, after all CSS was loaded. Exactly how this happens still needs to take shape.
+
+[DEMO VIDEO](https://drive.google.com/file/d/1sF4r8E1Cv97mxT8I4ZZKsjGAo-a33l-i/view)
+
 ## Status
-The theme editor should be usable in its current form, though given many features are currently under active development,
-some features temporarily don't work or work improperly. This can break some use cases.
+Multiple features are currently under active development. Hence some features temporarily don't work or work improperly.
+This can break some use cases.
 
 ## Known issues
 - Current theme view not working (needs adaptation to selector scoped properties)
-- Expanded option of screen switcher not working
-- Edits not working on pages that use multiple root scope selectors
+- Edits not always showing on pages that use multiple root scope selectors
 - Equally specific (and so order dependent) selectors override too much (e.g. Bootstrap .btn background will override .btn-primary)
 - Multiple issues with `:where` and similar selectors
+
+*Everything after this is somewhere between a brain dump and a road map.*
+
+---
 
 ### STALLED
 - Facilitate other variables as a value
@@ -75,7 +87,7 @@ some features temporarily don't work or work improperly. This can break some use
       - No additional CSS
       - Recalculations affect (potentially much) less elements, because cascading no longer needed
       - No specificity challenges at all
-      - Also supports regular CSS
+      - Also supports regular CSS edits
 
 - Determine / infer property types
   - examples + libs
@@ -83,8 +95,9 @@ some features temporarily don't work or work improperly. This can break some use
     - https://github.com/w3c/webref/tree/main/packages/css
     - https://github.com/csstree/csstree
     - https://github.com/mdn/data/
-  - "De facto" type system
+  - "De facto" type system?
     - A variable gets its type from the intersection of all CSS properties it's used on.
+      - Seems hard to parse from allowed syntaxes? Perhaps not a problem in most cases?
     - UI filters the actions it allows, so that the end result is always legal CSS.
     - e.g. you should be able to change a variable to a gradient if it's only used on the `background` property.
       You should not be able to assign a gradient variable to a non-background property.
@@ -95,16 +108,13 @@ some features temporarily don't work or work improperly. This can break some use
     - Should be possible to force constraints beyond usage inference.
     - Or perhaps including a property access in code is a very simple way to achieve this?
   - Fix handling of multiple variables on a single rule
-
-### TODO NEXT
-- Support typing of variables surrounded by just 1 function
-  - It's apparently a common thing for frameworks to hard code which color function to use, and have the variables only
-    contain the arguments. (e.g. BS and derivatives)
-  - Even though this is a bad idea for multiple reasons, I don't expect common frameworks to change it soon.
-  - Can be somewhat generalized. Perhaps check type of function arguments in CSS syntax?
+  - Support typing of variables surrounded by just 1 function
+    - It's apparently a common thing for frameworks to hard code which color function to use, and have the variables only
+      contain the arguments. (e.g. BS and derivatives)
+    - Even though this is a bad idea for multiple reasons, I don't expect common frameworks to change it soon.
+    - Can be somewhat generalized. Perhaps check type of function arguments in CSS syntax?
 
 ### TO FINISH
-- Decouple WordPress further (use other or no component lib)
 - Combine all media query versions of the same property into a single control. This can update the iframe to match the
   media query, so that you always can see your changes applied (done but for separate controls). Visualize media queries
   in UI.
@@ -134,7 +144,7 @@ some features temporarily don't work or work improperly. This can break some use
 - Improve elements with a hidden or hard to access state
 - Make keyboard shortcuts work when focus is inside the frame.
 - Ensure button elements are used where appropriate.
-- Better text inputs (clear button, debounce where needed, reliably prevent capitalization)
+- Better text inputs (clear button, debounce where needed)
 - Show current changes compared to server (maybe integrate with "current theme" component?)
 - As browser extension?
   - Address CORS (or detect + warn)
@@ -142,26 +152,7 @@ some features temporarily don't work or work improperly. This can break some use
 - Optimize root property updates
   - Updating root causes full style recalculation
     - Doesn't work well on large pages
-  - Use same selectors as `var` usages?
-    - Cost: increased selector matching (though these are all selectors that are already in use)
-    - Benefit: confirmed simple cases (e.g. one property on one class) are much faster, but same
-      property used across many different rules likely is slower than updating the root. Extreme
-      cases have over 100 different selectors per `var`. Then again, the full style recalculation
-      would also be affected by this complexity. Moral of the story, I still need to measure it.
-    - Referencing variables
-      - Possible approaches:
-        - Follow dependency chains so that these props can be added to each selector
-        - Do add these to the root
-        - Determine closest common root? (is this even possible?)
-    - Heuristic
-      - A variable is needed on root or body anyway => don't include its other selectors
-      - Max number of selectors over which to prefer root (I guess about 20, but should measure)
-    - Can be further optimized by excluding selectors that don't occur on the page
-      - On page load + mutation observer
-  - More els recalculated when using CSS `:root` selector instead of setting the document element's inline style.
-    - What about that? Maybe I mislooked.
-  - Is using `body` selector better?
-  - Or change approach altogether to update the actual rules instead?
+  - Solve by updating rules instead?
     - Probably has the best performance
     - Solves issues with scoped custom properties of equal selector specificity (i.e. order dependent)
 - Move expensive logic (regex and searching lists) into initial data extraction where possible.
@@ -181,6 +172,28 @@ some features temporarily don't work or work improperly. This can break some use
     - Some values can be entered manually (e.g. increment by a certain amount, choose a particular string like for panel layout)
     - Other values could come from some sort of context (e.g. the currently focused variable control)
     - Other approach is to tie it to event listeners. Might allow defining function once. Still need to check focus probably.
+- History actions
+  - Clear newer / older separately
+  - Clear specific state members
+    - Apply the most recent state to all members in history.
+  - Squash
+  - Different edit modes when in the past
+    - Current mode: discard future
+    - Optional prompt
+    - Save any "chopped" off futures
+    - Options determining which scenario (e.g. save when > 3 edits, discard when < 2)
+  - Keep alternate futures and merge them like branches
+  - Restore from local storage
+    - Store initial state + actions, then replay
+      - more space efficient
+      - minimal writes (though how to incrementally update local storage?)
+      - history can rely on object equality like newly constructed
+    - Some components can't reliably be resumed
+      - Inspected HTML can be (slightly to completely) different
+      - Could be solved partially using path of element in tree
+    - Some states are inconsequential / uninteresting
+      - E.g. open an editor UI window and close it with no changes
+      - hard to detect if this is the case
 
 
 ## Future theme structure
@@ -207,3 +220,18 @@ Each item: selector + property (combined unique ID, this could be a single ID as
   * data: condition text (maybe parsed a bit), source position
 * Added animations
 * Added resources (links, images, fonts)
+
+
+## Use cases
+* Inspect to learn
+* Designing
+  * Change parameters on existing design (parameters)
+  * Add new rules on existing design (parameters, rules)
+  * New design (text editor integration) (parameters, rules, markup)
+* Palette management
+  * Define palette
+  * Document palette
+  * Import/export palette
+* Theming
+* Authoring documentation
+* Testing
