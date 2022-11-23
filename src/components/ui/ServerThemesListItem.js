@@ -18,15 +18,16 @@ export const ServerThemesListItem = props => {
     modifiedServerVersion,
     deleteTheme,
   } = useContext(ThemeEditorContext);
-  const currentTheme = scopes[ROOT_SCOPE];
+  // const currentTheme = scopes[ROOT_SCOPE];
+  const isCurrent = fileName === name;
 
   return <li
     key={name}
-    ref={name === fileName ? activeThemeRef : null}
+    ref={isCurrent ? activeThemeRef : null}
     // title={diffSummary(serverTheme, currentTheme)}
-    className={'server-theme ' + (fileName === name ? 'server-theme-current' : '')}
+    className={'server-theme ' + ( isCurrent ? 'server-theme-current' : '')}
   >
-    {name} {modifiedServerVersion && name === fileName && '(*)'}
+    {name} {modifiedServerVersion && isCurrent && '(*)'}
 
     {name !== 'default' && <button
       style={{float: 'right'}}
@@ -44,10 +45,10 @@ export const ServerThemesListItem = props => {
         if (modifiedServerVersion && !confirm('You have some local changes that are not on the server. Cancel if you want to save changes.')) {
           return;
         }
-        name !== fileName && setFileName(name);
+        !isCurrent && setFileName(name);
         dispatch({type: ACTIONS.loadTheme, payload: {theme: serverTheme}});
       }}
-    >{fileName === name ? 'Reset' : 'Switch'}
+    >{isCurrent ? 'Reset' : 'Switch'}
     </button>
     
     {Object.keys(serverTheme).length > 0 &&
