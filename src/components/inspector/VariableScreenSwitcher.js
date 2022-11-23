@@ -1,5 +1,6 @@
 import mediaQuery from 'css-mediaquery';
 import React, {useContext} from 'react';
+import { useScreenOptions } from '../../state';
 import {ThemeEditorContext} from '../ThemeEditor';
 
 // Whether a variable is overridden by a later media query.
@@ -29,10 +30,11 @@ export const VariableScreenSwitcher = props => {
 
   const {
     width: screenWidth,
-    screenOptions,
     setWidth,
     setHeight,
   } = useContext(ThemeEditorContext);
+
+  const screenOptions = useScreenOptions();
 
   const filteredOptions = screenOptions
     .filter(({ dims: [width] }) => {

@@ -19,9 +19,6 @@ export function useGlobalSettings(frameRef) {
     height, setHeight,
   ] = useResumableLocalStorage('responsive-height', 640);
   const [
-    isSimpleSizes, setIsSimpleSizes,
-  ] = useResumableLocalStorage('responsive-simple-sizes', true);
-  const [
     frameClickBehavior, setFrameClickBehavior,
   ] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
   useHotkeys('alt+a', () => {
@@ -84,7 +81,6 @@ export function useGlobalSettings(frameRef) {
     fileName, setFileName,
     width, setWidth,
     height, setHeight,
-    isSimpleSizes, setIsSimpleSizes,
     frameClickBehavior, setFrameClickBehavior,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
