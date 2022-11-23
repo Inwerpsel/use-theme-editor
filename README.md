@@ -20,7 +20,8 @@ Exact instructions are still to follow, so for now you need to be prepared to de
 Though the setups steps are easy and require no code. In essence all that needs to happen is build the script (currently in example),
 and load it in any HTML page, after all CSS was loaded. Exactly how this happens still needs to take shape.
 
-[DEMO VIDEO](https://drive.google.com/file/d/1sF4r8E1Cv97mxT8I4ZZKsjGAo-a33l-i/view)
+[Demo Bootstrap](https://drive.google.com/file/d/1sF4r8E1Cv97mxT8I4ZZKsjGAo-a33l-i/view)
+[Demo Halfmoon](https://drive.google.com/file/d/1h6e5zwqSKZWnY6O3x5cCnc9bX1mWdL-F/view)
 
 ## Status
 Multiple features are currently under active development. Hence some features temporarily don't work or work improperly.
