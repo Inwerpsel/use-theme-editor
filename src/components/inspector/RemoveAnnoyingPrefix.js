@@ -1,4 +1,5 @@
 import React, { useContext } from "react";
+import { TextControl } from "../controls/TextControl";
 import { ThemeEditorContext } from "../ThemeEditor";
 
 export function RemoveAnnoyingPrefix() {
@@ -6,14 +7,11 @@ export function RemoveAnnoyingPrefix() {
         annoyingPrefix, setAnnoyingPrefix,
     } = useContext(ThemeEditorContext);
 
-    return <input 
-      type='text'
+    return <TextControl
       placeholder='Remove annoying prefix'
       title='Remove annoying prefix'
       value={annoyingPrefix}
-      onChange={({target: {value}}) => {
-        setAnnoyingPrefix(value);
-      }}
+      onChange={setAnnoyingPrefix}
       style={{
         textDecoration: 'line-through',
         textDecorationColor: 'grey',

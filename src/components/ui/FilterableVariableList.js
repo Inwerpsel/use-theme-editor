@@ -1,8 +1,8 @@
 import React, { useContext, useState, useMemo, Fragment } from "react";
 import { definedValues } from "../../functions/collectRuleVars";
-import { rootScopes } from "../../functions/extractPageVariables";
 import { ROOT_SCOPE } from "../../hooks/useThemeEditor";
 import { Checkbox } from "../controls/Checkbox";
+import { TextControl } from "../controls/TextControl";
 import { PREVIEW_SIZE } from "../properties/ColorControl";
 import { ThemeEditorContext } from "../ThemeEditor";
 
@@ -43,18 +43,15 @@ export function FilterableVariableList(props) {
       <div onClick={(e) => e.stopPropagation()} style={{}}>
         <Checkbox controls={[includeRoot, setIncludeRoot]}>Global values</Checkbox>
         <div style={{ display: 'flex', width: '100%' }}>
-          <input
-            autoCapitalize="off"
-            type="text"
+          <TextControl 
             placeholder="Filter name..."
             value={filter}
-            onChange={({ target: { value } }) => setFilter(value)}
+            onChange={setFilter}
           />
-          <input
-            type="text"
+          <TextControl 
             placeholder={`Filter value ${filtered.length}`}
             value={filterValue}
-            onChange={({ target: { value } }) => setFilterValue(value)}
+            onChange={setFilterValue}
           />
         </div>
         <ul

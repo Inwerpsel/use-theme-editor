@@ -3,6 +3,7 @@ import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import {ToggleButton} from '../controls/ToggleButton';
+import { TextControl } from '../controls/TextControl';
 
 export const CustomVariableInput = () => {
   const [displayed, setDisplayed] = useState(false);
@@ -27,15 +28,14 @@ export const CustomVariableInput = () => {
           return false;
         } }
       >
-        <input
-          type="text"
+        <TextControl
           value={name || '--'}
-          onChange={({target: {value}}) => {
+          onChange={(value) => {
             setName(value.replace(' ', '-').replace(/^-*/, '--'));
           }}
         />
         <br/>
-        <input required type="text" value={value} onChange={event => setValue(event.target.value)}/>
+        <TextControl required value={value} onChange={setValue}/>
         <button
           disabled={!isValidName || value === theme[name] || !overwriteExisting && varExists}
           title={!varExists ? 'Add new variable' : theme[name] === value ? 'Variable already has this value' : `Overwrite existing value of ${theme[name]}`}

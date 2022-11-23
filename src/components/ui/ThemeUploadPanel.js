@@ -1,6 +1,7 @@
 import {diffSummary} from '../../functions/diffThemes';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
+import { TextControl } from '../controls/TextControl';
 
 export function ThemeUploadPanel() {
   const {
@@ -14,12 +15,12 @@ export function ThemeUploadPanel() {
   } = useContext(ThemeEditorContext);
 
   return <div>
-    <input
+    <TextControl
       value={fileName}
+      onChange={setFileName}
       style={ { width: '130px', clear: 'both' } }
       placeholder='theme'
-      type="text"
-      onChange={ event => setFileName(event.target.value) }/>
+    />
     <button
       // title={existsOnServer ? `Save on server. Changes: ${diffSummary(serverThemes[fileName], theme)}` : 'Upload this theme to the server. You can upload as many as you want.'}
       style={{clear: 'both'}}

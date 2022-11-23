@@ -1,15 +1,9 @@
 import React, {Fragment, useContext, useRef} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {useHotkeys} from 'react-hotkeys-hook';
+import { TextControl } from '../controls/TextControl';
 
-const zKey = 90;
 
-function preventUndoRedo(e) {
-  if ((e.keyCode == zKey && e.ctrlKey)) {
-    e.preventDefault();
-    return false;
-  }
-}
 export function PropertySearch() {
   const {
     propertySearch: value,
@@ -23,18 +17,16 @@ export function PropertySearch() {
   });
 
   return <Fragment>
-    <input
-      onKeyDown={preventUndoRedo}
+    <TextControl
+      {...{ref, value}}
+      onChange={setPropertySearch}
+      placeholder={'search (cmd+/ or ctrl+/)'}
       style={{
         marginRight: !value ? '4px' : '24px',
         flexShrink: 1,
         maxWidth: '52%',
       }}
       autoComplete={'on'}
-      placeholder={'search (cmd+/ or ctrl+/)'}
-      type='text'
-      {...{ref, value}}
-      onChange={event => setPropertySearch(event.currentTarget.value)}
     />
     {!!value && <button
       style={{position: 'relative', right: '48px', width: '30px'}}

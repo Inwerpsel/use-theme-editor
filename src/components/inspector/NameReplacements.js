@@ -1,5 +1,6 @@
 import React, { useState, useContext } from "react";
 import { Checkbox } from "../controls/Checkbox";
+import { TextControl } from "../controls/TextControl";
 import { useCompactSetting } from "../movable/DispatchedElement";
 import { DragHandle } from "../movable/DragHandle";
 import { ThemeEditorContext } from "../ThemeEditor";
@@ -48,10 +49,9 @@ export function NameReplacements() {
               return (
                 <li key={id} style={{ display: 'flex' }}>
                   <div>
-                    <input
+                    <TextControl
                       value={from}
-                      onChange={(event) => {
-                        const value = event.target.value;
+                      onChange={(value) => {
                         setNameReplacements((r) =>
                           updateReplacement(r, {
                             ...replacement,
@@ -59,13 +59,11 @@ export function NameReplacements() {
                           })
                         );
                       }}
-                      type="text"
                       placeholder="From"
-                    ></input>
-                    <input
+                    />
+                    <TextControl
                       value={to}
-                      onChange={(event) => {
-                        const value = event.target.value;
+                      onChange={(value) => {
                         setNameReplacements((r) =>
                           updateReplacement(r, {
                             ...replacement,
@@ -73,9 +71,8 @@ export function NameReplacements() {
                           })
                         );
                       }}
-                      type="text"
                       placeholder="From"
-                    ></input>
+                    />
                   </div>
                   <button
                     onClick={() => {
@@ -128,22 +125,16 @@ export function NameReplacements() {
         </ul>}
         {!isCompact && <div style={{display: 'flex'}}>
             <div>
-              <input
+              <TextControl
                 value={newFrom}
-                onChange={(event) => {
-                  setNewFrom(event.target.value);
-                }}
-                type="text"
+                onChange={setNewFrom}
                 placeholder="From"
-              ></input>
-              <input
+              />
+              <TextControl
                 value={newTo}
-                onChange={(event) => {
-                  setNewTo(event.target.value);
-                }}
-                type="text"
+                onChange={setNewTo}
                 placeholder="To"
-              ></input>
+              />
             </div>
             <button
               disabled={newFrom.length < 2 || newTo.length < 1}

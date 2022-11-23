@@ -2,6 +2,7 @@ import React, {useMemo, useContext} from 'react';
 import { useLocalStorage, useResumableLocalStorage } from '../../hooks/useLocalStorage';
 import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
+import { TextControl } from '../controls/TextControl';
 import { ThemeEditorContext } from '../ThemeEditor';
 import {AreasContext} from './MovablePanels';
 
@@ -34,10 +35,9 @@ export function MoveControls() {
         </button>
       )}
       <div>
-        <input
-          type="text"
+        <TextControl
           value={inputName}
-          onChange={({ target: { value } }) => setInputName(value)}
+          onChange={setInputName}
         />
         <button
           disabled={inputName.length === 0}

@@ -4,6 +4,7 @@ import React, {useContext, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
+import { TextControl } from '../controls/TextControl';
 
 export function ImportExportTools() {
   const {
@@ -51,18 +52,18 @@ export function ImportExportTools() {
         />
       </label>
     </div>
-    <input
-      type={'text'}
+    <TextControl
       value={''}
       placeholder={'Drop/paste JSON here to import as a new theme'}
       style={{border: '1px dashed black', width: '100%'}}
-      onChange={event => {
+      onChange={value => {
         try {
-          const dropped = JSON.parse(event.target.value);
+          const dropped = JSON.parse(value);
           const ensured = ensureValidCssVariables(dropped);
           const newTheme = !shouldMerge ? ensured : {...theme, ...ensured};
           dispatch({type: ACTIONS.loadTheme, payload: {theme: newTheme}});
         } catch (e) {
+          console.log(e)
         }
       }}
     />
