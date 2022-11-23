@@ -12,8 +12,6 @@ import { hotkeysOptions } from '../components/ThemeEditor';
 
 export const HistoryNavigateContext = createContext({});
 
-const emptyState = {};
-
 const INITIAL_STATE = {
   currentId: null,
   lastActions: {
@@ -27,9 +25,8 @@ const INITIAL_STATE = {
   historyOffset: 0,
   reducers: {},
   states: {},
-  oldStates: emptyState,
+  oldStates: {},
   initialStates: {},
-  // direction: 'forward',
 };
 
 function historyReducer(state, action) {
@@ -86,7 +83,6 @@ function historyReducer(state, action) {
         ...state,
         oldStates,
         historyOffset: historyOffset + amount,
-        // direction: 'backward',
       };
     }
     case 'HISTORY_FORWARD': {
@@ -99,7 +95,6 @@ function historyReducer(state, action) {
         ...state,
         historyOffset: newOffset,
         oldStates: historyStack[historyStack.length - historyOffset].states,
-        // direction: 'forward',
       };
     }
     case 'CLEAR_HISTORY': {
@@ -113,7 +108,6 @@ function historyReducer(state, action) {
         historyOffset: 0,
         states: baseStates,
         lastActions,
-        // direction: 'forward'
       };
     }
     case 'PERFORM_ACTION': {
@@ -176,7 +170,6 @@ function historyReducer(state, action) {
         lastActions: !skipHistory
           ? { [id]: performedAction }
           : { ...state.lastActions, [id]: performedAction },
-        // direction: 'forward',
       };
     }
   }
@@ -194,10 +187,6 @@ const notifiers = {};
 
 // const USE_BROWSER_HISTORY = false;
 
-function doNotify(notify) {
-  notify();
-}
-
 function notifyChanged() {
   // console.log('NOTIFY');
   const { oldStates, initialStates } = state;
@@ -211,6 +200,10 @@ function notifyChanged() {
   const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(currentStates)]);
 
   for (const id of bothKeys.values()) {
+    const keyNotifiers = notifiers[id];
+    if (!keyNotifiers) {
+      continue;
+    }
     // For this to work it's important that unchanged state members
     // are the same object referentially.
     const inOld = id in oldStates, inNew = id in currentStates;
@@ -228,7 +221,9 @@ function notifyChanged() {
     //   changed ? diff.push(id) : same.push(id);
     // }
     if (changed) {
-      notifiers[id]?.forEach(doNotify);
+      for (const n of keyNotifiers.values()) {
+        n();
+      }
     }
   }
   
