@@ -1,6 +1,8 @@
 import React, {useState} from 'react';
 import {IdeLink} from './IdeLink';
 import {ElementLocator} from '../ui/ElementLocator';
+import { ROOT_SCOPE } from '../../hooks/useThemeEditor';
+import { rootScopes } from '../../functions/extractPageVariables';
 
 const currentSelectorStyle = {
   background: 'yellow',
@@ -10,7 +12,7 @@ function Usage(props) {
   const {scope, selector, highLightMatch, position, property} = props;
 
   const locateSelector =
-    !scope || scope === selector
+    !scope || scope === selector || scope === ROOT_SCOPE || scope === 'body' || scope === ':root' || scope === 'html'
       ? selector
       : `${scope}${selector}, ${scope} ${selector}`;
 
