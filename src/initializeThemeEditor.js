@@ -108,7 +108,7 @@ export const setupThemeEditor = async (config) => {
   if (!isRunningAsFrame) {
     const renderEmptyEditor = () => {
       document.documentElement.classList.add('hide-wp-admin-bar');
-      renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues);
+      renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
       // Since the original page can be accessed with a refresh, destroy it to save resources.
       destroyDoc();
     };
@@ -133,8 +133,8 @@ export const setupThemeEditor = async (config) => {
   }
 
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
-  let inspectedIndex = 0;
-  let inspections = [];
+  let inspectedIndex = -1;
+  let inspectedElements = [];
   let lastGroups = [];
 
   window.addEventListener('message', event => {
@@ -146,29 +146,40 @@ export const setupThemeEditor = async (config) => {
         payload.groups,
         cssVars,
         config,
-        defaultValues
+        defaultValues,
+        payload.index
       );
     }
   }, false);
 
-  const inspectedMap = new Map();
+  // const inspectedMap = new Map();
 
   function cachedInspection(target) {
-    if (inspectedMap.has(target)) {
-      console.log('cached inspection');
-      return inspectedMap.get(target);
-    }
+    // if (inspectedMap.has(target)) {
+      // console.log('cached inspection');
+      // return inspectedMap.get(target);
+    // }
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target);
     const groups = filterMostSpecific(rawGroups, target);
-    inspectedMap.set(target, groups);
+    // inspectedMap.set(target, groups);
     return groups;
   }
 
-  function inspect(target) {
-    inspections.push(target);
-    inspectedIndex++;
+  function inspect(targetOrIndex) {
+    const isPrevious = typeof targetOrIndex === 'number';
+    const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
+    if (!isPrevious) {
+      inspectedElements.push(target);
+      ++inspectedIndex
+    } else {
+      target.scrollIntoView({
+        block: 'center',
+        inline: 'end',
+        behavior: 'smooth'});
+    }
     const groups = cachedInspection(target);
+    const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
     if (!isRunningAsFrame) {
       renderSelectedVars(
@@ -178,7 +189,7 @@ export const setupThemeEditor = async (config) => {
         cssVars,
         config, 
         defaultValues,
-        inspectedIndex
+        currentInspectedIndex
       );
     } else {
       // It's not possible to send a message that includes a reference to a DOM element. 
@@ -192,15 +203,31 @@ export const setupThemeEditor = async (config) => {
           type: 'render-vars',
           payload: {
             groups: withElementIndexes,
+            index: currentInspectedIndex,
           },
         },
         window.location.href
       );
     }
     if (groups.length > 0) {
-      addHighlight(groups[0].element);
-      setTimeout(() => removeHighlight(groups[0].element), 700);
-    }
+      const {element} = groups[0];
+      addHighlight(element);
+      if (lastHighlightTimeout) {
+        const [timeout, handler, timeoutElement] = lastHighlightTimeout;
+
+        window.clearTimeout(timeout);
+        // If previous timeout was on another element, execute it immediately.
+        // Removes its focus border.
+        if (timeoutElement !== element) {
+          handler();
+        }
+      }
+      const handler = () => {
+        removeHighlight(element);
+        lastHighlightTimeout = null;
+      };
+
+      lastHighlightTimeout = [setTimeout(handler, isPrevious ? 2400 : 700), handler, element];    }
   }
 
   document.addEventListener('click', event => {
@@ -209,9 +236,6 @@ export const setupThemeEditor = async (config) => {
       return;
     }
     event.preventDefault();
-
-    // document.documentElement.classList.add('hide-wp-admin-bar');
-
     inspect(event.target);
   });
 
@@ -219,8 +243,6 @@ export const setupThemeEditor = async (config) => {
   if (!isRunningAsFrame) {
     return;
   }
-
-  let forwardScrollPosition = false;
 
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
@@ -371,6 +393,8 @@ export const setupThemeEditor = async (config) => {
           window.location.href
         );
         break;
+      case 'inspect-previous': 
+        inspect(index);
     }
   };
   window.addEventListener('message', messageListener, false);

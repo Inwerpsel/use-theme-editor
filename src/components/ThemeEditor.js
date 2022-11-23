@@ -1,5 +1,5 @@
 import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {ACTIONS, ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
+import {ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
@@ -8,7 +8,6 @@ import {ServerThemesList} from './ui/ServerThemesList';
 import {GroupControl} from './inspector/GroupControl';
 import {CustomVariableInput} from './ui/CustomVariableInput';
 import {StylesheetDisabler} from './ui/StylesheetDisabler';
-import {allScreenOptions, simpleScreenOptions} from '../screenOptions';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
 import {isColorProperty} from './inspector/TypedControl';
 import {PropertySearch} from './ui/PropertySearch';
@@ -45,21 +44,54 @@ export const hotkeysOptions = {
 
 export const ThemeEditorContext = createContext({});
 
+const prevGroups = [];
+
+let prevOpengroups = null;
+
 export const ThemeEditor = (props) => {
   const {
     config,
-    groups: unfilteredGroups,
+    groups: _unfilteredGroups,
     allVars,
     defaultValues,
     lastInspectTime,
+    inspectedIndex,
+    isNewInspection,
   } = props;
+  const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
+  const [currentInspected, setCurrentInspected] = useResumableState(-1, 'inspected-index');
 
-  const [openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
+  const [_openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
+  const openGroups = prevOpengroups !== null ? prevOpengroups : _openGroups;
+  prevOpengroups = null;
   const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
+  
+  useLayoutEffect(() => {
+    if (currentInspected !== -1 && currentInspected !== inspectedIndex) {
+      // window.requestAnimationFrame(() => {
+        frameRef.current?.contentWindow.postMessage(
+          {
+            type: 'inspect-previous',
+            payload: { index: currentInspected },
+          },
+          window.location.origin
+        );    
+      // });
+      prevOpengroups = openGroups;
+    }
+  }, [currentInspected]);
+
+  useLayoutEffect(() => {
+    if ( isNewInspection ) {
+      prevGroups[inspectedIndex] = unfilteredGroups;
+      setCurrentInspected(inspectedIndex);
+    } 
+  }, [inspectedIndex]);
+
   // Open first group.
   // I don't like how this is done but it's tricky to replace at the moment.
   useLayoutEffect(() => {
-    if (openFirstOnInspect && unfilteredGroups.length > 0) {
+    if (isNewInspection && openFirstOnInspect && unfilteredGroups.length > 0) {
       setOpenGroups(
         {
           [unfilteredGroups[0].label]: true,
@@ -107,7 +139,6 @@ export const ThemeEditor = (props) => {
     propertyFilter,
     propertySearch,
     fileName,
-    isSimpleSizes,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
     showCssProperties, setShowCssProperties,
@@ -131,8 +162,6 @@ export const ThemeEditor = (props) => {
       vars: group.vars.filter(cssVar => cssVar.usages.some(usage => isColorProperty(usage.property)))
     }));
   }, [unfilteredGroups, propertyFilter, propertySearch]);
-
-  const screenOptions = isSimpleSizes ? simpleScreenOptions : allScreenOptions;
 
   useHotkeys('alt+r', () => {
     flipDebugMode();
@@ -170,7 +199,6 @@ export const ThemeEditor = (props) => {
         defaultValues,
         frameRef,
         scrollFrameRef,
-        screenOptions,
         serverThemes,
         serverThemesLoading,
         uploadTheme,
@@ -248,8 +276,6 @@ export const ThemeEditor = (props) => {
               <ul className={'group-list'}>
                 {groups.length === 0 && <li><span className='alert'>No results</span></li>}
                 {groups.map((group, index) => {
-                  // const index = groups.length - 1 - indexNormal;
-                  // const group = groups[index];
                   return (
                     <GroupControl
                       key={group.label}
@@ -261,7 +287,6 @@ export const ThemeEditor = (props) => {
             </Area>
             <ResizableFrame src={window.location.href} />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
-            {/* <SmallFullHeightFrame src={window.location.href} /> */}
             
             <Area id="area-right">
               <div>{sheetsDisablerDisplayed && <StylesheetDisabler />}</div>
