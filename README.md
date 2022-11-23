@@ -42,6 +42,14 @@ This can break some use cases.
     requires some focus, so I'll first wrap up other in progress stuff.
 
 ### IN PROGRESS
+- Improve state management
+  - Move top level state that uses useResumableReducer down
+    - External store is very efficient, allows minimizing render complexity
+    - Trade off: A large amount of notifiers possibly performs worse (e.g. large list => don't use in lists > certain size?)
+    - Investigate impact on React's ability to render concurrently
+  - Decouple state implementations in movable panels so it can be used standalone
+    - Maybe better with reducer?
+
 - Improve relative layout of deeper parts of the inspector UI
   - Find design principles that work with the complex and interconnected nature of the displayed information.
   - Current principles: at the top level it shows the entire dependency chain up to the variable setting the raw value.
