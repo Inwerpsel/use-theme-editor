@@ -41,12 +41,19 @@ function ActionList(props) {
             : previewComponents[id][getName(action)];
 
         return (
-          <li {...{ key }}>
-            {!Preview && <span><b>{id}</b>{name}</span>}
-            
-            
+          <li {...{ key }} style={{ clear: 'both' }}>
+            {!Preview && (
+              <span>
+                <b>{id}</b>
+                {name}
+              </span>
+            )}
+
             {isShortString && (
-              <pre style={{ margin: 0, float: 'right' }} className="monospace-code">
+              <pre
+                style={{ margin: 0, float: 'right' }}
+                className="monospace-code"
+              >
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
@@ -66,16 +73,22 @@ function ActionList(props) {
 export function HistoryVisualization() {
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
-  const { states, historyStack, historyOffset, currentId, lastActions, currentStates } =
-    useContext(HistoryNavigateContext);
+  const {
+    historyStack,
+    historyOffset,
+    lastActions,
+    currentStates,
+    dispatch,
+  } = useContext(HistoryNavigateContext);
 
 
   // const {THEME_EDITOR, ...otherState} = states;
 
   const currentIndex = historyStack.length - historyOffset;
+  let isInFuture = false;
 
   return (
-    <div className='history'>
+    <div className="history">
       <Checkbox controls={[showJson, setShowJson]}>
         Inspect current state
       </Checkbox>
@@ -90,24 +103,54 @@ export function HistoryVisualization() {
       )}
 
       <h2>History</h2>
-      <ul style={{display: 'flex', flexDirection: 'column-reverse'}}>
-        {historyStack.map(({ lastActions, states }, index) => {
+      <ul style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+        {historyStack.map(({ lastActions }, index) => {
+          const isPresent = index === currentIndex;
+          // We don't use this in the present so it can be true already.
+          isInFuture = isInFuture || isPresent;
+          const amount = Math.abs(index - currentIndex);
+          const type = isInFuture ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
           return (
             <li
+              title={`${type} ${index} - ${currentIndex} === ${amount}`}
+              onClick={
+                isPresent
+                  ? null
+                  : () => {
+                      dispatch({ type, payload: { amount } });
+                    }
+              }
               key={index}
               style={{
-                border: index === currentIndex ? '2px solid yellow' : '2px solid black',
+                border:
+                  index === currentIndex
+                    ? '2px solid yellow'
+                    : '2px solid black',
               }}
             >
-              <ActionList actions={Object.entries(lastActions)}  {...{showPayloads}}/>
+              <ActionList
+                actions={Object.entries(lastActions)}
+                {...{ showPayloads }}
+              />
             </li>
           );
         })}
-        <li key={'latest'} style={{
-              border: historyOffset === 0 ? '2px solid yellow' : '2px solid black',
-        }}>
+        <li
+          onClick={!isInFuture ? null : () => {
+            // Whether the present is in the future?
+            dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
+          }}
+          key={'latest'}
+          style={{
+            border:
+              historyOffset === 0 ? '2px solid yellow' : '2px solid black',
+          }}
+        >
           LATEST
-          <ActionList actions={Object.entries(lastActions)} {...{showPayloads}}/>
+          <ActionList
+            actions={Object.entries(lastActions)}
+            {...{ showPayloads }}
+          />
         </li>
       </ul>
     </div>
