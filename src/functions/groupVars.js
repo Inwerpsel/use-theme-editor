@@ -2,11 +2,12 @@ import { scopesByProperty } from './collectRuleVars';
 import { rootScopes } from './extractPageVariables';
 import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
+import { HIGHLIGHT_CLASS } from './highlight';
 
 export const toLabel = ({id, className, tagName}) => {
   const idPart = !id ? '' : `#${ id }`;
   const noClass = !className || typeof className !== 'string';
-  const classPart =  noClass ? '' : `.${ className.trim().replaceAll(/ +/g, '\n.') }`;
+  const classPart =  noClass ? '' : `.${ className.replace(HIGHLIGHT_CLASS, '').trim().replaceAll(/ +/g, '\n.') }`;
 
   return tagName.toLowerCase() + idPart + '\n' + classPart;
 };
