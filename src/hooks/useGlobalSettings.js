@@ -1,6 +1,7 @@
 import {useLocalStorage, useResumableLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
+import { useHeight, useWidth } from '../state';
 
 export function useGlobalSettings(frameRef) {
   const [
@@ -12,12 +13,8 @@ export function useGlobalSettings(frameRef) {
   const [
     fileName, setFileName,
   ] = useResumableLocalStorage('theme-name', 'theme');
-  const [
-    width, setWidth,
-  ] = useResumableLocalStorage('responsive-width', 360);
-  const [
-    height, setHeight,
-  ] = useResumableLocalStorage('responsive-height', 640);
+  const [width] = useWidth();
+  const [height] = useHeight();
   const [
     frameClickBehavior, setFrameClickBehavior,
   ] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
@@ -79,8 +76,6 @@ export function useGlobalSettings(frameRef) {
     propertyFilter, setPropertyFilter,
     propertySearch, setPropertySearch,
     fileName, setFileName,
-    width, setWidth,
-    height, setHeight,
     frameClickBehavior, setFrameClickBehavior,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,

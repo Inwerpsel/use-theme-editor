@@ -1,4 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
+import { useHeight, useWidth } from '../state';
 import { ThemeEditorContext } from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -29,8 +30,9 @@ export function SmallFullHeightFrame(props) {
     }
   }, [ownPosition]);
 
-  const { width, height, frameRef, scrollFrameRef } =
-    useContext(ThemeEditorContext);
+  const { frameRef, scrollFrameRef } = useContext(ThemeEditorContext);
+  const [width] = useWidth();
+  const [height] = useHeight();
 
   useEffect(() => {
     setTimeout(() => {

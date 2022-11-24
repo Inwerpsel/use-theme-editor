@@ -1,18 +1,13 @@
-import React, { Fragment, useContext } from 'react';
-import { ThemeEditorContext } from '../ThemeEditor';
+import React, { Fragment } from 'react';
 import { useCompactSetting } from '../movable/DispatchedElement';
 import { CompactModeButton } from '../inspector/CompactModeButton';
 import { SelectControl } from '../controls/SelectControl';
 import { RadioControl } from '../controls/RadioControl';
-import { useIsSimpleSizes, useScreenOptions } from '../../state';
+import { useHeight, useIsSimpleSizes, useScreenOptions, useWidth } from '../../state';
 
 export function ScreenSwitcher() {
-  const {
-    width,
-    height,
-    setWidth,
-    setHeight,
-  } = useContext(ThemeEditorContext);
+  const [width, setWidth] = useWidth();
+  const [height, setHeight] = useHeight();
 
   const [isSimpleSizes, setIsSimpleSizes] = useIsSimpleSizes();
 

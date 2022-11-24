@@ -1,12 +1,9 @@
-import React, {useContext} from 'react';
-import {ThemeEditorContext} from '../ThemeEditor';
+import React from 'react';
+import { useHeight, useWidth } from '../../state';
 const id = 'responsive-size-controls';
 export function FrameSizeSettings() {
-
-  const {
-    width, setWidth,
-    height, setHeight,
-  } = useContext(ThemeEditorContext);
+  const [width, setWidth] = useWidth();
+  const [height, setHeight] = useHeight();
 
   return <div className={id} id={id}>
     <span>Dimensions: <input

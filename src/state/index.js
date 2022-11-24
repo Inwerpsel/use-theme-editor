@@ -10,3 +10,11 @@ export function useScreenOptions() {
 
     return isSimple ? simpleScreenOptions : allScreenOptions;
 }
+
+export function useWidth() {
+    return useResumableLocalStorage('responsive-width', 360);
+}
+
+export function useHeight() {
+    return useResumableLocalStorage('responsive-height', 640);
+}
