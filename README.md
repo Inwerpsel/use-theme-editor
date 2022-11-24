@@ -16,12 +16,19 @@ with no configuration needed to add a new setting.
 ## How to use
 
 Exact instructions are still to follow, so for now you need to be prepared to deal with unforeseen circumstances.
+Though the setups steps are easy and require no code.
 
-Though the setups steps are easy and require no code. In essence all that needs to happen is build the script (currently in example),
-and load it in any HTML page, after all CSS was loaded. Exactly how this happens still needs to take shape.
+In theory, all that needs to happen is build the script (currently in example),
+and load it in any HTML page, after all CSS was loaded.
 
-[Demo Bootstrap](https://drive.google.com/file/d/1sF4r8E1Cv97mxT8I4ZZKsjGAo-a33l-i/view)
-[Demo Halfmoon](https://drive.google.com/file/d/1h6e5zwqSKZWnY6O3x5cCnc9bX1mWdL-F/view)
+Currently the editor kind of "eats" the page it's on. Eventually it will likely be on its own page,
+able to load arbitrary HTML pages without a page reload.
+
+[Demo video Bootstrap](https://drive.google.com/file/d/1sF4r8E1Cv97mxT8I4ZZKsjGAo-a33l-i/view)
+
+[Demo video Halfmoon](https://drive.google.com/file/d/1h6e5zwqSKZWnY6O3x5cCnc9bX1mWdL-F/view)
+
+Online demo to follow.
 
 ## Status
 Multiple features are currently under active development. Hence some features temporarily don't work or work improperly.
