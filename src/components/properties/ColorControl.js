@@ -7,6 +7,7 @@ import {ThemePalettePicker} from '../ThemePalettePicker';
 import {useThrottler} from '../../hooks/useThrottler';
 import { useResumableState } from '../../hooks/useResumableReducer';
 import { TextControl } from '../controls/TextControl';
+import { CreateAlias } from '../inspector/CreateAlias';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
@@ -98,6 +99,8 @@ export const ColorControl = props => {
   // Disallow gradients if not all usages support it.
   const allowGradients = !usages.some(({property}) => property !== 'background');
 
+  const hexValue = tinycolor(value).toHexString();
+
   if (!nativeColorPicker) {
     return <Fragment>
       <div style={{clear: 'both'}}>
@@ -162,6 +165,7 @@ export const ColorControl = props => {
   }
 
   return <div style={{minHeight: '120px', clear: 'both'}}>
+    <CreateAlias key={value} {...{value}}/>
     <input
       type='color'
       style={{
@@ -170,7 +174,7 @@ export const ColorControl = props => {
         float: 'right',
         opacity,
       }}
-      value={tinycolor(value).toHexString()}
+      value={hexValue}
       onChange={(event) => {
         const color = tinycolor(event.target.value);
         const newColor = pickFormat(color, opacity);

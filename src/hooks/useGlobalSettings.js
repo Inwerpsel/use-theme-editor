@@ -1,7 +1,6 @@
 import {useLocalStorage, useResumableLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
-import { useHeight, useWidth } from '../state';
 
 export function useGlobalSettings(frameRef) {
   const [
@@ -13,8 +12,6 @@ export function useGlobalSettings(frameRef) {
   const [
     fileName, setFileName,
   ] = useResumableLocalStorage('theme-name', 'theme');
-  const [width] = useWidth();
-  const [height] = useHeight();
   const [
     frameClickBehavior, setFrameClickBehavior,
   ] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
@@ -40,12 +37,6 @@ export function useGlobalSettings(frameRef) {
     responsiveSticky,
     setResponsiveSticky
   ] = useLocalStorage('responsive-on-load', true);
-
-  const [
-    scales,
-    setScales,
-  ] = useResumableLocalStorage('responsive-scales', {});
-  const scale = scales[`${width}x${height}`] || 1;
 
   const [annoyingPrefix, setAnnoyingPrefix] = useLocalStorage(
     'annoying-prefix',
@@ -80,8 +71,6 @@ export function useGlobalSettings(frameRef) {
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
     responsiveSticky, setResponsiveSticky,
-    scales, setScales,
-    scale,
     annoyingPrefix, setAnnoyingPrefix,
     showCssProperties, setShowCssProperties,
     nameReplacements, setNameReplacements,

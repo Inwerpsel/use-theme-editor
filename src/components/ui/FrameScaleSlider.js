@@ -1,6 +1,5 @@
-import React, { useContext} from 'react';
-import { useHeight, useWidth } from '../../state';
-import {ThemeEditorContext} from '../ThemeEditor';
+import React from 'react';
+import { useHeight, useScales, useWidth } from '../../state';
 
 const config = {
   min: 0.2,
@@ -9,12 +8,10 @@ const config = {
 };
 
 export function FrameScaleSlider() {
-  const {
-    scales, setScales,
-    scale,
-  } = useContext(ThemeEditorContext);
+  const [scales, setScales] = useScales();
   const [width] = useWidth();
   const [height] = useHeight();
+  const scale = scales[`${width}x${height}`] || 1;
 
   const updateScales = (e) => {
     setScales({ ...scales, [`${width}x${height}`]: e.target.value });

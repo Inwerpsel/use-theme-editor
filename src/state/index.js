@@ -18,3 +18,7 @@ export function useWidth() {
 export function useHeight() {
     return useResumableLocalStorage('responsive-height', 640);
 }
+
+export function useScales() {
+    return useResumableLocalStorage('responsive-scales', {});
+}
