@@ -66,7 +66,7 @@ export function useResumableLocalStorage(key, defaultValue, _type = null) {
       return defaultValue;
     }
     return apply(type, stored);
-  }, scopedKey);
+  }, key);
 
   return [
     value,
