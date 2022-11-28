@@ -411,18 +411,15 @@ export function useResumableReducer(
   reducer,
   _initialState,
   initializer = (s) => s,
-  manualId
+  id
 ) {
-  const instanceId = useId();
-  const id = manualId || instanceId;
-
   const initialState = useMemo(
     () => (initializer(_initialState)),
     []
   );
 
   const state = useSyncExternalStore(
-    subscribe(id),
+    useMemo(() => subscribe(id), []),
     () => {
       // console.log('GETTING SNAPSHOT FOR', id, currentStates[id])
       return !(id in currentStates) ? initialState : currentStates[id];
