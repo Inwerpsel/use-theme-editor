@@ -14,7 +14,7 @@ function Usage(props) {
   const locateSelector =
     !scope || scope === selector || scope === ROOT_SCOPE || scope === 'body' || scope === ':root' || scope === 'html'
       ? selector
-      : `${scope}${selector}, ${scope} ${selector}`;
+      : `:where(${scope}, ${scope} *):where(${selector}) `;
 
   return (
     <li key={selector} style={!highLightMatch ? {} : currentSelectorStyle}>
