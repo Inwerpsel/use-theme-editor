@@ -1,5 +1,4 @@
-import { useId } from "react";
-import { useCallback } from "react";
+import React, { useId, useCallback } from "react";
 
 export function RadioControl(props) {
     const {options, onChange, selected, ...additionalProps} = props;
