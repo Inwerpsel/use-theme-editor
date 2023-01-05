@@ -1,6 +1,6 @@
 import {addHighlight, removeHighlight} from '../../functions/highlight';
 import {getValueFromDefaultScopes, VariableControl} from './VariableControl';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
@@ -12,10 +12,7 @@ import { rootScopes } from '../../functions/extractPageVariables';
 
 export const GroupControl = props => {
   const {
-    toggleGroup,
     group,
-    openGroups,
-    index,
   } = props;
 
   const {
@@ -33,7 +30,11 @@ export const GroupControl = props => {
     propertySearch, setPropertySearch,
     defaultValues,
     scopes,
+    openGroups,
+    setOpenGroups,
   } = useContext(ThemeEditorContext);
+
+  const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
 
   const groupColors = useMemo(() => {
     return vars.reduce((colorVars, someVar) => {
@@ -42,7 +43,7 @@ export const GroupControl = props => {
 
         const propertyScopes = scopesByProperty[name];
         let currentScope = null;
-        if (elementScopes) {
+        if (elementScopes.length > 0) {
           for (const key in propertyScopes || {}) {
             if (!rootScopes.includes(key)) {
               currentScope =
@@ -109,7 +110,7 @@ export const GroupControl = props => {
       
       <h4
         style={{fontWeight: 400, marginBottom: 0, cursor: 'pointer'}}
-        onClick={() => toggleGroup(label, index)}
+        onClick={() => toggleGroup(label)}
       >
         {label} ({vars.length})
         {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}

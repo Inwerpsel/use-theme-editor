@@ -37,6 +37,7 @@ import { TextControl } from './controls/TextControl';
 import { useLocallyStoredPanel } from '../hooks/useLocallyStoredPanel';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
+import { Inspector } from './ui/Inspector';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -44,7 +45,7 @@ export const hotkeysOptions = {
 
 export const ThemeEditorContext = createContext({});
 
-const prevGroups = [];
+export const prevGroups = [];
 
 let prevOpengroups = null;
 
@@ -64,7 +65,6 @@ export const ThemeEditor = (props) => {
   const [_openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
   const openGroups = prevOpengroups !== null ? prevOpengroups : _openGroups;
   prevOpengroups = null;
-  const toggleGroup = id => setOpenGroups({...openGroups, [id]: !openGroups[id]});
   
   useLayoutEffect(() => {
     if (currentInspected !== -1 && currentInspected !== inspectedIndex) {
@@ -150,6 +150,7 @@ export const ThemeEditor = (props) => {
   const [importDisplayed, setImportDisplayed] = useState(false);
   const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
+
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
 
   const groups = useMemo(() => {
@@ -189,7 +190,7 @@ export const ThemeEditor = (props) => {
     () => extractColorUsages(scopes[ROOT_SCOPE], !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
     [scopes, defaultValues, useDefaultsPalette],
   );
-  const[fullPagePreview, setFullPagePreview]  = useLocalStorage('full-page-preview', false)
+  const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   return (
     <ThemeEditorContext.Provider
@@ -209,6 +210,7 @@ export const ThemeEditor = (props) => {
         setSheetDisablerDisplayed,
         scopes,
         lastInspectTime,
+        openGroups, setOpenGroups,
         ...settings,
       }}
     >
@@ -273,16 +275,7 @@ export const ThemeEditor = (props) => {
                 <PropertyCategoryFilter/>
                 <PropertySearch/>
               </div>
-              <ul className={'group-list'}>
-                {groups.length === 0 && <li><span className='alert'>No results</span></li>}
-                {groups.map((group, index) => {
-                  return (
-                    <GroupControl
-                      key={group.label}
-                      {...{ group, toggleGroup, openGroups, index }} />
-                  );
-                })}
-              </ul>
+              <Inspector {...{groups}} />
               <HistoryControls />
             </Area>
             <ResizableFrame src={window.location.href} />
