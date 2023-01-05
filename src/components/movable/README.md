@@ -133,19 +133,14 @@ theme editor its impact is orders of magnitude smaller than the current performa
 One positive effect of this is that it reduces the amount of work that still needs to happen if the component
 does get shown.
 
-
-## IN PROGRESS
-- Save and restore arrangements
-
-## TODO NEXT
-
 ## TODO
 - Proper multi package repo setup
-- Minimize essential base CSS needed for Areas to work. If a rule is required, but the value is opionated, use a CSS variable.
-- Move non required CSS rules to a "theme" file, if any.
+- Minimize essential base CSS needed for Areas to work, move non required CSS rules to a "theme" file, if any.
 - Reduce wrapper elements where preferable.
 - Refactor hastily written ordering and positioning code.
-- Improve API for storing the position data (decouple local storage)
-- Handle changes to Area structure better. Ideally without requiring an ID be provided for each element in the area. Currently it uses the index + current area ID.
-- Avoid jump when scrollbar appears
-- Shrinkable components (use context to allow early returning a compact version of a component)
+- Handle changes to Area structure better
+  - Ideally without requiring an ID be provided for each element in the area
+  - Currently it uses the index + current area ID.
+- Hide entire area
+  - Currently only drawer does this
+  - Slide out animation can be hard (as hiding the elements has to be delayed)
