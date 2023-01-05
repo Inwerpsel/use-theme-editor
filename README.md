@@ -55,6 +55,24 @@ This can break some use cases.
     - External store is very efficient, allows minimizing render complexity
     - Trade off: A large amount of notifiers possibly performs worse (e.g. large list => don't use in lists > certain size?)
     - Investigate impact on React's ability to render concurrently
+    - Move local storage out of React this way?
+    - Complex state (open groups) vs many keys (open variable controls) vs reducer (theme editor)?
+      - complex state:
+        - pro: less work performed by store, less keys to change detect, stable amount of instances
+        - con: can't replay fine grained, causes more elements to render (same issue as Context)
+      - many keys:
+        - pro: maximally targeted renders, easy to replay / compare with other states
+        - con: need to generate complex key, lists can potentially have thousands of items
+      - reducer:
+        - pro: components can use dispatched actions (history view), replayable unless semantically impossible
+        - con: more coupled state, hard to detect whether 2 states are equal, replay requires error handling
+    - Questions on useResumableReducer
+      - How efficient is equality comparison in different cases?
+      - How many keys can a store have before any significant impact on performance?
+      - Is there a more efficient way to write and read this kind of data?
+      - Does the current approach of using a separate object for the latest state have any benefits?
+        - Compared to immediately pushing on the history stack and returning the state from that.
+        - I assume minimizing operations on the history array as new actions are dispatched is worth it.
   - Decouple state implementations in movable panels so it can be used standalone
     - Maybe better with reducer?
 

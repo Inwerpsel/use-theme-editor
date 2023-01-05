@@ -1,3 +1,12 @@
+// This file is the initial approach of managing application wide state.
+// At first, this was all done with context, which worked well... until it
+// didn't. This started causing quite a lot of overhead, especially in
+// complex trees.
+// I think most things can use custom hooks instead, that internally connect
+// to a global store.
+// Open questions: 
+// - Avoid multiple separate reads and writes from local storage? Is it even slow?
+// - Easier hot keys registering? Replace hotkeys dependency? It likely has scaling issues
 import {useLocalStorage, useResumableLocalStorage} from './useLocalStorage';
 import {useHotkeys} from 'react-hotkeys-hook';
 import {useEffect} from 'react';
