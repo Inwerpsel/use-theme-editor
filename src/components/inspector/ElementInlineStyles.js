@@ -35,7 +35,7 @@ export function ElementInlineStyles(props) {
 
             return (
               <VariableControl
-                key={property}
+                key={cssVar.name}
                 cssVar={cssVar}
                 scopes={elementScopes}
                 onChange={(value) => {
