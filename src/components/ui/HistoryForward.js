@@ -13,6 +13,6 @@ export function HistoryForward() {
     disabled={noFuture}
     title={noFuture ? 'No future' : historyOffset}
     onClick={() => dispatch({type: 'HISTORY_FORWARD'})}
-  >redo
+  >→
   </button>;
 }

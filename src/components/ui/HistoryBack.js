@@ -11,6 +11,6 @@ export function HistoryBack() {
     disabled={noHistory}
     title={noHistory ? 'No history' : remainingLength}
     onClick={() => dispatch({type: 'HISTORY_BACKWARD'})}
-  >undo
+  >←
   </button>;
 }
