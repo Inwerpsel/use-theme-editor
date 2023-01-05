@@ -5,7 +5,6 @@ import React, {
   useMemo,
   useState,
   useSyncExternalStore,
-  useId,
 } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { hotkeysOptions } from '../components/ThemeEditor';
@@ -116,6 +115,14 @@ function historyReducer(state, action) {
         return state;
       }
 
+      // `currentlyInThePast` should be very infrequent case: one edit on the past immediately clears future.
+      // In other words, most actions happen against the latest state.
+      // Hence I think the current approach of treating the latest state as a separate
+      // object has better overall performance characteristics,
+      // compared to just using the last entry of the history as the latest state.
+      // Especially if the changes are fluid and history is skipped every time.
+      // It's hard to validate this assumption, though, because this runs really fast even
+      // with hundreds of history entries.
       const currentlyInThePast = historyOffset > 0;
       const baseIndex = historyStack.length - historyOffset;
       const historyEntry = !currentlyInThePast ? state : historyStack[baseIndex];
@@ -346,6 +353,8 @@ const subscribe = (id) => (notify) => {
   };
 };
 
+// This component acts as a boundary for history.
+// Todo: use a global history if no boundary is provided.
 export function SharedActionHistory(props) {
   const { previewComponents, children } = props;
   const [,forceRender] = useState();
@@ -358,15 +367,10 @@ export function SharedActionHistory(props) {
     lastActions,
   } = state;
 
-  const dispatch = useCallback((action) => {
-    historyDispatch(action);
-    notifyChanged();
-  }, []);
-
   useHotkeys(
     'ctrl+z,cmd+z',
     () => {
-      dispatch({ type: 'HISTORY_BACKWARD' });
+      historyDispatch({ type: 'HISTORY_BACKWARD' });
     },
     hotkeysOptions
   );
@@ -374,7 +378,7 @@ export function SharedActionHistory(props) {
   useHotkeys(
     'ctrl+shift+z,cmd+shift+z',
     () => {
-      dispatch({ type: 'HISTORY_FORWARD' });
+      historyDispatch({ type: 'HISTORY_FORWARD' });
     },
     hotkeysOptions
   );
@@ -385,7 +389,7 @@ export function SharedActionHistory(props) {
       historyOffset,
       currentId,
       lastActions,
-      dispatch,
+      dispatch: historyDispatch ,
       states,
       currentStates,
       previewComponents,
