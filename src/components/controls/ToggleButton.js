@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { memo } from 'react';
+import { controlsAreEqual } from './Checkbox';
 
-export function ToggleButton({controls: [enabled, setEnabled], children, ...other}) {
+export const ToggleButton = memo(function ToggleButton({
+  controls: [enabled, setEnabled],
+  children,
+  ...other
+}) {
   return (
     <button
       {...other}
@@ -11,4 +16,5 @@ export function ToggleButton({controls: [enabled, setEnabled], children, ...othe
       {children}
     </button>
   );
-}
+},
+controlsAreEqual);
