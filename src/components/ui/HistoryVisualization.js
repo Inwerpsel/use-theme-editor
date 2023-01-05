@@ -49,7 +49,7 @@ function ActionList(props) {
               </span>
             )}
 
-            {isShortString && (
+            {!Preview && isShortString && (
               <pre
                 style={{ margin: 0, float: 'right' }}
                 className="monospace-code"
@@ -62,7 +62,7 @@ function ActionList(props) {
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
-            {Preview && <Preview payload={action.payload} />}
+            {Preview && <Preview {...{action}} payload={action.payload} />}
           </li>
         );
       })}
@@ -104,24 +104,27 @@ export function HistoryVisualization() {
 
       <h2>History</h2>
       <ul style={{ display: 'flex', flexDirection: 'column-reverse' }}>
-        {historyStack.map(({ lastActions }, index) => {
+        {historyStack.map(({ states, lastActions }, index) => {
           const isPresent = index === currentIndex;
           // We don't use this in the present so it can be true already.
           isInFuture = isInFuture || isPresent;
           const amount = Math.abs(index - currentIndex);
           const type = isInFuture ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
+
+          const canReplay =
+            !isInFuture &&
+            Object.entries(lastActions).some(
+              ([id, action]) =>
+                typeof action === 'object' || states[id] !== currentStates[id]
+            );
+
           return (
             <li
+              className='historical-actions'
               title={`${type} ${index} - ${currentIndex} === ${amount}`}
-              onClick={
-                isPresent
-                  ? null
-                  : () => {
-                      dispatch({ type, payload: { amount } });
-                    }
-              }
               key={index}
               style={{
+                position: 'relative',
                 border:
                   index === currentIndex
                     ? '2px solid yellow'
@@ -132,6 +135,48 @@ export function HistoryVisualization() {
                 actions={Object.entries(lastActions)}
                 {...{ showPayloads }}
               />
+              <div
+                style={{
+                  display: 'flex',
+                  justifyContent: 'stretch',
+                  // position: 'absolute',
+                  // top: 0,
+                  // bottom: 0,
+                  // right: 0,
+                  // left: 0,
+                }}
+              >
+                <button
+                  style={{width: '50%'}}
+                  onClick={
+                    isPresent
+                      ? null
+                      : () => {
+                          dispatch({ type, payload: { amount } });
+                        }
+                  }
+                >
+                  jump here
+                </button>
+                {canReplay && (
+                  <button
+                    style={{width: '50%'}}
+                    onClick={(event) => {
+                      Object.entries(lastActions).forEach(([id, action]) =>
+                        dispatch({
+                          type: 'PERFORM_ACTION',
+                          payload: { id, action },
+                          options: {},
+                        })
+                      );
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    do again
+                  </button>
+                )}
+              </div>
             </li>
           );
         })}

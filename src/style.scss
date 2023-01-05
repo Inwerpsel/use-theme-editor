@@ -360,8 +360,8 @@ div[id^=font-picker] ul {
 }
 
 .theme-editor .history-button {
-  padding-left: 2px;
-  padding-right: 2px;
+  // padding: 0 4px;
+  font-size: 24px;
 }
 
 .content {
@@ -400,4 +400,25 @@ div[id^=font-picker] ul {
   padding: 0 !important;
   border: none !important;
   padding-bottom: 12px !important;
+}
+
+#wpadminbar {
+  display: none;
+}
+
+.history {
+  li {
+    list-style-type: none;
+  }
+}
+
+.historical-actions {
+  display: flex;
+  flex-direction: column;
+  &:not(:hover) button {
+    visibility: hidden;
+  }
+  ul {
+      margin: 0;
+  }
 }
