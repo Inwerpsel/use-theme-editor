@@ -151,7 +151,6 @@ export const VariableControl = (props) => {
     onChange,
     onUnset,
     initialOpen = false,
-    nestingLevel,
     referenceChain = [],
     scopes: elementScopes,
     parentVar,
@@ -168,6 +167,7 @@ export const VariableControl = (props) => {
     showCssProperties,
     nameReplacements,
   } = useContext(ThemeEditorContext);
+
   const [width] = useWidth();
   const theme = scopes[ROOT_SCOPE] || {};
 
@@ -337,7 +337,7 @@ export const VariableControl = (props) => {
                 style={{ fontSize: '14px' }}
                 controls={[showReferences, setShowReferences]}
               >
-                Used by {references.length}
+                Used by {references.length} other
               </Checkbox>
               {showReferences && <VariableReferences {...{ references }} />}
             </div>
@@ -359,7 +359,7 @@ export const VariableControl = (props) => {
                 default{' '}
               </span>
             )}
-            {isInTheme && (
+            {isInTheme && defaultValue !== null && (
               <button
                title={`Remove from current theme? The value from the default theme will be used, which is currently: "${defaultValue}"`}
                 onClick={() => {
@@ -462,6 +462,7 @@ export const VariableControl = (props) => {
                     payload: { name: referencedVariable.name },
                   });
                 }}
+                key={referencedVariable.name}
                 referenceChain={[...referenceChain, cssVar]}
                 parentVar={cssVar}
               />
