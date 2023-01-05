@@ -38,17 +38,13 @@ export const ACTIONS = {
       return state;
     }
 
-
-    const {[scope]: old, ...otherScopes} = scopes;
-    const newTheme = { ...old, [name]: value };
+    const {...newScopes} = scopes;
+    newScopes[scope] = { ...(scopes[scope] || {}), [name]: value }; 
 
     return {
       ...state,
       // changeRequiresReset : false,
-      scopes: {
-        [scope]: newTheme,
-        ...otherScopes,
-      },
+      scopes: newScopes,
     };
   },
   unset: (state, { name, scope = ROOT_SCOPE }) => {
@@ -74,6 +70,34 @@ export const ACTIONS = {
         [scope]: others,
       },
     };
+  },
+  createAlias(state, {name, value}) {
+    const varName = `--${name.replaceAll(' ', '-')}`;
+    const varString = `var(${varName})`;
+    const newScopes = {};
+
+    let hasRoot = false;
+    for (const selector in state.scopes) {
+      newScopes[selector] = {};
+      const scopeVars = state.scopes[selector];
+      for (const varName in scopeVars) {
+        const isSameValue = value === scopeVars[varName];
+        newScopes[selector][varName] =  isSameValue ? varString : scopeVars[varName];
+      }
+      if (selector === ROOT_SCOPE) {
+        newScopes[selector][varName] = value;
+        hasRoot = true;
+      }
+    }
+
+    if (!hasRoot) {
+      newScopes[ROOT_SCOPE][varName] = value;
+    }
+
+    return {
+      ...state,
+      scopes: newScopes,
+    }
   },
 //  startPreview: (state, { name, value }) => {
 //     return {
