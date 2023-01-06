@@ -77,7 +77,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
       return null;
     }
     return <Fragment>
-      {showLabel && <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n').trim()}</div>}
+      {showLabel && <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}</div>}
 
         <span>No elements found!</span>
         {children}
@@ -96,7 +96,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
     <Fragment>
       {showLabel && (
         <div className="monospace-code">
-          {selector.replaceAll(/\s*\,\s*/g, ',\n').trim()}
+          {selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}
         </div>
       )}
       <div
