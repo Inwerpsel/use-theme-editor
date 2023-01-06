@@ -30,3 +30,7 @@ export function useHeight() {
 export function useScales() {
     return useResumableLocalStorage('responsive-scales', {});
 }
+
+export function useLocallyStoredPanel() {
+    return useResumableLocalStorage('panel-rearrangements', {})
+}

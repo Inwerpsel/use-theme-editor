@@ -34,10 +34,10 @@ import { updateScopedVars } from '../initializeThemeEditor';
 import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
 import { TextControl } from './controls/TextControl';
-import { useLocallyStoredPanel } from '../hooks/useLocallyStoredPanel';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
+import { useLocallyStoredPanel } from '../state';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
