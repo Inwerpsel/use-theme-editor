@@ -1,5 +1,10 @@
 import { useState } from "react";
 
+// This component is functional, but I have no use case yet.
+// Tabs mean that you can only access one of the items at a time,
+// which goes against the philosophy of allowing any component to be
+// on the screen at any time.
+// To not conflict with this, tabs would need to be optional and user editable.
 export function Tabs(props) {
   const { children } = props;
   const [activeId, setActiveId] = useState(null);
