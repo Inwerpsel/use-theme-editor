@@ -13,6 +13,25 @@ with no configuration needed to add a new setting.
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
+## Additional packages*
+
+\* Not fully set up as separate packages yet, but code should work as such. Setting up these packages is currently
+ not a priority, but if there's interest I'd love to hear which things would be needed to get it up in a particular use case.
+
+### [Draggable elements](https://github.com/Inwerpsel/use-theme-editor/tree/main/src/components/movable)
+I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
+
+### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.js)
+This was built from the ground up with `useSyncExternalStore`, which makes it possible to sync with a single history timeline,
+while offering an identical function signature as `useState` and `useReducer`. Any code that uses either should just work
+with history by replacing the function.
+
+* Capture any combination of separate states (simple or with reducers) into a single history timeline.
+* Only elements with changes are ever rerendered when jumping between any 2 states in history.
+* Some (rough) components for timeline navigation and visualization.
+* Register a custom component per action to visualize in the timeline.
+* Debounces everything by default (you'd never want history without it).
+
 ## How to use
 
 Exact instructions are still to follow, so for now you need to be prepared to deal with unforeseen circumstances.
@@ -57,15 +76,15 @@ This can break some use cases.
     - Investigate impact on React's ability to render concurrently
     - Move local storage out of React this way?
     - Complex state (open groups) vs many keys (open variable controls) vs reducer (theme editor)?
-      - complex state:
+      - complex state (without reducer):
         - pro: less work performed by store, less keys to change detect, stable amount of instances
-        - con: can't replay fine grained, causes more elements to render (same issue as Context)
+        - con: can't replay fine grained, causes more elements to render (same issue as Context), shifts burden to consumer
       - many keys:
         - pro: maximally targeted renders, easy to replay / compare with other states
         - con: need to generate complex key, lists can potentially have thousands of items
       - reducer:
         - pro: components can use dispatched actions (history view), replayable unless semantically impossible
-        - con: more coupled state, hard to detect whether 2 states are equal, replay requires error handling
+        - con: more coupled state, hard to detect whether 2 states are equivalent, replay requires error handling
     - Questions on useResumableReducer
       - How efficient is equality comparison in different cases?
       - How many keys can a store have before any significant impact on performance?

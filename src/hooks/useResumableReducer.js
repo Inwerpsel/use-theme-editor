@@ -72,7 +72,6 @@ function historyReducer(state, action) {
         return state;
       }
 
-
       const oldStates =
         historyOffset === 0
           ? states
@@ -98,7 +97,7 @@ function historyReducer(state, action) {
     }
     case 'CLEAR_HISTORY': {
       const currentlyInThePast = historyOffset > 0;
-      const baseStates = !currentlyInThePast ? states :  historyStack[historyStack.length - historyOffset].states;
+      const baseStates = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;
       const lastActions = !currentlyInThePast ? state.lastActions : historyStack[historyStack.length - historyOffset].lastActions;
 
       return {
@@ -115,8 +114,8 @@ function historyReducer(state, action) {
         return state;
       }
 
-      // `currentlyInThePast` should be very infrequent case: one edit on the past immediately clears future.
-      // In other words, most actions happen against the latest state.
+      // `currentlyInThePast` should be very infrequent case: one edit on the past clears future.
+      // Mmost actions happen against the latest state.
       // Hence I think the current approach of treating the latest state as a separate
       // object has better overall performance characteristics,
       // compared to just using the last entry of the history as the latest state.
