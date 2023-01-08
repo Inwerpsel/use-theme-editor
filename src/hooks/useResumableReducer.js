@@ -172,7 +172,11 @@ function historyReducer(state, action) {
               },
             ],
         currentId: id,
-        lastSet: now,
+        // If the previous state was removed from the history because it was duplicate,
+        // it should result in a new entry in any subsequent dispatches to the same id.
+        // Otherwise, it would be possible to remove multiple recent entries just by
+        // having the same value for any short amount of time.
+        lastSet: skippedHistoryNowSameAsPrevious ? null : now,
         lastActions: !skipHistory
           ? { [id]: performedAction }
           : { ...state.lastActions, [id]: performedAction },
