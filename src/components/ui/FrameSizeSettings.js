@@ -1,9 +1,11 @@
 import React from 'react';
-import { useHeight, useWidth } from '../../state';
+import { use } from '../../state';
+
 const id = 'responsive-size-controls';
+
 export function FrameSizeSettings() {
-  const [width, setWidth] = useWidth();
-  const [height, setHeight] = useHeight();
+  const [width, setWidth] = use.width();
+  const [height, setHeight] = use.height();
 
   return <div className={id} id={id}>
     <span>Dimensions: <input

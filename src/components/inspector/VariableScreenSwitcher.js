@@ -1,6 +1,6 @@
 import mediaQuery from 'css-mediaquery';
 import React from 'react';
-import { useHeight, useScreenOptions, useWidth } from '../../state';
+import { use } from '../../state';
 
 // Whether a variable is overridden by a later media query.
 export const isOverridden = ({media, width, cssVar}) => {
@@ -27,10 +27,10 @@ export const VariableScreenSwitcher = props => {
     media,
   } = props;
 
-  const [screenWidth, setWidth] = useWidth();
-  const [,setHeight] = useHeight();
+  const [screenWidth, setWidth] = use.width();
+  const [,setHeight] = use.height();
 
-  const screenOptions = useScreenOptions();
+  const screenOptions = use.screenOptions();
 
   const filteredOptions = screenOptions
     .filter(({ dims: [width] }) => {

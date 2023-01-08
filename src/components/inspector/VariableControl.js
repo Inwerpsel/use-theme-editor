@@ -15,7 +15,7 @@ import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
 import { rootScopes } from '../../functions/extractPageVariables';
 import { useResumableState } from '../../hooks/useResumableReducer';
-import { useWidth } from '../../state';
+import { use } from '../../state';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -168,7 +168,7 @@ export const VariableControl = (props) => {
     nameReplacements,
   } = useContext(ThemeEditorContext);
 
-  const [width] = useWidth();
+  const [width] = use.width();
   const theme = scopes[ROOT_SCOPE] || {};
 
   const {

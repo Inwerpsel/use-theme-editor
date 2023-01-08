@@ -9,28 +9,16 @@
 import { useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 
-export function useIsSimpleSizes() {
-    return useResumableLocalStorage('responsive-simple-sizes', true);
-}
-
-export function useScreenOptions() {
-    const [isSimple] = useIsSimpleSizes();
+export const use = {
+  isSimpleSizes: () =>
+    useResumableLocalStorage('responsive-simple-sizes', true),
+  screenOptions: () => {
+    const [isSimple] = use.isSimpleSizes();
 
     return isSimple ? simpleScreenOptions : allScreenOptions;
-}
-
-export function useWidth() {
-    return useResumableLocalStorage('responsive-width', 360);
-}
-
-export function useHeight() {
-    return useResumableLocalStorage('responsive-height', 640);
-}
-
-export function useScales() {
-    return useResumableLocalStorage('responsive-scales', {});
-}
-
-export function useLocallyStoredPanel() {
-    return useResumableLocalStorage('panel-rearrangements', {})
-}
+  },
+  width: () => useResumableLocalStorage('responsive-width', 360),
+  height: () => useResumableLocalStorage('responsive-height', 640),
+  scales: () => useResumableLocalStorage('responsive-scales', {}),
+  uiArrangement: () => useResumableLocalStorage('panel-rearrangements', {}),
+};

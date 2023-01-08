@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { useHeight, useScales, useWidth } from '../state';
+import { use } from '../state';
 import {ThemeEditorContext} from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -13,9 +13,9 @@ export const ResizableFrame = props => {
     frameRef,
   } = useContext(ThemeEditorContext);
 
-  const [width, setWidth] = useWidth();
-  const [height, setHeight] = useHeight();
-  const [scales] = useScales();
+  const [width, setWidth] = use.width();
+  const [height, setHeight] = use.height();
+  const [scales] = use.scales();
   const scale = scales[`${width}x${height}`] || 1;
 
   return <div

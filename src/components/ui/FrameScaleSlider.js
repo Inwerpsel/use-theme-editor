@@ -1,5 +1,5 @@
 import React from 'react';
-import { useHeight, useScales, useWidth } from '../../state';
+import { use } from '../../state';
 
 const config = {
   min: 0.2,
@@ -8,9 +8,9 @@ const config = {
 };
 
 export function FrameScaleSlider() {
-  const [scales, setScales] = useScales();
-  const [width] = useWidth();
-  const [height] = useHeight();
+  const [scales, setScales] = use.scales();
+  const [width] = use.width();
+  const [height] = use.height();
   const scale = scales[`${width}x${height}`] || 1;
 
   const updateScales = (e) => {

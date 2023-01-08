@@ -37,7 +37,7 @@ import { TextControl } from './controls/TextControl';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
-import { useLocallyStoredPanel } from '../state';
+import { use } from '../state';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -215,7 +215,7 @@ export const ThemeEditor = (props) => {
       }}
     >
       <div className="theme-editor">
-        <MovablePanels stateHook={useLocallyStoredPanel}>
+        <MovablePanels stateHook={use.uiArrangement}>
           <div
             style={{
               display: 'flex',
