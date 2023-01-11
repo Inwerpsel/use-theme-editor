@@ -3,7 +3,7 @@ import { useCompactSetting } from '../movable/DispatchedElement';
 import { CompactModeButton } from '../inspector/CompactModeButton';
 import { SelectControl } from '../controls/SelectControl';
 import { RadioControl } from '../controls/RadioControl';
-import { use } from '../../state';
+import { get, use } from '../../state';
 
 export function ScreenSwitcher() {
   const [width, setWidth] = use.width();
@@ -11,7 +11,7 @@ export function ScreenSwitcher() {
 
   const [isSimpleSizes, setIsSimpleSizes] = use.isSimpleSizes();
 
-  const screenOptions = use.screenOptions();
+  const { screenOptions } = get;
 
   const [isCompact, setIsCompact] = useCompactSetting();
 

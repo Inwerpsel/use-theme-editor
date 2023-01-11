@@ -15,7 +15,7 @@ import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
 import { rootScopes } from '../../functions/extractPageVariables';
 import { useResumableState } from '../../hooks/useResumableReducer';
-import { use } from '../../state';
+import { get } from '../../state';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -158,6 +158,8 @@ export const VariableControl = (props) => {
     currentScope = ROOT_SCOPE,
   } = props;
 
+  const { width } = get;
+
   const {
     scopes,
     dispatch,
@@ -168,7 +170,6 @@ export const VariableControl = (props) => {
     nameReplacements,
   } = useContext(ThemeEditorContext);
 
-  const [width] = use.width();
   const theme = scopes[ROOT_SCOPE] || {};
 
   const {

@@ -13,6 +13,9 @@ module.exports = {
         filename: '[name].js',
         path: path.resolve(__dirname, 'example/dist'),
     },
+    resolve: {
+        extensions: ['.tsx', '.ts', '.js'],
+    },
     devtool: 'source-map',
     module: {
         rules: [
@@ -25,6 +28,11 @@ module.exports = {
                         babelrc: true,
                     }
                 }
+            },
+            {
+                test: /\.tsx?$/,
+                use: 'ts-loader',
+                exclude: /node_modules/,
             },
             {
                 test: /\.s[ac]ss$/i,

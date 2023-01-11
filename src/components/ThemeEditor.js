@@ -37,7 +37,7 @@ import { TextControl } from './controls/TextControl';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
-import { use } from '../state';
+import { get, use } from '../state';
 
 export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
@@ -136,7 +136,6 @@ export const ThemeEditor = (props) => {
   }, [scopes]);
 
   const {
-    propertyFilter,
     propertySearch,
     fileName,
     useDefaultsPalette, setUseDefaultsPalette,
@@ -145,6 +144,8 @@ export const ThemeEditor = (props) => {
     showSourceLinks, setShowSourceLinks,
     webpackHome, setWebpackHome,
   } = settings;
+  
+  const { propertyFilter } = get;
 
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
   const [importDisplayed, setImportDisplayed] = useState(false);
@@ -211,6 +212,7 @@ export const ThemeEditor = (props) => {
         scopes,
         lastInspectTime,
         openGroups, setOpenGroups,
+        propertyFilter,
         ...settings,
       }}
     >

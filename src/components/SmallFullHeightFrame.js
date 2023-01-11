@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { use } from '../state';
+import { get } from '../state';
 import { ThemeEditorContext } from './ThemeEditor';
 
 const wrapperMargin = 28;
@@ -8,6 +8,9 @@ const scale = 0.05;
 const inverseScale = 1 / scale;
 
 export function SmallFullHeightFrame(props) {
+  const { src } = props;
+  const { width, height } = get;
+
   const [scrollPosition, setScrollPosition] = useState(0);
   const [windowDragged, setWindowDragged] = useState(false);
   const [dragStartPos, setDragStartPos] = useState(0);
@@ -15,7 +18,6 @@ export function SmallFullHeightFrame(props) {
   const [ownPosition, setOwnPosition] = useState(null);
   const [shouldSmoothScroll, setShouldSmoothScroll] = useState(false);
   const [windowHeight, setWindowHeight] = useState(null);
-  const { src } = props;
   const cursorRef = useRef();
 
   useEffect(() => {
@@ -31,8 +33,6 @@ export function SmallFullHeightFrame(props) {
   }, [ownPosition]);
 
   const { frameRef, scrollFrameRef } = useContext(ThemeEditorContext);
-  const [width] = use.width();
-  const [height] = use.height();
 
   useEffect(() => {
     setTimeout(() => {

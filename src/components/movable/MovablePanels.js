@@ -56,6 +56,7 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
   );
 };
 
+// todo: use TS to define shape of default hooks and require it on argument hooks.
 export const defaultHooks = {
   showMovers() {
     return useState(false);

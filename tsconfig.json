@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "outDir": "./build",
+      "sourceMap": true,
+      "module": "es6",
+      "target": "es5",
+      "jsx": "react",
+      "allowJs": true,
+      "moduleResolution": "node"
+
+    },
+    "include": ["./src/**/*.ts", "src/components/ui/FrameScaleSlider.js"], "src/state/index.js"
+  }
+  

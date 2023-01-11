@@ -10,6 +10,8 @@ function preventUndoRedo (e) {
     }
   }
 
+// todo: explore using controls, like Checkbox.
+// or even injecting hooks like MovablePanels.
 export function TextControl({
   label,
   value,
