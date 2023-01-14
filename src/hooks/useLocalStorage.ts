@@ -22,13 +22,9 @@ function apply(type, value) {
   }
 }
 
-// Use _type only if you want nullable things.
-export const useLocalStorage = (key, defaultValue, _type = null) => {
+export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) => void] {
   const scopedKey = getLocalStorageNamespace() + key;
-  // This means the default value's type determines whether an object can be stored.
-  // Care should be taken with this argument, ideally it's a literal value.
-  // In case of any doubt about the type use the third argument.
-  const type = _type || typeof defaultValue;
+  const type = typeof defaultValue;
   const isObject = type === 'object';
 
   const [value, setValue] = useState(() => {
@@ -52,12 +48,9 @@ export const useLocalStorage = (key, defaultValue, _type = null) => {
   ];
 };
 
-export function useResumableLocalStorage(key, defaultValue, _type = null) {
+export function useResumableLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) => void] {
   const scopedKey = getLocalStorageNamespace() + key;
-  // This means the default value's type determines whether an object can be stored.
-  // Care should be taken with this argument, ideally it's a literal value.
-  // In case of any doubt about the type use the third argument.
-  const type = _type || typeof defaultValue;
+  const type = typeof defaultValue;
   const isObject = type === 'object';
 
   const [value, setValue] = useResumableState(() => {
