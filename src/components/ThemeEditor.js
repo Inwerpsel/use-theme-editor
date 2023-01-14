@@ -145,7 +145,7 @@ export const ThemeEditor = (props) => {
     webpackHome, setWebpackHome,
   } = settings;
   
-  const { propertyFilter } = get;
+  const [propertyFilter, setPropertyFilter] = use.propertyFilter();
 
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
   const [importDisplayed, setImportDisplayed] = useState(false);
@@ -213,6 +213,7 @@ export const ThemeEditor = (props) => {
         lastInspectTime,
         openGroups, setOpenGroups,
         propertyFilter,
+        setPropertyFilter,
         ...settings,
       }}
     >

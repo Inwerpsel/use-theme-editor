@@ -30,7 +30,7 @@ export const VariableScreenSwitcher = props => {
   const [screenWidth, setWidth] = use.width();
   const [,setHeight] = use.height();
 
-  const screenOptions = use.screenOptions();
+  const [screenOptions] = use.screenOptions();
 
   const filteredOptions = screenOptions
     .filter(({ dims: [width] }) => {
