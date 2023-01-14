@@ -1,6 +1,5 @@
 import React, {
   createContext,
-  useCallback,
   useLayoutEffect,
   useMemo,
   useState,
@@ -22,50 +21,48 @@ const INITIAL_STATE = {
   lastSet: 0,
   historyStack: [],
   historyOffset: 0,
-  reducers: {},
   states: {},
   oldStates: {},
-  initialStates: {},
 };
 
-function historyReducer(state, action) {
+// The following are also "state", however the code strictly considers them append only.
+// Keys are expected to live indefinitely and re-assignment currently doesn't happen.
+const initialStates = {};
+const reducers = {};
+const dispatchers = {};
+const subscribers = {};
+
+function addReducer({id, reducer, initialState, initializer = null}) {
+  // No changes needed to add a second reducer with the same key.
+  // These are assumed to be unique.
+  if (id in reducers) {
+    return;
+  }
+
+  initialStates[id] =
+    typeof initializer === 'function'
+      ? initializer(initialState)
+      : initialState;
+  reducers[id] = reducer;
+  dispatchers[id] = (action, options = {}) => {
+    historyDispatch(
+      {
+        type: 'PERFORM_ACTION',
+        payload: { id, action },
+      },
+      options
+    );
+  };
+  subscribers[id] = createSubscriber(id);
+}
+
+function historyReducer(state, action, options) {
   const { states, historyStack, historyOffset } = state;
   const {
-    payload: { id, reducer, initialState, amount = 1 } = {},
+    payload: { id, amount = 1 } = {},
   } = action;
 
   switch (action.type) {
-    case 'ADD_REDUCER': {
-      // No changes needed to add a second reducer with the same key.
-      // These are assumed to be unique.
-      if (id in states) {
-        return state;
-      }
-
-      return {
-        ...state,
-        states: {
-          ...states,
-          [id]: initialState,
-        },
-        reducers: {
-          ...state.reducers,
-          [id]: reducer,
-        },
-        initialStates: {
-          ...state.initialStates,
-          [id]: initialState,
-        },
-      };
-    }
-    // case 'REMOVE_REDUCER': {
-    //   const { [id]: old, ...otherReducers } = state.reducers;
-
-    //   return {
-    //     ...state,
-    //     reducers: otherReducers,
-    //   };
-    // }
     case 'HISTORY_BACKWARD': {
       const oldIndex = historyStack.length - historyOffset;
       if (oldIndex < 1) {
@@ -109,7 +106,7 @@ function historyReducer(state, action) {
       };
     }
     case 'PERFORM_ACTION': {
-      const forwardedReducer = state.reducers[id];
+      const forwardedReducer = reducers[id];
       if (!forwardedReducer) {
         return state;
       }
@@ -128,20 +125,20 @@ function historyReducer(state, action) {
       const {states: baseStates, lastActions} = historyEntry;
 
       const performedAction = action.payload.action;
-      const baseState = id in baseStates ? baseStates[id] : state.initialStates[id];
+      const baseState = id in baseStates ? baseStates[id] : initialStates[id];
       const newState = forwardedReducer(
         baseState,
         // Action can be a function in case of setState.
         typeof performedAction === 'function ' ? performedAction(baseState) : performedAction
       );
-      // const isNowDefaultState = newState === state.initialStates[id];
+      // const isNowDefaultState = newState === initialStates[id];
       // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
       // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
       const now = performance.now();
       const slowEnough =
         !state.lastSet || now - state.lastSet > 500;
-      const skipHistory = !slowEnough || action.options.skipHistory;
+      const skipHistory = !slowEnough || options.skipHistory;
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
 
@@ -198,8 +195,7 @@ const notifiers = {};
 // const USE_BROWSER_HISTORY = false;
 
 function notifyChanged() {
-  // console.log('NOTIFY');
-  const { oldStates, initialStates } = state;
+  const { oldStates } = state;
   // This is a temporary fix.
   forceHistoryRender();
   // const neither = [];
@@ -285,9 +281,9 @@ function notifyChanged() {
 // }
 
 // const dispatchTimes = {};
-const historyDispatch = (action) => {
+const historyDispatch = (action, options) => {
   // const start = performance.now();
-  state = historyReducer(state, action);
+  state = historyReducer(state, action, options);
   const {states, historyOffset, historyStack } = state;
 
   currentStates =
@@ -298,7 +294,7 @@ const historyDispatch = (action) => {
   // if (USE_BROWSER_HISTORY) {
   //   switch (action.type) {
   //     case 'PERFORM_ACTION': {
-  //       if (!action.options.skipHistory) {
+  //       if (!options.skipHistory) {
   //         history.pushState(
   //           { historyOffset: 0, length: historyStack.length },
   //           ''
@@ -330,9 +326,7 @@ const historyDispatch = (action) => {
   // if (!dispatchTimes[key]) {
   //   dispatchTimes[key] = [];
   // }
-  if (action.type !== 'ADD_REDUCER') {
     notifyChanged();
-  }
   // dispatchTimes[key].push(duration);
   // if (logTimeout) {
   //   clearTimeout(logTimeout);
@@ -343,7 +337,7 @@ const historyDispatch = (action) => {
 }
 // let logTimeout;
 
-const subscribe = (id) => (notify) => {
+const createSubscriber = (id) => (notify) => {
   if (!(id in notifiers)) {
     notifiers[id] = new Set();
   }
@@ -416,48 +410,24 @@ export function SharedActionHistory(props) {
 
 export function useResumableReducer(
   reducer,
-  _initialState,
+  initialState,
   initializer = (s) => s,
   id
 ) {
-  const initialState = useMemo(
-    () => (initializer(_initialState)),
-    []
-  );
+  if (!reducers.hasOwnProperty(id)) {
+    // First one gets to add the reducer, but really it shouldn't matter.
+    addReducer({ id, reducer, initialState, initializer });
+  }
 
-  const state = useSyncExternalStore(
-    useMemo(() => subscribe(id), []),
+  const currentState = useSyncExternalStore(
+    subscribers[id],
     () => {
       // console.log('GETTING SNAPSHOT FOR', id, currentStates[id])
-      return !(id in currentStates) ? initialState : currentStates[id];
+      return !currentStates.hasOwnProperty(id) ? initialStates[id] : currentStates[id];
     }
   );
 
-  useLayoutEffect(() => {
-    historyDispatch({
-      type: 'ADD_REDUCER',
-      payload: { id, reducer, initialState },
-    });
-
-    // Can't clean up for now because others might use the same id.
-
-    // return () => {
-    //   historyDispatch({
-    //     type: 'REMOVE_REDUCER',
-    //     payload: { id },
-    //   });
-    // };
-  }, []);
-
-  const dispatch = useCallback((action, options = {}) => {
-    historyDispatch({
-      type: 'PERFORM_ACTION',
-      payload: { id, action},
-      options,
-    });
-  }, []);
-
-  return [state, dispatch];
+  return [currentState, dispatchers[id]];
 }
 
 const stateReducer = (s, v) => v;
