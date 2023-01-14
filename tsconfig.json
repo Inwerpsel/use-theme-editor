@@ -9,6 +9,6 @@
       "moduleResolution": "node"
 
     },
-    "include": ["./src/**/*.ts", "src/components/ui/FrameScaleSlider.js"], "src/state/index.js"
+    "include": ["./src/**/*.ts", "./src/**/*.tsx"]
   }
   
