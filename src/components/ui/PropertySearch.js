@@ -10,15 +10,15 @@ export function PropertySearch() {
     setPropertySearch,
   } = useContext(ThemeEditorContext);
 
-  const ref = useRef();
+  // const ref = useRef();
 
-  useHotkeys('ctrl+/,cmd+/', () => {
-    ref.current?.focus();
-  });
+  // useHotkeys('ctrl+/,cmd+/', () => {
+  //   ref.current?.focus();
+  // });
 
   return <Fragment>
     <TextControl
-      {...{ref, value}}
+      {...{value}}
       onChange={setPropertySearch}
       placeholder={'search (cmd+/ or ctrl+/)'}
       style={{
