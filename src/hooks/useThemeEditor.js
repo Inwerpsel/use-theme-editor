@@ -72,26 +72,30 @@ export const ACTIONS = {
     };
   },
   createAlias(state, {name, value}) {
-    const varName = `--${name.replaceAll(' ', '-')}`;
-    const varString = `var(${varName})`;
+    const newVarName = `--${name.replaceAll(' ', '-')}`;
+    const newVarString = `var(${newVarName})`;
     const newScopes = {};
 
     let hasRoot = false;
     for (const selector in state.scopes) {
       newScopes[selector] = {};
       const scopeVars = state.scopes[selector];
+
       for (const varName in scopeVars) {
-        const isSameValue = value === scopeVars[varName];
-        newScopes[selector][varName] =  isSameValue ? varString : scopeVars[varName];
+        const isSameValue = scopeVars[varName] === value;
+        newScopes[selector][varName] = isSameValue
+          ? newVarString
+          : scopeVars[varName];
       }
+
       if (selector === ROOT_SCOPE) {
-        newScopes[selector][varName] = value;
+        newScopes[selector][newVarName] = value;
         hasRoot = true;
       }
     }
 
     if (!hasRoot) {
-      newScopes[ROOT_SCOPE][varName] = value;
+      newScopes[ROOT_SCOPE][newVarName] = value;
     }
 
     return {
@@ -99,6 +103,12 @@ export const ACTIONS = {
       scopes: newScopes,
     }
   },
+
+  // The code below was partially coupled to a naming scheme.
+  // This made it less reusable, I want to ideally find another way to achieve
+  // similar functionality just using selectors. Perhaps supporting multiple naming schemes is an option too.
+  // Commented out because it doesn't work with scoped properties.
+
 //  startPreview: (state, { name, value }) => {
 //     return {
 //       ...state,
