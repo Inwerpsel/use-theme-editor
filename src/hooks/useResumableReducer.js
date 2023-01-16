@@ -32,18 +32,12 @@ const reducers = {};
 const dispatchers = {};
 const subscribers = {};
 
-function addReducer({id, reducer, initialState, initializer = null}) {
-  // No changes needed to add a second reducer with the same key.
-  // These are assumed to be unique.
-  if (id in reducers) {
-    return;
-  }
-
+function addReducer(id, reducer, initialState, initializer) {
+  reducers[id] = reducer;
   initialStates[id] =
     typeof initializer === 'function'
       ? initializer(initialState)
       : initialState;
-  reducers[id] = reducer;
   dispatchers[id] = (action, options = {}) => {
     historyDispatch(
       {
@@ -53,7 +47,18 @@ function addReducer({id, reducer, initialState, initializer = null}) {
       options
     );
   };
-  subscribers[id] = createSubscriber(id);
+  subscribers[id] = (notify) => {
+    if (!(id in notifiers)) {
+      notifiers[id] = new Set();
+    }
+    notifiers[id].add(notify);
+    return () => {
+      notifiers[id].delete(notify);
+      if (notifiers[id].size === 0) {
+        delete notifiers[id];
+      }
+    };
+  }
 }
 
 function historyReducer(state, action, options) {
@@ -138,7 +143,7 @@ function historyReducer(state, action, options) {
       const now = performance.now();
       const slowEnough =
         !state.lastSet || now - state.lastSet > 500;
-      const skipHistory = !slowEnough || options.skipHistory;
+      const skipHistory = !slowEnough || options?.skipHistory;
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
 
@@ -196,8 +201,6 @@ const notifiers = {};
 
 function notifyChanged() {
   const { oldStates } = state;
-  // This is a temporary fix.
-  forceHistoryRender();
   // const neither = [];
   // const added = [];
   // const removed = [];
@@ -212,7 +215,7 @@ function notifyChanged() {
     }
     // For this to work it's important that unchanged state members
     // are the same object referentially.
-    const inOld = id in oldStates, inNew = id in currentStates;
+    const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
 
     const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
     const newValue = !inNew ? initialStates[id] : currentStates[id];
@@ -232,6 +235,8 @@ function notifyChanged() {
       }
     }
   }
+  // This is a temporary fix.
+  forceHistoryRender();
   
   // console.log(JSON.parse(JSON.stringify(oldStates)), JSON.parse(JSON.stringify(currentStates)) );
   // console.log('neither', neither);
@@ -335,20 +340,8 @@ const historyDispatch = (action, options) => {
   //   console.log(dispatchTimes);
   // }, 1000)
 }
-// let logTimeout;
 
-const createSubscriber = (id) => (notify) => {
-  if (!(id in notifiers)) {
-    notifiers[id] = new Set();
-  }
-  notifiers[id].add(notify);
-  return () => {
-    notifiers[id].delete(notify);
-    if (notifiers[id].size === 0) {
-      delete notifiers[id];
-    }
-  };
-};
+// let logTimeout;
 
 // This component acts as a boundary for history.
 // Todo: use a global history if no boundary is provided.
@@ -416,7 +409,7 @@ export function useResumableReducer(
 ) {
   if (!reducers.hasOwnProperty(id)) {
     // First one gets to add the reducer, but really it shouldn't matter.
-    addReducer({ id, reducer, initialState, initializer });
+    addReducer(id, reducer, initialState, initializer);
   }
 
   const currentState = useSyncExternalStore(
