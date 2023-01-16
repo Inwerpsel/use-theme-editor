@@ -8,6 +8,7 @@ import { VariableControl } from "./VariableControl";
 
 export function ScopeControl(props) {
     const { dispatch } = useContext(ThemeEditorContext);
+    // Remove locator for now as it makes the UI jump too much.
     // const [showLocator, setShowLocator] = useState(false);
     const showLocator = true;
 

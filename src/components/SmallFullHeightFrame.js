@@ -7,6 +7,10 @@ const wrapperMargin = 28;
 const scale = 0.05;
 const inverseScale = 1 / scale;
 
+// Getting this component to work in any reasonable way is hard in most cases, and impossible in many.
+// Some fixed or sticky elements simply don't have a "right" position to be in when you stretch out the page.
+// And there are many more CSS configurations that cause all kinds of trouble.
+// The result is there's only few cases where you'll actually get a matching frame beyond the top position.
 export function SmallFullHeightFrame(props) {
   const { src } = props;
   const { width, height } = get;
