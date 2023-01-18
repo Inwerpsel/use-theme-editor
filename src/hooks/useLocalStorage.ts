@@ -49,10 +49,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) =
     } else {
       // Do first time setup for key.
       const stored = localStorage.getItem(scopedKey);
-      if (stored === null) {
-        return defaultValue;
-      }
-      const storedValue = apply(type, stored);
+      const storedValue = stored === null ? defaultValue : apply(type, stored);
       readProxy[key] = storedValue;
       dispatchers[key] = new Set();
 
