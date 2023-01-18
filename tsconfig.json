@@ -3,12 +3,16 @@
       "outDir": "./build",
       "sourceMap": true,
       "module": "es6",
-      "target": "es5",
+      "target": "es6",
+      "lib": [
+        "es6",
+        "dom"
+      ],
       "jsx": "react",
       "allowJs": true,
       "moduleResolution": "node"
 
     },
-    "include": ["./src/**/*.ts", "./src/**/*.tsx"]
+    "include": ["./src/**/*.ts", "./src/**/*.tsx", "src/hooks/useLocalStorage.ts"]
   }
   
