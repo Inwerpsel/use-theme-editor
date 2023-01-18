@@ -9,15 +9,15 @@ import {allStateSelectorsRegexp} from '../../functions/getMatchingVars';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {varMatchesTerm} from '../../functions/filterSearched';
 import {isColorProperty} from '../inspector/TypedControl';
+import { get } from '../../state';
 
 export function CurrentTheme() {
+  const { propertyFilter, propertySearch } = get;
   const {
     theme,
     dispatch,
     allVars,
     defaultValues,
-    propertyFilter,
-    propertySearch,
   } = useContext(ThemeEditorContext);
   const [initialized, setInitialized] = useState(false);
 

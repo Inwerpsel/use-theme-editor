@@ -20,6 +20,7 @@ export const use = {
   scales: () => useResumableLocalStorage('responsive-scales', {}),
   uiArrangement: () => useResumableLocalStorage('panel-rearrangements', {}),
   propertyFilter: () => useResumableLocalStorage('property-filter', 'all'),
+  propertySearch: () => useResumableLocalStorage('property-search', ''),
 } as const;
 
 export const get = getters(use);

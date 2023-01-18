@@ -1,8 +1,25 @@
-import React from 'react';
+import React, { useMemo } from 'react';
+import { filterSearched } from '../../functions/filterSearched';
+import { get } from '../../state';
 import { GroupControl } from "../inspector/GroupControl";
+import { isColorProperty } from '../inspector/TypedControl';
 
 export function Inspector(props) {
-    const {groups} = props;
+  const { unfilteredGroups } = props;
+  const { propertyFilter, propertySearch } = get;
+
+  const groups = useMemo(() => {
+    const searched = filterSearched(unfilteredGroups, propertySearch);
+    if (propertyFilter === 'all') {
+      return searched;
+    }
+    return searched.map((group) => ({
+      ...group,
+      vars: group.vars.filter((cssVar) =>
+        cssVar.usages.some((usage) => isColorProperty(usage.property))
+      ),
+    }));
+  }, [unfilteredGroups, propertyFilter, propertySearch]);
 
     return (
       <ul className={'group-list'}>

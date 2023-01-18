@@ -11,7 +11,6 @@ import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
 import {isColorProperty} from './inspector/TypedControl';
 import {PropertySearch} from './ui/PropertySearch';
-import {filterSearched} from '../functions/filterSearched';
 import {flipDebugMode} from './RenderInfo';
 import {byHexValue, extractColorUsages} from './properties/ColorControl';
 import {Checkbox} from './controls/Checkbox';
@@ -136,7 +135,6 @@ export const ThemeEditor = (props) => {
   }, [scopes]);
 
   const {
-    propertySearch,
     fileName,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
@@ -153,17 +151,6 @@ export const ThemeEditor = (props) => {
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
 
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
-
-  const groups = useMemo(() => {
-    const searched = filterSearched(unfilteredGroups, propertySearch);
-    if (propertyFilter === 'all') {
-      return searched;
-    }
-    return searched.map(group => ({
-      ...group,
-      vars: group.vars.filter(cssVar => cssVar.usages.some(usage => isColorProperty(usage.property)))
-    }));
-  }, [unfilteredGroups, propertyFilter, propertySearch]);
 
   useHotkeys('alt+r', () => {
     flipDebugMode();
@@ -278,7 +265,7 @@ export const ThemeEditor = (props) => {
                 <PropertyCategoryFilter/>
                 <PropertySearch/>
               </div>
-              <Inspector {...{groups}} />
+              <Inspector {...{unfilteredGroups}}/>
               <HistoryControls />
             </Area>
             <ResizableFrame src={window.location.href} />

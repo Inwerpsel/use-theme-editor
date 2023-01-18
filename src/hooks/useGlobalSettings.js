@@ -13,9 +13,6 @@ import {useEffect} from 'react';
 
 export function useGlobalSettings(frameRef) {
   const [
-    propertySearch, setPropertySearch,
-  ] = useResumableLocalStorage('property-search', '');
-  const [
     fileName, setFileName,
   ] = useResumableLocalStorage('theme-name', 'theme');
   const [
@@ -70,7 +67,6 @@ export function useGlobalSettings(frameRef) {
     // I preserved this line though useSetting code was removed. It would be very nice to define the options this terse.
     // However not having the setter symbol picked up by IDE was prohibitive. Perhaps there's a fix for that.
     // ...useSetting({propertyFilter: 'all'}),
-    propertySearch, setPropertySearch,
     fileName, setFileName,
     frameClickBehavior, setFrameClickBehavior,
     useDefaultsPalette, setUseDefaultsPalette,
