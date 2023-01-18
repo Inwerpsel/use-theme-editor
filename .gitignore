@@ -1,14 +1,6 @@
 .idea
+.vscode
 node_modules
 build
-example/dist/*
-example/bs/*
-example/github/*
-example/salesforce/*
-example/coreui/*
-example/mozilladocs/*
-example/openprops/*
-example/static/*
-example/halfmoon/*
-example/daisyui/*
+example/*/*
 tmp
