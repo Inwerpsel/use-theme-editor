@@ -31,7 +31,7 @@ function toPropertyString(properties) {
     let propertyString = '';
     for (const prop in properties) {
       // Leading space on first is needed to match CSS formated by the browser.
-      propertyString += ` ${prop}: ${properties[prop]};`
+      propertyString += ` ${prop}: ${properties[prop]} !important;`
     }
     return propertyString;
 }
