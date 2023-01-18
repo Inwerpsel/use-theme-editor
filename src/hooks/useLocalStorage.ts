@@ -54,7 +54,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) =
       dispatchers[key] = new Set();
 
       setters[key] = arg => {
-        const newValue = typeof arg === 'function' ? arg(value) : arg;
+        const newValue = typeof arg === 'function' ? arg(readProxy[key]) : arg;
         localStorage.setItem(
           scopedKey,
           !isObject ? newValue : JSON.stringify(newValue),
