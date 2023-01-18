@@ -5,8 +5,8 @@ import React, {
   useState,
   useSyncExternalStore,
 } from 'react';
+import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { hotkeysOptions } from '../components/ThemeEditor';
 
 export const HistoryNavigateContext = createContext({});
 

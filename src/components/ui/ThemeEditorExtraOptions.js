@@ -1,9 +1,10 @@
 import React, {useContext} from 'react';
+import { use } from '../../state';
 import {ThemeEditorContext} from '../ThemeEditor';
 
 export function ThemeEditorExtraOptions() {
+  const [frameClickBehavior, setFrameClickBehavior] = use.frameClickBehavior();
   const {
-    frameClickBehavior, setFrameClickBehavior,
     responsiveSticky, setResponsiveSticky,
   } = useContext(ThemeEditorContext);
   return <div>

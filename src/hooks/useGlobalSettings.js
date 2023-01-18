@@ -16,20 +16,6 @@ export function useGlobalSettings(frameRef) {
     fileName, setFileName,
   ] = useResumableLocalStorage('theme-name', 'theme');
   const [
-    frameClickBehavior, setFrameClickBehavior,
-  ] = useLocalStorage('theme-editor-frame-click-behavior', 'any');
-  useHotkeys('alt+a', () => {
-    setFrameClickBehavior(value => value === 'alt' ? 'any' : 'alt');
-  }, [frameClickBehavior]);
-  useEffect(() => {
-    if (!frameRef?.current) {
-      return;
-    }
-    const message = {type: 'theme-edit-alt-click', payload: {frameClickBehavior}};
-    frameRef.current.contentWindow.postMessage(message, window.location.origin);
-
-  }, [frameClickBehavior, frameRef.current]);
-  const [
     useDefaultsPalette, setUseDefaultsPalette,
   ] = useLocalStorage('use-defaults-palette', false);
   const [
@@ -68,7 +54,6 @@ export function useGlobalSettings(frameRef) {
     // However not having the setter symbol picked up by IDE was prohibitive. Perhaps there's a fix for that.
     // ...useSetting({propertyFilter: 'all'}),
     fileName, setFileName,
-    frameClickBehavior, setFrameClickBehavior,
     useDefaultsPalette, setUseDefaultsPalette,
     nativeColorPicker, setNativeColorPicker,
     responsiveSticky, setResponsiveSticky,

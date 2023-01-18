@@ -7,7 +7,7 @@
 // passing on the value? Does this register 2 listeners for the same element, or
 // is React smart about this?
 import { getters } from "../functions/getters";
-import { useResumableLocalStorage } from "../hooks/useLocalStorage";
+import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 
 export const use = {
@@ -21,6 +21,7 @@ export const use = {
   uiArrangement: () => useResumableLocalStorage('panel-rearrangements', {}),
   propertyFilter: () => useResumableLocalStorage('property-filter', 'all'),
   propertySearch: () => useResumableLocalStorage('property-search', ''),
+  frameClickBehavior: () => useLocalStorage('theme-editor-frame-click-behavior', 'any'),
 } as const;
 
 export const get = getters(use);

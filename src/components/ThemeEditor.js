@@ -1,7 +1,6 @@
 import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
-import {useHotkeys} from 'react-hotkeys-hook';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
@@ -11,7 +10,6 @@ import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
 import {isColorProperty} from './inspector/TypedControl';
 import {PropertySearch} from './ui/PropertySearch';
-import {flipDebugMode} from './RenderInfo';
 import {byHexValue, extractColorUsages} from './properties/ColorControl';
 import {Checkbox} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
@@ -37,10 +35,7 @@ import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
 import { use } from '../state';
-
-export const hotkeysOptions = {
-  enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
-};
+import { Hotkeys } from './Hotkeys';
 
 export const ThemeEditorContext = createContext({});
 
@@ -152,10 +147,6 @@ export const ThemeEditor = (props) => {
 
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
 
-  useHotkeys('alt+r', () => {
-    flipDebugMode();
-  }, []);
-
   const {
     serverThemes,
     serverThemesLoading,
@@ -167,12 +158,6 @@ export const ThemeEditor = (props) => {
   const modifiedServerVersion = useMemo(() => {
     return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
   }, [serverThemes, fileName, scopes]);
-
-  useHotkeys('alt+s', () => {
-    if (fileName && fileName !== 'default' && modifiedServerVersion) {
-      uploadTheme(fileName, scopes);
-    }
-  },hotkeysOptions, [fileName, modifiedServerVersion, scopes]);
 
   const colorUsages = useMemo(
     () => extractColorUsages(scopes[ROOT_SCOPE], !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
@@ -204,6 +189,7 @@ export const ThemeEditor = (props) => {
         ...settings,
       }}
     >
+      <Hotkeys {...{fileName, modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiArrangement}>
           <div
