@@ -31,6 +31,7 @@ const initialStates = {};
 const reducers = {};
 const dispatchers = {};
 const subscribers = {};
+const getSnapshots = {};
 
 function addReducer(id, reducer, initialState, initializer) {
   reducers[id] = reducer;
@@ -58,6 +59,9 @@ function addReducer(id, reducer, initialState, initializer) {
         delete notifiers[id];
       }
     };
+  }
+  getSnapshots[id] = () => {
+    return currentStates.hasOwnProperty(id) ? currentStates[id] : initialStates[id];
   }
 }
 
@@ -414,10 +418,7 @@ export function useResumableReducer(
 
   const currentState = useSyncExternalStore(
     subscribers[id],
-    () => {
-      // console.log('GETTING SNAPSHOT FOR', id, currentStates[id])
-      return !currentStates.hasOwnProperty(id) ? initialStates[id] : currentStates[id];
-    }
+    getSnapshots[id],
   );
 
   return [currentState, dispatchers[id]];
