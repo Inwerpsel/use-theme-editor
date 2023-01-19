@@ -1,4 +1,4 @@
-import { Fragment, useContext, useState } from "react"
+import { Fragment, useContext, useMemo, useState } from "react"
 import { TextControl } from "../controls/TextControl";
 import { COLOR_VALUE_REGEX } from "../properties/ColorControl";
 import nameThatColor from '@yatiac/name-that-color';
@@ -9,20 +9,35 @@ export function CreateAlias(props) {
     const {value} = props;
     const {dispatch} = useContext(ThemeEditorContext);
     const [open, setOpen] = useState(false);
+    const [wasOpened, setWasOpened] = useState(false);
 
-    const [name, setName] = useState(() => {
+    const colorSuggestion = useMemo(() => {
+        if (!wasOpened) {
+            return null;
+        }
         if (COLOR_VALUE_REGEX.test(value)) {
             return nameThatColor(value).colorName;
         }
         return '';
-    });
+    } , [wasOpened])
+
+    const [name, setName] = useState('');
 
     if (!open) {
-        return <button onClick={() => setOpen(true)}>Add alias</button>
+        return (
+          <button
+            onClick={() => {
+              setWasOpened(true);
+              setOpen(true);
+            }}
+          >
+            Add alias
+          </button>
+        );
     }
 
     return <Fragment>
-        <TextControl value={name} onChange={setName} />
+        <TextControl value={name || colorSuggestion} onChange={setName} />
         <button onClick={() => {
             dispatch({type: ACTIONS.createAlias, payload: {name, value}})
         }}>submit</button>
