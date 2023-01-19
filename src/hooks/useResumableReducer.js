@@ -21,6 +21,7 @@ const INITIAL_STATE = {
   lastSet: 0,
   historyStack: [],
   historyOffset: 0,
+  historyWarnOnUpdateLimit: 5,
   states: {},
   oldStates: {},
 };
@@ -118,6 +119,11 @@ function historyReducer(state, action, options) {
       const forwardedReducer = reducers[id];
       if (!forwardedReducer) {
         return state;
+      }
+      if (state.historyOffset > state.historyWarnOnUpdateLimit) {
+        if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
+          return state;
+        }
       }
 
       // `currentlyInThePast` should be very infrequent case: one edit on the past clears future.
@@ -292,7 +298,11 @@ function notifyChanged() {
 // const dispatchTimes = {};
 const historyDispatch = (action, options) => {
   // const start = performance.now();
-  state = historyReducer(state, action, options);
+  const newState = historyReducer(state, action, options);
+  if (newState === state) {
+    return
+  }
+  state = newState;
   const {states, historyOffset, historyStack } = state;
 
   currentStates =
