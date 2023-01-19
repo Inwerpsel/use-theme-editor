@@ -61,7 +61,6 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) =
         );
         readProxy[key] = newValue;
         for (const setValue of dispatchers[key].values()) {
-          console.log(setValue);
           setValue(newValue);
         }
       }

@@ -8,6 +8,7 @@ import {useThrottler} from '../../hooks/useThrottler';
 import { useResumableState } from '../../hooks/useResumableReducer';
 import { TextControl } from '../controls/TextControl';
 import { CreateAlias } from '../inspector/CreateAlias';
+import { get } from '../../state';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
@@ -67,6 +68,7 @@ const pickerSize = '80px';
 
 export const ColorControl = props => {
   const { onChange, onUnset, value, cssVar } = props;
+  const { nativeColorPicker } = get;
   // const { onChange: _onChange, onUnset, value: _value, cssVar, cssFunc } = props;
 
   // const value = !cssFunc ? _value : `${cssFunc}(${value})`
@@ -90,7 +92,6 @@ export const ColorControl = props => {
 
   const {
     dispatch,
-    nativeColorPicker,
   } = useContext(ThemeEditorContext);
 
   const throttle = useThrottler({ms: 50 });

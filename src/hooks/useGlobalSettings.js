@@ -16,13 +16,6 @@ export function useGlobalSettings(frameRef) {
     fileName, setFileName,
   ] = useResumableLocalStorage('theme-name', 'theme');
   const [
-    useDefaultsPalette, setUseDefaultsPalette,
-  ] = useLocalStorage('use-defaults-palette', false);
-  const [
-    nativeColorPicker, setNativeColorPicker,
-  ] = useLocalStorage('native-color-picker', true);
-
-  const [
     responsiveSticky,
     setResponsiveSticky
   ] = useLocalStorage('responsive-on-load', true);
@@ -54,8 +47,6 @@ export function useGlobalSettings(frameRef) {
     // However not having the setter symbol picked up by IDE was prohibitive. Perhaps there's a fix for that.
     // ...useSetting({propertyFilter: 'all'}),
     fileName, setFileName,
-    useDefaultsPalette, setUseDefaultsPalette,
-    nativeColorPicker, setNativeColorPicker,
     responsiveSticky, setResponsiveSticky,
     annoyingPrefix, setAnnoyingPrefix,
     showCssProperties, setShowCssProperties,

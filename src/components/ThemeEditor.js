@@ -10,7 +10,6 @@ import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
 import {isColorProperty} from './inspector/TypedControl';
 import {PropertySearch} from './ui/PropertySearch';
-import {byHexValue, extractColorUsages} from './properties/ColorControl';
 import {Checkbox} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
 import {ImportExportTools} from './ui/ImportExportTools';
@@ -36,6 +35,7 @@ import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
 import { use } from '../state';
 import { Hotkeys } from './Hotkeys';
+import { ColorSettings } from './ui/ColorSettings';
 
 export const ThemeEditorContext = createContext({});
 
@@ -131,8 +131,6 @@ export const ThemeEditor = (props) => {
 
   const {
     fileName,
-    useDefaultsPalette, setUseDefaultsPalette,
-    nativeColorPicker, setNativeColorPicker,
     showCssProperties, setShowCssProperties,
     showSourceLinks, setShowSourceLinks,
     webpackHome, setWebpackHome,
@@ -159,10 +157,6 @@ export const ThemeEditor = (props) => {
     return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
   }, [serverThemes, fileName, scopes]);
 
-  const colorUsages = useMemo(
-    () => extractColorUsages(scopes[ROOT_SCOPE], !useDefaultsPalette ? {} : defaultValues).sort(byHexValue),
-    [scopes, defaultValues, useDefaultsPalette],
-  );
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   return (
@@ -179,7 +173,6 @@ export const ThemeEditor = (props) => {
         deleteTheme,
         existsOnServer,
         modifiedServerVersion,
-        colorUsages,
         setSheetDisablerDisplayed,
         scopes,
         lastInspectTime,
@@ -235,14 +228,7 @@ export const ThemeEditor = (props) => {
                 {serverThemesDisplayed && <ServerThemesList/>}
               </Fragment>
               <ThemeUploadPanel/>
-              <div style={{display: 'flex', gap: '4px'}}>
-                <Checkbox controls={[useDefaultsPalette, setUseDefaultsPalette]}>
-                  Include default palette
-                </Checkbox>
-                <Checkbox controls={[nativeColorPicker, setNativeColorPicker]}>
-                  Native color picker
-                </Checkbox>
-              </div>
+              <ColorSettings />
               <CustomVariableInput/>
               <div style={{
                   display: 'flex',

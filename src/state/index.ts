@@ -22,6 +22,8 @@ export const use = {
   propertyFilter: () => useResumableLocalStorage('property-filter', 'all'),
   propertySearch: () => useResumableLocalStorage('property-search', ''),
   frameClickBehavior: () => useLocalStorage('theme-editor-frame-click-behavior', 'any'),
+  nativeColorPicker: () => useLocalStorage('native-color-picker', true),
+  includeDefaultPalette: () => useLocalStorage('include-default-palette', false),
 } as const;
 
 export const get = getters(use);

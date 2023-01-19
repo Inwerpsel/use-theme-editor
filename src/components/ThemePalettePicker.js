@@ -1,20 +1,28 @@
-import {ACTIONS} from '../hooks/useThemeEditor';
-import React, {useContext} from 'react';
+import {ACTIONS, ROOT_SCOPE} from '../hooks/useThemeEditor';
+import React, {useContext, useMemo} from 'react';
 import {ThemeEditorContext} from './ThemeEditor';
-import {PREVIEW_SIZE} from './properties/ColorControl';
+import {byHexValue, extractColorUsages, PREVIEW_SIZE} from './properties/ColorControl';
+import { get } from '../state';
 
 export function ThemePalettePicker(props) {
   const {
     onChange,
     value,
-    name,
+    // name,
     allowGradients,
   } = props;
 
+  const { includeDefaultPalette } = get;
+
   const {
-    dispatch,
-    colorUsages,
+    scopes,
+    defaultValues,
   } = useContext(ThemeEditorContext);
+
+  const colorUsages = useMemo(
+    () => extractColorUsages(scopes[ROOT_SCOPE], !includeDefaultPalette ? {} : defaultValues).sort(byHexValue),
+    [scopes, defaultValues, includeDefaultPalette],
+  );
   
   return colorUsages.map(({color, usages, isGradient}) => {
     // if (color === value && usages.length === 1) {
