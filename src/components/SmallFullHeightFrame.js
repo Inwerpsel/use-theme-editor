@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { get } from '../state';
 import { ThemeEditorContext } from './ThemeEditor';
 

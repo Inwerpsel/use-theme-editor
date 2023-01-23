@@ -1,4 +1,4 @@
-import { Fragment, useContext, useMemo, useState } from "react"
+import React, { Fragment, useContext, useMemo, useState } from "react"
 import { TextControl } from "../controls/TextControl";
 import { COLOR_VALUE_REGEX } from "../properties/ColorControl";
 import nameThatColor from '@yatiac/name-that-color';

@@ -190,15 +190,19 @@ export const ACTIONS = {
 
 const reducer = reducerOf(ACTIONS);
 
+function loadFromStorage(s) {
+  return {
+    ...s,
+    scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
+  }
+}
+
 export const useThemeEditor = ({ initialState = DEFAULT_STATE}) => {
   const [{ scopes  }, dispatch] =
     useResumableReducer(
       reducer,
       initialState,
-      (s) => ({
-        ...s,
-        scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
-      }),
+      loadFromStorage,
       'THEME_EDITOR'
     );
 
