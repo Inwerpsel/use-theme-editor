@@ -209,7 +209,19 @@ const notifiers = {};
 
 // const USE_BROWSER_HISTORY = false;
 
-function notifyChanged() {
+// Notify one ID without checking.
+function notifyOne(id) {
+  const keyNotifiers = notifiers[id];
+  if (!keyNotifiers) {
+    return;
+  }
+  for (const n of keyNotifiers.values()) {
+    n();
+  }
+  forceHistoryRender();
+}
+
+function checkNotifyAll() {
   const { oldStates } = state;
   // const neither = [];
   // const added = [];
@@ -345,7 +357,11 @@ const historyDispatch = (action, options) => {
   // if (!dispatchTimes[key]) {
   //   dispatchTimes[key] = [];
   // }
-    notifyChanged();
+  if (action.type === 'PERFORM_ACTION') {
+    notifyOne(action.payload.id);
+  } else {
+    checkNotifyAll();
+  }
   // dispatchTimes[key].push(duration);
   // if (logTimeout) {
   //   clearTimeout(logTimeout);
