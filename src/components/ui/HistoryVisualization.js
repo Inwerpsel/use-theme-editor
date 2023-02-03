@@ -111,12 +111,10 @@ export function HistoryVisualization() {
           const amount = Math.abs(index - currentIndex);
           const type = isInFuture ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
 
-          const canReplay =
-            !isInFuture &&
-            Object.entries(lastActions).some(
-              ([id, action]) =>
-                typeof action === 'object' || states[id] !== currentStates[id]
-            );
+          const canReplay = Object.entries(lastActions).some(
+            ([id, action]) =>
+              typeof action === 'object' || states[id] !== currentStates[id]
+          );
 
           return (
             <li
