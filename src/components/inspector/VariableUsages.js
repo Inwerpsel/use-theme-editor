@@ -28,9 +28,10 @@ function Usage(props) {
       <ElementLocator
         selector={locateSelector}
         initialized
-        showLabel={true}
-      />
-      <span> ({property})</span>
+        showLabel
+        {...{property}}
+      >
+      </ElementLocator>
     </li>
   );
 }

@@ -1,7 +1,9 @@
 import React, { useContext, useMemo, useState } from "react";
 import { scopesByProperty } from "../../functions/collectRuleVars";
 import { rootScopes } from "../../functions/extractPageVariables";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { ACTIONS } from "../../hooks/useThemeEditor";
+import { Checkbox } from "../controls/Checkbox";
 import { ThemeEditorContext } from "../ThemeEditor";
 import { ElementLocator } from "../ui/ElementLocator";
 import { VariableControl } from "./VariableControl";
@@ -9,8 +11,8 @@ import { VariableControl } from "./VariableControl";
 export function ScopeControl(props) {
     const { dispatch } = useContext(ThemeEditorContext);
     // Remove locator for now as it makes the UI jump too much.
-    // const [showLocator, setShowLocator] = useState(false);
-    const showLocator = true;
+    const [showLocator, setShowLocator] = useLocalStorage('show-scope-locators', false);
+    // const showLocator = true;
 
     const { scopes, vars, element } = props;
 
@@ -26,6 +28,7 @@ export function ScopeControl(props) {
 
     return <div style={{ background: 'lightyellow', marginBottom: '24px', padding: '4px', border: '1px solid black' }}>
         <h5>Variations</h5>
+        <Checkbox controls={[showLocator, setShowLocator]} style={{float: 'right'}}>Find on page</Checkbox>
         <ul>
             {nonRootScopes.map(({ selector, matchingSelector, scopeVars }) => {
               const selectors = selector.split();
@@ -63,12 +66,12 @@ export function ScopeControl(props) {
                       return selector;
                     })}
                   </span>
-                  {/* {showLocator && <ElementLocator
+                  {showLocator && <ElementLocator
                     {...{ selector }}
                     initialized
                     // hideIfOne
                     showLabel={false}
-                  />} */}
+                  />}
                   
                   <ul style={{marginBottom: '24px'}}>
                     {elementScopeVars

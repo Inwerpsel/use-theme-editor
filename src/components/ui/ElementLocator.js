@@ -17,7 +17,7 @@ function removeStateSelectors(selector) {
   .trim()
 }
 
-export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne, children, showLabel = true}) {
+export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne, children, showLabel = true, property = null}) {
   const {
     frameRef,
     lastInspectTime,
@@ -56,6 +56,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
       },
       window.location.origin,
     );
+
     return () => {
       window.removeEventListener('message', listener);
     };
@@ -77,7 +78,10 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
       return null;
     }
     return <Fragment>
-      {showLabel && <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}</div>}
+      {showLabel && <div className='monospace-code'>
+        {selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}
+          <span className={'var-control-property'}>{property}</span>
+      </div>}
 
         <span>Not found on page</span>
         {children}
@@ -97,6 +101,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
       {showLabel && (
         <div className="monospace-code">
           {selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}
+          <span className={'var-control-property'}>{property}</span>
         </div>
       )}
       <div
