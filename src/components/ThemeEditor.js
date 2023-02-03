@@ -4,7 +4,6 @@ import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
-import {GroupControl} from './inspector/GroupControl';
 import {CustomVariableInput} from './ui/CustomVariableInput';
 import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
@@ -14,7 +13,6 @@ import {Checkbox} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
 import {ImportExportTools} from './ui/ImportExportTools';
 import {ThemeUploadPanel} from './ui/ThemeUploadPanel';
-import {useGlobalSettings} from '../hooks/useGlobalSettings';
 import {MovablePanels} from './movable/MovablePanels';
 import {FrameSizeSettings} from './ui/FrameSizeSettings';
 import {ScreenSwitcher} from './ui/ScreenSwitcher';
@@ -33,9 +31,11 @@ import { TextControl } from './controls/TextControl';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
-import { use } from '../state';
+import { get, use } from '../state';
 import { Hotkeys } from './Hotkeys';
 import { ColorSettings } from './ui/ColorSettings';
+import { InformationVisibilitySettings } from './ui/InformationVisibilitySettings';
+import { WebpackHomeInput } from './ui/WebpackHomeInput';
 
 export const ThemeEditorContext = createContext({});
 
@@ -53,6 +53,8 @@ export const ThemeEditor = (props) => {
     inspectedIndex,
     isNewInspection,
   } = props;
+  const { fileName } = get;
+
   const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
   const [currentInspected, setCurrentInspected] = useResumableState(-1, 'inspected-index');
 
@@ -105,7 +107,6 @@ export const ThemeEditor = (props) => {
 
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
-  const settings = useGlobalSettings(frameRef);
 
   useInsertionEffect(() => {
     updateScopedVars(scopes, true);
@@ -129,15 +130,6 @@ export const ThemeEditor = (props) => {
       );
   }, [scopes]);
 
-  const {
-    fileName,
-    showCssProperties, setShowCssProperties,
-    showSourceLinks, setShowSourceLinks,
-    webpackHome, setWebpackHome,
-  } = settings;
-  
-  const [propertyFilter, setPropertyFilter] = use.propertyFilter();
-
   // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
   const [importDisplayed, setImportDisplayed] = useState(false);
   const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
@@ -155,7 +147,7 @@ export const ThemeEditor = (props) => {
   const existsOnServer = serverThemes && fileName in serverThemes;
   const modifiedServerVersion = useMemo(() => {
     return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
-  }, [serverThemes, fileName, scopes]);
+  }, [serverThemes[fileName]?.scopes, scopes]);
 
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
@@ -177,12 +169,9 @@ export const ThemeEditor = (props) => {
         scopes,
         lastInspectTime,
         openGroups, setOpenGroups,
-        propertyFilter,
-        setPropertyFilter,
-        ...settings,
       }}
     >
-      <Hotkeys {...{fileName, modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
+      <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiArrangement}>
           <div
@@ -267,16 +256,7 @@ export const ThemeEditor = (props) => {
             <Drawer>
               <ThemeEditorExtraOptions />
               <RemoveAnnoyingPrefix />
-              <div style={{display: 'flex', gap: '4px'}}>
-                <Checkbox
-                  id={'remove-css-properties'}
-                  controls={[showCssProperties, setShowCssProperties]}
-                >Show CSS properties</Checkbox>
-                <Checkbox
-                  id={'show-source-links'}
-                  controls={[showSourceLinks, setShowSourceLinks]}
-                >Show source links</Checkbox>
-              </div>
+              <InformationVisibilitySettings />
               {/* <ExampleTabs/> */}
               <NameReplacements/>
               <div>
@@ -289,7 +269,7 @@ export const ThemeEditor = (props) => {
                   id={'remove-css-properties'}
                   controls={[openFirstOnInspect, setOpenFirstOnInspect]}
                 >Auto open first group on inspect</Checkbox>
-                <TextControl value={webpackHome} onChange={v => setWebpackHome(v)} label='Webpack home'/>
+                <WebpackHomeInput />
               </div>
             </Drawer>
           </div>

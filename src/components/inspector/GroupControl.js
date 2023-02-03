@@ -9,12 +9,14 @@ import { isColorProperty } from './TypedControl';
 import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { rootScopes } from '../../functions/extractPageVariables';
-import { use } from '../../state';
+import { get, use } from '../../state';
 
 export const GroupControl = props => {
   const {
     group,
   } = props;
+
+  const { propertyFilter } = get;
 
   const [propertySearch, setPropertySearch] = use.propertySearch();
 
@@ -29,8 +31,6 @@ export const GroupControl = props => {
   const {
     frameRef,
     dispatch,
-    propertyFilter,
-    
     defaultValues,
     scopes,
     openGroups,

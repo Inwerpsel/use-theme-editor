@@ -5,14 +5,15 @@ import {ThemeEditorContext} from '../ThemeEditor';
 import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import { TextControl } from '../controls/TextControl';
+import { use } from '../../state';
 
 export function ImportExportTools() {
   const {
     dispatch,
-    fileName, setFileName,
     scopes,
   } = useContext(ThemeEditorContext);
   const theme = scopes[ROOT_SCOPE] || {};
+  const [fileName, setFileName,] = use.fileName();
 
   const [shouldMerge, setShouldMerge] = useState(false);
 

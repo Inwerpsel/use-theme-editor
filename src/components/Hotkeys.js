@@ -8,8 +8,8 @@ export const hotkeysOptions = {
 };
 
 export function Hotkeys(props) {
-  const {} = get;
-  const { fileName, modifiedServerVersion, scopes, uploadTheme, frameRef } = props;
+  const { modifiedServerVersion, scopes, uploadTheme, frameRef } = props;
+  const { fileName } = get;
 
   useHotkeys(
     'alt+r',

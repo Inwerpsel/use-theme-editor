@@ -1,4 +1,5 @@
-import React, { useState, useContext } from "react";
+import React, { useState } from "react";
+import { use } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
 import { useCompactSetting } from "../movable/DispatchedElement";
@@ -29,7 +30,7 @@ function updateReplacement(replacements, updated) {
 }
 
 export function NameReplacements() {
-    const {nameReplacements, setNameReplacements} = useContext(ThemeEditorContext);
+    const [nameReplacements, setNameReplacements] = use.nameReplacements();
 
     const [newFrom, setNewFrom] = useState('');
     const [newTo, setNewTo] = useState('');

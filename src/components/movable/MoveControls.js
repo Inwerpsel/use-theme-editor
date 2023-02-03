@@ -1,9 +1,9 @@
 import React, {useMemo, useContext} from 'react';
-import { useLocalStorage, useResumableLocalStorage } from '../../hooks/useLocalStorage';
+import { useResumableLocalStorage } from '../../hooks/useLocalStorage';
+import { use } from '../../state';
 import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
 import { TextControl } from '../controls/TextControl';
-import { ThemeEditorContext } from '../ThemeEditor';
 import {AreasContext} from './MovablePanels';
 
 export function MoveControls() {
@@ -14,9 +14,7 @@ export function MoveControls() {
     showMovers, setShowMovers,
   } = useContext(AreasContext);
 
-  const { 
-    windowArrangments, setWindowArrangments,
-  } = useContext(ThemeEditorContext);
+  const [windowArrangments, setWindowArrangments] = use.windowArrangments();
 
   const [inputName, setInputName] = useResumableLocalStorage('panel-arrangements-name', '');
   const isIdenticalToExisting = useMemo(() => {

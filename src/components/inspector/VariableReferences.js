@@ -1,12 +1,13 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
+import { get } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
-import { ThemeEditorContext } from "../ThemeEditor";
 import { ElementLocator } from "../ui/ElementLocator";
 import { formatTitle } from "./VariableControl";
 
 export function VariableReferences(props) {
   const { references } = props;
-  const { annoyingPrefix, nameReplacements } = useContext(ThemeEditorContext);
+  const { annoyingPrefix, nameReplacements } = get;
+
   const [filterFound, setFilterFound] = useState(false);
 
   if (references.length === 0) {

@@ -1,12 +1,10 @@
-import React, {useContext} from 'react';
+import React from 'react';
 import { use } from '../../state';
-import {ThemeEditorContext} from '../ThemeEditor';
 
 export function ThemeEditorExtraOptions() {
   const [frameClickBehavior, setFrameClickBehavior] = use.frameClickBehavior();
-  const {
-    responsiveSticky, setResponsiveSticky,
-  } = useContext(ThemeEditorContext);
+  const [responsiveSticky, setResponsiveSticky] = use.responsiveSticky();
+
   return <div>
     <button
       onClick={() => {

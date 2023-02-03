@@ -1,11 +1,9 @@
-import React, { useContext } from "react";
+import React  from "react";
+import { use } from "../../state";
 import { TextControl } from "../controls/TextControl";
-import { ThemeEditorContext } from "../ThemeEditor";
 
 export function RemoveAnnoyingPrefix() {
-    const {
-        annoyingPrefix, setAnnoyingPrefix,
-    } = useContext(ThemeEditorContext);
+  const [annoyingPrefix, setAnnoyingPrefix] = use.annoyingPrefix();
 
     return <TextControl
       placeholder='Remove annoying prefix'

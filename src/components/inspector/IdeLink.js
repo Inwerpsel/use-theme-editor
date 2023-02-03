@@ -1,5 +1,5 @@
-import React, {  useContext } from 'react';
-import { ThemeEditorContext } from '../ThemeEditor';
+import React from 'react';
+import { get } from '../../state';
 
 export function IdeLink(props) {
   const {
@@ -8,11 +8,13 @@ export function IdeLink(props) {
     column,
     generated: {sheet: href},
   } = props;
-  const {showSourceLinks, webpackHome } = useContext(ThemeEditorContext);
+
+  const {webpackHome, showSourceLinks} = get;
 
   if (!showSourceLinks || !source || !webpackHome) {
     return null;
   }
+
  const path = source.replace('webpack://', '');
   let dir = '';
   if (/\.\.\//.test(path)) {

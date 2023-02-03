@@ -2,6 +2,7 @@ import {diffSummary} from '../../functions/diffThemes';
 import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import React, {useContext} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
+import { use } from '../../state';
 
 export const ServerThemesListItem = props => {
   const {
@@ -10,11 +11,11 @@ export const ServerThemesListItem = props => {
     activeThemeRef,
   } = props;
 
+  const [fileName, setFileName] = use.fileName();
+
   const {
     scopes,
     dispatch,
-    fileName,
-    setFileName,
     modifiedServerVersion,
     deleteTheme,
   } = useContext(ThemeEditorContext);

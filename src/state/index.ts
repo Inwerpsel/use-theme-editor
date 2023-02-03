@@ -24,6 +24,14 @@ export const use = {
   frameClickBehavior: () => useLocalStorage('theme-editor-frame-click-behavior', 'any'),
   nativeColorPicker: () => useLocalStorage('native-color-picker', true),
   includeDefaultPalette: () => useLocalStorage('include-default-palette', false),
+  fileName: () => useResumableLocalStorage('theme-name', 'theme'),
+  responsiveSticky: () => useLocalStorage('responsive-on-load', true),
+  annoyingPrefix: () => useLocalStorage('annoying-prefix', ''),
+  nameReplacements: () => useLocalStorage('name-replacements', []),
+  showCssProperties: () => useLocalStorage('show-css-properties', false),
+  showSourceLinks: () => useLocalStorage('show-source-links', false),
+  windowArrangments: () => useLocalStorage('window-arrangments', {}),
+  webpackHome: () => useLocalStorage('webpack-home', ''),
 } as const;
 
 export const get = getters(use);

@@ -1,7 +1,7 @@
-import React, {memo, useContext} from 'react';
-import {ThemeEditorContext} from '../ThemeEditor';
+import React, {memo} from 'react';
 import {isColorProperty} from '../inspector/TypedControl';
 import { SelectControl } from '../controls/SelectControl';
+import { use } from '../../state';
 
 const filters = {
   all: {
@@ -28,10 +28,7 @@ const WrappedSelectControl = ({propertyFilter, setPropertyFilter}) => <SelectCon
 const MemoedSelectControl = memo(WrappedSelectControl);
 
 export function PropertyCategoryFilter() {
-  const {
-    propertyFilter,
-    setPropertyFilter,
-  } = useContext(ThemeEditorContext);
+  const [ propertyFilter, setPropertyFilter ] = use.propertyFilter();
 
   return <div style={{flexShrink: 0}}><MemoedSelectControl {...{propertyFilter, setPropertyFilter}}/></div>;
 }

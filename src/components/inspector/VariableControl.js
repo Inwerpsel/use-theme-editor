@@ -41,7 +41,14 @@ export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
     : nameReplacements
         .filter((r) => r.active && r.to.length > 0 && r.from.length > 1)
         .reduce(
-          (prop, { from, to }) => prop.replace(new RegExp(from), to),
+          (prop, { from, to }) => {
+            try {
+              return prop.replace(new RegExp(from), to);
+            } catch(e) {
+              console.log(`Failed replacing ${from} to ${to}`)
+              return prop;
+            }
+          },
           formattedProp
         );
 
@@ -158,16 +165,13 @@ export const VariableControl = (props) => {
     currentScope = ROOT_SCOPE,
   } = props;
 
-  const { width } = get;
+  const { width, annoyingPrefix, nameReplacements, showCssProperties } = get;
 
   const {
     scopes,
     dispatch,
     defaultValues,
     allVars,
-    annoyingPrefix,
-    showCssProperties,
-    nameReplacements,
   } = useContext(ThemeEditorContext);
 
   const theme = scopes[ROOT_SCOPE] || {};
@@ -313,7 +317,10 @@ export const VariableControl = (props) => {
               <span
                 key={property}
                 className="monospace-code"
-                style={{ fontSize: '14px' }}
+                style={{ 
+                  fontSize: '14px',
+                  ...(property !== maxSpecific?.property ? {background: 'grey'} : {})
+                 }}
                 title={
                   isFullProperty
                     ? ''
