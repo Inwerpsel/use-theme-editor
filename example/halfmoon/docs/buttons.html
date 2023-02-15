@@ -1,0 +1,1099 @@
+<!DOCTYPE html>
+<!-- saved from url=(0041)https://www.gethalfmoon.com/docs/buttons/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta tags -->
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Chrome, Firefox OS and Opera mobile address bar theming -->
+    <meta name="theme-color" content="#000000">
+    <!-- Windows Phone mobile address bar theming -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <!-- iOS Safari mobile address bar theming -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+
+    <!-- SEO -->
+    <meta name="description" content="Buttons can be used to trigger user actions, such as submitting forms, opening modal dialogs, etc.">
+    <meta name="author" content="Halfmoon">
+    <meta name="keywords" content="Halfmoon, HTML, CSS, JavaScript, CSS Framework, dark mode, dark-mode, darkmode, dark theme, dark-theme, darktheme, Bootstrap, Foundation, Bulma, dashboard, UI, UI framework, user interface, design, design system">
+
+    <!-- Open graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.gethalfmoon.com/docs/buttons/">
+    <meta property="og:title" content="Buttons - Halfmoon">
+    <meta property="og:description" content="Buttons can be used to trigger user actions, such as submitting forms, opening modal dialogs, etc.">
+    <meta property="og:image" content="https://res.cloudinary.com/halfmoon-ui/image/upload/v1599770364/halfmoon-og-image-1.1.0_uofgby.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <meta property="fb:app_id" content="2560228000973437">
+    <meta name="twitter:site" content="@halfmoonui">
+
+    <!-- Fav and Title -->
+    <link rel="icon" href="https://www.gethalfmoon.com/static/halfmoon/img/halfmoon-fav-alt.png">
+    <title>Buttons - Halfmoon</title>
+    
+
+    <!-- Font awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../dist/halfmoon.css">
+    <link href="/static/site/css/documentation-styles-4.css" rel="stylesheet">
+    
+<meta id="ConnectiveDocSignExtentionInstalled" name="ConnectiveDocSignExtentionInstalled" data-extension-version="1.0.6"></head>
+
+<body class=" with-custom-webkit-scrollbars with-custom-css-scrollbars" data-sidebar-shortcut-enabled="true" data-dm-shortcut-enabled="true">
+    
+    <!-- Documentation section id (hidden) -->
+    <input type="hidden" name="docs-section-id" id="docs-section-id" value="buttons">
+
+    <!-- Modals start -->
+    
+    <!-- Modals end -->
+
+    <!-- Page wrapper start -->
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-transitions" data-sidebar-type="overlayed-sm-and-down">
+
+        <!-- Sticky alerts start -->
+        <div class="sticky-alerts">
+            <!-- Precompiled alert 1 start -->
+            <div class="alert alert-primary filled" role="alert" id="precompiled-alert-1">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="w-50 h-50 d-flex align-items-center rounded-circle bg-white">
+                                    <div class="m-auto text-primary">
+                                        <i class="fa fa-commenting fa-2x" aria-hidden="true"></i>
+                                        <span class="sr-only">Commenting</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pl-20">
+                                <h4 class="alert-heading mb-5">New message!</h4>
+                                <div>
+                                    Jane Doe just sent you a new message.
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Precompiled alert 1 end -->
+        </div>
+        <!-- Sticky alerts end -->
+
+        <!-- Navbar start -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a href="https://www.gethalfmoon.com/docs/introduction/" class="navbar-brand ml-10 ml-sm-15">
+                <img src="./buttons_files/hm-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
+                <img src="./buttons_files/hm-logo-white.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
+                <span class="badge font-size-12 text-monospace px-5 px-sm-10">
+                    v1.1.1
+                </span>
+            </a>
+            <ul class="navbar-nav hidden-sm-and-down">
+                <li class="nav-item">
+                    <a href="https://www.gethalfmoon.com/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="https://www.gethalfmoon.com/docs/introduction/" class="nav-link">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://www.gethalfmoon.com/license/" class="nav-link">License <span class="ml-5 text-monospace font-size-12">(MIT)</span></a>
+                </li>
+            </ul>
+            <div class="navbar-content ml-auto">
+
+                <!-- Github button container 1 start -->
+                <div class="pt-5 mr-5 d-none d-lg-inline-block" id="gh-star-btn-container-1">
+                    <div class="hidden-dm">
+                        <span></span>
+                    </div>
+                    <div class="hidden-lm">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- Github button container 1 end -->
+
+                <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()" aria-label="Toggle dark mode">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                </button>
+                <a href="https://www.gethalfmoon.com/docs/download/" class="btn btn-primary hidden-sm-and-down" role="button">
+                    <i class="fa fa-cloud-download mr-5" aria-hidden="true"></i>
+                    Download
+                </a>
+                <div class="dropdown with-arrow hidden-md-and-up">
+                    <button class="btn navbar-menu-btn" data-toggle="dropdown" type="button" id="navbar-dropdown-toggle-btn" aria-haspopup="true" aria-expanded="false">
+                        <span class="text">Menu</span>
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown-toggle-btn">
+                        <a href="https://www.gethalfmoon.com/" class="dropdown-item">Home</a>
+                        <a href="https://www.gethalfmoon.com/docs/introduction/" class="dropdown-item">Documentation</a>
+                        <a href="https://www.gethalfmoon.com/license/" class="dropdown-item">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                        <div class="dropdown-divider"></div>
+
+                        <!-- Github button container 2 start -->
+                        <div class="pt-5" id="gh-star-btn-container-2">
+                            <div class="dropdown-content py-5 hidden-dm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-content py-5 hidden-lm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                        <!-- Github button container 2 end -->
+
+                        <div class="dropdown-content">
+                            <a href="https://www.gethalfmoon.com/docs/download/" class="btn btn-primary btn-download-sm" role="button">
+                                <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                                <span class="ml-5">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar end -->
+
+        <!-- Sidebar overlay -->
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+
+        <!-- Sidebar start -->
+        <div class="sidebar" id="sidebar">
+            <!-- Filter docs section start -->
+            <div class="sidebar-menu">
+                <div class="sidebar-content">
+                    <input class="form-control search" type="text" placeholder="Filter docs" id="filter-docs">
+                    <div class="mt-10 font-size-12 hidden-sm-and-down">
+                        Press <kbd>shift</kbd> + <kbd>F</kbd> to focus
+                    </div>
+                </div>
+            </div>
+            <!-- Filter docs section end -->
+
+            <!-- Filterable list start -->
+            <div class="sidebar-menu list"><h5 class="sidebar-title">
+                    Getting started
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </div><a href="https://www.gethalfmoon.com/docs/introduction/" class="sidebar-link" id="sidebar-introduction" data-active-scroll-disabled="disabled">
+                    <span class="name">Introduction</span>
+                </a><a href="https://www.gethalfmoon.com/docs/download/" class="sidebar-link" id="sidebar-download" data-active-scroll-disabled="disabled">
+                    <span class="name">Download</span>
+                </a><a href="https://www.gethalfmoon.com/docs/customize/" class="sidebar-link" id="sidebar-customize" data-active-scroll-disabled="disabled">
+                    <span class="name">Customize</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">(Must read)</span>
+                </a><a href="https://www.gethalfmoon.com/docs/page-building/" class="sidebar-link" id="sidebar-page-building" data-active-scroll-disabled="disabled">
+                    <span class="name">Page building</span>
+                    <br>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        (<span class="alt-name">Starter template generator</span>)
+                    </span>
+                </a><br><h5 class="sidebar-title">
+                    Building blocks
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </div><a href="https://www.gethalfmoon.com/docs/containers/" class="sidebar-link" id="sidebar-containers" data-active-scroll-disabled="disabled">
+                    <span class="name">Containers</span>
+                </a><a href="https://www.gethalfmoon.com/docs/content-and-cards/" class="sidebar-link" id="sidebar-content-and-cards" data-active-scroll-disabled="disabled">
+                    <span class="name">Content and cards</span>
+                </a><a href="https://www.gethalfmoon.com/docs/grid-system/" class="sidebar-link" id="sidebar-grid-system" data-active-scroll-disabled="disabled">
+                    <span class="name">Grid system</span>
+                </a><a href="https://www.gethalfmoon.com/docs/navbar/" class="sidebar-link" id="sidebar-navbar" data-active-scroll-disabled="disabled">
+                    <span class="name">Navbar</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sidebar/" class="sidebar-link" id="sidebar-sidebar" data-active-scroll-disabled="disabled">
+                    <span class="name">Sidebar</span>
+                </a><br><h5 class="sidebar-title">
+                    Basic elements
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </div><a href="https://www.gethalfmoon.com/docs/buttons/" class="sidebar-link active" id="sidebar-buttons">
+                    <span class="name">Buttons</span>
+                </a><a href="https://www.gethalfmoon.com/docs/code/" class="sidebar-link" id="sidebar-code">
+                    <span class="name">Code</span>
+                </a><a href="https://www.gethalfmoon.com/docs/image/" class="sidebar-link" id="sidebar-image">
+                    <span class="name">Image</span>
+                </a><a href="https://www.gethalfmoon.com/docs/links/" class="sidebar-link" id="sidebar-links">
+                    <span class="name">Links</span>
+                </a><a href="https://www.gethalfmoon.com/docs/tables/" class="sidebar-link" id="sidebar-tables">
+                    <span class="name">Tables</span>
+                </a><br><h5 class="sidebar-title">
+                    Form elements
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </div><a href="https://www.gethalfmoon.com/docs/form/" class="sidebar-link" id="sidebar-form">
+                    <span class="name">Form</span>
+                </a><a href="https://www.gethalfmoon.com/docs/input/" class="sidebar-link" id="sidebar-input">
+                    <span class="name">Input</span>
+                </a><a href="https://www.gethalfmoon.com/docs/select/" class="sidebar-link" id="sidebar-select">
+                    <span class="name">Select</span>
+                </a><a href="https://www.gethalfmoon.com/docs/textarea/" class="sidebar-link" id="sidebar-textarea">
+                    <span class="name">Textarea</span>
+                </a><a href="https://www.gethalfmoon.com/docs/checkbox/" class="sidebar-link" id="sidebar-checkbox">
+                    <span class="name">Checkbox</span>
+                </a><a href="https://www.gethalfmoon.com/docs/radio/" class="sidebar-link" id="sidebar-radio">
+                    <span class="name">Radio</span>
+                </a><a href="https://www.gethalfmoon.com/docs/switch/" class="sidebar-link" id="sidebar-switch">
+                    <span class="name">Switch</span>
+                </a><a href="https://www.gethalfmoon.com/docs/file-input/" class="sidebar-link" id="sidebar-file-input">
+                    <span class="name">File input</span>
+                </a><a href="https://www.gethalfmoon.com/docs/input-group/" class="sidebar-link" id="sidebar-input-group">
+                    <span class="name">Input group</span>
+                </a><br><h5 class="sidebar-title">
+                    Advanced components
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </div><a href="https://www.gethalfmoon.com/docs/alerts/" class="sidebar-link" id="sidebar-alerts">
+                    <span class="name">Alerts</span>
+                </a><a href="https://www.gethalfmoon.com/docs/badges/" class="sidebar-link" id="sidebar-badges">
+                    <span class="name">Badges</span>
+                </a><a href="https://www.gethalfmoon.com/docs/breadcrumb/" class="sidebar-link" id="sidebar-breadcrumb">
+                    <span class="name">Breadcrumb</span>
+                </a><a href="https://www.gethalfmoon.com/docs/button-group/" class="sidebar-link" id="sidebar-button-group">
+                    <span class="name">Button group</span>
+                </a><a href="https://www.gethalfmoon.com/docs/collapse/" class="sidebar-link" id="sidebar-collapse">
+                    <span class="name">Collapse</span>
+                </a><a href="https://www.gethalfmoon.com/docs/dropdown/" class="sidebar-link" id="sidebar-dropdown">
+                    <span class="name">Dropdown</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        <span class="alt-name">(And popover)</span>
+                    </span>
+                </a><a href="https://www.gethalfmoon.com/docs/modal/" class="sidebar-link" id="sidebar-modal">
+                    <span class="name">Modal</span>
+                </a><a href="https://www.gethalfmoon.com/docs/pagination/" class="sidebar-link" id="sidebar-pagination">
+                    <span class="name">Pagination</span>
+                </a><a href="https://www.gethalfmoon.com/docs/progress/" class="sidebar-link" id="sidebar-progress">
+                    <span class="name">Progress</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sticky-alerts-toasts/" class="sidebar-link" id="sidebar-sticky-alerts-toasts">
+                    <span class="name">Sticky alerts (Toasts)</span>
+                </a><a href="https://www.gethalfmoon.com/docs/tooltips/" class="sidebar-link" id="sidebar-tooltips">
+                    <span class="name">Tooltips</span>
+                </a><br><h5 class="sidebar-title">
+                    Common utilities
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </div><a href="https://www.gethalfmoon.com/docs/display-utilities/" class="sidebar-link" id="sidebar-display-utilities">
+                    <span class="name">Display utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/flex-utilities/" class="sidebar-link" id="sidebar-flex-utilities">
+                    <span class="name">Flex utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/position-utilities/" class="sidebar-link" id="sidebar-position-utilities">
+                    <span class="name">Position utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sizing-utilities/" class="sidebar-link" id="sidebar-sizing-utilities">
+                    <span class="name">Sizing utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/spacing-utilities/" class="sidebar-link" id="sidebar-spacing-utilities">
+                    <span class="name">Spacing utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/text-utilities/" class="sidebar-link" id="sidebar-text-utilities">
+                    <span class="name">Text utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    Other utilities
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </div><a href="https://www.gethalfmoon.com/docs/border-utilities/" class="sidebar-link" id="sidebar-border-utilities">
+                    <span class="name">Border utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/box-shadow-utilities/" class="sidebar-link" id="sidebar-box-shadow-utilities">
+                    <span class="name">Box shadow utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/color-utilities/" class="sidebar-link" id="sidebar-color-utilities">
+                    <span class="name">Color utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/float-utilities/" class="sidebar-link" id="sidebar-float-utilities">
+                    <span class="name">Float utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/overflow-utilities/" class="sidebar-link" id="sidebar-overflow-utilities">
+                    <span class="name">Overflow utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/pointer-events-utilities/" class="sidebar-link" id="sidebar-pointer-events-utilities">
+                    <span class="name">Pointer events utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/screen-reader-utilities/" class="sidebar-link" id="sidebar-screen-reader-utilities">
+                    <span class="name">Screen reader utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/vertical-align-utilities/" class="sidebar-link" id="sidebar-vertical-align-utilities">
+                    <span class="name">Vertical align utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/visibility-utilities/" class="sidebar-link" id="sidebar-visibility-utilities">
+                    <span class="name">Visibility utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/z-index-utilities/" class="sidebar-link" id="sidebar-z-index-utilities">
+                    <span class="name">Z-index utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    JavaScript
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </div><a href="https://www.gethalfmoon.com/docs/core-javascript-library/" class="sidebar-link" id="sidebar-core-javascript-library">
+                    <span class="name">Core JavaScript library</span>
+                </a><br><h5 class="sidebar-title">
+                    Others
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </div><a href="https://www.gethalfmoon.com/docs/internet-explorer-support/" class="sidebar-link" id="sidebar-internet-explorer-support">
+                    <span class="name">Internet Explorer support</span>
+                </a></div>
+            <!-- Filterable list end -->
+        </div>
+        <!-- Sidebar end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+            
+
+            
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-xl-9">
+
+                <!-- Top section start  -->
+                <div id="top">
+                    <div class="content">
+                        <h1 class="content-title font-size-24">
+                            Buttons
+                        </h1>
+                        <div class="my-20">
+                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                        </div>
+                        <p>
+                            Buttons can be used to trigger user actions, such as submitting forms, opening modal dialogs, etc. Different types of buttons are available for different types of actions.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Most commonly used buttons -->
+                            <button class="btn mb-5 mr-2" type="button">Default</button>
+                            <button class="btn btn-primary mb-5 mr-2" type="button">Primary</button>
+                            <button class="btn btn-danger mb-5 mr-2" type="button">Danger</button>
+                            <button class="btn btn-link mb-5" type="button">Link</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-1&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-1"><span class="hljs-comment">&lt;!-- Most commonly used buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-danger"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Danger<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-link"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Link<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Less commonly used, but still available -->
+                            <button class="btn btn-success mb-5 mr-2" type="button">Success</button>
+                            <button class="btn btn-secondary mb-5" type="button">Secondary</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-2&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-2"><span class="hljs-comment">&lt;!-- Less commonly used, but still available --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-success"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Success<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-secondary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Secondary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+</code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Please note that contextual buttons can be styled using the following CSS selectors:
+                        </p>
+                        <ul>
+                            <li>
+                                <span class="code">.btn.btn-* {...}</span> for light mode.
+                            </li>
+                            <li>
+                                <span class="code">.dark-mode .btn.btn-* {...}</span> for dark mode.
+                            </li>
+                        </ul>
+                        <p>
+                            This means that something like <span class="code">.btn-primary {...}</span>/<span class="code">.dark-mode .btn-primary {...}</span> is not enough. This is because of how button styles are structured in Halfmoon.
+                        </p>
+                    </div>
+                </div>
+                <!-- Top section end  -->
+
+                <!-- Button tags section start  -->
+                <div id="button-tags">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Button tags
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#button-tags" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            While the <span class="code">.btn</span> classes are designed to work with the <span class="code">&lt;button&gt;</span> element, they can also be used with elements such as <span class="code">&lt;input&gt;</span> and <span class="code">&lt;a&gt;</span> to create buttons.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <button class="btn mb-5 mr-2" type="button">Button</button>
+                            <input class="btn btn-primary mb-5 mr-2" type="submit" value="Submit">
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#" class="btn btn-link mb-5" role="button">Link</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-3&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-3"><span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Submit"</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-link"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"button"</span>&gt;</span>Link<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Buttons will also work with the <span class="code">&lt;input&gt;</span> element with the <span class="code">type="button"</span> and <span class="code">type="reset"</span> attributes.
+                        </p>
+                    </div>
+                </div>
+                <!-- Button tags section end  -->
+
+                <!-- Sizing section start  -->
+                <div id="sizing">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Sizing
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#sizing" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Different sizes of buttons are also available:
+                        </p>
+                        <ul>
+                            <li>Large buttons can be created by adding the <span class="code">.btn-lg</span> class.</li>
+                            <li>Small buttons can be created by adding the <span class="code">.btn-sm</span> class.</li>
+                            <li>Block level buttons can be created by adding the <span class="code">.btn-block</span> class.</li>
+                        </ul>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Large buttons -->
+                            <button class="btn btn-lg mb-5 mr-2" type="button">Default</button>
+                            <button class="btn btn-primary btn-lg mb-5" type="button">Primary</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-4&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-4"><span class="hljs-comment">&lt;!-- Large buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-lg"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary btn-lg"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Small buttons -->
+                            <button class="btn btn-sm mb-5 mr-2" type="button">Default</button>
+                            <button class="btn btn-primary btn-sm mb-5" type="button">Primary</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-5&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-5"><span class="hljs-comment">&lt;!-- Small buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-sm"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary btn-sm"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Block buttons -->
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <button class="btn btn-block mb-5" type="button">Default</button>
+                                    <button class="btn btn-primary btn-block" type="button">Primary</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-6&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-6"><span class="hljs-comment">&lt;!-- Block buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"row"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col-md-6"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-block"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary btn-block"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sizing section end  -->
+
+                <!-- Disabled buttons section start  -->
+                <div id="disabled-buttons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Disabled buttons
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#disabled-buttons" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Buttons can be disabled by adding the <span class="code">disabled="..."</span> attribute to them. In order to just style the button to look disabled, the class <span class="code">.disabled</span> can be added. However, it should be noted that this does not actually disable the button, it only styles it.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Disabled buttons -->
+                            <button class="btn mb-5 mr-2" type="button" disabled="disabled">Default</button>
+                            <button class="btn btn-primary disabled mb-5" type="button">Primary</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-7&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-7"><span class="hljs-comment">&lt;!-- Disabled buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">"disabled"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary disabled"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span> <span class="hljs-comment">&lt;!-- Not actually disabled, only styled to look the part --&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Disabled buttons section end  -->
+
+                <!-- Active buttons section start  -->
+                <div id="active-buttons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Active buttons
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#active-buttons" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Buttons with the class <span class="code">.active</span> are styled with a focus effect around them.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Active button -->
+                            <button class="btn active mb-5 mr-5" type="button">Default</button>
+                            <button class="btn btn-primary active mb-5" type="button">Primary</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-8&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-8"><span class="hljs-comment">&lt;!-- Active buttons --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn active"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary active"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Please note that the <span class="code">.active</span> class is added automatically to buttons which are used as dropdown toggles. See the examples in the <a class="hyperlink" href="https://www.gethalfmoon.com/docs/dropdown/" target="_blank" rel="noopener">dropdown</a> (opens in new tab) section.
+                        </p>
+                    </div>
+                </div>
+                <!-- Active buttons section end  -->
+
+                <!-- Alternate in dark mode section start  -->
+                <div id="alternate-in-dark-mode">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Alternate in dark mode
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#alternate-in-dark-mode" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Default buttons with the class <span class="code">.alt-dm</span> will have an alternate appearance in dark mode. Their appearance will be unchanged in light mode.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Alternate in dark mode (unchanged in light mode) -->
+                            <button class="btn alt-dm" type="button">Alt. in dark mode</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-9&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-9"><span class="hljs-comment">&lt;!-- Alternate in dark mode (unchanged in light mode) --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn alt-dm"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Alt. in dark mode<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            These buttons are designed to look good and be usable on the colorful backgrounds in dark mode. For example, they can be used to great effect on <a class="hyperlink" href="https://www.gethalfmoon.com/docs/alerts/#alternate-buttons-and-inputs-in-dark-mode" target="_blank" rel="noopener">contextual alerts in dark mode</a> (opens in new tab).
+                        </p>
+                    </div>
+                </div>
+                <!-- Alternate in dark mode section end  -->
+
+                <!-- Square buttons section start  -->
+                <div id="square-buttons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Square buttons
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#square-buttons" class="ml-5 text-decoration-none">#</a>
+                            <span class="badge badge-pill font-size-12 align-middle ml-5">Since v1.1.0+</span>
+                        </h2>
+                        <p>
+                            Buttons with the class <span class="code">.btn-square</span> will be square in shape. These buttons are generally great for creating action buttons with icons. You can also use the <span class="code">.btn-sm</span> and <span class="code">.btn-lg</span> classes for different sizes.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <div>
+                                <!-- Square button -->
+                                <button class="btn btn-square mb-5 mr-5" type="button">×</button>
+                                <!-- Link styled as circle button -->
+                                <a href="https://www.gethalfmoon.com/docs/buttons/#" class="btn btn-square btn-primary rounded-circle mb-5" role="button">+</a>
+                            </div>
+                            <div class="mt-20">
+                                <!-- Small square button -->
+                                <button class="btn btn-square btn-sm mb-5 mr-5 align-bottom" type="button">1</button>
+                                <!-- Normal square button -->
+                                <button class="btn btn-square btn-primary mb-5 mr-5 align-bottom" type="button">2</button>
+                                <!-- Large square button -->
+                                <button class="btn btn-square btn-lg mb-5" type="button">3</button>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-10&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-10"><span class="hljs-comment">&lt;!-- Square button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-square"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span><span class="hljs-symbol">&amp;times;</span><span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Link styled as circle primary button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-square btn-primary rounded-circle"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"button"</span>&gt;</span><span class="hljs-symbol">&amp;plus;</span><span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span> <span class="hljs-comment">&lt;!-- rounded-circle = border-radius: 50% --&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Small square button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-square btn-sm"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>1<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Normal square button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-square btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>2<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Large square button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-square btn-lg"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>3<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Square buttons section end -->
+
+                <!-- Rounded buttons section start  -->
+                <div id="rounded-buttons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Rounded buttons
+                            <a href="https://www.gethalfmoon.com/docs/buttons/#rounded-buttons" class="ml-5 text-decoration-none">#</a>
+                            <span class="badge badge-pill font-size-12 align-middle ml-5">Since v1.1.1+</span>
+                        </h2>
+                        <p>
+                            By default, buttons have slightly rounded <span class="code">border-radius</span> properties. The <span class="code">.btn-rounded</span> class can be used to create buttons that are properly rounded in shape. You can also use the <span class="code">.btn-sm</span> and <span class="code">.btn-lg</span> classes for different sizes.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <div>
+                                <!-- Rounded button -->
+                                <button class="btn btn-rounded mb-5 mr-2" type="button">Default</button>
+                                <!-- Link styled as rounded primary button -->
+                                <a href="https://www.gethalfmoon.com/docs/buttons/#" class="btn btn-rounded btn-primary mb-5" role="button">Primary</a>
+                            </div>
+                            <div class="mt-20">
+                                <!-- Small rounded button -->
+                                <button class="btn btn-rounded btn-sm mb-5 mr-2 align-bottom" type="button">Small</button>
+                                <!-- Normal rounded button -->
+                                <button class="btn btn-rounded mb-5 mr-2 align-bottom" type="button">Default</button>
+                                <!-- Large rounded button -->
+                                <button class="btn btn-rounded btn-lg mb-5" type="button">Large</button>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-11&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-11"><span class="hljs-comment">&lt;!-- Rounded button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-rounded"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Link styled as rounded primary button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-rounded btn-primary"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"button"</span>&gt;</span>Primary<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Small rounded button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-rounded btn-sm"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Small<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Normal rounded button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-rounded"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Default<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Large rounded button --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-rounded btn-lg"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span>&gt;</span>Large<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Rounded buttons section end -->
+
+                <!-- Up next section start -->
+                <div class="content mb-0">
+                    <hr class="mb-20">
+                    
+                        <div class="text-right font-size-16">
+                            Up next:
+                            <a href="https://www.gethalfmoon.com/docs/code/" class="hyperlink ml-5">
+                                Code
+                                <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- Up next section end -->
+
+            </div>
+
+            <!-- On this page navigation start  -->
+            <div class="col-xl-3 on-this-page-nav-container">
+                <div class="content">
+                    <div class="on-this-page-nav" id="on-this-page-nav">
+                        <div class="title">On this page</div>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#top">Buttons</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#button-tags">Button tags</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#sizing">Sizing</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#disabled-buttons">Disabled buttons</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#active-buttons">Active buttons</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#alternate-in-dark-mode">Alternate in dark mode</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#square-buttons">Square buttons</a>
+                        <a href="https://www.gethalfmoon.com/docs/buttons/#rounded-buttons">Rounded buttons</a>
+                    </div>
+                </div>
+            </div>
+            <!-- On this page navigation end  -->
+
+        </div>
+    </div>
+
+
+            <!-- Docs footer card start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="card docs-footer-card p-0 mt-20">
+                            <div class="row">
+
+                                <!-- Help us grow section start -->
+                                <div class="col-lg-7">
+                                    <div class="content">
+                                        <h3 class="content-title">Help us grow</h3>
+
+                                        <!-- Project roadmap start -->
+                                        <p>
+                                            Our goal is to make Halfmoon the go-to framework for building dashboards and tools on the web. We are already working on things like a form validator, number input, datepicker, multi-select (think Select2 without jQuery), tabs component, JSX docs, and so much more. You can learn more in the project roadmap.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.gethalfmoon.com/project-roadmap/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <div class="w-60 h-60 rounded d-flex align-items-center justify-content-center bg-light-lm bg-dark-light-dm text-dark-lm text-light-dm">
+                                                        <i class="fa fa-map-o font-size-18" aria-hidden="true"></i>
+                                                        <span class="sr-only">Roadmap image placeholder</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Project roadmap <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Upcoming features and components (with demos). 
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Project roadmap end -->
+
+                                        <!-- Patreon link start -->
+                                        <p>
+                                            However, we need your help to grow. So if you truly believe in our goal, please consider supporting us through Patreon.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <img src="./buttons_files/patreon-logo-hm_bgv8al.svg" class="d-block w-60 h-60 rounded" alt="Patreon image placeholder">
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Support on Patreon <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Become a backer on Patreon, and help us grow Halfmoon.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Patreon link end -->
+
+                                        <!-- Gold sponsor start -->
+                                        <h3 class="content-title mb-0">Gold sponsor</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the highest tier, with a maximum of 1 sponsor.
+                                            <br>
+                                            (Also seen at the top of the page)
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                                        </div>
+                                        <!-- Gold sponsor end -->
+
+                                        <!-- Sponsors start -->
+                                        <h3 class="content-title mb-0">Sponsors</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the normal tier, with a maximum of 10 sponsors.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- AYCD sponsor card start -->
+<a href="https://aycd.io/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex mb-20" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center rounded bg-light-lm bg-dark-light-dm d-flex align-items-center justify-content-center">
+        <img src="./buttons_files/aycd-logo_gqspco.svg" class="d-block rounded h-100 w-100" alt="AYCD logo">
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                AYCD
+            </p>
+            <p class="font-size-12 mt-0 mb-0">
+                Automation Done Right
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- AYCD sponsor card end -->
+
+<!-- Placeholder start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #ff4757;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Sponsor (9 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Placeholder end -->
+                                        </div>
+                                        <!-- Sponsors end -->
+
+                                        <!-- Backers start -->
+                                        <h3 class="content-title mb-0">Backers</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following people have generously decided to support Halfmoon.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Backers start -->
+<div class="card sponsor-section-card w-350 h-200 overflow-y-auto mw-full m-0 d-flex align-items-center">
+	<div class="m-auto">
+		<ol class="text-dark-lm text-light-dm">
+			<li>Ethan Fann</li>
+			<li>Julia Koblitz</li>
+			<li>Benjamin Listwon</li>
+			<li>Sean Lindsay</li>
+			<li>Daan</li>
+		</ol>
+		<p>
+			Become a backer <a href="https://www.patreon.com/halfmoonui" target="_blank" rel="noopener" class="hyperlink">on Patreon <i class="fa fa-external-link" aria-hidden="true"></i></a>.
+		</p>
+	</div>
+</div>
+<!-- Backers end -->
+                                        </div>
+                                        <!-- Backers end -->
+                                    </div>
+                                </div>
+                                <!-- Help us grow section end -->
+
+                                <!-- Subscriber form container start -->
+                                <div class="col-lg-5 subscriber-form-container" id="subscriber-form-container">
+                                    <div class="content position-lg-sticky top-lg-0 left-lg-0 py-card my-0">
+                                        <h3 class="content-title">Subscribe for updates</h3>
+
+                                        <!-- Subscriber form confirmation start -->
+                                        
+                                        <!-- Subscriber form confirmation end -->
+
+                                        <!-- Subscriber form start -->
+                                        <form action="https://www.gethalfmoon.com/docs/buttons/#subscriber-form-container" method="post" id="subscriber-form">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="2xN2H1sZI8TProyILpEyHqpJWlB75OpSEMddx0JfxnAnfZwwMxdABGmeJ1uljKJt">
+                                            
+                                            
+                                                <div class="form-group ">
+                                                    
+                                                    <input type="email" name="email" maxlength="254" placeholder="Your email address" class="form-control" required="" id="id_email">
+                                                    
+                                                </div>
+                                            
+                                            <input type="submit" value="Subscribe" class="btn btn-primary btn-block" name="save_subscriber_form">
+                                        </form>
+                                        <!-- Subscriber form end -->
+                                        <br>
+                                        <ul>
+                                            <li class="text-muted">
+                                                We will notify you when the framework gets a substantial update. No spam or  marketing.
+                                            </li>
+                                            <li class="text-muted">
+                                                You can also <a class="hyperlink" href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener"> follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a> and stay updated that way.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Subscriber form container end -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Docs footer card end -->
+
+            <!-- Custom footer start -->
+            <div class="custom-footer">
+                <div class="container-fluid">
+                    <div class="row row-eq-spacing-lg">
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <div class="mb-10">
+                                    <img src="./buttons_files/hm-logo.svg" class="img-fluid hidden-dm halfmoon-logo-img" alt="halfmoon-logo">
+                                    <img src="./buttons_files/hm-logo-white.svg" class="img-fluid hidden-lm halfmoon-logo-img" alt="halfmoon-logo-white">
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/" class="custom-footer-link">Home</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/docs/introduction/" class="custom-footer-link">Documentation</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/license/" class="custom-footer-link">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/project-roadmap/" class="custom-footer-link">Project roadmap</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Get in touch</h4>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/team/" class="custom-footer-link">Team</a>
+                                </div>
+                                <div>
+                                    <a href="https://github.com/halfmoonui/halfmoon/issues" target="_blank" rel="noopener" class="custom-footer-link">Report an issue</a>
+                                </div>
+                                <div>
+                                    <a href="mailto:hey.halfmoon@gmail.com" target="_blank" rel="noopener" class="custom-footer-link">Contact us</a>
+                                </div>
+                                <div>
+                                    <a href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener" class="custom-footer-link">
+                                        Follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Legal</h4>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/privacy-policy/" class="custom-footer-link">Privacy policy</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/cookies/" class="custom-footer-link">Cookies</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Made with <i class="fa fa-heart text-danger ml-5 mr-5" aria-hidden="true"></i> for developers</h4>
+                                <div class="mb-10">
+                                    <a href="https://www.gethalfmoon.com/docs/buttons/#top" class="btn btn-primary btn-scroll-to-top" role="button">Scroll to top</a>
+                                </div>
+                                <div class="text-muted">
+                                    © Copyright 2022, Halfmoon UI
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom footer end -->
+        </div>
+        <!-- Content wrapper end -->
+
+    </div>
+    <!-- Page wrapper end -->
+    
+
+
+    <link rel="stylesheet" href="../../dist/main.css">
+    
+    
+    <script src="../../dist/bundle.js"></script>
+
+
+</body></html>

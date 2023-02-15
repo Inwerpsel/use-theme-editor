@@ -1,0 +1,985 @@
+
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Intro - Halfmoon</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../dist/halfmoon.css">
+  <link href="/static/site/css/documentation-styles-4.css" rel="stylesheet">
+</head>
+
+<body>
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-transitions" data-sidebar-type="overlayed-sm-and-down">
+
+        <!-- Sticky alerts start -->
+        <div class="sticky-alerts">
+            <!-- Precompiled alert 1 start -->
+            <div class="alert alert-primary filled" role="alert" id="precompiled-alert-1">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="w-50 h-50 d-flex align-items-center rounded-circle bg-white">
+                                    <div class="m-auto text-primary">
+                                        <i class="fa fa-commenting fa-2x" aria-hidden="true"></i>
+                                        <span class="sr-only">Commenting</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pl-20">
+                                <h4 class="alert-heading mb-5">New message!</h4>
+                                <div>
+                                    Jane Doe just sent you a new message.
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Precompiled alert 1 end -->
+        </div>
+        <!-- Sticky alerts end -->
+
+        <!-- Navbar start -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a href="/docs/introduction/" class="navbar-brand ml-10 ml-sm-15">
+                <img src="/static/halfmoon/img/hm-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
+                <img src="/static/halfmoon/img/hm-logo-white.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
+                <span class="badge font-size-12 text-monospace px-5 px-sm-10">
+                    v1.1.1
+                </span>
+            </a>
+            <ul class="navbar-nav hidden-sm-and-down">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/docs/introduction/" class="nav-link">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/license/" class="nav-link">License <span class="ml-5 text-monospace font-size-12">(MIT)</span></a>
+                </li>
+            </ul>
+            <div class="navbar-content ml-auto">
+
+                <!-- Github button container 1 start -->
+                <div class="pt-5 mr-5 d-none d-lg-inline-block" id="gh-star-btn-container-1">
+                    <div class="hidden-dm">
+                        <span></span>
+                    </div>
+                    <div class="hidden-lm">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- Github button container 1 end -->
+
+                <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()" aria-label="Toggle dark mode">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                </button>
+                <a href="/docs/download/" class="btn btn-primary hidden-sm-and-down" role="button">
+                    <i class="fa fa-cloud-download mr-5" aria-hidden="true"></i>
+                    Download
+                </a>
+                <div class="dropdown with-arrow hidden-md-and-up">
+                    <button class="btn navbar-menu-btn" data-toggle="dropdown" type="button" id="navbar-dropdown-toggle-btn" aria-haspopup="true" aria-expanded="false">
+                        <span class="text">Menu</span>
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown-toggle-btn">
+                        <a href="/" class="dropdown-item">Home</a>
+                        <a href="/docs/introduction/" class="dropdown-item">Documentation</a>
+                        <a href="/license/" class="dropdown-item">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                        <div class="dropdown-divider"></div>
+
+                        <!-- Github button container 2 start -->
+                        <div class="pt-5" id="gh-star-btn-container-2">
+                            <div class="dropdown-content py-5 hidden-dm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-content py-5 hidden-lm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                        <!-- Github button container 2 end -->
+
+                        <div class="dropdown-content">
+                            <a href="/docs/download/" class="btn btn-primary btn-download-sm" role="button">
+                                <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                                <span class="ml-5">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar end -->
+
+        <!-- Sidebar overlay -->
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+
+        <!-- Sidebar start -->
+        <div class="sidebar" id="sidebar">
+            <!-- Filter docs section start -->
+            <div class="sidebar-menu">
+                <div class="sidebar-content">
+                    <input class="form-control search" type="text" placeholder="Filter docs" id="filter-docs">
+                    <div class="mt-10 font-size-12 hidden-sm-and-down">
+                        Press <kbd>shift</kbd> + <kbd>F</kbd> to focus
+                    </div>
+                </div>
+            </div>
+            <!-- Filter docs section end -->
+
+            <!-- Filterable list start -->
+            <div class="sidebar-menu list"><h5 class="sidebar-title">
+                    Getting started
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </div><a href="/docs/introduction/" class="sidebar-link active" id="sidebar-introduction" data-active-scroll-disabled="disabled">
+                    <span class="name">Introduction</span>
+                </a><a href="/docs/download/" class="sidebar-link" id="sidebar-download" data-active-scroll-disabled="disabled">
+                    <span class="name">Download</span>
+                </a><a href="/docs/customize/" class="sidebar-link" id="sidebar-customize" data-active-scroll-disabled="disabled">
+                    <span class="name">Customize</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">(Must read)</span>
+                </a><a href="/docs/page-building/" class="sidebar-link" id="sidebar-page-building" data-active-scroll-disabled="disabled">
+                    <span class="name">Page building</span>
+                    <br>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        (<span class="alt-name">Starter template generator</span>)
+                    </span>
+                </a><br><h5 class="sidebar-title">
+                    Building blocks
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </div><a href="/docs/containers/" class="sidebar-link" id="sidebar-containers" data-active-scroll-disabled="disabled">
+                    <span class="name">Containers</span>
+                </a><a href="/docs/content-and-cards/" class="sidebar-link" id="sidebar-content-and-cards" data-active-scroll-disabled="disabled">
+                    <span class="name">Content and cards</span>
+                </a><a href="/docs/grid-system/" class="sidebar-link" id="sidebar-grid-system" data-active-scroll-disabled="disabled">
+                    <span class="name">Grid system</span>
+                </a><a href="/docs/navbar/" class="sidebar-link" id="sidebar-navbar" data-active-scroll-disabled="disabled">
+                    <span class="name">Navbar</span>
+                </a><a href="/docs/sidebar/" class="sidebar-link" id="sidebar-sidebar" data-active-scroll-disabled="disabled">
+                    <span class="name">Sidebar</span>
+                </a><br><h5 class="sidebar-title">
+                    Basic elements
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </div><a href="/docs/buttons/" class="sidebar-link" id="sidebar-buttons">
+                    <span class="name">Buttons</span>
+                </a><a href="/docs/code/" class="sidebar-link" id="sidebar-code">
+                    <span class="name">Code</span>
+                </a><a href="/docs/image/" class="sidebar-link" id="sidebar-image">
+                    <span class="name">Image</span>
+                </a><a href="/docs/links/" class="sidebar-link" id="sidebar-links">
+                    <span class="name">Links</span>
+                </a><a href="/docs/tables/" class="sidebar-link" id="sidebar-tables">
+                    <span class="name">Tables</span>
+                </a><br><h5 class="sidebar-title">
+                    Form elements
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </div><a href="/docs/form/" class="sidebar-link" id="sidebar-form">
+                    <span class="name">Form</span>
+                </a><a href="/docs/input/" class="sidebar-link" id="sidebar-input">
+                    <span class="name">Input</span>
+                </a><a href="/docs/select/" class="sidebar-link" id="sidebar-select">
+                    <span class="name">Select</span>
+                </a><a href="/docs/textarea/" class="sidebar-link" id="sidebar-textarea">
+                    <span class="name">Textarea</span>
+                </a><a href="/docs/checkbox/" class="sidebar-link" id="sidebar-checkbox">
+                    <span class="name">Checkbox</span>
+                </a><a href="/docs/radio/" class="sidebar-link" id="sidebar-radio">
+                    <span class="name">Radio</span>
+                </a><a href="/docs/switch/" class="sidebar-link" id="sidebar-switch">
+                    <span class="name">Switch</span>
+                </a><a href="/docs/file-input/" class="sidebar-link" id="sidebar-file-input">
+                    <span class="name">File input</span>
+                </a><a href="/docs/input-group/" class="sidebar-link" id="sidebar-input-group">
+                    <span class="name">Input group</span>
+                </a><br><h5 class="sidebar-title">
+                    Advanced components
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </div><a href="/docs/alerts/" class="sidebar-link" id="sidebar-alerts">
+                    <span class="name">Alerts</span>
+                </a><a href="/docs/badges/" class="sidebar-link" id="sidebar-badges">
+                    <span class="name">Badges</span>
+                </a><a href="/docs/breadcrumb/" class="sidebar-link" id="sidebar-breadcrumb">
+                    <span class="name">Breadcrumb</span>
+                </a><a href="/docs/button-group/" class="sidebar-link" id="sidebar-button-group">
+                    <span class="name">Button group</span>
+                </a><a href="/docs/collapse/" class="sidebar-link" id="sidebar-collapse">
+                    <span class="name">Collapse</span>
+                </a><a href="/docs/dropdown/" class="sidebar-link" id="sidebar-dropdown">
+                    <span class="name">Dropdown</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        <span class="alt-name">(And popover)</span>
+                    </span>
+                </a><a href="/docs/modal/" class="sidebar-link" id="sidebar-modal">
+                    <span class="name">Modal</span>
+                </a><a href="/docs/pagination/" class="sidebar-link" id="sidebar-pagination">
+                    <span class="name">Pagination</span>
+                </a><a href="/docs/progress/" class="sidebar-link" id="sidebar-progress">
+                    <span class="name">Progress</span>
+                </a><a href="/docs/sticky-alerts-toasts/" class="sidebar-link" id="sidebar-sticky-alerts-toasts">
+                    <span class="name">Sticky alerts (Toasts)</span>
+                </a><a href="/docs/tooltips/" class="sidebar-link" id="sidebar-tooltips">
+                    <span class="name">Tooltips</span>
+                </a><br><h5 class="sidebar-title">
+                    Common utilities
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </div><a href="/docs/display-utilities/" class="sidebar-link" id="sidebar-display-utilities">
+                    <span class="name">Display utilities</span>
+                </a><a href="/docs/flex-utilities/" class="sidebar-link" id="sidebar-flex-utilities">
+                    <span class="name">Flex utilities</span>
+                </a><a href="/docs/position-utilities/" class="sidebar-link" id="sidebar-position-utilities">
+                    <span class="name">Position utilities</span>
+                </a><a href="/docs/sizing-utilities/" class="sidebar-link" id="sidebar-sizing-utilities">
+                    <span class="name">Sizing utilities</span>
+                </a><a href="/docs/spacing-utilities/" class="sidebar-link" id="sidebar-spacing-utilities">
+                    <span class="name">Spacing utilities</span>
+                </a><a href="/docs/text-utilities/" class="sidebar-link" id="sidebar-text-utilities">
+                    <span class="name">Text utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    Other utilities
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </div><a href="/docs/border-utilities/" class="sidebar-link" id="sidebar-border-utilities">
+                    <span class="name">Border utilities</span>
+                </a><a href="/docs/box-shadow-utilities/" class="sidebar-link" id="sidebar-box-shadow-utilities">
+                    <span class="name">Box shadow utilities</span>
+                </a><a href="/docs/color-utilities/" class="sidebar-link" id="sidebar-color-utilities">
+                    <span class="name">Color utilities</span>
+                </a><a href="/docs/float-utilities/" class="sidebar-link" id="sidebar-float-utilities">
+                    <span class="name">Float utilities</span>
+                </a><a href="/docs/overflow-utilities/" class="sidebar-link" id="sidebar-overflow-utilities">
+                    <span class="name">Overflow utilities</span>
+                </a><a href="/docs/pointer-events-utilities/" class="sidebar-link" id="sidebar-pointer-events-utilities">
+                    <span class="name">Pointer events utilities</span>
+                </a><a href="/docs/screen-reader-utilities/" class="sidebar-link" id="sidebar-screen-reader-utilities">
+                    <span class="name">Screen reader utilities</span>
+                </a><a href="/docs/vertical-align-utilities/" class="sidebar-link" id="sidebar-vertical-align-utilities">
+                    <span class="name">Vertical align utilities</span>
+                </a><a href="/docs/visibility-utilities/" class="sidebar-link" id="sidebar-visibility-utilities">
+                    <span class="name">Visibility utilities</span>
+                </a><a href="/docs/z-index-utilities/" class="sidebar-link" id="sidebar-z-index-utilities">
+                    <span class="name">Z-index utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    JavaScript
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </div><a href="/docs/core-javascript-library/" class="sidebar-link" id="sidebar-core-javascript-library">
+                    <span class="name">Core JavaScript library</span>
+                </a><br><h5 class="sidebar-title">
+                    Others
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </div><a href="/docs/internet-explorer-support/" class="sidebar-link" id="sidebar-internet-explorer-support">
+                    <span class="name">Internet Explorer support</span>
+                </a></div>
+            <!-- Filterable list end -->
+        </div>
+        <!-- Sidebar end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+            
+
+            
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-xl-9">
+
+                <!-- Top section start  -->
+                <div id="top">
+                    <div class="content">
+                        <h1 class="content-title font-size-24">
+                            Introduction
+                        </h1>
+                        <div class="my-20">
+                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                        </div>
+                        <p>
+                            Halfmoon is a responsive front-end framework with a lot of useful and interesting qualities to help you build websites. It comes with a built-in dark mode, which is one of its most important and defining features.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <p>
+                                You can click on the following button to toggle dark mode (or press <kbd>shift</kbd> + <kbd>D</kbd>).
+                            </p>
+                            <button class="btn btn-primary" type="button" onclick="halfmoon.toggleDarkMode()">
+                                Click me!
+                            </button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-1')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-1"><span class="hljs-comment">&lt;!-- HTML --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"toggleDemo()"</span>&gt;</span>Click me!<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- JavaScript --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text/javascript"</span>&gt;</span><span class="javascript">
+  <span class="hljs-comment">// Dark mode toggle demo</span>
+  <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">toggleDemo</span>(<span class="hljs-params"></span>) </span>{
+    halfmoon.toggleDarkMode();
+  }
+</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Every single element has a different set of styles in dark mode. The dark mode styles are applied to an element when its parent element has the <span class="code">.dark-mode</span> class. Therefore, the ideal way to do this is by adding the class to the DOM's body.
+                        </p>
+                        <p>
+                            This is exactly what the built-in <span class="code">halfmoon.toggleDarkMode()</span> method is doing in the above example (along with saving the preference in a cookie). You can read more about this in the <a class="hyperlink" href="/docs/core-javascript-library/" target="_blank" rel="noopener">core JavaScript library section</a> (opens in new tab) of the documentation.
+                        </p>
+                    </div>
+                </div>
+                <!-- Top section end -->
+
+                <!-- Fully customizable using CSS variables section start  -->
+                <div id="fully-customizable-using-css-variables">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Fully customizable using CSS variables
+                            <a href="#fully-customizable-using-css-variables" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Another great thing about the framework is that it is built entirely using CSS variables (also known as CSS custom properties). There are close to <strong>1,500 CSS variables</strong>, which means that almost everything can be customized by overriding a property, making it very easy to theme Halfmoon to fit your brand.
+                        </p>
+                        <p>
+                            You can see a demo of this below. Click the button on the top right to change the theme.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs customize-card">
+                        <div class="docs-cards-container">
+                            <div class="customization-demo-content w-sm-450 mw-full m-auto">
+                                <div class="navbar-container bg-dark-light-dm">
+                                    <div class="navbar">
+                                        <div class="navbar-content">
+                                            <div class="fake-button bg-danger"></div>
+                                            <div class="fake-button bg-secondary"></div>
+                                            <div class="fake-button bg-success"></div>
+                                        </div>
+                                        <span class="navbar-text text-monospace">
+                                            Customization demo
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="h-550 d-none-only-in-ie">
+                                    <iframe src="/customization-demo/?demo-chunk=chart" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                                </div>
+                                <div class="h-550 d-block-only-in-ie bg-dark-light-dm">
+                                    <div class="h-550 p-card d-flex align-items-center justify-content-center">
+                                        <p>
+                                            This demo does not work on Internet Explorer, because the browser does not support CSS variables. Please open this page using another browser to view the demo.
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="iframe-message iframe-message-no-code">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/customization-demo/?demo-chunk=chart" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            While it is impossible to understand what is happening without looking at the code, the gist of it is that you can simply override the variables to create a custom theme, or even create completely new components. You can learn about these concepts and also find detailed code examples in the <a class="hyperlink" href="/docs/customize/" target="_blank" rel="noopener">customize section</a> (opens in new tab) of the docs. We highly recommend giving that page a good, thorough read.
+                        </p>
+                    </div>
+                </div>
+                <!-- Fully customizable using CSS variables section end -->
+
+                <!-- Great for building dashboards section start  -->
+                <div id="great-for-building-dashboards">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Great for building dashboards (and tools)
+                            <a href="#great-for-building-dashboards" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Halfmoon can be used to create most types of websites. However, it really shines when it comes to building dashboards and other tools (such as admin panels). This is thanks to the following features: 
+                        </p>
+                        <ul>
+                            <li>
+                                A highly <em>standardized</em> look and feel to the components. Everything is designed to be snappy and highly usable.
+                            </li>
+                            <li>
+                                The aforementioned built-in dark mode. At least half of the users now expect their dashboards and tools to have a dark mode, and Halfmoon provides this by default.
+                            </li>
+                            <li>
+                                Huge customizability thanks to the CSS variables (as explained above). 
+                            </li>
+                            <li>
+                                Availability of different types of navbars, five different types of sidebars, omnidirectional dropdowns, toasts, <strong>tons of utilities</strong>, etc. — all of these things are very useful when it comes to building tools on the web. 
+                            </li>
+                            <li>
+                                Built-in shortcuts — <kbd>shift</kbd> + <kbd>D</kbd> to toggle dark mode, and <kbd>shift</kbd> + <kbd>S</kbd> to toggle the sidebar.
+                            </li>
+                        </ul>
+                        <p>
+                            Moreover, you will also find that most examples in the docs are geared towards dashboards and tools. For instance, check out <a class="hyperlink" href="/docs/grid-system/#building-a-dashboard" target="_blank" rel="noopener">this example</a> (opens in new tab) in the grid system section of the docs. With all that said, it is worth repeating that Halfmoon <strong>can definitely</strong> be used to build other types of websites as well.
+                        </p>
+                    </div>
+                </div>
+                <!-- Great for building dashboards section end -->
+
+                <!-- Optional JS library section start  -->
+                <div id="optional-js-library">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Optional JavaScript library
+                            <a href="#optional-js-library" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Many of the components found in Halfmoon are built to work without JavaScript, including things like modals and tooltips. Given below is an example.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <p>
+                                The following button opens a modal with a tooltip attached to it. All of this works without any JavaScript.
+                            </p>
+                            <a href="#demo-modal" class="btn btn-primary" data-toggle="tooltip" data-title="Tooltip message" role="button">Open modal</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-2')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-2"><span class="hljs-comment">&lt;!-- Modal --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"modal"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"demo-modal"</span> <span class="hljs-attr">tabindex</span>=<span class="hljs-string">"-1"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"dialog"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"modal-dialog"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"document"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"modal-content"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Button to open modal --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#demo-modal"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">data-toggle</span>=<span class="hljs-string">"tooltip"</span> <span class="hljs-attr">data-title</span>=<span class="hljs-string">"Tooltip message"</span> <span class="hljs-attr">role</span>=<span class="hljs-string">"button"</span>&gt;</span>Open modal<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            However, Halfmoon comes with a <strong>powerful</strong> JS library that implements all the necessary functionalities in one small file. This also includes things like the keyboard shortcuts mentioned above — <kbd>shift</kbd> + <kbd>D</kbd> to toggle dark mode, and <kbd>shift</kbd> + <kbd>S</kbd> to toggle the sidebar. Please note, the shortcuts don't interfere with inputs, and is turned off by default.
+                        </p>
+                        <p>
+                            See the <a class="hyperlink" href="/docs/core-javascript-library/" target="_blank" rel="noopener">core JavaScript library</a> (opens in new tab) for details. You can also download it (along with all the other things) from the <a class="hyperlink" href="/docs/download/" target="_blank" rel="noopener">download page</a> (opens in new tab). Moreover, there is no dependency on jQuery, and everything is pure, vanilla JavaScript.
+                        </p>
+                    </div>
+                </div>
+                <!-- Optional JS library section end  -->
+
+                <!-- Bootstrap like classes section start  -->
+                <div id="bootstrap-like-classes">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Bootstrap like classes
+                            <a href="#bootstrap-like-classes" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Halfmoon is designed to have classes very similar to the ones found in Bootstrap, which is by far the most popular CSS framework in the world. This is because most designers are already familiar with those class names, and can therefore immediately jump into Halfmoon.
+                        </p>
+                        <p>
+                            Most of the commonly used components, such as buttons, tables, inputs, dropdowns, alerts, modals, pagination, breadcrumb, badges, etc, are <strong>fully similar</strong> (in terms of class names and structure). Some components do have tiny differences, but the differences are usually trivial. For instance, see the switches below.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Bootstrap classes -->
+                            <p>
+                                This switch is rendered using class names taken from Bootstrap's docs:
+                            </p>
+                            <div class="custom-control custom-switch">
+                                <input type="checkbox" class="custom-control-input" id="switch-1">
+                                <label class="custom-control-label" for="switch-1">Toggle switch</label>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-3')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-3"><span class="hljs-comment">&lt;!-- Bootstrap classes --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control custom-switch"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control-input"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"switch-1"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control-label"</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"switch-1"</span>&gt;</span>Toggle switch<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <!-- Halfmoon classes -->
+                            <p>
+                                This switch element is rendered using class names found in Halfmoon:
+                            </p>
+                            <div class="custom-switch">
+                                <input type="checkbox" id="switch-2">
+                                <label for="switch-2">Toggle switch</label>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-4')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-4"><span class="hljs-comment">&lt;!-- Halfmoon classes --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-switch"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"switch-2"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"switch-2"</span>&gt;</span>Toggle switch<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Therefore, even when there are differences, they are usually insignificant. It has to be noted, however, that Halfmoon is not a drop-in replacement theme for Bootstrap. It is a custom front-end framework built from the ground up with a very simple goal — help people quickly build dashboards, tools, and other websites that are highly usable and automatically come with built-in dark modes for their users.
+                        </p>
+                    </div>
+                </div>
+                <!-- Bootstrap like classes section end  -->
+
+                <!-- Cross-browser compatibility section start  -->
+                <div id="cross-browser-compatibility">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Cross-browser compatibility
+                            <a href="#cross-browser-compatibility" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Halfmoon is compatible with almost all the browsers available, including some legacy ones that are still used. This includes but is not limited to:
+                        </p>
+                        <ul>
+                            <li><i class="fa fa-chrome mr-5" aria-hidden="true"></i>Google Chrome</li>
+                            <li><i class="fa fa-safari mr-5" aria-hidden="true"></i>Safari</li>
+                            <li><i class="fa fa-firefox mr-5" aria-hidden="true"></i>Mozilla Firefox</li>
+                            <li><i class="fa fa-edge mr-5" aria-hidden="true"></i>Microsoft Edge (including old versions that came pre-packaged with some machines)</li>
+                            <li><i class="fa fa-internet-explorer mr-5" aria-hidden="true"></i>Internet Explorer 11 (<em>almost</em> fully supported)</li>
+                        </ul>
+                        <p>
+                            and more. As mentioned above, Halfmoon has <em>almost</em> full compatibility with IE11. You can learn more about this in the <a class="hyperlink" href="/docs/internet-explorer-support/" target="_blank" rel="noopener">Internet Explorer support section</a> (opens in new tab) of the docs.
+                        </p>
+                    </div>
+                </div>
+                <!-- Cross-browser compatibility section end  -->
+
+                <!-- Compact and performant section start  -->
+                <div id="compact-and-performant">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Compact and performant
+                            <a href="#compact-and-performant" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            The core of Halfmoon is the following — one CSS file, and one JavaScript file (with no dependencies).  This lack of bloat, and use of native browser technology (plain old CSS and vanilla JS) results in fast page loads and good performance all across the board. Everything is designed to feel snappy and responsive.
+                        </p>
+                    </div>
+                </div>
+                <!-- Compact and performant section end  -->
+
+                <!-- Ready to get started section start  -->
+                <div id="ready-to-get-started">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Ready to get started?
+                            <a href="#ready-to-get-started" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Once you are ready to get started, you can jump to the <a class="hyperlink" href="/docs/download/">download section</a>. You can also check out the <a class="hyperlink" href="/docs/customize/">customize section</a> of the docs, which is a guide for understanding customization with CSS variables (as mentioned above). Other than that, the <a class="hyperlink" href="/docs/page-building/">page building section</a> breaks down the basics of building pages in Halfmoon. There is also a <a class="hyperlink" href="/docs/page-building/#starter-template-generator">starter template generator</a>, which lets you generate boilerplates for your project.  We look forward to seeing what you decide to build with Halfmoon.
+                        </p>
+                    </div>
+                </div>
+                <!-- Ready to get started section end  -->
+
+                <!-- Up next section start -->
+                <div class="content mb-0">
+                    <hr class="mb-20">
+                    
+                        <div class="text-right font-size-16">
+                            Up next:
+                            <a href="/docs/download/" class="hyperlink ml-5">
+                                Download
+                                <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- Up next section end -->
+
+            </div>
+
+            <!-- On this page navigation start  -->
+            <div class="col-xl-3 on-this-page-nav-container">
+                <div class="content">
+                    <div class="on-this-page-nav" id="on-this-page-nav">
+                        <div class="title">On this page</div>
+                        <a href="#top">Introduction</a>
+                        <a href="#fully-customizable-using-css-variables">Fully customizable using CSS variables</a>
+                        <a href="#great-for-building-dashboards">Great for building dashboards</a>
+                        <a href="#optional-js-library">Optional JS library</a>
+                        <a href="#bootstrap-like-classes">Bootstrap like classes</a>
+                        <a href="#cross-browser-compatibility">Cross-browser compatibility</a>
+                        <a href="#compact-and-performant">Compact and performant</a>
+                        <a href="#ready-to-get-started">Ready to get started?</a>
+                    </div>
+                </div>
+            </div>
+            <!-- On this page navigation end  -->
+
+        </div>
+    </div>
+
+
+            <!-- Docs footer card start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="card docs-footer-card p-0 mt-20">
+                            <div class="row">
+
+                                <!-- Help us grow section start -->
+                                <div class="col-lg-7">
+                                    <div class="content">
+                                        <h3 class="content-title">Help us grow</h3>
+
+                                        <!-- Project roadmap start -->
+                                        <p>
+                                            Our goal is to make Halfmoon the go-to framework for building dashboards and tools on the web. We are already working on things like a form validator, number input, datepicker, multi-select (think Select2 without jQuery), tabs component, JSX docs, and so much more. You can learn more in the project roadmap.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="/project-roadmap/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <div class="w-60 h-60 rounded d-flex align-items-center justify-content-center bg-light-lm bg-dark-light-dm text-dark-lm text-light-dm">
+                                                        <i class="fa fa-map-o font-size-18" aria-hidden="true"></i>
+                                                        <span class="sr-only">Roadmap image placeholder</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Project roadmap <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Upcoming features and components (with demos). 
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Project roadmap end -->
+
+                                        <!-- Patreon link start -->
+                                        <p>
+                                            However, we need your help to grow. So if you truly believe in our goal, please consider supporting us through Patreon.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <img src="https://res.cloudinary.com/halfmoon-ui/image/upload/v1604837306/patreon-logo-hm_bgv8al.svg" class="d-block w-60 h-60 rounded" alt="Patreon image placeholder">
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Support on Patreon <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Become a backer on Patreon, and help us grow Halfmoon.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Patreon link end -->
+
+                                        <!-- Gold sponsor start -->
+                                        <h3 class="content-title mb-0">Gold sponsor</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the highest tier, with a maximum of 1 sponsor.
+                                            <br>
+                                            (Also seen at the top of the page)
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                                        </div>
+                                        <!-- Gold sponsor end -->
+
+                                        <!-- Sponsors start -->
+                                        <h3 class="content-title mb-0">Sponsors</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the normal tier, with a maximum of 10 sponsors.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- AYCD sponsor card start -->
+<a href="https://aycd.io/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex mb-20" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center rounded bg-light-lm bg-dark-light-dm d-flex align-items-center justify-content-center">
+        <img src="https://res.cloudinary.com/halfmoon-ui/image/upload/v1610224192/aycd-logo_gqspco.svg" class="d-block rounded h-100 w-100" alt="AYCD logo">
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                AYCD
+            </p>
+            <p class="font-size-12 mt-0 mb-0">
+                Automation Done Right
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- AYCD sponsor card end -->
+
+<!-- Placeholder start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #ff4757;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Sponsor (9 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Placeholder end -->
+                                        </div>
+                                        <!-- Sponsors end -->
+
+                                        <!-- Backers start -->
+                                        <h3 class="content-title mb-0">Backers</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following people have generously decided to support Halfmoon.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Backers start -->
+<div class="card sponsor-section-card w-350 h-200 overflow-y-auto mw-full m-0 d-flex align-items-center">
+	<div class="m-auto">
+		<ol class="text-dark-lm text-light-dm">
+			<li>Ethan Fann</li>
+			<li>Julia Koblitz</li>
+			<li>Benjamin Listwon</li>
+			<li>Sean Lindsay</li>
+			<li>Daan</li>
+		</ol>
+		<p>
+			Become a backer <a href="https://www.patreon.com/halfmoonui" target="_blank" rel="noopener" class="hyperlink">on Patreon <i class="fa fa-external-link" aria-hidden="true"></i></a>.
+		</p>
+	</div>
+</div>
+<!-- Backers end -->
+                                        </div>
+                                        <!-- Backers end -->
+                                    </div>
+                                </div>
+                                <!-- Help us grow section end -->
+
+                                <!-- Subscriber form container start -->
+                                <div class="col-lg-5 subscriber-form-container" id="subscriber-form-container">
+                                    <div class="content position-lg-sticky top-lg-0 left-lg-0 py-card my-0">
+                                        <h3 class="content-title">Subscribe for updates</h3>
+
+                                        <!-- Subscriber form confirmation start -->
+                                        
+                                        <!-- Subscriber form confirmation end -->
+
+                                        <!-- Subscriber form start -->
+                                        <form action="#subscriber-form-container" method="post" id="subscriber-form">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="5aUPUd3mWImEk5qzCYAoipXhy4gY2nYiHpk0KckCLX3c8GonD69qcFUMlK9cgjiT">
+                                            
+                                            
+                                                <div class="form-group ">
+                                                    
+                                                    <input type="email" name="email" maxlength="254" placeholder="Your email address" class="form-control" required="" id="id_email">
+                                                    
+                                                </div>
+                                            
+                                            <input type="submit" value="Subscribe" class="btn btn-primary btn-block" name="save_subscriber_form">
+                                        </form>
+                                        <!-- Subscriber form end -->
+                                        <br>
+                                        <ul>
+                                            <li class="text-muted">
+                                                We will notify you when the framework gets a substantial update. No spam or  marketing.
+                                            </li>
+                                            <li class="text-muted">
+                                                You can also <a class="hyperlink" href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener"> follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a> and stay updated that way.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Subscriber form container end -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Docs footer card end -->
+
+            <!-- Custom footer start -->
+            <div class="custom-footer">
+                <div class="container-fluid">
+                    <div class="row row-eq-spacing-lg">
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <div class="mb-10">
+                                    <img src="/static/halfmoon/img/hm-logo.svg" class="img-fluid hidden-dm halfmoon-logo-img" alt="halfmoon-logo">
+                                    <img src="/static/halfmoon/img/hm-logo-white.svg" class="img-fluid hidden-lm halfmoon-logo-img" alt="halfmoon-logo-white">
+                                </div>
+                                <div>
+                                    <a href="/" class="custom-footer-link">Home</a>
+                                </div>
+                                <div>
+                                    <a href="/docs/introduction/" class="custom-footer-link">Documentation</a>
+                                </div>
+                                <div>
+                                    <a href="/license/" class="custom-footer-link">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                                </div>
+                                <div>
+                                    <a href="/project-roadmap/" class="custom-footer-link">Project roadmap</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Get in touch</h4>
+                                <div>
+                                    <a href="/team/" class="custom-footer-link">Team</a>
+                                </div>
+                                <div>
+                                    <a href="https://github.com/halfmoonui/halfmoon/issues" target="_blank" rel="noopener" class="custom-footer-link">Report an issue</a>
+                                </div>
+                                <div>
+                                    <a href="mailto:hey.halfmoon@gmail.com" target="_blank" rel="noopener" class="custom-footer-link">Contact us</a>
+                                </div>
+                                <div>
+                                    <a href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener" class="custom-footer-link">
+                                        Follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Legal</h4>
+                                <div>
+                                    <a href="/privacy-policy/" class="custom-footer-link">Privacy policy</a>
+                                </div>
+                                <div>
+                                    <a href="/cookies/" class="custom-footer-link">Cookies</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Made with <i class="fa fa-heart text-danger ml-5 mr-5" aria-hidden="true"></i> for developers</h4>
+                                <div class="mb-10">
+                                    <a href="#top" class="btn btn-primary btn-scroll-to-top" role="button">Scroll to top</a>
+                                </div>
+                                <div class="text-muted">
+                                    © Copyright 2022, Halfmoon UI
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom footer end -->
+        </div>
+        <!-- Content wrapper end -->
+
+    </div>
+
+  <link rel="stylesheet" href="../../dist/main.css">
+  
+  
+  <script src="../../dist/bundle.js"></script>
+</body>
+
+</html>

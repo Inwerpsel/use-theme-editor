@@ -1,0 +1,1543 @@
+<!DOCTYPE html>
+<!-- saved from url=(0038)https://www.gethalfmoon.com/docs/form/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <!-- Meta tags -->
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+    <meta name="viewport" content="width=device-width">
+
+    <!-- Chrome, Firefox OS and Opera mobile address bar theming -->
+    <meta name="theme-color" content="#000000">
+    <!-- Windows Phone mobile address bar theming -->
+    <meta name="msapplication-navbutton-color" content="#000000">
+    <!-- iOS Safari mobile address bar theming -->
+    <meta name="apple-mobile-web-app-status-bar-style" content="#000000">
+
+    <!-- SEO -->
+    <meta name="description" content="Forms can be used to collect user input. They can be composed of inputs, select boxes, textareas, checkboxes, radio buttons, switches, and file inputs.">
+    <meta name="author" content="Halfmoon">
+    <meta name="keywords" content="Halfmoon, HTML, CSS, JavaScript, CSS Framework, dark mode, dark-mode, darkmode, dark theme, dark-theme, darktheme, Bootstrap, Foundation, Bulma, dashboard, UI, UI framework, user interface, design, design system">
+
+    <!-- Open graph -->
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="https://www.gethalfmoon.com/docs/form/">
+    <meta property="og:title" content="Form - Halfmoon">
+    <meta property="og:description" content="Forms can be used to collect user input. They can be composed of inputs, select boxes, textareas, checkboxes, radio buttons, switches, and file inputs.">
+    <meta property="og:image" content="https://res.cloudinary.com/halfmoon-ui/image/upload/v1599770364/halfmoon-og-image-1.1.0_uofgby.png">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <meta property="fb:app_id" content="2560228000973437">
+    <meta name="twitter:site" content="@halfmoonui">
+
+    <!-- Fav and Title -->
+    <link rel="icon" href="https://www.gethalfmoon.com/static/halfmoon/img/halfmoon-fav-alt.png">
+    <title>Form - Halfmoon</title>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+    <link rel="stylesheet" href="../../dist/halfmoon.css">
+    <link href="/static/site/css/documentation-styles-4.css" rel="stylesheet">
+</head>
+
+<body class=" with-custom-webkit-scrollbars with-custom-css-scrollbars" data-sidebar-shortcut-enabled="true" data-dm-shortcut-enabled="true">
+    
+    <!-- Documentation section id (hidden) -->
+    <input type="hidden" name="docs-section-id" id="docs-section-id" value="form">
+
+    <!-- Modals start -->
+    
+    <!-- Modals end -->
+
+    <!-- Page wrapper start -->
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-transitions" data-sidebar-type="overlayed-sm-and-down">
+
+        <!-- Sticky alerts start -->
+        <div class="sticky-alerts">
+            <!-- Precompiled alert 1 start -->
+            <div class="alert alert-primary filled" role="alert" id="precompiled-alert-1">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="w-50 h-50 d-flex align-items-center rounded-circle bg-white">
+                                    <div class="m-auto text-primary">
+                                        <i class="fa fa-commenting fa-2x" aria-hidden="true"></i>
+                                        <span class="sr-only">Commenting</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pl-20">
+                                <h4 class="alert-heading mb-5">New message!</h4>
+                                <div>
+                                    Jane Doe just sent you a new message.
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Precompiled alert 1 end -->
+        </div>
+        <!-- Sticky alerts end -->
+
+        <!-- Navbar start -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a href="https://www.gethalfmoon.com/docs/introduction/" class="navbar-brand ml-10 ml-sm-15">
+                <img src="./Form - Halfmoon_files/hm-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
+                <img src="./Form - Halfmoon_files/hm-logo-white.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
+                <span class="badge font-size-12 text-monospace px-5 px-sm-10">
+                    v1.1.1
+                </span>
+            </a>
+            <ul class="navbar-nav hidden-sm-and-down">
+                <li class="nav-item">
+                    <a href="https://www.gethalfmoon.com/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="https://www.gethalfmoon.com/docs/introduction/" class="nav-link">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="https://www.gethalfmoon.com/license/" class="nav-link">License <span class="ml-5 text-monospace font-size-12">(MIT)</span></a>
+                </li>
+            </ul>
+            <div class="navbar-content ml-auto">
+
+                <!-- Github button container 1 start -->
+                <div class="pt-5 mr-5 d-none d-lg-inline-block" id="gh-star-btn-container-1">
+                    <div class="hidden-dm">
+                        <span></span>
+                    </div>
+                    <div class="hidden-lm">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- Github button container 1 end -->
+
+                <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()" aria-label="Toggle dark mode">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                </button>
+                <a href="https://www.gethalfmoon.com/docs/download/" class="btn btn-primary hidden-sm-and-down" role="button">
+                    <i class="fa fa-cloud-download mr-5" aria-hidden="true"></i>
+                    Download
+                </a>
+                <div class="dropdown with-arrow hidden-md-and-up">
+                    <button class="btn navbar-menu-btn" data-toggle="dropdown" type="button" id="navbar-dropdown-toggle-btn" aria-haspopup="true" aria-expanded="false">
+                        <span class="text">Menu</span>
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown-toggle-btn">
+                        <a href="https://www.gethalfmoon.com/" class="dropdown-item">Home</a>
+                        <a href="https://www.gethalfmoon.com/docs/introduction/" class="dropdown-item">Documentation</a>
+                        <a href="https://www.gethalfmoon.com/license/" class="dropdown-item">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                        <div class="dropdown-divider"></div>
+
+                        <!-- Github button container 2 start -->
+                        <div class="pt-5" id="gh-star-btn-container-2">
+                            <div class="dropdown-content py-5 hidden-dm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-content py-5 hidden-lm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                        <!-- Github button container 2 end -->
+
+                        <div class="dropdown-content">
+                            <a href="https://www.gethalfmoon.com/docs/download/" class="btn btn-primary btn-download-sm" role="button">
+                                <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                                <span class="ml-5">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar end -->
+
+        <!-- Sidebar overlay -->
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+
+        <!-- Sidebar start -->
+        <div class="sidebar" id="sidebar">
+            <!-- Filter docs section start -->
+            <div class="sidebar-menu">
+                <div class="sidebar-content">
+                    <input class="form-control search" type="text" placeholder="Filter docs" id="filter-docs">
+                    <div class="mt-10 font-size-12 hidden-sm-and-down">
+                        Press <kbd>shift</kbd> + <kbd>F</kbd> to focus
+                    </div>
+                </div>
+            </div>
+            <!-- Filter docs section end -->
+
+            <!-- Filterable list start -->
+            <div class="sidebar-menu list"><h5 class="sidebar-title">
+                    Getting started
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </div><a href="https://www.gethalfmoon.com/docs/introduction/" class="sidebar-link" id="sidebar-introduction" data-active-scroll-disabled="disabled">
+                    <span class="name">Introduction</span>
+                </a><a href="https://www.gethalfmoon.com/docs/download/" class="sidebar-link" id="sidebar-download" data-active-scroll-disabled="disabled">
+                    <span class="name">Download</span>
+                </a><a href="https://www.gethalfmoon.com/docs/customize/" class="sidebar-link" id="sidebar-customize" data-active-scroll-disabled="disabled">
+                    <span class="name">Customize</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">(Must read)</span>
+                </a><a href="https://www.gethalfmoon.com/docs/page-building/" class="sidebar-link" id="sidebar-page-building" data-active-scroll-disabled="disabled">
+                    <span class="name">Page building</span>
+                    <br>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        (<span class="alt-name">Starter template generator</span>)
+                    </span>
+                </a><br><h5 class="sidebar-title">
+                    Building blocks
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </div><a href="https://www.gethalfmoon.com/docs/containers/" class="sidebar-link" id="sidebar-containers" data-active-scroll-disabled="disabled">
+                    <span class="name">Containers</span>
+                </a><a href="https://www.gethalfmoon.com/docs/content-and-cards/" class="sidebar-link" id="sidebar-content-and-cards" data-active-scroll-disabled="disabled">
+                    <span class="name">Content and cards</span>
+                </a><a href="https://www.gethalfmoon.com/docs/grid-system/" class="sidebar-link" id="sidebar-grid-system" data-active-scroll-disabled="disabled">
+                    <span class="name">Grid system</span>
+                </a><a href="https://www.gethalfmoon.com/docs/navbar/" class="sidebar-link" id="sidebar-navbar" data-active-scroll-disabled="disabled">
+                    <span class="name">Navbar</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sidebar/" class="sidebar-link" id="sidebar-sidebar" data-active-scroll-disabled="disabled">
+                    <span class="name">Sidebar</span>
+                </a><br><h5 class="sidebar-title">
+                    Basic elements
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </div><a href="https://www.gethalfmoon.com/docs/buttons/" class="sidebar-link" id="sidebar-buttons">
+                    <span class="name">Buttons</span>
+                </a><a href="https://www.gethalfmoon.com/docs/code/" class="sidebar-link" id="sidebar-code">
+                    <span class="name">Code</span>
+                </a><a href="https://www.gethalfmoon.com/docs/image/" class="sidebar-link" id="sidebar-image">
+                    <span class="name">Image</span>
+                </a><a href="https://www.gethalfmoon.com/docs/links/" class="sidebar-link" id="sidebar-links">
+                    <span class="name">Links</span>
+                </a><a href="https://www.gethalfmoon.com/docs/tables/" class="sidebar-link" id="sidebar-tables">
+                    <span class="name">Tables</span>
+                </a><br><h5 class="sidebar-title">
+                    Form elements
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </div><a href="https://www.gethalfmoon.com/docs/form/" class="sidebar-link active" id="sidebar-form">
+                    <span class="name">Form</span>
+                </a><a href="https://www.gethalfmoon.com/docs/input/" class="sidebar-link" id="sidebar-input">
+                    <span class="name">Input</span>
+                </a><a href="https://www.gethalfmoon.com/docs/select/" class="sidebar-link" id="sidebar-select">
+                    <span class="name">Select</span>
+                </a><a href="https://www.gethalfmoon.com/docs/textarea/" class="sidebar-link" id="sidebar-textarea">
+                    <span class="name">Textarea</span>
+                </a><a href="https://www.gethalfmoon.com/docs/checkbox/" class="sidebar-link" id="sidebar-checkbox">
+                    <span class="name">Checkbox</span>
+                </a><a href="https://www.gethalfmoon.com/docs/radio/" class="sidebar-link" id="sidebar-radio">
+                    <span class="name">Radio</span>
+                </a><a href="https://www.gethalfmoon.com/docs/switch/" class="sidebar-link" id="sidebar-switch">
+                    <span class="name">Switch</span>
+                </a><a href="https://www.gethalfmoon.com/docs/file-input/" class="sidebar-link" id="sidebar-file-input">
+                    <span class="name">File input</span>
+                </a><a href="https://www.gethalfmoon.com/docs/input-group/" class="sidebar-link" id="sidebar-input-group">
+                    <span class="name">Input group</span>
+                </a><br><h5 class="sidebar-title">
+                    Advanced components
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </div><a href="https://www.gethalfmoon.com/docs/alerts/" class="sidebar-link" id="sidebar-alerts">
+                    <span class="name">Alerts</span>
+                </a><a href="https://www.gethalfmoon.com/docs/badges/" class="sidebar-link" id="sidebar-badges">
+                    <span class="name">Badges</span>
+                </a><a href="https://www.gethalfmoon.com/docs/breadcrumb/" class="sidebar-link" id="sidebar-breadcrumb">
+                    <span class="name">Breadcrumb</span>
+                </a><a href="https://www.gethalfmoon.com/docs/button-group/" class="sidebar-link" id="sidebar-button-group">
+                    <span class="name">Button group</span>
+                </a><a href="https://www.gethalfmoon.com/docs/collapse/" class="sidebar-link" id="sidebar-collapse">
+                    <span class="name">Collapse</span>
+                </a><a href="https://www.gethalfmoon.com/docs/dropdown/" class="sidebar-link" id="sidebar-dropdown">
+                    <span class="name">Dropdown</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        <span class="alt-name">(And popover)</span>
+                    </span>
+                </a><a href="https://www.gethalfmoon.com/docs/modal/" class="sidebar-link" id="sidebar-modal">
+                    <span class="name">Modal</span>
+                </a><a href="https://www.gethalfmoon.com/docs/pagination/" class="sidebar-link" id="sidebar-pagination">
+                    <span class="name">Pagination</span>
+                </a><a href="https://www.gethalfmoon.com/docs/progress/" class="sidebar-link" id="sidebar-progress">
+                    <span class="name">Progress</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sticky-alerts-toasts/" class="sidebar-link" id="sidebar-sticky-alerts-toasts">
+                    <span class="name">Sticky alerts (Toasts)</span>
+                </a><a href="https://www.gethalfmoon.com/docs/tooltips/" class="sidebar-link" id="sidebar-tooltips">
+                    <span class="name">Tooltips</span>
+                </a><br><h5 class="sidebar-title">
+                    Common utilities
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </div><a href="https://www.gethalfmoon.com/docs/display-utilities/" class="sidebar-link" id="sidebar-display-utilities">
+                    <span class="name">Display utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/flex-utilities/" class="sidebar-link" id="sidebar-flex-utilities">
+                    <span class="name">Flex utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/position-utilities/" class="sidebar-link" id="sidebar-position-utilities">
+                    <span class="name">Position utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/sizing-utilities/" class="sidebar-link" id="sidebar-sizing-utilities">
+                    <span class="name">Sizing utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/spacing-utilities/" class="sidebar-link" id="sidebar-spacing-utilities">
+                    <span class="name">Spacing utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/text-utilities/" class="sidebar-link" id="sidebar-text-utilities">
+                    <span class="name">Text utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    Other utilities
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </div><a href="https://www.gethalfmoon.com/docs/border-utilities/" class="sidebar-link" id="sidebar-border-utilities">
+                    <span class="name">Border utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/box-shadow-utilities/" class="sidebar-link" id="sidebar-box-shadow-utilities">
+                    <span class="name">Box shadow utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/color-utilities/" class="sidebar-link" id="sidebar-color-utilities">
+                    <span class="name">Color utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/float-utilities/" class="sidebar-link" id="sidebar-float-utilities">
+                    <span class="name">Float utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/overflow-utilities/" class="sidebar-link" id="sidebar-overflow-utilities">
+                    <span class="name">Overflow utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/pointer-events-utilities/" class="sidebar-link" id="sidebar-pointer-events-utilities">
+                    <span class="name">Pointer events utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/screen-reader-utilities/" class="sidebar-link" id="sidebar-screen-reader-utilities">
+                    <span class="name">Screen reader utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/vertical-align-utilities/" class="sidebar-link" id="sidebar-vertical-align-utilities">
+                    <span class="name">Vertical align utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/visibility-utilities/" class="sidebar-link" id="sidebar-visibility-utilities">
+                    <span class="name">Visibility utilities</span>
+                </a><a href="https://www.gethalfmoon.com/docs/z-index-utilities/" class="sidebar-link" id="sidebar-z-index-utilities">
+                    <span class="name">Z-index utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    JavaScript
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </div><a href="https://www.gethalfmoon.com/docs/core-javascript-library/" class="sidebar-link" id="sidebar-core-javascript-library">
+                    <span class="name">Core JavaScript library</span>
+                </a><br><h5 class="sidebar-title">
+                    Others
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </div><a href="https://www.gethalfmoon.com/docs/internet-explorer-support/" class="sidebar-link" id="sidebar-internet-explorer-support">
+                    <span class="name">Internet Explorer support</span>
+                </a></div>
+            <!-- Filterable list end -->
+        </div>
+        <!-- Sidebar end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+            
+
+            
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-xl-9">
+
+                <!-- Top section start  -->
+                <div id="top">
+                    <div class="content">
+                        <h1 class="content-title font-size-24">
+                            Form
+                        </h1>
+                        <div class="my-20">
+                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                        </div>
+                        <p>
+                            Forms can be composed of <span class="code">&lt;input&gt;</span>, <span class="code">&lt;select&gt;</span>, <span class="code">&lt;textarea&gt;</span> elements, and other specialized input elements, such as checkboxes, and radio buttons. The first example shows all the form-controls available in one single form.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <form action="https://www.gethalfmoon.com/docs/form/#top" class="w-400 mw-full">
+                                <div class="form-group">
+                                    <label for="full-name" class="required">Full name</label>
+                                    <input type="text" class="form-control" id="full-name" placeholder="Full name" required="required">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender-male" class="required">Gender</label>
+                                    <div class="custom-radio">
+                                        <input type="radio" name="gender" id="gender-male" value="male" required="required">
+                                        <label for="gender-male">Male</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" name="gender" id="gender-female" value="female" required="required">
+                                        <label for="gender-female">Female</label>
+                                    </div>
+                                    <div class="custom-radio">
+                                        <input type="radio" name="gender" id="gender-other" value="other" required="required">
+                                        <label for="gender-other">Other</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="area-of-specialization" class="required">Area of specialization</label>
+                                    <select class="form-control" id="area-of-specialization" required="required">
+                                        <option value="" selected="selected" disabled="disabled">Select your area of specialization</option>
+                                        <option value="front-end">Front-end</option>
+                                        <option value="back-end">Back-end</option>
+                                        <option value="full-stack">Full-stack</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="languages" class="required">Languages</label>
+                                    <select class="form-control" id="languages" multiple="multiple" required="required" size="5">
+                                        <option value="javascript">JavaScript</option>
+                                        <option value="python">Python</option>
+                                        <option value="php">PHP</option>
+                                        <option value="c-c-plus-plus">C/C++</option>
+                                        <option value="java">Java</option>
+                                        <option value="Rust">Rust</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="description">Description</label>
+                                    <textarea class="form-control" id="description" placeholder="Write a short description about yourself."></textarea>
+                                </div>
+                                <div class="form-group">
+                                    <label for="picture" class="required">Display picture</label>
+                                    <div class="custom-file">
+                                        <input type="file" id="picture" required="required">
+                                        <label for="picture">Choose picture</label>
+                                    <div class="file-names">No file chosen</div></div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-switch">
+                                        <input type="checkbox" id="remember-my-information">
+                                        <label for="remember-my-information">Remember my information</label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="custom-checkbox">
+                                        <input type="checkbox" id="agree-to-terms">
+                                        <label for="agree-to-terms">I agree to all the <a href="https://www.gethalfmoon.com/docs/form/#" class="hyperlink">terms and conditions</a></label>
+                                    </div>
+                                </div>
+                                <input class="btn btn-primary" type="submit" value="Submit">
+                            </form>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-1&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-1"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-comment">&lt;!-- Input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"full-name"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Full name<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"full-name"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Full name"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Radio --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"gender-male"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Gender<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-radio"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"radio"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"gender"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"gender-male"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"male"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"gender-male"</span>&gt;</span>Male<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-radio"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"radio"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"gender"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"gender-female"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"female"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"gender-female"</span>&gt;</span>Female<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-radio"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"radio"</span> <span class="hljs-attr">name</span>=<span class="hljs-string">"gender"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"gender-other"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"other"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"gender-other"</span>&gt;</span>Other<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Select --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"area-of-specialization"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Area of specialization<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"area-of-specialization"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span> <span class="hljs-attr">selected</span>=<span class="hljs-string">"selected"</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">"disabled"</span>&gt;</span>Select your area of specialization<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"front-end"</span>&gt;</span>Front-end<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"back-end"</span>&gt;</span>Back-end<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"full-stack"</span>&gt;</span>Full-stack<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Multi-select --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"languages"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Languages<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"languages"</span> <span class="hljs-attr">multiple</span>=<span class="hljs-string">"multiple"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span> <span class="hljs-attr">size</span>=<span class="hljs-string">"5"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"javascript"</span>&gt;</span>JavaScript<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"python"</span>&gt;</span>Python<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"php"</span>&gt;</span>PHP<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Textarea --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"description"</span>&gt;</span>Description<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">textarea</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"description"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Write a short description about yourself."</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- File input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"picture"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Display picture<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-file"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"file"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"picture"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"picture"</span>&gt;</span>Choose picture<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Switch --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-switch"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"remember-my-information"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"remember-my-information"</span>&gt;</span>Remember my information<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Checkbox --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-checkbox"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"agree-to-terms"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"agree-to-terms"</span>&gt;</span>I agree to all the <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"hyperlink"</span>&gt;</span>terms and conditions<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Submit button --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Submit"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Required for the custom file input --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <h3 class="content-title font-size-18">
+                            A few things to keep in mind
+                        </h3>
+                        <p>
+                            Here's a list of things to keep in mind when creating forms in Halfmoon.
+                        </p>
+                        <ul>
+                            <li>
+                                The <span class="code">.form-control</span> class styles the <span class="code">&lt;input&gt;</span>, <span class="code">&lt;select&gt;</span>, and <span class="code">&lt;textarea&gt;</span> elements.
+                            </li>
+                            <li>
+                                Putting the form-controls inside containers with the class <span class="code">.form-group</span> provides margin between the elements.
+                            </li>
+                            <li>
+                                Adding the <span class="code">.required</span> class to <span class="code">&lt;label&gt;</span> elements automatically adds a tiny red asterisk to signify the requirement.
+                            </li>
+                            <li>
+                                The custom file input requires the core JavaScript file to work properly, mainly to update the file(s) chosen. You can read more about custom file inputs in the <a class="hyperlink" href="https://www.gethalfmoon.com/docs/file-input/" target="_blank" rel="noopener">file input section</a> (opens in new tab) of the docs.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Top section end  -->
+
+                <!-- Form rows section start  -->
+                <div id="form-rows">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Form rows
+                            <a href="https://www.gethalfmoon.com/docs/form/#form-rows" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Forms can also be composed using the <a class="hyperlink" href="https://www.gethalfmoon.com/docs/grid-system/" target="_blank" rel="noopener">grid system</a> (opens in new tab). The main thing worth noting is that the columns must be placed inside <span class="code">.form-row</span> containers, instead of <span class="code">.row</span>. Please also note that columns do not have any margin/padding in Halfmoon, therefore, the form rows should always be given the classes <span class="code">.row-eq-spacing</span>/<span class="code">.row-eq-spacing-{breakpoint}</span>, especially when using inputs, select boxes, and textareas. You can learn more about equal in-between spacing <a class="hyperlink" href="https://www.gethalfmoon.com/docs/grid-system/#equal-in-between-spacing" target="_blank" rel="noopener">in this section of the grid system</a> (opens in new tab).
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <form action="https://www.gethalfmoon.com/docs/form/#form-rows">
+                            	<div class="form-row row-eq-spacing-sm">
+                            		<div class="col-sm">
+                            			<label for="first-name" class="required">First name</label>
+                            			<input type="text" class="form-control" id="first-name" placeholder="First name" required="required">
+                            		</div>
+                            		<div class="col-sm">
+                            			<label for="last-name">Last name</label>
+                            			<input type="text" class="form-control" id="last-name" placeholder="Last name">
+                            		</div>
+                            	</div>
+                            	<div>
+                            		<label for="day-of-birth" class="required">Date of birth</label>
+                            		<div class="form-row row-eq-spacing">
+                            			<div class="col">
+                            				<input type="text" class="form-control" id="day-of-birth" placeholder="Day" pattern="[0-9]*" inputmode="numeric" required="required">
+                            			</div>
+                            			<div class="col">
+                            				<input type="text" class="form-control" id="month-of-birth" placeholder="Month" pattern="[0-9]*" inputmode="numeric" required="required">
+                            			</div>
+                            			<div class="col">
+                            				<input type="text" class="form-control" id="year-of-birth" placeholder="Year" pattern="[0-9]*" inputmode="numeric" required="required">
+                            			</div>
+                            		</div>
+                            	</div>
+                                <div>
+                                    <label for="state" class="required">School</label>
+                                    <div class="form-row row-eq-spacing-md">
+                                        <div class="col-md-3">
+                                            <select class="form-control" id="state" required="required">
+                                                <option value="" selected="selected" disabled="disabled">State</option>
+                                                <option value="NY">NY</option>
+                                                <option value="NJ">NJ</option>
+                                                <option value="PA">PA</option>
+                                            </select>
+                                        </div>
+                                        <div class="col-md-9">
+                                            <input type="text" class="form-control" id="school-name" placeholder="Name of school" required="required">
+                                        </div>
+                                    </div>
+                                </div>
+                            	<div class="text-right">
+                            		<input class="btn btn-primary" type="submit" value="Submit">
+                            	</div>
+                            </form>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-2&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-2"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- First row --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-row row-eq-spacing-sm"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col-sm"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"first-name"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>First name<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"first-name"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"First name"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col-sm"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"last-name"</span>&gt;</span>Last name<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"last-name"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Last name"</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Second row container --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Label --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"day-of-birth"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Date of birth<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Second row --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-row row-eq-spacing"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"day-of-birth"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Day"</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[0-9]*"</span> <span class="hljs-attr">inputmode</span>=<span class="hljs-string">"numeric"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"month-of-birth"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Month"</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[0-9]*"</span> <span class="hljs-attr">inputmode</span>=<span class="hljs-string">"numeric"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"year-of-birth"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Year"</span> <span class="hljs-attr">pattern</span>=<span class="hljs-string">"[0-9]*"</span> <span class="hljs-attr">inputmode</span>=<span class="hljs-string">"numeric"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Third row container --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"state"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>School<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Third row --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-row row-eq-spacing-md"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col-md-3"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"state"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span> <span class="hljs-attr">selected</span>=<span class="hljs-string">"selected"</span> <span class="hljs-attr">disabled</span>=<span class="hljs-string">"disabled"</span>&gt;</span>State<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"NY"</span>&gt;</span>NY<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"NJ"</span>&gt;</span>NJ<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"PA"</span>&gt;</span>PA<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"col-md-9"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"school-name"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Name of school"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Submit button container --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"text-right"</span>&gt;</span> <span class="hljs-comment">&lt;!-- text-right = text-align: right --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Submit"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Everything else from the grid system can be used with form rows, including the <a class="hyperlink" href="https://www.gethalfmoon.com/docs/flex-utilities/" target="_blank" rel="noopener">flex utilities</a> (opens in new tab) for alignment, offsets, ordering, etc. You may also choose to use <a class="hyperlink" href="https://www.gethalfmoon.com/docs/form/#inline-forms">inline forms</a>, which are described in one of the sections below.
+                        </p>
+                        <p>
+                        	On a side note, the inputs used for the date of birth is using the attributes <span class="code">type="text"</span>, <span class="code">pattern="[0-9]*"</span>,
+                        	and <span class="code">inputmode="numeric"</span>, instead of the regular <span class="code">type="number"</span>. The rationale behind this choice has been illustrated nicely <a class="hyperlink" href="https://technology.blog.gov.uk/2020/02/24/why-the-gov-uk-design-system-team-changed-the-input-type-for-numbers/" target="_blank" rel="noopener">here <i class="fa fa-external-link" aria-hidden="true"></i></a> by the GOV.UK Design System. However, at the end of the day, it is upto you which number input format you choose to use in your project.
+                        </p>
+                    </div>
+                </div>
+                <!-- Form rows section end  -->
+
+                <!-- Form text section start  -->
+                <div id="form-text">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Form text
+                            <a href="https://www.gethalfmoon.com/docs/form/#form-text" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Helper text can be displayed to users using the <span class="code">.form-text</span> class. This is especially useful for displaying hints to users regarding the nature of the expected input.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <form action="https://www.gethalfmoon.com/docs/form/#form-text" class="w-400 mw-full">
+                                <div class="form-group">
+                                    <label for="username" class="required">Username</label>
+                                    <input type="text" class="form-control" id="username" placeholder="Username" required="required">
+                                    <div class="form-text">
+                                        Only alphanumeric characters and underscores allowed.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password" class="required">Password</label>
+                                    <input type="password" class="form-control" id="password" placeholder="Password" required="required">
+                                    <div class="form-text">
+                                        Must be at least 8 characters long, and contain at least one special character.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="confirm-password" class="required">Confirm password</label>
+                                    <input type="password" class="form-control" id="confirm-password" placeholder="Confirm password" required="required">
+                                    <div class="form-text">
+                                        Must match the above password exactly.
+                                    </div>
+                                </div>
+                                <input class="btn btn-primary btn-block mb-10" type="submit" value="Sign up">
+                            </form>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-3&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-3"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"username"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Username<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"username"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Username"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Only alphanumeric characters and underscores allowed.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Password<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Must be at least 8 characters long, and contain at least one special character.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"confirm-password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Confirm password<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"confirm-password"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Confirm password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Must match the above password exactly.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary btn-block"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Sign up"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Form text section end  -->
+
+                <!-- Invalid input and feedback section start  -->
+                <div id="invalid-input-and-feedback">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Invalid input and feedback
+                            <a href="https://www.gethalfmoon.com/docs/form/#invalid-input-and-feedback" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Invalid feedback (or errors) can be displayed to users using the <span class="code">.invalid-feedback</span> class. Moreover, adding the <span class="code">.is-invalid</span> class to a <span class="code">.form-group</span> element will style the <span class="code">&lt;input&gt;</span>, <span class="code">&lt;select&gt;</span>, or <span class="code">&lt;textarea&gt;</span> inside to show users that the input is invalid.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <form action="https://www.gethalfmoon.com/docs/form/#invalid-input-and-feedback" class="w-400 mw-full">
+                                <div class="form-group is-invalid">
+                                    <label for="username-2" class="required">Username</label>
+                                    <div class="invalid-feedback">
+                                        <ul>
+                                            <li>Username exceeds the maximum length of 20 characters.</li>
+                                            <li>Username can not contain dashes.</li>
+                                        </ul>
+                                    </div>
+                                    <input type="text" class="form-control" id="username-2" placeholder="Username" required="required" value="my-really-long-username">
+                                    <div class="form-text">
+                                        Only alphanumeric characters and underscores allowed.
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="password-2" class="required">Password</label>
+                                    <input type="password" class="form-control" id="password-2" placeholder="Password" required="required" value="my-password">
+                                    <div class="form-text">
+                                        Must be at least 8 characters long, and contain at least one special character.
+                                    </div>
+                                </div>
+                                <div class="form-group is-invalid">
+                                    <label for="confirm-password-2" class="required">Confirm password</label>
+                                    <div class="invalid-feedback">
+                                        Does not match with the password above.
+                                    </div>
+                                    <input type="password" class="form-control" id="confirm-password-2" placeholder="Confirm password" required="required" value="mmyy-ppasswordd">
+                                    <div class="form-text">
+                                        Must match the above password exactly.
+                                    </div>
+                                </div>
+                                <input class="btn btn-primary btn-block mb-10" type="submit" value="Sign up">
+                            </form>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-4&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-4"><span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group is-invalid"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"username"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Username<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"invalid-feedback"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">ul</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Username exceeds the maximum length of 20 characters.<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">li</span>&gt;</span>Username can not contain dashes.<span class="hljs-tag">&lt;/<span class="hljs-name">li</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">ul</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"username"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Username"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"my-really-long-username"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Only alphanumeric characters and underscores allowed.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Password<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"my-password"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Must be at least 8 characters long, and contain at least one special character.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group is-invalid"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"confirm-password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span>&gt;</span>Confirm password<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"invalid-feedback"</span>&gt;</span>
+      Does not match with the password above.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"confirm-password"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Confirm password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"mmyy-ppasswordd"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      Must match the above password exactly.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary btn-block"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Sign up"</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            It should be noted that the <span class="code">.is-invalid</span> class can also be added directly to the <span class="code">&lt;input&gt;</span>, <span class="code">&lt;select&gt;</span>, or <span class="code">&lt;textarea&gt;</span> elements (along with the class <span class="code">.form-control</span>) to style them like the ones in the above example. You can find examples for this on their individual docs sections.
+                        </p>
+                    </div>
+                </div>
+                <!-- Invalid input and feedback section end  -->
+
+                <!-- Inline forms section start  -->
+                <div id="inline-forms">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Inline forms
+                            <a href="https://www.gethalfmoon.com/docs/form/#inline-forms" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Inline forms can be created using the class <span class="code">.form-inline</span>/<span class="code">.form-inline-{breakpoint}</span>, where the breakpoint can be <span class="code">sm</span>, <span class="code">md</span>, <span class="code">lg</span>, or <span class="code">xl</span>. If a breakpoint is provided, the form will be inline for that screen size and up. For example, <span class="code">.form-inline-sm</span> will make the form inline only for small screens and up, ie, <span class="code">width &gt; 576px</span>. Below this width, the form will "collapse" and be rendered like a regular form. The following things should be kept in mind when using inline forms:
+                        </p>
+                        <ul>
+                            <li>
+                                Labels, form text, invalid feedback, input groups, and buttons (including input buttons) can all be used inside inline forms alongside the regular form-controls.
+                            </li>
+                            <li>
+                                Custom checkboxes, radio buttons, switches, and file inputs can also be used. However, they need to placed inside a container with the <span class="code">.custom-control</span> class.
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <div class="w-400 mw-full"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+                                <!-- Inline form with label, input, and button (input submit) -->
+                                <form class="form-inline" id="if-0" action="https://www.gethalfmoon.com/docs/form/#if-0">
+                                    <label class="required" for="if-0-full-name">Name</label>
+                                    <input type="text" class="form-control" placeholder="Full name" id="if-0-full-name" required="required">
+                                    <input type="submit" class="btn btn-primary" value="Submit">
+                                </form>
+                                <br>
+                                <!-- Inline form (sm) for sign in -->
+                                <form class="form-inline-sm" id="if-1" action="https://www.gethalfmoon.com/docs/form/#if-1">
+                                    <input type="text" class="form-control" placeholder="Username" id="if-1-username" required="required">
+                                    <input type="password" class="form-control" placeholder="Password" id="if-1-password" required="required">
+                                    <input type="submit" class="btn btn-primary" value="Sign in">
+                                </form>
+                                <br>
+                                <!-- Inline form with input group and button -->
+                                <form class="form-inline" id="if-2" action="https://www.gethalfmoon.com/docs/form/#if-2">
+                                    <div class="input-group">
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text">Income</span>
+                                        </div>
+                                        <input type="text" class="form-control" value="0.00" id="if-2-income">
+                                        <div class="input-group-append">
+                                            <span class="input-group-text">$</span>
+                                        </div>
+                                    </div>
+                                    <button class="btn btn-primary">Enter</button>
+                                </form>
+                                <br>
+                                <!-- Inline form with form text and input -->
+                                <form class="form-inline" id="if-3" action="https://www.gethalfmoon.com/docs/form/#if-3">
+                                    <input type="text" class="form-control" placeholder="Username" id="if-3-username">
+                                    <div class="form-text">
+                                        A-Z, 0-9 and - allowed.
+                                    </div>
+                                </form>
+                                <br>
+                                <!-- Inline form with invalid feedback and invalid input -->
+                                <form class="form-inline" id="if-4" action="https://www.gethalfmoon.com/docs/form/#if-4">
+                                    <input type="text" class="form-control is-invalid" value="my_username" id="if-4-username">
+                                    <div class="invalid-feedback">
+                                        A-Z, 0-9 and - allowed.
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-5&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-5"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-comment">&lt;!-- Inline form with label, input, and button (input submit) --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required"</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"if-0-full-name"</span>&gt;</span>Name<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Full name"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-0-full-name"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Submit"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Inline form (sm) for sign in --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline-sm"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Username"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-1-username"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Password"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-1-password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Sign in"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form with input group and button --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"input-group"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"input-group-prepend"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"input-group-text"</span>&gt;</span>Income<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"0.00"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-2-income"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"input-group-append"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"input-group-text"</span>&gt;</span>$<span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span>&gt;</span>Enter<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form with form text and input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Username"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-3-username"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-text"</span>&gt;</span>
+      A-Z, 0-9 and - allowed.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form with invalid feedback and invalid input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control is-invalid"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"my_username"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-4-username"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"invalid-feedback"</span>&gt;</span>
+      A-Z, 0-9 and - allowed.
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            As mentioned above, custom checkboxes, radio buttons, switches, and file inputs can also be used with inline forms using a container with the <span class="code">.custom-control</span> class.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <div class="w-400 mw-full"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+                                <!-- Inline form with checkbox and input -->
+                                <form class="form-inline" id="if-5" action="https://www.gethalfmoon.com/docs/form/#if-5">
+                                    <div class="custom-control">
+                                        <div class="custom-checkbox">
+                                            <input type="checkbox" id="if-5-checkbox" value="">
+                                            <label for="if-5-checkbox">Checkbox</label>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Input" id="if-5-input">
+                                </form>
+                                <br>
+                                <!-- Inline form with radio button and select box -->
+                                <form class="form-inline" id="if-6" action="https://www.gethalfmoon.com/docs/form/#if-6">
+                                    <div class="custom-control">
+                                        <div class="custom-radio">
+                                            <input type="radio" id="if-6-radio" value="">
+                                            <label for="if-6-radio">Radio</label>
+                                        </div>
+                                    </div>
+                                    <select class="form-control" id="if-6-select">
+                                        <option value="">Select</option>
+                                        <option value="">Option 1</option>
+                                        <option value="">Option 2</option>
+                                    </select>
+                                </form>
+                                <br>
+                                <!-- Inline form with switch and input -->
+                                <form class="form-inline" id="if-7" action="https://www.gethalfmoon.com/docs/form/#if-7">
+                                    <div class="custom-control">
+                                        <div class="custom-switch">
+                                            <input type="checkbox" id="if-7-switch" value="">
+                                            <label for="if-7-switch">Switch</label>
+                                        </div>
+                                    </div>
+                                    <input type="text" class="form-control" placeholder="Input" id="if-7-input">
+                                </form>
+                                <br>
+                                <!-- Inline form (sm) with file input, textarea, and button (input submit) -->
+                                <form class="form-inline-sm" id="if-8" action="https://www.gethalfmoon.com/docs/form/#if-8">
+                                    <div class="custom-control">
+                                        <div class="custom-file">
+                                            <input type="file" id="if-8-file-input">
+                                            <label for="if-8-file-input">Choose photo</label>
+                                        <div class="file-names">No file chosen</div></div>
+                                    </div>
+                                    <textarea class="form-control" placeholder="Write a short description about the picture" id="if-8-textarea"></textarea>
+                                    <input type="submit" class="btn btn-primary" value="Upload">
+                                </form>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-6&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-6"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-comment">&lt;!-- Inline form with checkbox and input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-checkbox"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-5-checkbox"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"if-5-checkbox"</span>&gt;</span>Checkbox<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Input"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-5-input"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form with radio button and select box --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-radio"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"radio"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-6-radio"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"if-6-radio"</span>&gt;</span>Radio<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">select</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-6-select"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>Select<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>Option 1<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">option</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>Option 2<span class="hljs-tag">&lt;/<span class="hljs-name">option</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">select</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form with switch and input --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-switch"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-7-switch"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"if-7-switch"</span>&gt;</span>Switch<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Input"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-7-input"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+  
+  <span class="hljs-comment">&lt;!-- Inline form (sm) with file input, textarea, and button (input submit) --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline-sm"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-file"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"file"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-8-file-input"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"if-8-file-input"</span>&gt;</span>Choose photo<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">textarea</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Write a short description about the picture"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"if-8-textarea"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">textarea</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Upload"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Please note that forms do not have any margins by default, so the forms in the above examples are separated by <span class="code">&lt;br /&gt;</span> tags. This is not shown in the code for the sake of conciseness.
+                        </p>
+                    </div>
+                </div>
+                <!-- Inline forms section end  -->
+
+                <!-- Inline forms with form-groups section start  -->
+                <div id="inline-forms-with-form-groups">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Inline forms with form-groups
+                            <a href="https://www.gethalfmoon.com/docs/form/#inline-forms-with-form-groups" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Practical use cases of inline forms often requires the use of form-groups (<span class="code">.form-group</span>). For form-groups inside inline forms, whatever is placed inside the form-group will be inline, but each of the separate form-group will be block level. This can be used to create different types of forms with varying layouts. Given below is a simple example:
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <form class="form-inline w-400 mw-full" action="https://www.gethalfmoon.com/docs/form/#inline-forms-with-form-groups"> <!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% -->
+                                <div class="form-group">
+                                    <label class="required w-100" for="if-9-username">Username</label>
+                                    <input type="text" class="form-control" placeholder="Username" id="if-9-username" required="required">
+                                </div>
+                                <div class="form-group">
+                                    <label class="required w-100" for="if-9-password">Password</label>
+                                    <input type="password" class="form-control" placeholder="Password" id="if-9-password" required="required">
+                                </div>
+                                <div class="form-group mb-0">
+                                    <div class="custom-control">
+                                        <div class="custom-checkbox">
+                                            <input type="checkbox" id="if-9-remember-me" value="">
+                                            <label for="if-9-remember-me">Remember me</label>
+                                        </div>
+                                    </div>
+                                    <input type="submit" class="btn btn-primary ml-auto" value="Sign in">
+                                </div>
+                            </form>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, &#39;code-block-7&#39;)">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-7"><span class="hljs-comment">&lt;!-- Inline form with form-groups --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">action</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">method</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-inline w-400 mw-full"</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-400 = width: 40rem (400px), mw-full = max-width: 100% --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required w-100"</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"username"</span>&gt;</span>Username<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-100 = width: 10rem (100px) --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Username"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"username"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"required w-100"</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"password"</span>&gt;</span>Password<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span> <span class="hljs-comment">&lt;!-- w-100 = width: 10rem (100px) --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Password"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"password"</span> <span class="hljs-attr">required</span>=<span class="hljs-string">"required"</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-group mb-0"</span>&gt;</span> <span class="hljs-comment">&lt;!-- mb-0 = margin-bottom: 0 --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-control"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"custom-checkbox"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"checkbox"</span> <span class="hljs-attr">id</span>=<span class="hljs-string">"remember-me"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">""</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">label</span> <span class="hljs-attr">for</span>=<span class="hljs-string">"remember-me"</span>&gt;</span>Remember me<span class="hljs-tag">&lt;/<span class="hljs-name">label</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"submit"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn btn-primary ml-auto"</span> <span class="hljs-attr">value</span>=<span class="hljs-string">"Sign in"</span>&gt;</span> <span class="hljs-comment">&lt;!-- ml-auto = margin-left: auto --&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Inline forms make use of flexbox, so we can use <a class="hyperlink" href="https://www.gethalfmoon.com/docs/flex-utilities/" target="_blank" rel="noopener">flex utilities</a> (opens in new tab) for positioning content. For instance, the <span class="code">.ml-auto</span> class pushes the button to the right side by setting the property <span class="code">margin-left: auto</span> on it. Both the labels are also given a width of <span class="code">10rem (100px)</span>, which means that the input boxes are aligned perfectly.
+                        </p>
+                    </div>
+                </div>
+                <!-- Inline forms with form-groups section end  -->
+
+                <!-- More examples section start  -->
+                <div id="more-examples">
+                    <div class="content">
+                        <h2 class="content-title">
+                            More examples
+                            <a href="https://www.gethalfmoon.com/docs/form/#more-examples" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            More examples of the individual form control elements, along with different options, such as sizing and disabling, can be found in their separate docs sections: <a class="hyperlink" href="https://www.gethalfmoon.com/docs/input/">input</a>, <a class="hyperlink" href="https://www.gethalfmoon.com/docs/select/">select</a>, <a class="hyperlink" href="https://www.gethalfmoon.com/docs/textarea/">textarea</a>, <a class="hyperlink" href="https://www.gethalfmoon.com/docs/checkbox/">checkbox</a>, <a class="hyperlink" href="https://www.gethalfmoon.com/docs/radio/">radio</a>, <a class="hyperlink" href="https://www.gethalfmoon.com/docs/switch/">switch</a>, and <a class="hyperlink" href="https://www.gethalfmoon.com/docs/file-input/">file input</a>.
+                        </p>
+                    </div>
+                </div>
+                <!-- More examples section end  -->
+
+                <!-- Up next section start -->
+                <div class="content mb-0">
+                    <hr class="mb-20">
+                    
+                        <div class="text-right font-size-16">
+                            Up next:
+                            <a href="https://www.gethalfmoon.com/docs/input/" class="hyperlink ml-5">
+                                Input
+                                <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- Up next section end -->
+
+            </div>
+
+            <!-- On this page navigation start  -->
+            <div class="col-xl-3 on-this-page-nav-container">
+                <div class="content">
+                    <div class="on-this-page-nav" id="on-this-page-nav">
+                        <div class="title">On this page</div>
+                        <a href="https://www.gethalfmoon.com/docs/form/#top">Form</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#form-rows">Form rows</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#form-text">Form text</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#invalid-input-and-feedback">Invalid input and feedback</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#inline-forms">Inline forms</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#inline-forms-with-form-groups">Inline forms with form-groups</a>
+                        <a href="https://www.gethalfmoon.com/docs/form/#more-examples">More examples</a>
+                    </div>
+                </div>
+            </div>
+            <!-- On this page navigation end  -->
+
+        </div>
+    </div>
+
+
+            <!-- Docs footer card start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="card docs-footer-card p-0 mt-20">
+                            <div class="row">
+
+                                <!-- Help us grow section start -->
+                                <div class="col-lg-7">
+                                    <div class="content">
+                                        <h3 class="content-title">Help us grow</h3>
+
+                                        <!-- Project roadmap start -->
+                                        <p>
+                                            Our goal is to make Halfmoon the go-to framework for building dashboards and tools on the web. We are already working on things like a form validator, number input, datepicker, multi-select (think Select2 without jQuery), tabs component, JSX docs, and so much more. You can learn more in the project roadmap.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.gethalfmoon.com/project-roadmap/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <div class="w-60 h-60 rounded d-flex align-items-center justify-content-center bg-light-lm bg-dark-light-dm text-dark-lm text-light-dm">
+                                                        <i class="fa fa-map-o font-size-18" aria-hidden="true"></i>
+                                                        <span class="sr-only">Roadmap image placeholder</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Project roadmap <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Upcoming features and components (with demos). 
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Project roadmap end -->
+
+                                        <!-- Patreon link start -->
+                                        <p>
+                                            However, we need your help to grow. So if you truly believe in our goal, please consider supporting us through Patreon.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <img src="./Form - Halfmoon_files/patreon-logo-hm_bgv8al.svg" class="d-block w-60 h-60 rounded" alt="Patreon image placeholder">
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Support on Patreon <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Become a backer on Patreon, and help us grow Halfmoon.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Patreon link end -->
+
+                                        <!-- Gold sponsor start -->
+                                        <h3 class="content-title mb-0">Gold sponsor</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the highest tier, with a maximum of 1 sponsor.
+                                            <br>
+                                            (Also seen at the top of the page)
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                                        </div>
+                                        <!-- Gold sponsor end -->
+
+                                        <!-- Sponsors start -->
+                                        <h3 class="content-title mb-0">Sponsors</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the normal tier, with a maximum of 10 sponsors.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- AYCD sponsor card start -->
+<a href="https://aycd.io/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex mb-20" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center rounded bg-light-lm bg-dark-light-dm d-flex align-items-center justify-content-center">
+        <img src="./Form - Halfmoon_files/aycd-logo_gqspco.svg" class="d-block rounded h-100 w-100" alt="AYCD logo">
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                AYCD
+            </p>
+            <p class="font-size-12 mt-0 mb-0">
+                Automation Done Right
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- AYCD sponsor card end -->
+
+<!-- Placeholder start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #ff4757;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Sponsor (9 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Placeholder end -->
+                                        </div>
+                                        <!-- Sponsors end -->
+
+                                        <!-- Backers start -->
+                                        <h3 class="content-title mb-0">Backers</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following people have generously decided to support Halfmoon.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Backers start -->
+<div class="card sponsor-section-card w-350 h-200 overflow-y-auto mw-full m-0 d-flex align-items-center">
+	<div class="m-auto">
+		<ol class="text-dark-lm text-light-dm">
+			<li>Ethan Fann</li>
+			<li>Julia Koblitz</li>
+			<li>Benjamin Listwon</li>
+			<li>Sean Lindsay</li>
+			<li>Daan</li>
+		</ol>
+		<p>
+			Become a backer <a href="https://www.patreon.com/halfmoonui" target="_blank" rel="noopener" class="hyperlink">on Patreon <i class="fa fa-external-link" aria-hidden="true"></i></a>.
+		</p>
+	</div>
+</div>
+<!-- Backers end -->
+                                        </div>
+                                        <!-- Backers end -->
+                                    </div>
+                                </div>
+                                <!-- Help us grow section end -->
+
+                                <!-- Subscriber form container start -->
+                                <div class="col-lg-5 subscriber-form-container" id="subscriber-form-container">
+                                    <div class="content position-lg-sticky top-lg-0 left-lg-0 py-card my-0">
+                                        <h3 class="content-title">Subscribe for updates</h3>
+
+                                        <!-- Subscriber form confirmation start -->
+                                        
+                                        <!-- Subscriber form confirmation end -->
+
+                                        <!-- Subscriber form start -->
+                                        <form action="https://www.gethalfmoon.com/docs/form/#subscriber-form-container" method="post" id="subscriber-form">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="QHfS5nGyHTmC0CnAI912kEdC8bXzGXdnsWF3VmXOw83aOdloJhA4eUa7VRQNUTxY">
+                                            
+                                            
+                                                <div class="form-group ">
+                                                    
+                                                    <input type="email" name="email" maxlength="254" placeholder="Your email address" class="form-control" required="" id="id_email">
+                                                    
+                                                </div>
+                                            
+                                            <input type="submit" value="Subscribe" class="btn btn-primary btn-block" name="save_subscriber_form">
+                                        </form>
+                                        <!-- Subscriber form end -->
+                                        <br>
+                                        <ul>
+                                            <li class="text-muted">
+                                                We will notify you when the framework gets a substantial update. No spam or  marketing.
+                                            </li>
+                                            <li class="text-muted">
+                                                You can also <a class="hyperlink" href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener"> follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a> and stay updated that way.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Subscriber form container end -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Docs footer card end -->
+
+            <!-- Custom footer start -->
+            <div class="custom-footer">
+                <div class="container-fluid">
+                    <div class="row row-eq-spacing-lg">
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <div class="mb-10">
+                                    <img src="./Form - Halfmoon_files/hm-logo.svg" class="img-fluid hidden-dm halfmoon-logo-img" alt="halfmoon-logo">
+                                    <img src="./Form - Halfmoon_files/hm-logo-white.svg" class="img-fluid hidden-lm halfmoon-logo-img" alt="halfmoon-logo-white">
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/" class="custom-footer-link">Home</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/docs/introduction/" class="custom-footer-link">Documentation</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/license/" class="custom-footer-link">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/project-roadmap/" class="custom-footer-link">Project roadmap</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Get in touch</h4>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/team/" class="custom-footer-link">Team</a>
+                                </div>
+                                <div>
+                                    <a href="https://github.com/halfmoonui/halfmoon/issues" target="_blank" rel="noopener" class="custom-footer-link">Report an issue</a>
+                                </div>
+                                <div>
+                                    <a href="mailto:hey.halfmoon@gmail.com" target="_blank" rel="noopener" class="custom-footer-link">Contact us</a>
+                                </div>
+                                <div>
+                                    <a href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener" class="custom-footer-link">
+                                        Follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Legal</h4>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/privacy-policy/" class="custom-footer-link">Privacy policy</a>
+                                </div>
+                                <div>
+                                    <a href="https://www.gethalfmoon.com/cookies/" class="custom-footer-link">Cookies</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Made with <i class="fa fa-heart text-danger ml-5 mr-5" aria-hidden="true"></i> for developers</h4>
+                                <div class="mb-10">
+                                    <a href="https://www.gethalfmoon.com/docs/form/#top" class="btn btn-primary btn-scroll-to-top" role="button">Scroll to top</a>
+                                </div>
+                                <div class="text-muted">
+                                    © Copyright 2022, Halfmoon UI
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom footer end -->
+        </div>
+        <!-- Content wrapper end -->
+
+    </div>
+    <!-- Page wrapper end -->
+    
+
+    <!-- List JS -->
+    
+    <!-- Highlight JS -->
+    
+    <!-- Halfmoon JS -->
+    
+    <!-- Script -->
+    
+    <!-- Github star button -->
+    
+    <link rel="stylesheet" href="../../dist/main.css">
+    
+    
+    <script src="../../dist/bundle.js"></script>
+</body></html>

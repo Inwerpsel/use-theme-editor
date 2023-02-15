@@ -1,0 +1,1607 @@
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sidebar - Halfmoon</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css" integrity="sha256-eZrrJcwDc/3uDhsdt61sL2oOBY362qM3lon1gyExkL0=" crossorigin="anonymous" />
+  <link rel="stylesheet" href="../../dist/halfmoon.css">
+  <link href="/static/site/css/documentation-styles-4.css" rel="stylesheet">
+</head>
+
+<body>
+    
+    <div id="page-wrapper" class="page-wrapper with-navbar with-sidebar with-transitions" data-sidebar-type="overlayed-sm-and-down">
+
+        <!-- Sticky alerts start -->
+        <div class="sticky-alerts">
+            <!-- Precompiled alert 1 start -->
+            <div class="alert alert-primary filled" role="alert" id="precompiled-alert-1">
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <div class="w-50 h-50 d-flex align-items-center rounded-circle bg-white">
+                                    <div class="m-auto text-primary">
+                                        <i class="fa fa-commenting fa-2x" aria-hidden="true"></i>
+                                        <span class="sr-only">Commenting</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="pl-20">
+                                <h4 class="alert-heading mb-5">New message!</h4>
+                                <div>
+                                    Jane Doe just sent you a new message.
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <!-- Precompiled alert 1 end -->
+        </div>
+        <!-- Sticky alerts end -->
+
+        <!-- Navbar start -->
+        <nav class="navbar">
+            <div class="navbar-content">
+                <button id="toggle-sidebar-btn" class="btn btn-action" type="button" onclick="halfmoon.toggleSidebar()">
+                    <i class="fa fa-bars" aria-hidden="true"></i>
+                </button>
+            </div>
+            <a href="/docs/introduction/" class="navbar-brand ml-10 ml-sm-15">
+                <img src="/static/halfmoon/img/hm-logo.svg" class="hidden-dm mr-5 mr-sm-10" alt="halfmoon-logo">
+                <img src="/static/halfmoon/img/hm-logo-white.svg" class="hidden-lm mr-5 mr-sm-10" alt="halfmoon-logo-white">
+                <span class="badge font-size-12 text-monospace px-5 px-sm-10">
+                    v1.1.1
+                </span>
+            </a>
+            <ul class="navbar-nav hidden-sm-and-down">
+                <li class="nav-item">
+                    <a href="/" class="nav-link">Home</a>
+                </li>
+                <li class="nav-item active">
+                    <a href="/docs/introduction/" class="nav-link">Documentation</a>
+                </li>
+                <li class="nav-item">
+                    <a href="/license/" class="nav-link">License <span class="ml-5 text-monospace font-size-12">(MIT)</span></a>
+                </li>
+            </ul>
+            <div class="navbar-content ml-auto">
+
+                <!-- Github button container 1 start -->
+                <div class="pt-5 mr-5 d-none d-lg-inline-block" id="gh-star-btn-container-1">
+                    <div class="hidden-dm">
+                        <span></span>
+                    </div>
+                    <div class="hidden-lm">
+                        <span></span>
+                    </div>
+                </div>
+                <!-- Github button container 1 end -->
+
+                <button class="btn btn-action mr-5" type="button" onclick="halfmoon.toggleDarkMode()" aria-label="Toggle dark mode">
+                    <i class="fa fa-moon-o" aria-hidden="true"></i>
+                </button>
+                <a href="/docs/download/" class="btn btn-primary hidden-sm-and-down" role="button">
+                    <i class="fa fa-cloud-download mr-5" aria-hidden="true"></i>
+                    Download
+                </a>
+                <div class="dropdown with-arrow hidden-md-and-up">
+                    <button class="btn navbar-menu-btn" data-toggle="dropdown" type="button" id="navbar-dropdown-toggle-btn" aria-haspopup="true" aria-expanded="false">
+                        <span class="text">Menu</span>
+                        <i class="fa fa-angle-down" aria-hidden="true"></i>
+                    </button>
+                    <div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbar-dropdown-toggle-btn">
+                        <a href="/" class="dropdown-item">Home</a>
+                        <a href="/docs/introduction/" class="dropdown-item">Documentation</a>
+                        <a href="/license/" class="dropdown-item">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                        <div class="dropdown-divider"></div>
+
+                        <!-- Github button container 2 start -->
+                        <div class="pt-5" id="gh-star-btn-container-2">
+                            <div class="dropdown-content py-5 hidden-dm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-content py-5 hidden-lm">
+                                <span></span>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                        </div>
+                        <!-- Github button container 2 end -->
+
+                        <div class="dropdown-content">
+                            <a href="/docs/download/" class="btn btn-primary btn-download-sm" role="button">
+                                <i class="fa fa-cloud-download" aria-hidden="true"></i>
+                                <span class="ml-5">Download</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        <!-- Navbar end -->
+
+        <!-- Sidebar overlay -->
+        <div class="sidebar-overlay" onclick="halfmoon.toggleSidebar()"></div>
+
+        <!-- Sidebar start -->
+        <div class="sidebar" id="sidebar">
+            <!-- Filter docs section start -->
+            <div class="sidebar-menu">
+                <div class="sidebar-content">
+                    <input class="form-control search" type="text" placeholder="Filter docs" id="filter-docs">
+                    <div class="mt-10 font-size-12 hidden-sm-and-down">
+                        Press <kbd>shift</kbd> + <kbd>F</kbd> to focus
+                    </div>
+                </div>
+            </div>
+            <!-- Filter docs section end -->
+
+            <!-- Filterable list start -->
+            <div class="sidebar-menu list"><h5 class="sidebar-title">
+                    Getting started
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Introduction | Download | Customize | Page building | Starter template generator</span>
+                </div><a href="/docs/introduction/" class="sidebar-link" id="sidebar-introduction" data-active-scroll-disabled="disabled">
+                    <span class="name">Introduction</span>
+                </a><a href="/docs/download/" class="sidebar-link" id="sidebar-download" data-active-scroll-disabled="disabled">
+                    <span class="name">Download</span>
+                </a><a href="/docs/customize/" class="sidebar-link" id="sidebar-customize" data-active-scroll-disabled="disabled">
+                    <span class="name">Customize</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">(Must read)</span>
+                </a><a href="/docs/page-building/" class="sidebar-link" id="sidebar-page-building" data-active-scroll-disabled="disabled">
+                    <span class="name">Page building</span>
+                    <br>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        (<span class="alt-name">Starter template generator</span>)
+                    </span>
+                </a><br><h5 class="sidebar-title">
+                    Building blocks
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Containers | Content and cards | Grid system | Navbar | Sidebar</span>
+                </div><a href="/docs/containers/" class="sidebar-link" id="sidebar-containers" data-active-scroll-disabled="disabled">
+                    <span class="name">Containers</span>
+                </a><a href="/docs/content-and-cards/" class="sidebar-link" id="sidebar-content-and-cards" data-active-scroll-disabled="disabled">
+                    <span class="name">Content and cards</span>
+                </a><a href="/docs/grid-system/" class="sidebar-link" id="sidebar-grid-system" data-active-scroll-disabled="disabled">
+                    <span class="name">Grid system</span>
+                </a><a href="/docs/navbar/" class="sidebar-link" id="sidebar-navbar" data-active-scroll-disabled="disabled">
+                    <span class="name">Navbar</span>
+                </a><a href="/docs/sidebar/" class="sidebar-link active" id="sidebar-sidebar" data-active-scroll-disabled="disabled">
+                    <span class="name">Sidebar</span>
+                </a><br><h5 class="sidebar-title">
+                    Basic elements
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Buttons | Code | Image | Links | Tables</span>
+                </div><a href="/docs/buttons/" class="sidebar-link" id="sidebar-buttons">
+                    <span class="name">Buttons</span>
+                </a><a href="/docs/code/" class="sidebar-link" id="sidebar-code">
+                    <span class="name">Code</span>
+                </a><a href="/docs/image/" class="sidebar-link" id="sidebar-image">
+                    <span class="name">Image</span>
+                </a><a href="/docs/links/" class="sidebar-link" id="sidebar-links">
+                    <span class="name">Links</span>
+                </a><a href="/docs/tables/" class="sidebar-link" id="sidebar-tables">
+                    <span class="name">Tables</span>
+                </a><br><h5 class="sidebar-title">
+                    Form elements
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Form | Input | Select | Textarea | Checkbox | Radio | Switch | File input | Input group</span>
+                </div><a href="/docs/form/" class="sidebar-link" id="sidebar-form">
+                    <span class="name">Form</span>
+                </a><a href="/docs/input/" class="sidebar-link" id="sidebar-input">
+                    <span class="name">Input</span>
+                </a><a href="/docs/select/" class="sidebar-link" id="sidebar-select">
+                    <span class="name">Select</span>
+                </a><a href="/docs/textarea/" class="sidebar-link" id="sidebar-textarea">
+                    <span class="name">Textarea</span>
+                </a><a href="/docs/checkbox/" class="sidebar-link" id="sidebar-checkbox">
+                    <span class="name">Checkbox</span>
+                </a><a href="/docs/radio/" class="sidebar-link" id="sidebar-radio">
+                    <span class="name">Radio</span>
+                </a><a href="/docs/switch/" class="sidebar-link" id="sidebar-switch">
+                    <span class="name">Switch</span>
+                </a><a href="/docs/file-input/" class="sidebar-link" id="sidebar-file-input">
+                    <span class="name">File input</span>
+                </a><a href="/docs/input-group/" class="sidebar-link" id="sidebar-input-group">
+                    <span class="name">Input group</span>
+                </a><br><h5 class="sidebar-title">
+                    Advanced components
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Alerts | Badges | Breadcrumb | Button group | Collapse | Dropdown (And popover) | Modal | Pagination | Progress | Sticky alerts (Toasts) | Tooltips</span>
+                </div><a href="/docs/alerts/" class="sidebar-link" id="sidebar-alerts">
+                    <span class="name">Alerts</span>
+                </a><a href="/docs/badges/" class="sidebar-link" id="sidebar-badges">
+                    <span class="name">Badges</span>
+                </a><a href="/docs/breadcrumb/" class="sidebar-link" id="sidebar-breadcrumb">
+                    <span class="name">Breadcrumb</span>
+                </a><a href="/docs/button-group/" class="sidebar-link" id="sidebar-button-group">
+                    <span class="name">Button group</span>
+                </a><a href="/docs/collapse/" class="sidebar-link" id="sidebar-collapse">
+                    <span class="name">Collapse</span>
+                </a><a href="/docs/dropdown/" class="sidebar-link" id="sidebar-dropdown">
+                    <span class="name">Dropdown</span>
+                    <span class="text-muted font-size-12 text-smoothing-antialiased-dm">
+                        <span class="alt-name">(And popover)</span>
+                    </span>
+                </a><a href="/docs/modal/" class="sidebar-link" id="sidebar-modal">
+                    <span class="name">Modal</span>
+                </a><a href="/docs/pagination/" class="sidebar-link" id="sidebar-pagination">
+                    <span class="name">Pagination</span>
+                </a><a href="/docs/progress/" class="sidebar-link" id="sidebar-progress">
+                    <span class="name">Progress</span>
+                </a><a href="/docs/sticky-alerts-toasts/" class="sidebar-link" id="sidebar-sticky-alerts-toasts">
+                    <span class="name">Sticky alerts (Toasts)</span>
+                </a><a href="/docs/tooltips/" class="sidebar-link" id="sidebar-tooltips">
+                    <span class="name">Tooltips</span>
+                </a><br><h5 class="sidebar-title">
+                    Common utilities
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Display utilities | Flex utilities | Position utilities |  Sizing utilities | Spacing utilities | Text utilities</span>
+                </div><a href="/docs/display-utilities/" class="sidebar-link" id="sidebar-display-utilities">
+                    <span class="name">Display utilities</span>
+                </a><a href="/docs/flex-utilities/" class="sidebar-link" id="sidebar-flex-utilities">
+                    <span class="name">Flex utilities</span>
+                </a><a href="/docs/position-utilities/" class="sidebar-link" id="sidebar-position-utilities">
+                    <span class="name">Position utilities</span>
+                </a><a href="/docs/sizing-utilities/" class="sidebar-link" id="sidebar-sizing-utilities">
+                    <span class="name">Sizing utilities</span>
+                </a><a href="/docs/spacing-utilities/" class="sidebar-link" id="sidebar-spacing-utilities">
+                    <span class="name">Spacing utilities</span>
+                </a><a href="/docs/text-utilities/" class="sidebar-link" id="sidebar-text-utilities">
+                    <span class="name">Text utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    Other utilities
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Border utilities | Box shadow utilities | Color utilities | Float utilities | Overflow utilities | Pointer events utilities | Screen reader utilities | Vertical align utilities | Visibility utilities | Z-index utilities</span>
+                </div><a href="/docs/border-utilities/" class="sidebar-link" id="sidebar-border-utilities">
+                    <span class="name">Border utilities</span>
+                </a><a href="/docs/box-shadow-utilities/" class="sidebar-link" id="sidebar-box-shadow-utilities">
+                    <span class="name">Box shadow utilities</span>
+                </a><a href="/docs/color-utilities/" class="sidebar-link" id="sidebar-color-utilities">
+                    <span class="name">Color utilities</span>
+                </a><a href="/docs/float-utilities/" class="sidebar-link" id="sidebar-float-utilities">
+                    <span class="name">Float utilities</span>
+                </a><a href="/docs/overflow-utilities/" class="sidebar-link" id="sidebar-overflow-utilities">
+                    <span class="name">Overflow utilities</span>
+                </a><a href="/docs/pointer-events-utilities/" class="sidebar-link" id="sidebar-pointer-events-utilities">
+                    <span class="name">Pointer events utilities</span>
+                </a><a href="/docs/screen-reader-utilities/" class="sidebar-link" id="sidebar-screen-reader-utilities">
+                    <span class="name">Screen reader utilities</span>
+                </a><a href="/docs/vertical-align-utilities/" class="sidebar-link" id="sidebar-vertical-align-utilities">
+                    <span class="name">Vertical align utilities</span>
+                </a><a href="/docs/visibility-utilities/" class="sidebar-link" id="sidebar-visibility-utilities">
+                    <span class="name">Visibility utilities</span>
+                </a><a href="/docs/z-index-utilities/" class="sidebar-link" id="sidebar-z-index-utilities">
+                    <span class="name">Z-index utilities</span>
+                </a><br><h5 class="sidebar-title">
+                    JavaScript
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Core JavaScript library</span>
+                </div><a href="/docs/core-javascript-library/" class="sidebar-link" id="sidebar-core-javascript-library">
+                    <span class="name">Core JavaScript library</span>
+                </a><br><h5 class="sidebar-title">
+                    Others
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </h5><div class="sidebar-divider">
+                    <span class="hidden-search-terms name">Internet Explorer support</span>
+                </div><a href="/docs/internet-explorer-support/" class="sidebar-link" id="sidebar-internet-explorer-support">
+                    <span class="name">Internet Explorer support</span>
+                </a></div>
+            <!-- Filterable list end -->
+        </div>
+        <!-- Sidebar end -->
+
+        <!-- Content wrapper start -->
+        <div class="content-wrapper">
+            
+
+            
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-xl-9">
+
+                <!-- Top section start  -->
+                <div id="top">
+                    <div class="content">
+                        <h1 class="content-title font-size-24">
+                            Sidebar
+                        </h1>
+                        <div class="my-20">
+                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                        </div>
+                        <p>
+                            Sidebars are vertical navigation menus fixed to the left. They can be used to display branding, navigation links, buttons, forms, and any other content, making them a vital component for most dashboards and other product pages.
+                        </p>
+                        <h3 class="content-title font-size-18">
+                            Before we begin
+                        </h3>
+                        <p>
+                            Here's a list of things to understand about sidebars in Halfmoon.
+                        </p>
+                        <ul>
+                            <li>
+                                Sidebars are fixed to the left of the page by default, and only one can be used per page.
+                            </li>
+                            <li>
+                                Sidebars must be the immediate child of the page wrapper (<span class="code">.page-wrapper</span>). You can learn more about this in the <a class="hyperlink" href="/docs/page-building/#page-sections" target="_blank" rel="noopener">page building section</a> (opens in new tab) of the docs.
+                            </li>
+                            <li>
+                                When sidebars are used, the page wrapper (<span class="code">.page-wrapper</span>) must be given the <span class="code">.with-sidebar</span> class. This automatically adjusts all the other content in the page to accomodate the sidebar. Moreover, without this class, the sidebar will not be displayed.
+                            </li>
+                        </ul>
+                        <p>
+                            With all that said, given below is an example of a sidebar.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content bg-dark-light-dm m-0 docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="fake-sidebar">
+                                        <div class="sidebar-menu">
+                                            <a href="#" class="sidebar-brand">
+                                                <img src="/static/site/img/fake-logo.svg" alt="fake-logo">
+                                                Brand
+                                            </a>
+                                            <div class="sidebar-content">
+                                                <input type="text" class="form-control" placeholder="Search">
+                                                <div class="mt-10 font-size-12">
+                                                    Press <kbd>/</kbd> to focus
+                                                </div>
+                                            </div>
+                                            <h5 class="sidebar-title">Getting started</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link active">Installation</a>
+                                            <a href="#" class="sidebar-link">CLI commands</a>
+                                            <br>
+                                            <h5 class="sidebar-title">Components</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link">File explorer</a>
+                                            <a href="#" class="sidebar-link">Spreadsheet</a>
+                                            <a href="#" class="sidebar-link">Map</a>
+                                            <a href="#" class="sidebar-link">Messenger</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col hidden-xs-and-down">
+                                    <div class="content">
+                                        <h1 class="content-title font-size-22">
+                                            Page title
+                                        </h1>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="card">
+                                        <h2 class="card-title">
+                                            Card title
+                                        </h2>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="content">
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-1')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-1"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with .with-sidebar class --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-sidebar"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar (immediate child of the page wrapper) --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-menu"</span>&gt;</span>
+        <span class="hljs-comment">&lt;!-- Sidebar brand --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-brand"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"..."</span>&gt;</span>
+          Brand
+        <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-comment">&lt;!-- Sidebar content with the search box --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-content"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Search"</span>&gt;</span>
+          <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"mt-10 font-size-12"</span>&gt;</span> <span class="hljs-comment">&lt;!-- mt-10 = margin-top: 1rem (10px), font-size-12 = font-size: 1.2rem (12px) --&gt;</span>
+            Press <span class="hljs-tag">&lt;<span class="hljs-name">kbd</span>&gt;</span>/<span class="hljs-tag">&lt;/<span class="hljs-name">kbd</span>&gt;</span> to focus
+          <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-comment">&lt;!-- Sidebar links and titles --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>Getting started<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link active"</span>&gt;</span>Installation<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link"</span>&gt;</span>CLI commands<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">br</span> /&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>Components<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link"</span>&gt;</span>File explorer<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link"</span>&gt;</span>Spreadsheet<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link"</span>&gt;</span>Map<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link"</span>&gt;</span>Messenger<span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            The following makes up the content inside the sidebar:
+                        </p>
+                        <ul>
+                            <li>
+                                <span class="code">.sidebar-menu</span> — the main container for all the other content. Adds a nice bit of margin on the top and bottom.
+                            </li>
+                            <li>
+                                <span class="code">.sidebar-brand</span> — can be used for branding. The branding supports images as well, as can be seen above.
+                            </li>
+                            <li>
+                                <span class="code">.sidebar-title</span> — can be used to create titles for the sidebar menu, to show different sections.
+                            </li>
+                            <li>
+                                <span class="code">.sidebar-link</span> — can be used for the main links. The link with the class <span class="code">.active</span> will have a different style, showing that it is indeed the active one.
+                            </li>
+                            <li>
+                                <span class="code">.sidebar-divider</span> — can be used to create dividers, by adding the class to a <span class="code">&lt;div&gt;</span> element.
+                            </li>
+                            <li>
+                                <span class="code">.sidebar-content</span> — can be used on containers for other content, such as inputs, buttons, forms, and so on. This provides spacing to match with the title, links and dividers.
+                            </li>
+                            <li>
+                                You can also use <span class="code">&lt;br /&gt;</span> tags or utility classes to separate links into different sections.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <!-- Top section end  -->
+
+                <!-- Sidebar links with icons section start  -->
+                <div id="sidebar-links-with-icons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Sidebar links with icons
+                            <a href="#sidebar-links-with-icons" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Sidebar links can also contain icons. This can be done by adding the <span class="code">.sidebar-link-with-icon</span> class to the links, and placing the icons in a container with the <span class="code">.sidebar-icon</span> class.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content bg-dark-light-dm m-0 docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="fake-sidebar">
+                                        <div class="sidebar-menu">
+                                            <a href="#" class="sidebar-brand">
+                                                <img src="/static/site/img/fake-logo.svg" alt="fake-logo">
+                                                Brand
+                                            </a>
+                                            <div class="sidebar-content">
+                                                <input type="text" class="form-control" placeholder="Search">
+                                                <div class="mt-10 font-size-12">
+                                                    Press <kbd>/</kbd> to focus
+                                                </div>
+                                            </div>
+                                            <h5 class="sidebar-title">Getting started</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon active">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-code" aria-hidden="true"></i>
+                                                </span>
+                                                Installation
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-terminal" aria-hidden="true"></i>
+                                                </span>
+                                                CLI commands
+                                            </a>
+                                            <br>
+                                            <h5 class="sidebar-title">Components</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-folder-open-o" aria-hidden="true"></i>
+                                                </span>
+                                                File explorer
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-table" aria-hidden="true"></i>
+                                                </span>
+                                                Spreadsheet
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-map-o" aria-hidden="true"></i>
+                                                </span>
+                                                Map
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon">
+                                                    <i class="fa fa-commenting-o" aria-hidden="true"></i>
+                                                </span>
+                                                Messenger
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col hidden-xs-and-down">
+                                    <div class="content">
+                                        <h1 class="content-title font-size-22">
+                                            Page title
+                                        </h1>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="card">
+                                        <h2 class="card-title">
+                                            Card title
+                                        </h2>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="content">
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-2')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-2"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-menu"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar brand --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-brand"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">img</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"..."</span> <span class="hljs-attr">alt</span>=<span class="hljs-string">"..."</span>&gt;</span>
+      Brand
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar content with the search box --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-content"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"text"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"form-control"</span> <span class="hljs-attr">placeholder</span>=<span class="hljs-string">"Search"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"mt-10 font-size-12"</span>&gt;</span> <span class="hljs-comment">&lt;!-- mt-10 = margin-top: 1rem (10px), font-size-12 = font-size: 1.2rem (12px) --&gt;</span>
+        Press <span class="hljs-tag">&lt;<span class="hljs-name">kbd</span>&gt;</span>/<span class="hljs-tag">&lt;/<span class="hljs-name">kbd</span>&gt;</span> to focus
+      <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar links (with icons) and titles --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>Getting started<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon active"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-code"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Installation
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-terminal"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      CLI commands
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>Components<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-folder-open-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      File explorer
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-table"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Spreadsheet
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-map-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Map
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon"</span>&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-commenting-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Messenger
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content">
+                        <p>
+                            Please note that the icons being used are part of the <a class="hyperlink" href="https://fontawesome.com/v4.7.0/" target="_blank" rel="noopener">Font Awesome 4.7.0 <i class="fa fa-external-link mr-5" aria-hidden="true"></i></a> iconset.
+                        </p>
+                    </div>
+                </div>
+                <!-- Sidebar links with icons section end  -->
+
+                <!-- Customizing sidebar icons section start  -->
+                <div id="customizing-sidebar-icons">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Customizing sidebar icons
+                            <a href="#customizing-sidebar-icons" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Sidebar icons can be easily customized using utility classes to set the text color, background color, border radius, and also the flex properties (since the icons are using flexbox). The following example shows customized sidebar icons.
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content bg-dark-light-dm m-0 docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-auto">
+                                    <div class="fake-sidebar">
+                                        <div class="sidebar-menu">
+                                            <h5 class="sidebar-title">General</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-transparent justify-content-start mr-0">
+                                                    <i class="fa fa-calculator" aria-hidden="true"></i>
+                                                </span>
+                                                Calculator
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-transparent justify-content-start mr-0">
+                                                    <i class="fa fa-newspaper-o" aria-hidden="true"></i>
+                                                </span>
+                                                News reader
+                                            </a>
+                                            <br>
+                                            <h5 class="sidebar-title">Productivity</h5>
+                                            <div class="sidebar-divider"></div>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-primary text-white rounded-circle">
+                                                    <i class="fa fa-file-word-o" aria-hidden="true"></i>
+                                                </span>
+                                                Docs
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-success text-dark rounded-circle">
+                                                    <i class="fa fa-file-excel-o" aria-hidden="true"></i>
+                                                </span>
+                                                Sheets
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-secondary text-dark rounded-circle">
+                                                    <i class="fa fa-envelope-o" aria-hidden="true"></i>
+                                                </span>
+                                                Email
+                                            </a>
+                                            <a href="#" class="sidebar-link sidebar-link-with-icon">
+                                                <span class="sidebar-icon bg-danger text-white rounded-circle">
+                                                    <i class="fa fa-file-powerpoint-o" aria-hidden="true"></i>
+                                                </span>
+                                                Slides
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col hidden-xs-and-down">
+                                    <div class="content">
+                                        <h1 class="content-title font-size-22">
+                                            Page title
+                                        </h1>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="card">
+                                        <h2 class="card-title">
+                                            Card title
+                                        </h2>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                    <div class="content">
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                        <div class="fake-content"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-3')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-3"><span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-menu"</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>General<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-transparent justify-content-start mr-0"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-transparent = background-color: transparent, justify-content-start = justify-content: flex-start, mr-0 = margin-right: 0 --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-calculator"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Calculator
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-transparent justify-content-start mr-0"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-transparent = background-color: transparent, justify-content-start = justify-content: flex-start, mr-0 = margin-right: 0 --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-newspaper-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      News reader
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">br</span> /&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">h5</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-title"</span>&gt;</span>Productivity<span class="hljs-tag">&lt;/<span class="hljs-name">h5</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-divider"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-primary text-white rounded-circle"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-primary = background-color: var(--primary-color), text-white = color: white, rounded-circle = border-radius: 50% --&gt;</span> 
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-file-word-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Docs
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-success text-dark rounded-circle"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-success = background-color: var(--success-color), text-dark = color: var(--lm-base-text-color), rounded-circle = border-radius: 50% --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-file-excel-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Sheets
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-secondary text-dark rounded-circle"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-secondary = background-color: var(--secondary-color), text-dark = color: var(--lm-base-text-color), rounded-circle = border-radius: 50% --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-envelope-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Email
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">a</span> <span class="hljs-attr">href</span>=<span class="hljs-string">"#"</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-link sidebar-link-with-icon"</span>&gt;</span>
+      <span class="hljs-tag">&lt;<span class="hljs-name">span</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-icon bg-danger text-white rounded-circle"</span>&gt;</span> <span class="hljs-comment">&lt;!-- bg-danger = background-color: var(--danger-color), text-white = color: white, rounded-circle = border-radius: 50% --&gt;</span>
+        <span class="hljs-tag">&lt;<span class="hljs-name">i</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"fa fa-file-powerpoint-o"</span> <span class="hljs-attr">aria-hidden</span>=<span class="hljs-string">"true"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">i</span>&gt;</span>
+      <span class="hljs-tag">&lt;/<span class="hljs-name">span</span>&gt;</span>
+      Slides
+    <span class="hljs-tag">&lt;/<span class="hljs-name">a</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Customizing sidebar icons section end  -->
+
+                <!-- Toggling sidebar section start  -->
+                <div id="toggling-sidebar">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Toggling sidebar
+                            <a href="#toggling-sidebar" class="ml-5 text-decoration-none">#</a>
+                            <span class="font-size-16 text-muted ml-5">(Requires JavaScript)</span>
+                        </h2>
+                        <p>
+                            Sidebars are hidden when the <span class="code">data-sidebar-hidden="hidden"</span> attribute is present on the page wrapper (<span class="code">.page-wrapper</span>). Therefore, toggling the sidebar is simply just adding/removing this attribute to/from the page wrapper. To do this, you can use the built-in <span class="code">halfmoon.toggleSidebar()</span> method that comes with the <a class="hyperlink" href="/docs/core-javascript-library/#toggling-sidebar" target="_blank" rel="noopener">core JavaScript library</a> (opens in new tab).
+                        </p>
+                    </div>
+                    <div class="card p-0">
+                        <div class="content">
+                            <button class="btn" type="button" onclick="halfmoon.toggleSidebar()">Toggle sidebar</button>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-4')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-4"><span class="hljs-comment">&lt;!-- Toggle sidebar --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">button</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"btn"</span> <span class="hljs-attr">type</span>=<span class="hljs-string">"button"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"halfmoon.toggleSidebar()"</span>&gt;</span>Toggle sidebar<span class="hljs-tag">&lt;/<span class="hljs-name">button</span>&gt;</span>
+
+<span class="hljs-comment">&lt;!-- Requires halfmoon.js --&gt;</span>
+<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Toggling sidebar section end  -->
+
+                <!-- Sidebar types section start  -->
+                <div id="sidebar-types">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Sidebar types
+                            <a href="#sidebar-types" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Sidebars interact with the following components on a page:
+                        </p>
+                        <ul>
+                            <li>
+                                Navbars (both default, ie, fixed to top, and fixed to bottom) — <a class="hyperlink" href="/docs/navbar/" target="_blank" rel="noopener">see docs page</a> (opens in new tab)
+                            </li>
+                            <li>
+                                Content wrapper — <a class="hyperlink" href="/docs/page-building/#basic-page" target="_blank" rel="noopener">see docs page</a> (opens in new tab)
+                            </li>
+                        </ul>
+                        <p>
+                            Different types of sidebars interact differently with the above components. For example, by default, the sidebar will make space for the navbars on top and bottom and stay adjacent to the content wrapper (<span class="code">.content-wrapper</span>). However, full height sidebars will take up the full height of the page and be adjacent to the navbars on top and bottom, and also the content wrapper.
+                        </p>
+                        <p>
+                            The sidebar type can be set by adding the <span class="code">data-sidebar-type="{type}"</span> attribute to the page wrapper (<span class="code">.page-wrapper</span>), where <span class="code">{type}</span> is the type of sidebar you want. The following sections discuss the different types of sidebars available.
+                        </p>
+                    </div>
+                </div>
+                <!-- Sidebar types section end  -->
+
+                <!-- Default section start  -->
+                <div id="default">
+                    <div class="content docs-subsection">
+                        <h2 class="content-title">
+                            Default
+                            <a href="#default" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            As mentioned above, by default, sidebars will make space for the navbars on top and bottom and stay adjacent to the content wrapper. This is the type of sidebar that will be created if the <span class="code">data-sidebar-type="{type}"</span> attribute is <strong>not present</strong> on the page wrapper.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs">
+                        <div class="content m-0 bg-dark-light-dm docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="h-600">
+                                <iframe src="/page-sections-demo/" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                            </div>
+                        </div>
+                        <div class="iframe-message">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/page-sections-demo/" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-5')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-5"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with default sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Default sidebar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar fixed bottom --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar navbar-fixed-bottom"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Requires halfmoon.js for toggling sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Default section end  -->
+
+                <!-- Full height section start  -->
+                <div id="full-height">
+                    <div class="content docs-subsection">
+                        <h2 class="content-title">
+                            Full height
+                            <a href="#full-height" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Full height sidebars will take up the full height of the page and be adjacent to the navbars on top and bottom, and also the content wrapper. They can be created by adding the <span class="code">data-sidebar-type="full-height"</span> attribute to the page wrapper.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs">
+                        <div class="content m-0 bg-dark-light-dm docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="h-600">
+                                <iframe src="/page-sections-demo/?sidebar-type=full-height" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                            </div>
+                        </div>
+                        <div class="iframe-message">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/page-sections-demo/?sidebar-type=full-height" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-6')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-6"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with full height sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span> 
+    <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom"</span> 
+    <span class="hljs-attr">data-sidebar-type</span>=<span class="hljs-string">"full-height"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Full height sidebar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar fixed bottom --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar navbar-fixed-bottom"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Requires halfmoon.js for toggling sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                </div>
+                <!-- Full height section end  -->
+
+                <!-- Overlayed section start  -->
+                <div id="overlayed">
+                    <div class="content docs-subsection">
+                        <h2 class="content-title">
+                            Overlayed
+                            <a href="#overlayed" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Overlayed sidebars float on top of the page when they are open. They can be created by adding the <span class="code">data-sidebar-type="overlayed-all"</span> attribute to the page wrapper. In the example below, try clicking on the button in the navbar to open the sidebar.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs">
+                        <div class="content m-0 bg-dark-light-dm docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="h-600">
+                                <iframe src="/page-sections-demo/?sidebar-type=overlayed-all" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                            </div>
+                        </div>
+                        <div class="iframe-message">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/page-sections-demo/?sidebar-type=overlayed-all" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-7')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-7"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with overlayed sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+    <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom"</span> 
+    <span class="hljs-attr">data-sidebar-type</span>=<span class="hljs-string">"overlayed-all"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar overlay --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-overlay"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"halfmoon.toggleSidebar()"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+    <span class="hljs-comment">&lt;!-- Navbar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Overlayed sidebar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar fixed bottom --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar navbar-fixed-bottom"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Requires halfmoon.js for toggling sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content docs-subsection">
+                        <p>
+                            Please note that for overlayed sidebars, the overlay element (<span class="code">.sidebar-overlay</span>) has to be added manually to the DOM <strong>inside</strong> the page wrapper. It is also a good idea to trigger the <span class="code">halfmoon.toggleSidebar()</span> method when the overlay is clicked, so that the sidebar can be closed by clicking on the overlay, since the overlay is only visible when the sidebar is open. The easiest way to do this is by simply setting the method to the <span class="code">onclick="..."</span> attribute, as shown above.
+                        </p>
+                    </div>
+                </div>
+                <!-- Overlayed section end  -->
+
+                <!-- Overlayed only on small screens and down section start  -->
+                <div id="overlayed-only-on-small-screens-and-down">
+                    <div class="content docs-subsection">
+                        <h2 class="content-title">
+                            Overlayed only on small screens and down
+                            <a href="#overlayed-only-on-small-screens-and-down" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            You can also have sidebars which are overlayed only on small screens and below (<span class="code">screen width &lt;= 768px</span>). This can be done by adding the <span class="code">data-sidebar-type="overlayed-sm-and-down"</span> attribute to the page wrapper.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs">
+                        <div class="content m-0 docs-navbar-sidebar-container">
+                            <div class="w-sm-400 mw-full bg-dark-light-dm small-device-window m-auto">
+                                <div class="fake-window">
+                                    <div class="fake-window-top-row rounded-0">
+                                        <div class="fake-button bg-danger"></div>
+                                        <div class="fake-button bg-secondary"></div>
+                                        <div class="fake-button bg-success"></div>
+                                    </div>
+                                </div>
+                                <div class="h-600">
+                                    <iframe src="/page-sections-demo/?sidebar-type=overlayed-sm-and-down" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="iframe-message">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/page-sections-demo/?sidebar-type=overlayed-sm-and-down" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-8')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-8"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with overlayed (only on small screens and down) sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+    <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom"</span> 
+    <span class="hljs-attr">data-sidebar-type</span>=<span class="hljs-string">"overlayed-sm-and-down"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar overlay --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-overlay"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"halfmoon.toggleSidebar()"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    
+    <span class="hljs-comment">&lt;!-- Navbar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Overlayed (only on small screens and down) sidebar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar fixed bottom --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar navbar-fixed-bottom"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Requires halfmoon.js for toggling sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content docs-subsection">
+                        <p>
+                            Once again, the overlay element (<span class="code">.sidebar-overlay</span>) has to be added manually to the DOM <strong>inside</strong> the page wrapper, as can be seen above.
+                        </p>
+                    </div>
+                </div>
+                <!-- Overlayed only on small screens and down section end  -->
+
+                <!-- Composite section start  -->
+                <div id="composite">
+                    <div class="content docs-subsection">
+                        <h2 class="content-title">
+                            Composite
+                            <a href="#composite" class="ml-5 text-decoration-none">#</a>
+                        </h2>
+                        <p>
+                            Sidebar types can also be combined together to create composite sidebars. The only one available as of right now is a sidebar that is overlayed on small screens and below (<span class="code">screen width &lt;= 768px</span>), and full height otherwise. This can be created by adding the <span class="code">data-sidebar-type="full-height overlayed-sm-and-down"</span> attribute to the page wrapper.
+                        </p>
+                    </div>
+                    <div class="card p-0 card-w-full-xs">
+                        <div class="content m-0 bg-dark-light-dm docs-navbar-sidebar-container">
+                            <div class="fake-window">
+                                <div class="fake-window-top-row">
+                                    <div class="fake-button bg-danger"></div>
+                                    <div class="fake-button bg-secondary"></div>
+                                    <div class="fake-button bg-success"></div>
+                                </div>
+                            </div>
+                            <div class="h-600">
+                                <iframe src="/page-sections-demo/?sidebar-type=full-height%20overlayed-sm-and-down" class="demo-iframe border-0 w-full h-full m-0"></iframe>
+                            </div>
+                        </div>
+                        <div class="iframe-message">
+                            The above example is loaded in an iFrame, so a few things may look out of place depending on your browser settings and screen size. <a class="hyperlink" href="/page-sections-demo/?sidebar-type=full-height%20overlayed-sm-and-down" target="_blank" rel="noopener">Open it in a new tab</a>
+                        </div>
+                        <div class="code-container">
+                            <button class="btn btn-sm copy-button" type="button" onclick="copyCode(this, 'code-block-9')">
+                                <i class="fa fa-clipboard" aria-hidden="true"></i> Copy
+                            </button>
+                            <pre class="m-0"><code class="html hljs xml" id="code-block-9"><span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span>
+  <span class="hljs-comment">&lt;!-- Page wrapper with composite sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">div</span>
+    <span class="hljs-attr">class</span>=<span class="hljs-string">"page-wrapper with-navbar with-sidebar with-navbar-fixed-bottom"</span> 
+    <span class="hljs-attr">data-sidebar-type</span>=<span class="hljs-string">"full-height overlayed-sm-and-down"</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar overlay --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar-overlay"</span> <span class="hljs-attr">onclick</span>=<span class="hljs-string">"halfmoon.toggleSidebar()"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    
+    <span class="hljs-comment">&lt;!-- Navbar --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Sidebar that is overlayed on small screens and down, and full height otherwise --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"sidebar"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Content wrapper --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">div</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"content-wrapper"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+    <span class="hljs-comment">&lt;!-- Navbar fixed bottom --&gt;</span>
+    <span class="hljs-tag">&lt;<span class="hljs-name">nav</span> <span class="hljs-attr">class</span>=<span class="hljs-string">"navbar navbar-fixed-bottom"</span>&gt;</span>
+      ...
+    <span class="hljs-tag">&lt;/<span class="hljs-name">nav</span>&gt;</span>
+  <span class="hljs-tag">&lt;/<span class="hljs-name">div</span>&gt;</span>
+
+  <span class="hljs-comment">&lt;!-- Requires halfmoon.js for toggling sidebar --&gt;</span>
+  <span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">src</span>=<span class="hljs-string">"path/to/halfmoon.js"</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span>
+<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span></code></pre>
+                        </div>
+                    </div>
+                    <div class="content docs-subsection">
+                        <p>
+                            And once again, the overlay element (<span class="code">.sidebar-overlay</span>) has to be added manually to the DOM <strong>inside</strong> the page wrapper, as can be seen above.
+                        </p>
+                    </div>
+                </div>
+                <!-- Composite section end  -->
+
+                <!-- Responsive behavior section start  -->
+                <div id="responsive-behavior">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Responsive behavior
+                            <a href="#responsive-behavior" class="ml-5 text-decoration-none">#</a>
+                            <span class="font-size-16 text-muted ml-5">(Requires JavaScript)</span>
+                        </h2>
+                        <p>
+                            When the sidebar type is set to <span class="code">"overlayed-all"</span>, the sidebar is initially hidden when the DOM is loaded on all screen sizes.
+                        </p>
+                        <p>
+                            On small screens and below (<span class="code">screen width &lt;= 768px</span>), <strong>all types</strong> of sidebars are initially hidden when the DOM is loaded. You can turn off this behavior by adding the <span class="code">data-show-sidebar-onload-sm-and-down="..."</span> attribute to the page wrapper (<span class="code">.page-wrapper</span>). This will make sure that sidebars are not hidden initially when the DOM is loaded (on small screens and below).
+                        </p>
+                    </div>
+                </div>
+                <!-- Responsive behavior section end  -->
+
+                <!-- Shortcut for toggling sidebar section start  -->
+                <div id="shortcut-for-toggling-sidebar">
+                    <div class="content">
+                        <h2 class="content-title">
+                            Shortcut for toggling sidebar
+                            <a href="#shortcut-for-toggling-sidebar" class="ml-5 text-decoration-none">#</a>
+                            <span class="font-size-16 text-muted ml-5">(Requires JavaScript)</span>
+                        </h2>
+                        <p>
+                            There is also a built-in shortcut which lets users toggle the sidebar by pressing <kbd>shift</kbd> + <kbd>S</kbd> on the keyboard. This can be enabled by adding the <span class="code">data-sidebar-shortcut-enabled="..."</span> attribute to the DOM's <span class="code">&lt;body&gt;</span>. You can read more about this in the <a class="hyperlink" href="/docs/core-javascript-library/#shortcuts" target="_blank" rel="noopener">core JavaScript library section</a> (opens in new tab) of the documentation.
+                        </p>
+                    </div>
+                </div>
+                <!-- Shortcut for toggling sidebar section end  -->
+
+                <!-- Up next section start -->
+                <div class="content mb-0">
+                    <hr class="mb-20">
+                    
+                        <div class="text-right font-size-16">
+                            Up next:
+                            <a href="/docs/buttons/" class="hyperlink ml-5">
+                                Buttons
+                                <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                            </a>
+                        </div>
+                    
+                </div>
+                <!-- Up next section end -->
+
+            </div>
+
+            <!-- On this page navigation start  -->
+            <div class="col-xl-3 on-this-page-nav-container">
+                <div class="content">
+                    <div class="on-this-page-nav" id="on-this-page-nav">
+                        <div class="title">On this page</div>
+                        <a href="#top">Sidebar</a>
+                        <a href="#sidebar-links-with-icons">Sidebar links with icons</a>
+                        <a href="#customizing-sidebar-icons">Customizing sidebar icons</a>
+                        <a href="#toggling-sidebar">Toggling sidebar</a>
+                        <a href="#sidebar-types">Sidebar types</a>
+                        <a href="#default"><span class="d-inline-block pl-10">Default</span></a>
+                        <a href="#full-height"><span class="d-inline-block pl-10">Full height</span></a>
+                        <a href="#overlayed"><span class="d-inline-block pl-10">Overlayed</span></a>
+                        <a href="#overlayed-only-on-small-screens-and-down"><span class="d-inline-block pl-10">Overlayed only on small screens and down</span></a>
+                        <a href="#composite"><span class="d-inline-block pl-10">Composite</span></a>
+                        <a href="#responsive-behavior">Responsive behavior</a>
+                        <a href="#shortcut-for-toggling-sidebar">Shortcut for toggling sidebar</a>
+                    </div>
+                </div>
+            </div>
+            <!-- On this page navigation end  -->
+
+        </div>
+    </div>
+
+
+            <!-- Docs footer card start -->
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-xl-9">
+                        <div class="card docs-footer-card p-0 mt-20">
+                            <div class="row">
+
+                                <!-- Help us grow section start -->
+                                <div class="col-lg-7">
+                                    <div class="content">
+                                        <h3 class="content-title">Help us grow</h3>
+
+                                        <!-- Project roadmap start -->
+                                        <p>
+                                            Our goal is to make Halfmoon the go-to framework for building dashboards and tools on the web. We are already working on things like a form validator, number input, datepicker, multi-select (think Select2 without jQuery), tabs component, JSX docs, and so much more. You can learn more in the project roadmap.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="/project-roadmap/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <div class="w-60 h-60 rounded d-flex align-items-center justify-content-center bg-light-lm bg-dark-light-dm text-dark-lm text-light-dm">
+                                                        <i class="fa fa-map-o font-size-18" aria-hidden="true"></i>
+                                                        <span class="sr-only">Roadmap image placeholder</span>
+                                                    </div>
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Project roadmap <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Upcoming features and components (with demos). 
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Project roadmap end -->
+
+                                        <!-- Patreon link start -->
+                                        <p>
+                                            However, we need your help to grow. So if you truly believe in our goal, please consider supporting us through Patreon.
+                                        </p>
+                                        <div class="my-20">
+                                            <a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+                                                <div class="w-60 h-60 m-10 align-self-center">
+                                                    <img src="https://res.cloudinary.com/halfmoon-ui/image/upload/v1604837306/patreon-logo-hm_bgv8al.svg" class="d-block w-60 h-60 rounded" alt="Patreon image placeholder">
+                                                </div>
+                                                <div class="flex-grow-1 d-flex align-items-center">
+                                                    <div class="p-10 w-full m-auto">
+                                                        <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                                                            Support on Patreon <i class="fa fa-angle-right ml-5" aria-hidden="true"></i>
+                                                        </p>
+                                                        <p class="m-0 mt-5 text-muted font-size-12">
+                                                            Become a backer on Patreon, and help us grow Halfmoon.
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </div>
+                                        <!-- Patreon link end -->
+
+                                        <!-- Gold sponsor start -->
+                                        <h3 class="content-title mb-0">Gold sponsor</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the highest tier, with a maximum of 1 sponsor.
+                                            <br>
+                                            (Also seen at the top of the page)
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Gold sponsor card start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #5352ed;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+        <!--
+        <img src="/static/site/img/image-2.png" class="d-block w-100 h-100 rounded" alt="sponsor image placeholder">
+        -->
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Gold sponsor (1 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Gold sponsor card end -->
+                                        </div>
+                                        <!-- Gold sponsor end -->
+
+                                        <!-- Sponsors start -->
+                                        <h3 class="content-title mb-0">Sponsors</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following is the normal tier, with a maximum of 10 sponsors.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- AYCD sponsor card start -->
+<a href="https://aycd.io/" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex mb-20" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center rounded bg-light-lm bg-dark-light-dm d-flex align-items-center justify-content-center">
+        <img src="https://res.cloudinary.com/halfmoon-ui/image/upload/v1610224192/aycd-logo_gqspco.svg" class="d-block rounded h-100 w-100" alt="AYCD logo">
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="m-0 font-weight-medium text-dark-lm text-light-dm">
+                AYCD
+            </p>
+            <p class="font-size-12 mt-0 mb-0">
+                Automation Done Right
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- AYCD sponsor card end -->
+
+<!-- Placeholder start -->
+<a href="https://www.patreon.com/halfmoonui" class="card sponsor-section-card w-350 mw-full m-0 p-0 d-flex" target="_blank" rel="noopener">
+    <div class="w-100 h-100 m-10 align-self-center">
+        <div class="w-100 h-100 rounded d-flex align-items-center justify-content-center" style="background-color: #ff4757;">
+            <i class="fa fa-photo fa-2x text-white" aria-hidden="true"></i>
+            <span class="sr-only">Sponsor image placeholder</span>
+        </div>
+    </div>
+    <div class="flex-grow-1 overflow-y-hidden d-flex align-items-center position-relative h-120">
+        <div class="p-10 w-full m-auto">
+            <p class="font-size-10 text-dark-lm text-light-dm m-0 mb-5 text-truncate font-weight-medium">
+                Sponsor (9 available)
+            </p>
+            <p class="font-size-12 mt-5 mb-0">
+                Halfmoon needs your support! Become a sponsor to place an image and description of your product here.
+                <span class="text-primary text-smoothing-auto-dm d-inline-block">Click here <i class="fa fa-angle-right" aria-hidden="true"></i></span>
+            </p>
+        </div>
+        <div class="sponsor-section-card-scroll-block"></div>
+    </div>
+</a>
+<!-- Placeholder end -->
+                                        </div>
+                                        <!-- Sponsors end -->
+
+                                        <!-- Backers start -->
+                                        <h3 class="content-title mb-0">Backers</h3>
+                                        <p class="mt-5 text-muted font-size-12">
+                                            The following people have generously decided to support Halfmoon.
+                                        </p>
+                                        <div class="my-20">
+                                            
+
+<!-- Backers start -->
+<div class="card sponsor-section-card w-350 h-200 overflow-y-auto mw-full m-0 d-flex align-items-center">
+	<div class="m-auto">
+		<ol class="text-dark-lm text-light-dm">
+			<li>Ethan Fann</li>
+			<li>Julia Koblitz</li>
+			<li>Benjamin Listwon</li>
+			<li>Sean Lindsay</li>
+			<li>Daan</li>
+		</ol>
+		<p>
+			Become a backer <a href="https://www.patreon.com/halfmoonui" target="_blank" rel="noopener" class="hyperlink">on Patreon <i class="fa fa-external-link" aria-hidden="true"></i></a>.
+		</p>
+	</div>
+</div>
+<!-- Backers end -->
+                                        </div>
+                                        <!-- Backers end -->
+                                    </div>
+                                </div>
+                                <!-- Help us grow section end -->
+
+                                <!-- Subscriber form container start -->
+                                <div class="col-lg-5 subscriber-form-container" id="subscriber-form-container">
+                                    <div class="content position-lg-sticky top-lg-0 left-lg-0 py-card my-0">
+                                        <h3 class="content-title">Subscribe for updates</h3>
+
+                                        <!-- Subscriber form confirmation start -->
+                                        
+                                        <!-- Subscriber form confirmation end -->
+
+                                        <!-- Subscriber form start -->
+                                        <form action="#subscriber-form-container" method="post" id="subscriber-form">
+                                            <input type="hidden" name="csrfmiddlewaretoken" value="E3rc9BGE91s3PrzoudQ3lRkyGhKbjPw1giRnZAXUYg9BD2xcvlp5f7h3tXDpxLQC">
+                                            
+                                            
+                                                <div class="form-group ">
+                                                    
+                                                    <input type="email" name="email" maxlength="254" placeholder="Your email address" class="form-control" required="" id="id_email">
+                                                    
+                                                </div>
+                                            
+                                            <input type="submit" value="Subscribe" class="btn btn-primary btn-block" name="save_subscriber_form">
+                                        </form>
+                                        <!-- Subscriber form end -->
+                                        <br>
+                                        <ul>
+                                            <li class="text-muted">
+                                                We will notify you when the framework gets a substantial update. No spam or  marketing.
+                                            </li>
+                                            <li class="text-muted">
+                                                You can also <a class="hyperlink" href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener"> follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter</a> and stay updated that way.
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </div>
+                                <!-- Subscriber form container end -->
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Docs footer card end -->
+
+            <!-- Custom footer start -->
+            <div class="custom-footer">
+                <div class="container-fluid">
+                    <div class="row row-eq-spacing-lg">
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <div class="mb-10">
+                                    <img src="/static/halfmoon/img/hm-logo.svg" class="img-fluid hidden-dm halfmoon-logo-img" alt="halfmoon-logo">
+                                    <img src="/static/halfmoon/img/hm-logo-white.svg" class="img-fluid hidden-lm halfmoon-logo-img" alt="halfmoon-logo-white">
+                                </div>
+                                <div>
+                                    <a href="/" class="custom-footer-link">Home</a>
+                                </div>
+                                <div>
+                                    <a href="/docs/introduction/" class="custom-footer-link">Documentation</a>
+                                </div>
+                                <div>
+                                    <a href="/license/" class="custom-footer-link">License <span class="text-monospace font-size-12">(MIT)</span></a>
+                                </div>
+                                <div>
+                                    <a href="/project-roadmap/" class="custom-footer-link">Project roadmap</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Get in touch</h4>
+                                <div>
+                                    <a href="/team/" class="custom-footer-link">Team</a>
+                                </div>
+                                <div>
+                                    <a href="https://github.com/halfmoonui/halfmoon/issues" target="_blank" rel="noopener" class="custom-footer-link">Report an issue</a>
+                                </div>
+                                <div>
+                                    <a href="mailto:hey.halfmoon@gmail.com" target="_blank" rel="noopener" class="custom-footer-link">Contact us</a>
+                                </div>
+                                <div>
+                                    <a href="https://twitter.com/HalfmoonUi" target="_blank" rel="noopener" class="custom-footer-link">
+                                        Follow us on <i class="fa fa-twitter" aria-hidden="true"></i> Twitter
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Legal</h4>
+                                <div>
+                                    <a href="/privacy-policy/" class="custom-footer-link">Privacy policy</a>
+                                </div>
+                                <div>
+                                    <a href="/cookies/" class="custom-footer-link">Cookies</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="content">
+                                <h4 class="content-title font-size-16 mb-10">Made with <i class="fa fa-heart text-danger ml-5 mr-5" aria-hidden="true"></i> for developers</h4>
+                                <div class="mb-10">
+                                    <a href="#top" class="btn btn-primary btn-scroll-to-top" role="button">Scroll to top</a>
+                                </div>
+                                <div class="text-muted">
+                                    © Copyright 2022, Halfmoon UI
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Custom footer end -->
+        </div>
+        <!-- Content wrapper end -->
+
+    </div>
+
+  <link rel="stylesheet" href="../../dist/main.css">
+  
+  
+  <script src="../../dist/bundle.js"></script>
+</body>
+
+</html>
