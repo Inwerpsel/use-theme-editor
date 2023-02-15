@@ -72,7 +72,7 @@ https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/
 
 ### [Openprops](https://open-props.style/)
 
-This one just looks amazing (not mine)
+Just a great looking page and a great palette of values.
 
 https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles
 
