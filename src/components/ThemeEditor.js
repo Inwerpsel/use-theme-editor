@@ -27,7 +27,6 @@ import { NameReplacements } from './inspector/NameReplacements';
 import { updateScopedVars } from '../initializeThemeEditor';
 import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
-import { TextControl } from './controls/TextControl';
 import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
@@ -185,9 +184,14 @@ export const ThemeEditor = (props) => {
               id="area-top"
               style={{ justifyContent: 'flex-start', flexGrow: 1 }}
             >
-              <FrameSizeSettings />
+              <div style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                }}>
+                <PropertyCategoryFilter/>
+                <PropertySearch/>
+              </div>
               <ScreenSwitcher />
-              <MoveControls />
             </Area>
             <Area
               id="area-top-reverse"
@@ -198,10 +202,6 @@ export const ThemeEditor = (props) => {
               }}
             >
               <FrameScaleSlider/>
-            </Area>
-          </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
-            <Area id="area-left">
               <div className={'theme-editor-menu'}>
                 <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
                   Import/export
@@ -213,28 +213,39 @@ export const ThemeEditor = (props) => {
                   Server
                 </ToggleButton>
               </div>
-              <Fragment>
-                {serverThemesDisplayed && <ServerThemesList/>}
-              </Fragment>
-              <ThemeUploadPanel/>
-              <ColorSettings />
-              <CustomVariableInput/>
-              <div style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                }}>
-                <PropertyCategoryFilter/>
-                <PropertySearch/>
-              </div>
+            </Area>
+          </div>
+          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
+            <Area id="area-left">
+              <MoveControls />
               <Inspector {...{unfilteredGroups}}/>
-              <HistoryControls />
             </Area>
             <ResizableFrame src={window.location.href} />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
             
             <Area id="area-right">
-              <div>{sheetsDisablerDisplayed && <StylesheetDisabler />}</div>
-              <div>{importDisplayed && <ImportExportTools />}</div>
+              <Fragment>
+                {serverThemesDisplayed && <ServerThemesList/>}
+              </Fragment>
+              <Fragment>{sheetsDisablerDisplayed && <StylesheetDisabler />}</Fragment>
+              <Fragment>{importDisplayed && <ImportExportTools />}</Fragment>
+
+              <ThemeUploadPanel/>
+              <InformationVisibilitySettings />
+              <ColorSettings />
+              <div>
+                <Checkbox
+                  // id={'full-page-preview'}
+                  controls={[fullPagePreview, setFullPagePreview]}
+                  title='This does not work properly for pages that have different styles based on screen height.'
+                >Scroll preview</Checkbox>
+                <Checkbox
+                  // id={'open-first-on-inspect'}
+                  controls={[openFirstOnInspect, setOpenFirstOnInspect]}
+                >Auto open first group on inspect</Checkbox>
+                <WebpackHomeInput />
+              </div>
+              <HistoryControls />
             </Area>
           </div>
           <div
@@ -254,23 +265,12 @@ export const ThemeEditor = (props) => {
               }}
             ></Area>
             <Drawer>
+              <CustomVariableInput/>
+              <FrameSizeSettings />
               <ThemeEditorExtraOptions />
               <RemoveAnnoyingPrefix />
-              <InformationVisibilitySettings />
               {/* <ExampleTabs/> */}
               <NameReplacements/>
-              <div>
-                <Checkbox
-                  id={'full-page-preview'}
-                  controls={[fullPagePreview, setFullPagePreview]}
-                  title='This does not work properly for pages that have different styles based on screen height.'
-                >Scroll preview</Checkbox>
-                <Checkbox
-                  id={'remove-css-properties'}
-                  controls={[openFirstOnInspect, setOpenFirstOnInspect]}
-                >Auto open first group on inspect</Checkbox>
-                <WebpackHomeInput />
-              </div>
             </Drawer>
           </div>
         </MovablePanels>
