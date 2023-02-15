@@ -65,7 +65,7 @@ export const defaultHooks = {
     return useResumableState(false, 'drawer-open');
   },
   dragEnabled() {
-    return useLocalStorage('drag-on', false);
+    return useLocalStorage('drag-on', true);
   }
 };
 

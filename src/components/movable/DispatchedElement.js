@@ -31,7 +31,7 @@ function getId(element, index) {
 export function useCompactSetting() {
   const {elementId} = useContext(DispatchedElementContext);
 
-  return useLocalStorage(`compact::${elementId}`, false);
+  return useLocalStorage(`compact::${elementId}`, true);
 }
 
 export function DispatchedElement({homeAreaId, element, index}) {

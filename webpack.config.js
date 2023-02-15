@@ -5,13 +5,13 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
     watch: true,
     entry: {
-        bundle: './example/src/index.js',
-        main: './example/src/style.scss',
-        halfmoon: './example/halfmoon/style.scss',
+        bundle: './docs/src/index.js',
+        main: './docs/src/style.scss',
+        halfmoon: './docs/halfmoon/style.scss',
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'example/dist'),
+        path: path.resolve(__dirname, 'docs/dist'),
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],

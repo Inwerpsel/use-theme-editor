@@ -113,7 +113,7 @@ export const setupThemeEditor = async (config) => {
       destroyDoc();
     };
 
-    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') === 'true') {
+    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') !== 'false') {
       renderEmptyEditor();
     }
 
