@@ -39,7 +39,7 @@ It also uses only 1 or a few selectors per custom property, which works quite we
 
 [sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
-### Bootstrap
+### [Bootstrap](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html)
 
 Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
 
