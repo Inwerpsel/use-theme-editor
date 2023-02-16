@@ -24,13 +24,13 @@ body {
     font-size: 16px;
   }
   h4 {
-      _-- {
-        white-space: break-spaces;
-      }
-  
-      font-size: 18px !important;
-      margin-top: 0 !important;
-      margin-bottom: 8px;
+    _-- {
+      white-space: break-spaces;
+    }
+
+    font-size: 18px !important;
+    margin-top: 0 !important;
+    margin-bottom: 8px;
   }
 
   h5 {
@@ -168,7 +168,12 @@ html.hide-wp-admin-bar {
 }
 
 .group-list, .server-theme-list {
-  min-width: 360px;
+  --theme-editor--lists-- {
+    min-width: 320px;
+    @media screen and (min-width: 800px) {
+      min-width: 360px;
+    }
+  }
   padding: 0;
   overflow-y: scroll;
   margin-bottom: 0;
@@ -381,6 +386,11 @@ div[id^=font-picker] ul {
   display: inline-block;
   white-space: pre-wrap;
   font-family: monospace !important;
+
+  .var-control-property _-- {
+    margin-left: 16px;
+    color: purple !important;
+  }
 }
 
 // Quick and dirty way to visualize linked variables.
@@ -424,5 +434,10 @@ div[id^=font-picker] ul {
 }
 
 button {
+
   width: auto;
+}
+
+header.Header _-- {
+  position: static;
 }

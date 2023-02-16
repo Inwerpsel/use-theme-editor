@@ -62760,13 +62760,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks/useLocalStorage */ "./src/hooks/useLocalStorage.ts");
 /* harmony import */ var _screenOptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../screenOptions */ "./src/screenOptions.js");
 // This file is intended to contain all custom hooks that provide the app state.
-// 
-// TODO: Explore consequences of calling other hooks that use `useSyncExternalStore`
-// under the hood. This would result in the hook potentially being called more than
-// once for the same value on the same component.
-// Does each additional invocation have a significantly higher cost than calling it once and
-// passing on the value? Does this register 2 listeners for the same element, or
-// is React smart about this?
 
 
 
