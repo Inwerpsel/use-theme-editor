@@ -2,3 +2,7 @@ node_modules
 .idea
 .vscode
 tmp
+build
+docs/github
+docs/stackexchange
+docs/tesla
