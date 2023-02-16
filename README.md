@@ -18,6 +18,43 @@ The most common CSS properties have a dedicated UI element, with more still to f
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
+## Demo
+
+I used some open source page content that seemed ok to use.
+If you're the owner of some of this content and would like to have it removed / updated,
+please let me know in a new issue on this repo.
+
+### [Halfmoon](https://github.com/halfmoonui/halfmoon)
+
+This one makes much use of chains of linked variables.
+It also uses only 1 or a few selectors per custom property, which works quite well.
+
+[buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
+
+[forms](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms)
+
+[grids](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/grids)
+
+[intro](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/intro)
+
+[sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
+
+### Bootstrap
+
+Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
+
+[cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
+
+### [Openprops](https://open-props.style/)
+
+Just a great looking page and a great palette of values.
+
+[home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
+
+### Other sites
+
+
+
 ## Additional packages*
 
 \* Not fully set up as separate packages yet, but code should work as such. Setting up these packages is currently
@@ -47,39 +84,6 @@ and load it in any HTML page, after all CSS was loaded.
 
 Currently the editor kind of "eats" the page it's on. Eventually it will likely be on its own page,
 able to load arbitrary HTML pages without a page reload.
-
-## Demo
-
-I used some open source page content that seemed ok to use.
-If you're the owner of some of this content and would like to have it removed / updated,
-please let me know in a new issue on this repo.
-
-### [Halfmoon](https://github.com/halfmoonui/halfmoon)
-
-This one makes much use of chains of linked variables.
-It also uses only 1 or a few selectors per custom property, which works quite well.
-
-https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons
-
-https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms
-
-https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/grids
-
-https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/intro
-
-https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar
-
-### Bootstrap
-
-Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
-
-https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/
-
-### [Openprops](https://open-props.style/)
-
-Just a great looking page and a great palette of values.
-
-https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles
 
 ## Status
 Multiple features are currently under active development. Hence some features temporarily don't work or work improperly.
