@@ -1,15 +1,20 @@
-# Experimental CSS variables based theme editor
+# CSS variables based theme editor
 
-This is a WIP theme editor that allows creating a theming UI for CSS custom properties based entirely on the built CSS files,
-with no configuration needed to add a new setting.
+A collection of React components and hooks that can be used standalone or together to provide theme editing capabilities
+based on the contents of the stylesheets on a page.
+All CSS rules that use a `var()` statement in the value are included in the UI.
+It can easily be integrated into any HTML page by injecting the same script.
+
+The most common CSS properties have a dedicated UI element, with more still to follow.
 
 ## Features
-* Plug and play: discover and design on any page of an app, removing the need for mockups
-* Get all relevant style attributes of an element with 1 click
-* Link variables to other variables to create a design system
-* Super fast access to contextual information
+* Plug and play: can be added to any page of an app
+* Good performance even on huge pages
+* Detailed information
+* Many editing options
+* Easily locate all other elements affected by a change
 * Screen switcher on variables with a media query
-* All changes applied instantly with no delay, regardless of the content size / amount of variables (on most sites on non potato devices)
+* Link variables to other variables to create a design system
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
@@ -22,9 +27,9 @@ with no configuration needed to add a new setting.
 I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
 
 ### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.js)
-This was built from the ground up with `useSyncExternalStore`, which makes it possible to sync with a single history timeline,
+Using `useSyncExternalStore`, this hook makes it possible to sync with a single history timeline,
 while offering an identical function signature as `useState` and `useReducer`. Any code that uses either should just work
-with history by replacing the function.
+with history by replacing the function, and adding a string key.
 
 * Capture any combination of separate states (simple or with reducers) into a single history timeline.
 * Only elements with changes are ever rerendered when jumping between any 2 states in history.
