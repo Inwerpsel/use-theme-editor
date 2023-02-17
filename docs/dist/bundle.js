@@ -62616,7 +62616,9 @@ function getters(use) {
     for (const k in use) {
         Object.defineProperty(get, k, {
             // Call the hook and return just the value, ignoring the dispatcher or any other contents of the result array.
-            get() { return use[k]()[0]; },
+            get() {
+                return use[k]()[0];
+            },
             set() {
                 throw new Error('Only for getting');
             },
@@ -62768,7 +62770,11 @@ const use = {
     screenOptions: () => [get.isSimpleSizes ? _screenOptions__WEBPACK_IMPORTED_MODULE_2__.simpleScreenOptions : _screenOptions__WEBPACK_IMPORTED_MODULE_2__.allScreenOptions],
     width: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('responsive-width', 360),
     height: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('responsive-height', 640),
-    scales: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('responsive-scales', {}),
+    scales: 
+    // Even though scales are a number, the input that manages it returns a string,
+    // and the end use is also as a string.
+    // Double converting just to get the type right goes a bit too far.
+    () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('responsive-scales', {}),
     uiArrangement: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('panel-rearrangements', {}),
     propertyFilter: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('property-filter', 'all'),
     propertySearch: () => (0,_hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__.useResumableLocalStorage)('property-search', ''),

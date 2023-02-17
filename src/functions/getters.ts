@@ -8,16 +8,18 @@ export interface BunchOfHooks {
 
 // For now this uses the object literal directly for simplicity.
 export type EasyAccessors = {
-  [P in keyof typeof use]?: ReturnType<(typeof use)[P]>[0];
+  [P in keyof typeof use]: ReturnType<(typeof use)[P]>[0];
 }
 
 export function getters(use: BunchOfHooks): EasyAccessors {
-  const get = {};
+  const get = {} as EasyAccessors;
 
   for (const k in use) {
     Object.defineProperty(get, k, {
       // Call the hook and return just the value, ignoring the dispatcher or any other contents of the result array.
-      get() {return use[k]()[0]},
+      get() {
+        return use[k]()[0]
+      },
       set() {
         throw new Error('Only for getting');
       },
