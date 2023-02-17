@@ -35,7 +35,10 @@ export const use = {
   annoyingPrefix:
     () => useLocalStorage('annoying-prefix', ''),
   nameReplacements:
-    () => useLocalStorage('name-replacements', [] as { from: string, to: string }[]),
+    () => useLocalStorage(
+      'name-replacements',
+      [] as { id: string, from: string, to: string, order: number, active: boolean }[]
+    ),
   showCssProperties:
     () => useLocalStorage('show-css-properties', false),
   showSourceLinks:
