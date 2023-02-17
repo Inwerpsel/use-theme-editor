@@ -1,5 +1,3 @@
-// This file is intended to contain all custom hooks that provide the app state.
-
 import { getters } from "../functions/getters";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
