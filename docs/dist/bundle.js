@@ -11907,6 +11907,7 @@ var toggleStylesheets = function toggleStylesheets(disabledSheets) {
 var scopesStyleElement = scopesStyleElement = document.createElement('style');
 document.head.appendChild(scopesStyleElement);
 var ruleIndexes = {};
+document.title = "\uD83D\uDD8C".concat(document.title);
 function toPropertyString(properties) {
   var propertyString = '';
   for (var prop in properties) {
@@ -62761,7 +62762,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var _functions_getters__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../functions/getters */ "./src/functions/getters.ts");
 /* harmony import */ var _hooks_useLocalStorage__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../hooks/useLocalStorage */ "./src/hooks/useLocalStorage.ts");
 /* harmony import */ var _screenOptions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ../screenOptions */ "./src/screenOptions.js");
-// This file is intended to contain all custom hooks that provide the app state.
 
 
 

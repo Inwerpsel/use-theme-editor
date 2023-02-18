@@ -27,6 +27,8 @@ document.head.appendChild(scopesStyleElement);
 
 let ruleIndexes = {};
 
+document.title = `🖌${document.title}`;
+
 function toPropertyString(properties) {
     let propertyString = '';
     for (const prop in properties) {
