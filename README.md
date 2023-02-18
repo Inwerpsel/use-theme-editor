@@ -2,32 +2,23 @@
 
 A collection of React components and hooks that can be used standalone or together to provide theme editing capabilities
 based on the contents of the stylesheets on a page.
+
 All CSS rules that use a `var()` statement in the value are included in the UI.
 It can easily be integrated into any HTML page by injecting the same script.
 
-The most common CSS properties have a dedicated UI element, with more still to follow.
-
-## Features
-* Plug and play: can be added to any page of an app
-* Good performance even on huge pages
-* Detailed information
-* Many editing options
-* Easily locate all other elements affected by a change
-* Screen switcher on variables with a media query
-* Link variables to other variables to create a design system
-* Switch themes while deep inspecting
-* Reposition or hide any UI element with drag and drop
+There's a dedicated UI element for most common CSS properties, with more to follow.
+It takes all relevant data in the CSS files into account, and you can change quite a lot of it by swapping out custom props.
+Eventually it will be expanded to allow any CSS edit without needing custom properties.
 
 ## Demo
+
+> **Currently, demos live inside of `/docs` just to make them work with GitHug Pages.**
 
 I used some open source page content that seemed ok to use.
 If you're the owner of some of this content and would like to have it removed / updated,
 please let me know in a new issue on this repo.
 
-### [Halfmoon](https://github.com/halfmoonui/halfmoon)
-
-This one makes much use of chains of linked variables.
-It also uses only 1 or a few selectors per custom property, which works quite well.
+### Halfmoon ([GitHub repo](https://github.com/halfmoonui/halfmoon))
 
 [buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
 
@@ -39,20 +30,47 @@ It also uses only 1 or a few selectors per custom property, which works quite we
 
 [sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
-### [Bootstrap](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html)
+This one makes much use of chains of linked variables.
+It also uses only 1 or a few selectors per custom property, which works quite well.
 
-Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
-
-[cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
-
-### [Openprops](https://open-props.style/)
+### Openprops ([source page](https://open-props.style/))
 
 Just a great looking page and a great palette of values.
 
 [home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
 
+### Bootstrap ([source HTML](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
+
+[cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
+
+Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
+
 ### Other sites
 
+It should work for any site that uses custom properties, but you'll have to test those locally for now.
+Only with the current selection of demo pages I was confident enough hosting this content on GitHub Pages
+wouldn't be a problem (as the source HTML is on GitHub already).
+
+I might in the future add a general purpose way to load other sites, though this has some obvious CORS
+challenges. Luckily it's quite easy to run locally.
+
+You should be able to check out the repo locally, save any page as HTML in the browser, and inject the script and style 
+tags you see in [other example HTML pages at the end of the body](https://github.com/Inwerpsel/use-theme-editor/blob/a040386a18ab001b2add0e59610f4ae077128d36/docs/halfmoon/docs/buttons.html#L1091-L1092).
+
+Among such pages, GitHub itself has quite interesting results in the editor.
+It pushes some parts of the UI much further (performance and UX) than any other site, because a single custom property
+often is used in over 100 selectors, and very large pages are frequent (e.g. PR main page).
+
+## Features
+* Plug and play: can be added to any page of an app
+* Good performance even on huge pages
+* Detailed information
+* Many editing options
+* Easily locate all other elements affected by a change
+* Screen switcher on variables with a media query
+* Link variables to other variables to create a design system
+* Switch themes while deep inspecting
+* Reposition or hide any UI element with drag and drop
 
 
 ## Additional packages*
@@ -209,8 +227,6 @@ This can break some use cases.
   in UI.
 
 ### TODO
-- Properly set up dependencies
-- Properly configure linting
 - Write tests
 - Variable actions:
   - Convert a raw value to a variable
@@ -245,7 +261,6 @@ This can break some use cases.
     - Probably has the best performance
     - Solves issues with scoped custom properties of equal selector specificity (i.e. order dependent)
 - Move expensive logic (regex and searching lists) into initial data extraction where possible.
-- Configurable source URLs (protocol, Github, automatic detection?)
 - Inspector as a separate package?
 - Drop tokens onto page like Figma tokens plugin
   - Can reuse inspect function and auto apply the innermost fitting the token type.
@@ -267,15 +282,15 @@ This can break some use cases.
     - Apply the most recent state to all members in history.
   - Squash
   - Different edit modes when in the past
-    - Current mode: discard future
-    - Optional prompt
-    - Save any "chopped" off futures
+    - Current mode: discard future, prompt first if offset > 5
+    - Optional prompt?
+    - Save any "chopped" off futures?
     - Options determining which scenario (e.g. save when > 3 edits, discard when < 2)
   - Keep alternate futures and merge them like branches
   - Restore from local storage
     - Store initial state + actions, then replay
       - more space efficient
-      - minimal writes (though how to incrementally update local storage?)
+      - minimal writes (though how to incrementally update local storage efficiently?)
       - history can rely on object equality like newly constructed
     - Some components can't reliably be resumed
       - Inspected HTML can be (slightly to completely) different
@@ -283,7 +298,6 @@ This can break some use cases.
     - Some states are inconsequential / uninteresting
       - E.g. open an editor UI window and close it with no changes
       - hard to detect if this is the case
-
 
 ## Future theme structure
 
@@ -302,25 +316,10 @@ Each item: selector + property (combined unique ID, this could be a single ID as
 #### Other
 * Added selectors
   * data: selector text, source position, media query
-  * Translate to multiple source CSS dialects
+  * Translate to multiple source CSS dialects (where?)
   * Ideally a minimal description of the source position requirements. E.g. only say "after X". It's then up to
     the code generating for a particular source to deterministically figure out the exact position.
 * Added media queries
   * data: condition text (maybe parsed a bit), source position
 * Added animations
 * Added resources (links, images, fonts)
-
-
-## Use cases
-* Inspect to learn
-* Designing
-  * Change parameters on existing design (parameters)
-  * Add new rules on existing design (parameters, rules)
-  * New design (text editor integration) (parameters, rules, markup)
-* Palette management
-  * Define palette
-  * Document palette
-  * Import/export palette
-* Theming
-* Authoring documentation
-* Testing
