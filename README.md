@@ -20,27 +20,28 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 
 ### Halfmoon ([source](https://github.com/halfmoonui/halfmoon))
 
-[buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
+This CSS framework currently produces the best result in the editor,
+it has an enormous amount of custom properties covering almost every property.
 
-[forms](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms)
+A selection from their documentation site:
 
-[grids](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/grids)
-
-[intro](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/intro)
-
-[sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
+[🖌 Buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
+[🖌 Forms](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms)
+[🖌 Grids](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/grids)
+[🖌 Intro](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/intro)
+[🖌 Sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
 ### Openprops ([source](https://open-props.style/))
 
-[home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
-
 Just a great looking page and a great palette of values.
+
+[🖌 Home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
 
 ### Bootstrap ([source](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
 
-[cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
-
 Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
+
+[🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
 
 ### Other sites
 
