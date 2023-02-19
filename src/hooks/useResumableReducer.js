@@ -8,10 +8,7 @@ import React, {
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-export const HistoryNavigateContext = createContext({});
-
 const INITIAL_STATE = {
-  currentId: null,
   lastActions: {
     HISTORY: {
       type: 'INIT',
@@ -178,7 +175,6 @@ function historyReducer(state, action, options) {
                 lastActions,
               },
             ],
-        currentId: id,
         // If the previous state was removed from the history because it was duplicate,
         // it should result in a new entry in any subsequent dispatches to the same id.
         // Otherwise, it would be possible to remove multiple recent entries just by
@@ -330,6 +326,8 @@ const historyDispatch = (action, options) => {
   }
 }
 
+export const HistoryNavigateContext = createContext({});
+
 // This component acts as a boundary for history.
 // Todo: use a global history if no boundary is provided.
 export function SharedActionHistory(props) {
@@ -340,7 +338,6 @@ export function SharedActionHistory(props) {
     states,
     historyStack,
     historyOffset,
-    currentId,
     lastActions,
   } = state;
 
@@ -364,14 +361,13 @@ export function SharedActionHistory(props) {
     () => ({
       historyStack,
       historyOffset,
-      currentId,
       lastActions,
-      dispatch: historyDispatch ,
+      dispatch: historyDispatch,
       states,
       currentStates,
       previewComponents,
     }),
-    [historyStack, historyOffset, currentId, lastActions, states]
+    [historyStack, historyOffset, lastActions, states]
   );
 
   useLayoutEffect(() => {
