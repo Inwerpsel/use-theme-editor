@@ -26,8 +26,6 @@ const INITIAL_STATE = {
   oldStates: {},
 };
 
-// The following are also "state", however the code strictly considers them append only.
-// Keys are expected to live indefinitely and re-assignment currently doesn't happen.
 const initialStates = {};
 const reducers = {};
 const dispatchers = {};
@@ -126,14 +124,13 @@ function historyReducer(state, action, options) {
         }
       }
 
-      // `currentlyInThePast` should be very infrequent case: one edit on the past clears future.
-      // Mmost actions happen against the latest state.
-      // Hence I think the current approach of treating the latest state as a separate
-      // object has better overall performance characteristics,
+      // `currentlyInThePast` is false most of the time: one edit on the past clears future.
+      // Most actions happen against the latest state (e.g. changing color wheel).
+      // Hence the current approach of treating the latest state as a separate
+      // object probably has better overall performance characteristics,
       // compared to just using the last entry of the history as the latest state.
-      // Especially if the changes are fluid and history is skipped every time.
-      // It's hard to validate this assumption, though, because this runs really fast even
-      // with hundreds of history entries.
+      // Especially if the changes are fast and history is debounced every time.
+      // Todo: setup performance test scenario to validate this.
       const currentlyInThePast = historyOffset > 0;
       const baseIndex = historyStack.length - historyOffset;
       const historyEntry = !currentlyInThePast ? state : historyStack[baseIndex];
@@ -157,7 +154,6 @@ function historyReducer(state, action, options) {
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
 
-      // Uses || skipHistory to take the cheapest path when prevHistory is not used.
       const prevHistory =
         !currentlyInThePast || skipHistory
           ? historyStack
@@ -180,7 +176,6 @@ function historyReducer(state, action, options) {
               {
                 states: baseStates,
                 lastActions,
-                // alternateFutures: [],
               },
             ],
         currentId: id,
@@ -207,6 +202,8 @@ let forceHistoryRender = () => {};
 
 const notifiers = {};
 
+// All browser history related code was commented for now.
+// It works, but it's not that user friendly and hard to support.
 // const USE_BROWSER_HISTORY = false;
 
 // Notify one ID without checking.
@@ -223,11 +220,6 @@ function notifyOne(id) {
 
 function checkNotifyAll() {
   const { oldStates } = state;
-  // const neither = [];
-  // const added = [];
-  // const removed = [];
-  // const diff = [];
-  // const same = [];
   const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(currentStates)]);
 
   for (const id of bothKeys.values()) {
@@ -235,22 +227,13 @@ function checkNotifyAll() {
     if (!keyNotifiers) {
       continue;
     }
-    // For this to work it's important that unchanged state members
-    // are the same object referentially.
     const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
 
     const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
     const newValue = !inNew ? initialStates[id] : currentStates[id];
 
     const changed = oldValue !== newValue; 
-    // if (!inOld ) {
-    //   added.push(id);
-    // }
-    // else if (!inNew) {
-    //   removed.push(id);
-    // } else {
-    //   changed ? diff.push(id) : same.push(id);
-    // }
+
     if (changed) {
       for (const n of keyNotifiers.values()) {
         n();
@@ -259,13 +242,6 @@ function checkNotifyAll() {
   }
   // This is a temporary fix.
   forceHistoryRender();
-  
-  // console.log(JSON.parse(JSON.stringify(oldStates)), JSON.parse(JSON.stringify(currentStates)) );
-  // console.log('neither', neither);
-  // console.log('added', added);
-  // console.log('removed', removed,);
-  // console.log('diff', diff);
-  // console.log('same', same);
 }
 
 // if (USE_BROWSER_HISTORY) {
@@ -307,9 +283,7 @@ function checkNotifyAll() {
 //   };
 // }
 
-// const dispatchTimes = {};
 const historyDispatch = (action, options) => {
-  // const start = performance.now();
   const newState = historyReducer(state, action, options);
   if (newState === state) {
     return
@@ -349,29 +323,12 @@ const historyDispatch = (action, options) => {
   //     }
   //   }
   // }
-
-  // const duration = performance.now() - start;
-  // const key = `${action.payload?.id || action.type}~${
-  //   action.payload?.action?.type?.name || action.payload?.action?.type || ''
-  // }`;
-  // if (!dispatchTimes[key]) {
-  //   dispatchTimes[key] = [];
-  // }
   if (action.type === 'PERFORM_ACTION') {
     notifyOne(action.payload.id);
   } else {
     checkNotifyAll();
   }
-  // dispatchTimes[key].push(duration);
-  // if (logTimeout) {
-  //   clearTimeout(logTimeout);
-  // }
-  // logTimeout = setTimeout(() => {
-  //   console.log(dispatchTimes);
-  // }, 1000)
 }
-
-// let logTimeout;
 
 // This component acts as a boundary for history.
 // Todo: use a global history if no boundary is provided.
@@ -438,7 +395,7 @@ export function useResumableReducer(
   id
 ) {
   if (!reducers.hasOwnProperty(id)) {
-    // First one gets to add the reducer, but really it shouldn't matter.
+    // First one for an id gets to add the reducer.
     addReducer(id, reducer, initialState, initializer);
   }
 
