@@ -12,13 +12,13 @@ Eventually it will be expanded to allow any CSS edit without needing custom prop
 
 ## Demo
 
-> **Currently, demos live inside of `/docs` just to make them work with GitHug Pages.**
+> Currently, demos live inside of `/docs` just to make them work with GitHub Pages.
 
-I used some open source page content that seemed ok to use.
+> I used some open source page content that seemed ok to use.
 If you're the owner of some of this content and would like to have it removed / updated,
-please let me know in a new issue on this repo.
+please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) on this repo.
 
-### Halfmoon ([GitHub repo](https://github.com/halfmoonui/halfmoon))
+### Halfmoon ([source](https://github.com/halfmoonui/halfmoon))
 
 [buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
 
@@ -30,16 +30,13 @@ please let me know in a new issue on this repo.
 
 [sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
-This one makes much use of chains of linked variables.
-It also uses only 1 or a few selectors per custom property, which works quite well.
-
-### Openprops ([source page](https://open-props.style/))
-
-Just a great looking page and a great palette of values.
+### Openprops ([source](https://open-props.style/))
 
 [home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
 
-### Bootstrap ([source HTML](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
+Just a great looking page and a great palette of values.
+
+### Bootstrap ([source](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
 
 [cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
 
@@ -54,12 +51,8 @@ wouldn't be a problem (as the source HTML is on GitHub already).
 I might in the future add a general purpose way to load other sites, though this has some obvious CORS
 challenges. Luckily it's quite easy to run locally.
 
-You should be able to check out the repo locally, save any page as HTML in the browser, and inject the script and style 
+Just save any page as HTML in the browser, into the `/docs` folder, and inject the script and style 
 tags you see in [other example HTML pages at the end of the body](https://github.com/Inwerpsel/use-theme-editor/blob/a040386a18ab001b2add0e59610f4ae077128d36/docs/halfmoon/docs/buttons.html#L1091-L1092).
-
-Among such pages, GitHub itself has quite interesting results in the editor.
-It pushes some parts of the UI much further (performance and UX) than any other site, because a single custom property
-often is used in over 100 selectors, and very large pages are frequent (e.g. PR main page).
 
 ## Features
 * Plug and play: can be added to any page of an app
@@ -94,24 +87,15 @@ with history by replacing the function, and adding a string key.
 
 ## How to use
 
-Exact instructions are still to follow, so for now you need to be prepared to deal with unforeseen circumstances.
-Though the setups steps are easy and require no code.
-
-In theory, all that needs to happen is build the script (currently in example),
-and load it in any HTML page, after all CSS was loaded.
-
-Currently the editor kind of "eats" the page it's on. Eventually it will likely be on its own page,
-able to load arbitrary HTML pages without a page reload.
-
-## Status
-Multiple features are currently under active development. Hence some features temporarily don't work or work improperly.
-This can break some use cases.
+For now, there are 2 main ways you could use this repo:
+- inject the self contained theme editor into existing pages
+- as a component and hooks library for React apps
 
 ## Known issues
+A few components are not (fully) working at the moment.
 - Current theme view not working (needs adaptation to selector scoped properties)
-- Edits not always showing on pages that use multiple root scope selectors
-- Equally specific (and so order dependent) selectors override too much (e.g. Bootstrap .btn background will override .btn-primary)
-- Multiple issues with `:where` and similar selectors
+- References in other variables mostly not working.
+- Import/export exports wrong data format.
 
 *Everything after this is somewhere between a brain dump and a road map.*
 
