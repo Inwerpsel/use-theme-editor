@@ -67,20 +67,19 @@ tags you see in [other example HTML pages at the end of the body](https://github
 * Reposition or hide any UI element with drag and drop
 
 
-## Additional packages*
+## Embedded packages*
 
-\* Not fully set up as separate packages yet, but code should work as such. Setting up these packages is currently
- not a priority, but if there's interest I'd love to hear which things would be needed to get it up in a particular use case.
+\* Not fully set up as separate packages yet, but code should work as such.
 
 ### [Draggable elements](https://github.com/Inwerpsel/use-theme-editor/tree/main/src/components/movable)
 I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
 
 ### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.js)
-Using `useSyncExternalStore`, this hook makes it possible to sync with a single history timeline,
-while offering an identical function signature as `useState` and `useReducer`. Any code that uses either should just work
+Using `useSyncExternalStore`, these hooks make it possible to put multiple pieces of state into a single history timeline,
+while offering a similar function signature as `useState` and `useReducer`. Any code that uses either should just work
 with history by replacing the function, and adding a string key.
 
-* Capture any combination of separate states (simple or with reducers) into a single history timeline.
+* Capture any combination of separate states (simple or with reducers) into a single timeline.
 * Only elements with changes are ever rerendered when jumping between any 2 states in history.
 * Some (rough) components for timeline navigation and visualization.
 * Register a custom component per action to visualize in the timeline.
@@ -93,14 +92,16 @@ For now, there are 2 main ways you could use this repo:
 - as a component and hooks library for React apps
 
 ## Known issues
-A few components are not (fully) working at the moment.
+A few components are not (fully) working at the moment, mostly because they depend on other changes, but also some small bugs.
 - Current theme view not working (needs adaptation to selector scoped properties)
 - References in other variables mostly not working.
 - Import/export exports wrong data format.
+- Add alias for raw values not working.
 
-*Everything after this is somewhere between a brain dump and a road map.*
-
----
+<details>
+<summary>
+  Here's a long list / braindump of some in progress work and ideas. I'll gradually convert some to issues.
+</summary>
 
 ### STALLED
 - Facilitate other variables as a value
@@ -308,3 +309,5 @@ Each item: selector + property (combined unique ID, this could be a single ID as
   * data: condition text (maybe parsed a bit), source position
 * Added animations
 * Added resources (links, images, fonts)
+
+</details>
