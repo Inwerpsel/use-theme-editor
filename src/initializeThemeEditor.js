@@ -281,15 +281,6 @@ export const setupThemeEditor = async (config) => {
     case 'scroll-in-view':
       const element = selector ? locatedElements[selector][index] : group.element;
 
-      // Quick and dirty way to allow showing an element in the editor by assigning stuff to the ref.
-      let parent = element;
-      while (parent) {
-        parent = parent.parentNode;
-        if (parent && typeof parent.emerge === 'function') {
-          parent.emerge();
-        }
-      }
-
       element.scrollIntoView({
         behavior: 'smooth',
         block: 'center',
