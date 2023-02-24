@@ -34,6 +34,7 @@ export const sizeLikeProperties = [
   'outline-width',
   'outline-offset',
   'gap',
+  'block-size',
 ];
 
 const remSize = 16;

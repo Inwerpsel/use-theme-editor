@@ -11,7 +11,26 @@ const alignOptions = [
         'last baseline',
         'safe center',
         'unsafe center',
-    ];
+];
+
+const blendOptions = [
+    'normal',
+    'multiply',
+    'screen',
+    'overlay',
+    'darken',
+    'lighten',
+    'color-dodge',
+    'color-burn',
+    'hard-light',
+    'soft-light',
+    'difference',
+    'exclusion',
+    'hue',
+    'saturation',
+    'color',
+    'luminosity',
+  ];
 
 // These should be all CSS properties that only allow keywords as a value.
 const lists = {
@@ -64,6 +83,26 @@ const lists = {
     'wordbreak-all',
     'wordkeep-all',
     'wordbreak-word' /* deprecated */,
+  ],
+  'word-break': [
+    'normal',
+    'wordbreak-all',
+    'wordkeep-all',
+    'wordbreak-word' /* deprecated */,
+  ],
+  'background-blend-mode': blendOptions,
+  'mix-blend-mode': blendOptions,
+  'border-style': [
+    'none',
+    'hidden',
+    'dotted',
+    'dashed',
+    'solid',
+    'double',
+    'groove',
+    'ridge',
+    'inset',
+    'outset',
   ],
 };
 
