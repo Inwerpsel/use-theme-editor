@@ -16,7 +16,6 @@ export function TextControl({
   label,
   value,
   className,
-  instanceId,
   onChange: _onChange,
   ...props
 }) {
