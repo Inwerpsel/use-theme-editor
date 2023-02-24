@@ -1,4 +1,4 @@
-import { BunchOfHooks } from "../functions/getters";
+import { EasyAccessors } from "../functions/getters";
 import { get, use } from "../state";
 
 const cache = new Map<(state: {}) => any, [any, {}]>();
@@ -16,9 +16,6 @@ function createMagicObject(): {_deps: {}, [index: string]: any} {
         const v = get[k];
         capture._deps[k] = v;
         return v;
-      },
-      set() {
-        throw new Error('Only for getting');
       },
     });
   }
@@ -55,7 +52,7 @@ function getLatestValues(old: {}): [{}, boolean] {
 
 // If a function respects the rules of hooks, you can intercept the calls,
 // and replay them to avoid running the function + check if recalc needs to happen.
-export function useGlobalMemo(create: (state: BunchOfHooks|{}) => any) {
+export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
   if (cache.has(create)) {
     const [cached, cachedState] = cache.get(create);
     // This should be guaranteed to run the same hooks as are called during capturing.
@@ -65,26 +62,31 @@ export function useGlobalMemo(create: (state: BunchOfHooks|{}) => any) {
     if (hasChanged) {
       cache.set(create, [value, latestState])
     }
+    console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
+
     return value;
   }
 
   const [result, state] = runAndCapture(create);
   cache.set(create, [result, state]);
 
+  console.log('NEW', create.name, result)
+
   return result;
 }
 
 // There is no usage in this repo yet, unfortunately.
-
 {
-  // Examples.
-  function calculateArea({width, height, scales}) {
+  // Example.
+  // This is not actually expensive, but it's an easy to test example.
+  
+  function calculateArea({width, height, scales}: typeof get) {
     const scale = Number(scales[`${width}x${height}`]);
-    console.log(`calculating area ${width} x ${height} x ${scale}`);
     return width * height * scale;
   }
 
   function useArea() {
+    // Look ma, no deps!
     return useGlobalMemo(calculateArea);
   }
 }
