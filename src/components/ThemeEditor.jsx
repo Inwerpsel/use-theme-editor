@@ -171,6 +171,7 @@ export const ThemeEditor = (props) => {
       }}
     >
       <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
+      <span>AAAAAAA</span>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiArrangement}>
           <div
