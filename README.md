@@ -93,10 +93,12 @@ For now, there are 2 main ways you could use this repo:
 
 ## Known issues
 A few components are not (fully) working at the moment, mostly because they depend on other changes, but also some small bugs.
+
 - Current theme view not working (needs adaptation to selector scoped properties)
-- References in other variables mostly not working.
+- Not all references in other variables are listed
 - Import/export exports wrong data format.
 - Add alias for raw values not working.
+- Some issues in the presence of specific root selectors
 
 <details>
 <summary>
