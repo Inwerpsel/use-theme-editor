@@ -99,12 +99,14 @@ export function DispatchedElement({homeAreaId, element, index}) {
       title={!dragEnabled ? null : elementId}
       className={classnames('dispatched-element', { 'is-dragged': isDragged })}
       onDragStart={() => {
-        setDraggedElement(elementId);
-        forceDrag && setForceDrag(false);
-        setTimeout(() => {
-          // Without timeout there's no drag element snapshot.
-          setIsDragged(true);
-        }, 0);
+        if (dragEnabled || forceDrag) {
+          setDraggedElement(elementId);
+          forceDrag && setForceDrag(false);
+          setTimeout(() => {
+            // Without timeout there's no drag element snapshot.
+            setIsDragged(true);
+          }, 0);
+        }
       }}
       onDragEnd={() => {
         setDraggedElement(null);
