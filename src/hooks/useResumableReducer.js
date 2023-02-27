@@ -138,7 +138,7 @@ function historyReducer(state, action, options) {
       const newState = forwardedReducer(
         baseState,
         // Action can be a function in case of setState.
-        typeof performedAction === 'function ' ? performedAction(baseState) : performedAction
+        typeof performedAction === 'function' ? performedAction(baseState) : performedAction
       );
       // const isNowDefaultState = newState === initialStates[id];
       // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
@@ -279,7 +279,7 @@ function checkNotifyAll() {
 //   };
 // }
 
-const historyDispatch = (action, options) => {
+const historyDispatch = (action, options = {}) => {
   const newState = historyReducer(state, action, options);
   if (newState === state) {
     return

@@ -22,7 +22,7 @@ const toggleStylesheets = (disabledSheets) => {
   });
 };
 
-let scopesStyleElement = scopesStyleElement = document.createElement('style');
+let scopesStyleElement = document.createElement('style');
 document.head.appendChild(scopesStyleElement);
 
 let ruleIndexes = {};
@@ -168,6 +168,14 @@ export const setupThemeEditor = async (config) => {
     return groups;
   }
 
+
+  const locatedElements = {};
+
+  // Keep 1 timeout as we only want to be highlighting 1 element at a time.
+  let lastHighlightTimeout = null;
+  let ignoreScroll = false;
+  let scrollDebounceTimeout = null;
+
   function inspect(targetOrIndex) {
     const isPrevious = typeof targetOrIndex === 'number';
     const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
@@ -255,14 +263,6 @@ export const setupThemeEditor = async (config) => {
     const disabledSheets = JSON.parse(storedSheetConfig);
     toggleStylesheets(disabledSheets);
   }
-
-  const locatedElements = {};
-
-  // Keep 1 timeout as we only want to be highlighting 1 element at a time.
-  let lastHighlightTimeout = null;
-
-  let ignoreScroll = false;
-  let scrollDebounceTimeout = null;
 
   const messageListener = event => {
     const {type, payload} = event.data;
