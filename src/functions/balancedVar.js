@@ -1,5 +1,5 @@
 // Copied from https://github.com/greenpeace/planet4-postcss-css-variables/blob/06a7d101f9d4714a9a85d4829cdab3f233096f28/lib/balanced-var.js
-const balanced = require( 'balanced-match' );
+import balanced from 'balanced-match';
 
 // Check for balanced `var(` and `)` pairs inside `value`, and return the 3 fragments:
 // `body` (inside), `pre` (before), `post` (after) of the found wrapper

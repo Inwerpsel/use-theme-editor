@@ -78,7 +78,7 @@ export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
 // There is no usage in this repo yet, unfortunately.
 {
   // Example.
-  // This is not actually expensive, but it's an easy to test example.
+  // This is not actually expensive, but it's easy to test.
   
   function calculateArea({width, height, scales}: typeof get) {
     const scale = Number(scales[`${width}x${height}`]);
@@ -92,6 +92,9 @@ export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
 }
 
 // Incomplete attempt at a version that can memo based on args.
+// In my use case every memo depends on data that is not retrieved from hooks,
+// but instead coming in through a prop in the main component.
+// It would be nice to do the same thing as above, but without requiring all args to be hooks.
 // Even if multi map works and is efficient, invalidating old entries is likely pretty hard.
 
 function __incomplete__GetCached(func: (any) => any, args: {} ) {

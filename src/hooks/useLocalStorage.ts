@@ -26,7 +26,6 @@ type SetsOfDispatchers = {
 }
 
 const readProxy = {};
-// const dispatchers = {};
 const setters = {};
 const initializers = {};
 const dispatchers: SetsOfDispatchers = {};
@@ -36,6 +35,7 @@ const dispatchers: SetsOfDispatchers = {};
 // It may seem odd to have both approaches in the same repo, but this also seems a simple approach that so far works just fine.
 // Maybe both approaches have their own merits, or one is clearly better. Honestly I can't tell at the moment.
 export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) => void] {
+  // Todo: Find a more generally applicable way to namespace.
   const scopedKey = getLocalStorageNamespace() + key;
   const type = typeof defaultValue;
   const isObject = type === 'object';
