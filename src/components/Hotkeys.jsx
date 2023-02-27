@@ -13,9 +13,7 @@ export function Hotkeys(props) {
 
   useHotkeys(
     'alt+r',
-    () => {
-      flipDebugMode();
-    },
+    flipDebugMode,
     []
   );
 
