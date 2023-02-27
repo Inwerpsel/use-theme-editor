@@ -52,15 +52,47 @@ export const ThemeEditor = (props) => {
     inspectedIndex,
     isNewInspection,
   } = props;
+
   const { fileName } = get;
 
-  const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
   const [currentInspected, setCurrentInspected] = useResumableState(-1, 'inspected-index');
-
+  const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
   const [_openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
   const openGroups = prevOpengroups !== null ? prevOpengroups : _openGroups;
   prevOpengroups = null;
   
+  const frameRef = useRef(null);
+  const scrollFrameRef = useRef(null);
+
+  // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
+  const [importDisplayed, setImportDisplayed] = useState(false);
+  const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
+  const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
+
+  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
+
+  const [
+    {
+      scopes,
+      // changeRequiresReset,
+    },
+    dispatch,
+  ] = useThemeEditor({allVars, defaultValues});
+
+  const {
+    serverThemes,
+    serverThemesLoading,
+    uploadTheme,
+    deleteTheme,
+  } = useServerThemes(config.serverThemes);
+
+  const existsOnServer = serverThemes && fileName in serverThemes;
+  const modifiedServerVersion = useMemo(() => {
+    return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
+  }, [serverThemes[fileName]?.scopes, scopes]);
+
+  const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
+
   useLayoutEffect(() => {
     if (currentInspected !== -1 && currentInspected !== inspectedIndex) {
       // window.requestAnimationFrame(() => {
@@ -78,7 +110,7 @@ export const ThemeEditor = (props) => {
 
   useLayoutEffect(() => {
     if ( isNewInspection ) {
-      prevGroups[inspectedIndex] = unfilteredGroups;
+      prevGroups[inspectedIndex] = _unfilteredGroups;
       setCurrentInspected(inspectedIndex);
     } 
   }, [inspectedIndex]);
@@ -95,17 +127,6 @@ export const ThemeEditor = (props) => {
       );
     }
   }, [unfilteredGroups, openFirstOnInspect]);
-
-  const [
-    {
-      scopes,
-      // changeRequiresReset,
-    },
-    dispatch,
-  ] = useThemeEditor({allVars, defaultValues});
-
-  const frameRef = useRef(null);
-  const scrollFrameRef = useRef(null);
 
   useInsertionEffect(() => {
     updateScopedVars(scopes, true);
@@ -129,26 +150,6 @@ export const ThemeEditor = (props) => {
       );
   }, [scopes]);
 
-  // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
-  const [importDisplayed, setImportDisplayed] = useState(false);
-  const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
-  const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
-
-  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
-
-  const {
-    serverThemes,
-    serverThemesLoading,
-    uploadTheme,
-    deleteTheme,
-  } = useServerThemes(config.serverThemes);
-
-  const existsOnServer = serverThemes && fileName in serverThemes;
-  const modifiedServerVersion = useMemo(() => {
-    return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
-  }, [serverThemes[fileName]?.scopes, scopes]);
-
-  const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   return (
     <ThemeEditorContext.Provider
