@@ -84,12 +84,6 @@ const lists = {
     'wordkeep-all',
     'wordbreak-word' /* deprecated */,
   ],
-  'word-break': [
-    'normal',
-    'wordbreak-all',
-    'wordkeep-all',
-    'wordbreak-word' /* deprecated */,
-  ],
   'background-blend-mode': blendOptions,
   'mix-blend-mode': blendOptions,
   'border-style': [
