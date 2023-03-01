@@ -17,8 +17,7 @@ function Usage(props) {
       : `:where(
     ${scope},
     ${scope} *
-)
-:where(
+):where(
     ${selector}
 )`;
 
