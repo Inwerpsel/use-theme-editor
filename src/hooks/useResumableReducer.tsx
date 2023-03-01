@@ -145,8 +145,7 @@ function historyReducer(state, action, options) {
       // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
       const now = performance.now();
-      const slowEnough =
-        !state.lastSet || now - state.lastSet > 500;
+      const slowEnough = now - state.lastSet > 500;
       const skipHistory = !slowEnough || options?.skipHistory;
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
@@ -179,7 +178,7 @@ function historyReducer(state, action, options) {
         // it should result in a new entry in any subsequent dispatches to the same id.
         // Otherwise, it would be possible to remove multiple recent entries just by
         // having the same value for any short amount of time.
-        lastSet: skippedHistoryNowSameAsPrevious ? null : now,
+        lastSet: skippedHistoryNowSameAsPrevious ? 0 : now,
         lastActions: !skipHistory
           ? { [id]: performedAction }
           : { ...state.lastActions, [id]: performedAction },
