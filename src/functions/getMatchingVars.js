@@ -2,7 +2,7 @@ export const allStateSelectorsRegexp = /:(active|focus(-(visible|within))?|visit
 
 export const residualNotRegexp = /:not\([\s,\*]*\)/g;
 
-function includeDescendants(selector) {
+export function includeDescendants(selector) {
     // const isBodySelector = !!selector.match(/^body(\.[\w-]*)?$/);
     // const isRootSelector = selector.trim() === ':root';
     // const isGlobalSelector = isBodySelector || isRootSelector;
@@ -17,44 +17,34 @@ function includeDescendants(selector) {
     // const shouldIncludeStar = true;
 
     // Remove any pseudo selectors that might not match the clicked element right now.
-    return `${selector}, ${selector.replace(',', ' *,')} *`;
+    return `${selector}, :where(${selector}) *`;
 }
+
+let cache;
 
 function matchVar (cssVar, target) {
   if (typeof target.matches !== 'function') {
     return false;
   }
+  const selector = cssVar.statelessSelector;
 
-  const combinedSelector = cssVar.uniqueSelectors
-    .map(includeDescendants)
-    .join();
-
-  const cleanedSelector = combinedSelector
-    .replace(allStateSelectorsRegexp, '')
-    .replace(/:?:(before|after|first\-letter)/g, '')
-    .replaceAll(residualNotRegexp, '')
-    .trim()
-    .replace(/^,/, '')
-    .replace(/,$/, '')
-    .replaceAll(/,(\s*,)+/g, ',');
-
-  if (combinedSelector === '') {
-    return false;
+  if (cache.has(selector)) {
+    return cache.get(selector);
   }
 
   try {
-    // Remove residual empty not-selectors after removing pseudo states.
-    return target.matches(cleanedSelector);
+    const matches = target.matches(selector);
+    cache.set(selector, matches);
+
+    return matches;
   } catch (e) {
-    if (!/^:/.test(combinedSelector)) {
-      console.log('Failed testing a selector, and it is not because it only matches a pseudo selector.', cssVar);
-      console.log(cleanedSelector, combinedSelector);
-    }
+    console.log('Failed testing a selector', cssVar);
     return false;
   }
 };
 
 export const getMatchingVars = ({ cssVars, target }) => {
+  cache = new Map();
 
   try {
     return cssVars.filter(cssVar => matchVar(cssVar, target));

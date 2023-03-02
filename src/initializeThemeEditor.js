@@ -83,10 +83,10 @@ function destroyDoc() {
 
 
 export const setupThemeEditor = async (config) => {
+  updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   setLocalStorageNamespace(config.localStorageNamespace || '');
 
   const editorRoot = document.createElement( 'div' );
-
 
   if (!isRunningAsFrame) {
     editorRoot.id = 'theme-editor-root';
@@ -94,17 +94,7 @@ export const setupThemeEditor = async (config) => {
   }
 
   await dependencyReady;
-  const allVars = await extractPageVariables();
-  updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
-  const cssVars = allVars.reduce((cssVars, someVar) => [
-    ...cssVars,
-    ...(
-      cssVars.some(v => v.name === someVar.name) ? [] : [{
-        ...someVar,
-        uniqueSelectors: [...new Set(someVar.usages.map(usage => usage.selector))],
-      }]
-    ),
-  ], []);
+  const cssVars = await extractPageVariables();
   const defaultValues = getAllDefaultValues(cssVars);
 
   if (!isRunningAsFrame) {
@@ -154,21 +144,6 @@ export const setupThemeEditor = async (config) => {
     }
   }, false);
 
-  // const inspectedMap = new Map();
-
-  function cachedInspection(target) {
-    // if (inspectedMap.has(target)) {
-      // console.log('cached inspection');
-      // return inspectedMap.get(target);
-    // }
-    const matchedVars = getMatchingVars({ cssVars, target });
-    const rawGroups = groupVars(matchedVars, target);
-    const groups = filterMostSpecific(rawGroups, target);
-    // inspectedMap.set(target, groups);
-    return groups;
-  }
-
-
   const locatedElements = {};
 
   // Keep 1 timeout as we only want to be highlighting 1 element at a time.
@@ -188,7 +163,10 @@ export const setupThemeEditor = async (config) => {
         inline: 'end',
         behavior: 'smooth'});
     }
-    const groups = cachedInspection(target);
+    const matchedVars = getMatchingVars({ cssVars, target });
+    const rawGroups = groupVars(matchedVars, target);
+    const groups = filterMostSpecific(rawGroups, target);
+
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
     if (!isRunningAsFrame) {

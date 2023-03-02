@@ -1,4 +1,5 @@
-import {compare} from 'specificity';
+import { statelessSelector } from './extractPageVariables';
+import { compare } from './getMatchingScopes';
 import { allStateSelectorsRegexp, residualNotRegexp } from './getMatchingVars';
 import {sortForUI} from './groupVars';
 
@@ -30,8 +31,13 @@ export function getMaxMatchingSpecificity(usages, element) {
     // if (!usage) {
     //   return max;
     // }
-    const strippedSelector = usage.selector.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '');
-    if (!strippedSelector || !element.matches(strippedSelector)) {
+    // const strippedSelector = usage.selector.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '');
+    const strippedSelector = statelessSelector(usage.selector);
+    try {
+      if (!strippedSelector || !element.matches(strippedSelector)) {
+        return max;
+      }
+    } catch (e) {
       return max;
     }
 

@@ -1,5 +1,6 @@
 // eslint-disable-next-line no-undef
 import {collectRuleVars, definedValues} from './collectRuleVars';
+import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
 
 // For now only extract from the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
@@ -140,6 +141,26 @@ let activeScopes = [];
 export let rootScopes = [];
 export const sourceReferences = {}
 
+export function statelessSelector(selectors) {
+  return (
+    includeDescendants(selectors)
+      .replace(allStateSelectorsRegexp, '')
+      .replace(/:?:(before|after|first\-letter)/g, '')
+      // Try fix remaining descendants pointing to nothing.
+      .trim()
+      .replaceAll(/[,^]\s*[\>+~]/g, '')
+      .replaceAll(/[\>+~]\s?[,$]/g, '')
+      .replaceAll(/,(\s*,)+/g, ',')
+      .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
+      .replace(/^(\s*,\s*)+/, '')
+      .replace(/(\s*,\s*)+$/, '')
+      .replaceAll(/\s*,\s*/g, ',')
+      // Seems to happen for Tailwind special.
+      .replaceAll(/\//g, '\\/')
+      .replaceAll(/,\s*\)/g, ')')
+  );
+}
+
 export const extractPageVariables = async() => {
   const startTime = performance.now();
   const sheets = [...document.styleSheets];
@@ -156,6 +177,7 @@ export const extractPageVariables = async() => {
       otherV => asObject[otherV].usages.some(u => u.fullValue.includes(`var(${k},`) || u.fullValue.includes(`var${k})`))
     ),
     ...v,
+    statelessSelector: statelessSelector([...new Set(v.usages.map(usage => usage.selector))]),
   }));
   // console.log(allVars.filter(v => v.sourceReferences.length > 0));
 

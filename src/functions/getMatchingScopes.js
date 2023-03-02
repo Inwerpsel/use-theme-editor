@@ -1,7 +1,20 @@
-import { compare } from 'specificity';
+import {compare as specificityCompare} from 'specificity';
 import { definedValues } from './collectRuleVars';
+import { statelessSelector } from './extractPageVariables';
 import { allStateSelectorsRegexp } from './getMatchingVars';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
+
+// Remove where with up to 2 levels of internal parentheses.
+export const removeWheresReg = /:where\(([^\(\)]|\(([^\(\)]|\(([^\(\)]|)*\))*\))\)/g;
+
+export function compare(a, b) {
+  // Try to remove `:where()` blocks, as they have no specificity.
+  return specificityCompare(
+    a.replace(removeWheresReg, ''),
+    b.replace(removeWheresReg, ''),
+  );
+};
+
 
 export function getMatchingScopes(target, vars) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
@@ -11,13 +24,12 @@ export function getMatchingScopes(target, vars) {
       // But so far the editor just considers these the same as default values.
       return false;
     }
-    const selector = rawSelector.replace(allStateSelectorsRegexp, '').replace(/:?:(before|after|first\-letter)/g, '');
-    const withInnerElementsSelector = `${selector}, ${selector.replace(',', ' *,')} *`;
+    const selector = statelessSelector(rawSelector);
 
     try {
-      return target.matches(withInnerElementsSelector);
+      return target.matches(selector);
     } catch (e) {
-      console.log('Failed testing scope selector:', withInnerElementsSelector);
+      console.log('Failed testing scope selector:', selector);
     }
   });
 
@@ -52,11 +64,17 @@ export function getMatchingScopes(target, vars) {
   });
 
   return withMostSpecific.sort((a,b) => {
-    const result = compare(a.matchingSelector, b.matchingSelector);
-    if (result === 0) {
+    try {
+      const result = compare(a.matchingSelector, b.matchingSelector);
+      if (result === 0) {
+        return -1;
+      }
+      // Sort opposite direction.
+      return result * -1;
+    } catch (e) {
+      console.log(a, b);
+      console.log(e);
       return -1;
     }
-    // Sort opposite direction.
-    return result * -1;
   });
 };

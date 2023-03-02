@@ -112,7 +112,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           };
           index++;
           if (!(variableName in collected)) {
-            collected[variableName] = { properties: {}, usages: [] };
+            collected[variableName] = { properties: {}, usages: [], statelessSelector: null };
           }
           collected[variableName].usages.push(usage);
           collected[variableName].properties[property] = {isFullProperty, fullValue, isImportant};
