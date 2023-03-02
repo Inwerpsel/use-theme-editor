@@ -5,7 +5,7 @@ import { allStateSelectorsRegexp } from './getMatchingVars';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 
 // Remove where with up to 2 levels of internal parentheses.
-export const removeWheresReg = /:where\(([^\(\)]|\(([^\(\)]|\(([^\(\)]|)*\))*\))\)/g;
+export const removeWheresReg = /:where\(([^\(\)]|\(([^\(\)]|\(([^\(\)]|)*\))*\))*\)/g;
 
 export function compare(a, b) {
   // Try to remove `:where()` blocks, as they have no specificity.
