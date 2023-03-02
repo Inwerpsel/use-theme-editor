@@ -5,7 +5,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 module.exports = {
     watch: true,
     entry: {
-        bundle: './docs/src/index.js',
+        // bundle: './docs/src/index.js',
         main: './docs/src/style.scss',
         halfmoon: './docs/halfmoon/style.scss',
     },
@@ -19,21 +19,21 @@ module.exports = {
     devtool: 'source-map',
     module: {
         rules: [
-            {
-                test: /\.(js|jsx|mjs)$/,
-                exclude: /node_modules/,
-                use: {
-                    loader: 'babel-loader',
-                    options: {
-                        babelrc: true,
-                    }
-                }
-            },
-            {
-                test: /\.tsx?$/,
-                use: 'ts-loader',
-                exclude: /node_modules/,
-            },
+            // {
+            //     test: /\.(js|jsx|mjs)$/,
+            //     exclude: /node_modules/,
+            //     use: {
+            //         loader: 'babel-loader',
+            //         options: {
+            //             babelrc: true,
+            //         }
+            //     }
+            // },
+            // {
+            //     test: /\.tsx?$/,
+            //     use: 'ts-loader',
+            //     exclude: /node_modules/,
+            // },
             {
                 test: /\.s[ac]ss$/i,
                 use: [

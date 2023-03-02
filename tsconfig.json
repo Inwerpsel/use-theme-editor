@@ -13,6 +13,6 @@
       "moduleResolution": "node"
 
     },
-    "include": ["./src/**/*.ts", "./src/**/*.tsx", "src/hooks/useLocalStorage.ts"]
+    "include": ["./src/**/*.ts", "./src/**/*.tsx"]
   }
   
