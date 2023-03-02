@@ -120,11 +120,19 @@ export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
     />;
   }
 
-  return <Fragment>
-    { !isNaN(value) && <input type={ 'number' } onChange={ e => onChange(e.target.value) } value={ value }/> }
-    <TextControl
-      value={ value }
-      onChange={ onChange }
-    />
-  </Fragment>;
+  return (
+    <Fragment>
+      {!isNaN(value) && (
+        <input
+          type={'number'}
+          onChange={(e) => onChange(e.target.value)}
+          value={value}
+        />
+      )}
+      {cssVar.usages.some((usage) => usage.property === 'text-transform') && (
+        <button onClick={() => onChange('none')}>None</button>
+      )}
+      <TextControl value={value} onChange={onChange} />
+    </Fragment>
+  );
 };
