@@ -1,4 +1,5 @@
 import React, { useContext } from 'react';
+import { ACTIONS } from '../../hooks/useThemeEditor';
 import { ThemeEditorContext } from '../ThemeEditor';
 import { VariableControl } from './VariableControl';
 
