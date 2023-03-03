@@ -1,5 +1,5 @@
+import { compare } from './compare';
 import { statelessSelector } from './extractPageVariables';
-import { compare } from './getMatchingScopes';
 import { allStateSelectorsRegexp, residualNotRegexp } from './getMatchingVars';
 import {sortForUI} from './groupVars';
 

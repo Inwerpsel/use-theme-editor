@@ -1,20 +1,7 @@
-import {compare as specificityCompare} from 'specificity';
 import { definedValues } from './collectRuleVars';
+import { compare } from './compare';
 import { statelessSelector } from './extractPageVariables';
-import { allStateSelectorsRegexp } from './getMatchingVars';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
-
-// Remove where with up to 2 levels of internal parentheses.
-export const removeWheresReg = /:where\(([^\(\)]|\(([^\(\)]|\(([^\(\)]|)*\))*\))*\)/g;
-
-export function compare(a, b) {
-  // Try to remove `:where()` blocks, as they have no specificity.
-  return specificityCompare(
-    a.replace(removeWheresReg, ''),
-    b.replace(removeWheresReg, ''),
-  );
-};
-
 
 export function getMatchingScopes(target, vars) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {

@@ -148,15 +148,19 @@ export function statelessSelector(selectors) {
       .replace(/:?:(before|after|first\-letter)/g, '')
       // Try fix remaining descendants pointing to nothing.
       .trim()
-      .replaceAll(/[,^]\s*[\>+~]/g, '')
-      .replaceAll(/[\>+~]\s?[,$]/g, '')
+      .replaceAll(/^\s*[\>+~]/g, '')
+      .replaceAll(/,\s*[\>+~]/g, ',')
+      .replaceAll(/[\>+~]\s*,/g, ',')
+      .replaceAll(/[\>+~]\s*$/g, '')
+      .replaceAll(/[\>+~]\s*\)/g, ')')
+      .replaceAll(/\(\s*[\>+~]/g, '(')
       .replaceAll(/,(\s*,)+/g, ',')
       .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
       .replace(/^(\s*,\s*)+/, '')
       .replace(/(\s*,\s*)+$/, '')
       .replaceAll(/\s*,\s*/g, ',')
       // Seems to happen for Tailwind special.
-      .replaceAll(/\//g, '\\/')
+      // .replaceAll(/\//g, '\\/')
       .replaceAll(/,\s*\)/g, ')')
   );
 }
