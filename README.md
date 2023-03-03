@@ -12,6 +12,9 @@ Eventually it will be expanded to allow any CSS edit without needing custom prop
 
 ## Demo
 
+> Because conversion from webpack to vite is still ongoing, the online demo for now is not updated
+with the latest changes (mostly bugfixes). Once remaining vite issues are resolved, I'll set up an automated build.
+
 > Currently, demos live inside of `/docs` just to make them work with GitHub Pages.
 
 > I used some open source page content that seemed ok to use.
