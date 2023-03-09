@@ -31,23 +31,23 @@ const getGoogleSheetRules = async href => {
   return style.sheet.cssRules;
 };
 
-const collectFontVariant = (previousFonts, {style: {fontFamily, fontWeight, fontStyle}}) => {
+const collectFontVariant = (
+  fonts,
+  { style: { fontFamily, fontWeight, fontStyle } }
+) => {
+  const variants = fonts[fontFamily]?.variants || {};
 
-  const previousVariants = previousFonts[fontFamily]?.variants || {};
-
-  return {
-    ...previousFonts,
-    [fontFamily]: {
-      fontFamily,
-      variants: {
-        ...previousVariants,
-        [`${fontWeight || 'normal'}|${fontStyle || 'normal'}`]: {
-          fontWeight: fontWeight || 'normal',
-          fontStyle: fontStyle || 'normal',
-        }
-      }
-    }
+  variants[`${fontWeight || 'normal'}|${fontStyle || 'normal'}`] = {
+    fontWeight: fontWeight || 'normal',
+    fontStyle: fontStyle || 'normal',
   };
+
+  fonts[fontFamily] = {
+    fontFamily,
+    variants,
+  };
+
+  return fonts;
 };
 
 const extractFonts = async (fonts, sheet) => {

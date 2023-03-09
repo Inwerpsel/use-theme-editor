@@ -63,8 +63,8 @@ export function getMaxMatchingSpecificity(usages, element) {
     const actualParts = getActualParts(pass1);
 
     const comparePart = (max, part) => {
-      const selector = part.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '');
-      if (!element.matches(selector)) {
+      const selector = part.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '').trim();
+      if (selector === '' || !element.matches(selector)) {
         return max;
       }
       // Return part if it's equally or more specific.
@@ -115,12 +115,10 @@ export function getMaxMatchingSpecificity(usages, element) {
 const groupByMediaQueries = (all, usage) => {
   const mediaKey = usage.media || 'all';
   const prevUsages = all[mediaKey] || [];
-  const allUsages = [...prevUsages, usage];
 
-  return ({
-    ...all,
-    [mediaKey]: allUsages,
-  });
+  all[mediaKey] = [...prevUsages, usage];
+
+  return all;
 };
 
 export const getOnlyMostSpecific = (vars, element) => {

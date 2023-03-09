@@ -29,7 +29,7 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
 
   return Object.entries(panelMap).sort(byHostAndOrder).reduce(
     (
-      newPanelMap,
+      panelMap,
       [otherElementId, [otherAreaId]],
     ) => {
       if (!panelOrders[otherAreaId]) {
@@ -38,19 +38,16 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
 
       if (targetElementId === otherElementId && targetAreaId === otherAreaId) {
         panelOrders[otherAreaId]++;
-        newPanelMap[id] = [targetAreaId, panelOrders[otherAreaId]];
+        panelMap[id] = [targetAreaId, panelOrders[otherAreaId]];
       }
 
-      if (otherElementId === id) {
-        return newPanelMap;
+      if (otherElementId !== id) {
+        panelOrders[otherAreaId]++;
+        const newOtherOrder = panelOrders[otherAreaId];
+        panelMap[otherElementId] = [otherAreaId, newOtherOrder];
       }
-      panelOrders[otherAreaId]++;
-      const newOtherOrder = panelOrders[otherAreaId];
 
-      return {
-        ...newPanelMap,
-        [otherElementId]: [otherAreaId, newOtherOrder],
-      };
+      return panelMap;
     },
     {},
   );

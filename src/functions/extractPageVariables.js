@@ -46,17 +46,15 @@ const getLineVarPositions = (varName, sourceMapConsumer, sheet) => (positions, l
   for (const match of matches) {
     const line = index + 1;
     if (!/^[\w-]/.test(match)) {
-      return [
-        ...positions,
-        {
+      positions.push({
           ...sourceMapConsumer.originalPositionFor({line, column}),
           generated: {
             line,
             column,
             sheet,
           },
-        }
-      ];
+        });
+      return positions;
     }
     column += occurrenceStart.length + match.length;
   }
@@ -198,14 +196,16 @@ export const extractPageVariables = async() => {
       }
       const newPositions = getVarPositions(sheet, name, sourceMapConsumer);
 
-      return [...positions, ...newPositions];
+      positions.push(...newPositions);
+      return positions;
     }, []);
+    cssVar.usages = cssVar.usages.map((u, i) => {
+      u.position = positions[i];
+      return u;
+    });
+    cssVar.positions = positions;
 
-    return {
-      ...cssVar,
-      usages: cssVar.usages.map((u, i) => ({...u, position: positions[i]})),
-      positions,
-    };
+    return cssVar;
   });
 
   const results = await Promise.allSettled( promises );
