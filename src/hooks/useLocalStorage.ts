@@ -1,4 +1,4 @@
-import { useInsertionEffect, useState } from 'react';
+import { useCallback, useInsertionEffect, useState } from 'react';
 import {getLocalStorageNamespace} from '../functions/getLocalStorageNamespace';
 import { useResumableState } from './useResumableReducer';
 
@@ -103,15 +103,17 @@ export function useResumableLocalStorage<T>(key: string, defaultValue: T): [T, (
     return apply(type, stored);
   }, key);
 
+  const update = useCallback((arg: T) => {
+    const newValue = typeof arg === 'function' ? arg(value) : arg;
+    localStorage.setItem(
+      scopedKey,
+      !isObject ? newValue : JSON.stringify(newValue)
+    );
+    setValue(newValue);
+  }, []);
+
   return [
     value,
-    arg => {
-      const newValue = typeof arg === 'function' ? arg(value) : arg;
-      localStorage.setItem(
-        scopedKey,
-        !isObject ? newValue : JSON.stringify(newValue)
-      );
-      setValue(newValue);
-    }
+    update,
   ];
 }

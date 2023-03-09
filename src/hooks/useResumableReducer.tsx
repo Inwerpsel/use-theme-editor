@@ -383,12 +383,12 @@ export function SharedActionHistory(props) {
   );
 }
 
-export function useResumableReducer(
+export function useResumableReducer<T>(
   reducer,
-  initialState,
+  initialState: T,
   initializer = (s) => s,
-  id
-) {
+  id: string
+): [T, (action) => void] {
   if (!reducers.hasOwnProperty(id)) {
     // First one for an id gets to add the reducer.
     addReducer(id, reducer, initialState, initializer);
@@ -399,7 +399,7 @@ export function useResumableReducer(
     getSnapshots[id],
   );
 
-  return [currentState, dispatchers[id]];
+  return [currentState as T, dispatchers[id]];
 }
 
 const stateReducer = (s, v) => v;
