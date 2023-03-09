@@ -3,28 +3,26 @@ import { get, use } from "../state";
 
 const cache = new Map<(state: {}) => any, [any, {}]>();
 
+let magicObject = {_deps: {}};
 // This relies on all hook calls happening in a way that can be intercepted.
 // Will enforce later with types.
-function createMagicObject(): {_deps: {}, [index: string]: any} {
-  const capture = {_deps: {}};
+export function createMagicObject(use): void {
   
   for (const k in use) {
-    Object.defineProperty(capture, k, {
+    Object.defineProperty(magicObject, k, {
       get() {
         // Open question: how to reasonably link this to an application's collection of hooks?
         // Currently, I'm just importing this collection directly to keep things simple.
         const v = get[k];
-        capture._deps[k] = v;
+        magicObject._deps[k] = v;
         return v;
       },
     });
   }
-  
-  return capture;
 }
 
 function runAndCapture(create) {
-  const magicObject = createMagicObject();
+  magicObject._deps = {};
   const result = create(magicObject);
 
   return [result, magicObject._deps];
@@ -34,10 +32,10 @@ function getLatestValues(old: {}): [{}, boolean] {
   const state = {};
   let hasChanged = false;
 
-  for (const [k, oldValue] of Object.entries(old)) {
+  for (const k in old) {
     // This will call hooks in a loop, but it should be the same sequence as the create function.
     const latestValue = get[k];
-    if (oldValue !== latestValue) { 
+    if (old[k] !== latestValue) { 
       hasChanged = true;
     }
     state[k] = latestValue;
@@ -52,7 +50,7 @@ function getLatestValues(old: {}): [{}, boolean] {
 
 // If a function respects the rules of hooks, you can intercept the calls,
 // and replay them to avoid running the function + check if recalc needs to happen.
-export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
+export function useGlobalMemo<T>(create: (state: EasyAccessors|{}) => T): T {
   if (cache.has(create)) {
     const [cached, cachedState] = cache.get(create);
     // This should be guaranteed to run the same hooks as are called during capturing.
@@ -62,7 +60,7 @@ export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
     if (hasChanged) {
       cache.set(create, [value, latestState])
     }
-    console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
+    // console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
 
     return value;
   }
@@ -70,7 +68,45 @@ export function useGlobalMemo(create: (state: EasyAccessors|{}) => any) {
   const [result, state] = runAndCapture(create);
   cache.set(create, [result, state]);
 
-  console.log('NEW', create.name, result)
+  // console.log('NEW', create.name, result)
+
+  return result;
+}
+
+const cacheAnon = new Map<string, [any, {}]>();
+
+// Because writing a separate function is not very ergonomical, especially for very simple logic,
+// it's much more convenient to support anonymous functions.
+// This imposes some rules upon the anonymous function because the source code is used as unique identifier.
+// Only usage of hooks or literals is allowed.
+// Technically a variable that doesn't change is fine, but still risky.
+// TODO: Write a validator, similar to the rules of hooks.
+export function useGlobalMemoAnon<T>(create: (state: EasyAccessors) => T): T {
+  // TODO: Check how expensive this is, and how it scales with function source size.
+  // Does the browser have this string at hand already? Or is it derived from another representation of the
+  // function? In the latter case it could be costly.
+  // Most anonymous functions are quite short, though. If needed hashing them might make sense.
+  // Then again, there are not that many use cases in any given app, so probably you'll never get more than a 
+  // few tens of these anonymous functions being globally memo'd.
+  const key = create.toString();
+  if (cacheAnon.has(key)) {
+    const [cached, cachedState] = cacheAnon.get(key);
+    // This should be guaranteed to run the same hooks as are called during capturing.
+    const [latestState, hasChanged] = getLatestValues(cachedState);
+
+    const value = hasChanged ? create(latestState as EasyAccessors) : cached;
+    if (hasChanged) {
+      cacheAnon.set(key, [value, latestState])
+    }
+    // console.log( hasChanged ? 'RECALC' : 'CACHED' , key, value)
+
+    return value;
+  }
+
+  const [result, state] = runAndCapture(create);
+  cacheAnon.set(key, [result, state]);
+
+  // console.log('NEW', key, result)
 
   return result;
 }

@@ -1,6 +1,8 @@
-import { getters } from "../functions/getters";
+import { EasyAccessors, getters } from "../functions/getters";
+import { createMagicObject, useGlobalMemo, useGlobalMemoAnon } from "../hooks/useGlobalMemo";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
+import { signals } from "../functions/signals";
 
 export const use = {
   isSimpleSizes:
@@ -41,12 +43,40 @@ export const use = {
     ),
   showCssProperties:
     () => useLocalStorage('show-css-properties', false),
+  linkCssProperties:
+    () => useLocalStorage('link-css-properties', true),
   showSourceLinks:
     () => useLocalStorage('show-source-links', false),
   windowArrangments:
     () => useLocalStorage('window-arrangments', {}),
   webpackHome:
     () => useLocalStorage('webpack-home', ''),
+  // 
+  // State below this is only used in a demo element.
+  //
+  area: 
+    () => [useGlobalMemo(calculateArea)],
+  areaAnon: 
+    () => [useGlobalMemoAnon(get => get.width * get.height )],
+  areaDoubled: 
+    // Staggered memo.
+    () => [useGlobalMemoAnon(get => get.area * 2)],
+  areaAnonBroken: 
+    // Just to demonstrate types are working for the anonymous function.
+    () => [useGlobalMemoAnon(get => get.area * get.annoyingPrefix)],
+  areaNomemo: 
+    // What would actually make sense as this is not very expensive.
+    () => [get.width * get.height],
 } as const;
 
+
+function calculateArea(get: EasyAccessors) {
+  return get.width * get.height;
+}
+
 export const get = getters(use);
+
+export const $ = signals(use);
+
+// Quick fix to resolve dependency situation.
+createMagicObject(use);

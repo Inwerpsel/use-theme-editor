@@ -20,9 +20,6 @@ export function getters(use: BunchOfHooks): EasyAccessors {
       get() {
         return use[k]()[0]
       },
-      set() {
-        throw new Error('Only for getting');
-      },
     });
   }
   

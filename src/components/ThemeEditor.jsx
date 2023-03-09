@@ -35,6 +35,7 @@ import { Hotkeys } from './Hotkeys';
 import { ColorSettings } from './ui/ColorSettings';
 import { InformationVisibilitySettings } from './ui/InformationVisibilitySettings';
 import { WebpackHomeInput } from './ui/WebpackHomeInput';
+import { SignalExample } from './_examples/SignalExample';
 
 export const ThemeEditorContext = createContext({});
 
@@ -273,6 +274,7 @@ export const ThemeEditor = (props) => {
               <RemoveAnnoyingPrefix />
               {/* <ExampleTabs/> */}
               <NameReplacements/>
+              <SignalExample />
             </Drawer>
           </div>
         </MovablePanels>
