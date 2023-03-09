@@ -206,12 +206,11 @@ export const useThemeEditor = ({ initialState = DEFAULT_STATE}) => {
       'THEME_EDITOR'
     );
 
-  const sorted = sortObject(scopes);
-
-  const themeJson = JSON.stringify(sorted);
   useEffect(() => {
+    const sorted = sortObject(scopes);
+    const themeJson = JSON.stringify(sorted);
     localStorage.setItem(LOCAL_STORAGE_KEY, themeJson);
-  }, [themeJson]);
+  }, [scopes]);
 
   return [
     {
