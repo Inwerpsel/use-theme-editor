@@ -98,6 +98,22 @@ const lists = {
     'inset',
     'outset',
   ],
+  'vertical-align': [
+    'baseline',
+    'sub',
+    'super',
+    'text-top',
+    'text-bottom',
+    'middle',
+    'top',
+    'bottom',
+  ],
+  'text-rendering': [
+    'auto',
+    'optimizeSpeed',
+    'optimizeLegibility',
+    'geometricPrecision',
+  ],
 };
 
 export function selectOnlyOptions(cssVar) {
