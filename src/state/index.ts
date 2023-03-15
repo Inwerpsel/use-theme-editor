@@ -1,5 +1,5 @@
 import { EasyAccessors, getters } from "../functions/getters";
-import { createMagicObject, useGlobalMemo, useGlobalMemoAnon } from "../hooks/useGlobalMemo";
+import { createMagicObject, memo, memoAnon } from "../hooks/useGlobalMemo";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { signals } from "../functions/signals";
@@ -14,9 +14,6 @@ export const use = {
   height:
     () => useResumableLocalStorage('responsive-height', 640),
   scales:
-    // Even though scales are a number, the input that manages it returns a string,
-    // and the end use is also as a string.
-    // Double converting just to get the type right goes a bit too far.
     () => useResumableLocalStorage('responsive-scales', {} as {[index: string]: string}),
   uiArrangement:
     () => useResumableLocalStorage('panel-rearrangements', {}),
@@ -55,28 +52,39 @@ export const use = {
   // State below this is only used in a demo element.
   //
   area: 
-    () => [useGlobalMemo(calculateArea)],
+    () => [memo(calculateArea)],
   areaAnon: 
-    () => [useGlobalMemoAnon(get => get.width * get.height )],
+    // "memoAnon" is temporary name, probably just memo if I eliminate the other.
+    // This should also work for non anonymous functions.
+    // If there is no performance penalty to getting the function code as string,
+    // it could replace the previous function.
+    () => [memoAnon(get => get.width * get.height)],
   areaDoubled: 
     // Staggered memo.
-    () => [useGlobalMemoAnon(get => get.area * 2)],
-  areaAnonBroken: 
-    // Just to demonstrate types are working for the anonymous function.
-    () => [useGlobalMemoAnon(get => get.area * get.annoyingPrefix)],
+    () => [memoAnon(get => get.area * 2)],
+  areaBroken: 
+    // Just to demonstrate types are working inside the anonymous function.
+    () => [memoAnon(get => get.area * get.fileName)],
   areaNomemo: 
     // What would actually make sense as this is not very expensive.
     () => [get.width * get.height],
 } as const;
 
 
+// This is the reason why it's worth using the anon func source as string.
+// You need to put this function somewhere else. And you need to name it.
 function calculateArea(get: EasyAccessors) {
   return get.width * get.height;
 }
+
+console.time('Getters and signals');
 
 export const get = getters(use);
 
 export const $ = signals(use);
 
+
 // Quick fix to resolve dependency situation.
 createMagicObject(use);
+
+console.timeEnd('Getters and signals');

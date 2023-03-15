@@ -50,7 +50,7 @@ function getLatestValues(old: {}): [{}, boolean] {
 
 // If a function respects the rules of hooks, you can intercept the calls,
 // and replay them to avoid running the function + check if recalc needs to happen.
-export function useGlobalMemo<T>(create: (state: EasyAccessors|{}) => T): T {
+export function memo<T>(create: (state: EasyAccessors|{}) => T): T {
   if (cache.has(create)) {
     const [cached, cachedState] = cache.get(create);
     // This should be guaranteed to run the same hooks as are called during capturing.
@@ -81,7 +81,7 @@ const cacheAnon = new Map<string, [any, {}]>();
 // Only usage of hooks or literals is allowed.
 // Technically a variable that doesn't change is fine, but still risky.
 // TODO: Write a validator, similar to the rules of hooks.
-export function useGlobalMemoAnon<T>(create: (state: EasyAccessors) => T): T {
+export function memoAnon<T>(create: (state: EasyAccessors) => T): T {
   // TODO: Check how expensive this is, and how it scales with function source size.
   // Does the browser have this string at hand already? Or is it derived from another representation of the
   // function? In the latter case it could be costly.
@@ -123,7 +123,7 @@ export function useGlobalMemoAnon<T>(create: (state: EasyAccessors) => T): T {
 
   function useArea() {
     // Look ma, no deps!
-    return useGlobalMemo(calculateArea);
+    return memo(calculateArea);
   }
 }
 

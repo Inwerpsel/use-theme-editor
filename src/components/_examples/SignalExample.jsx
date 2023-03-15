@@ -1,9 +1,60 @@
-import { useState } from "react";
+import { Fragment, useState } from "react";
 import { $ } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
 
 function TimeAtRender() {
     return <time>{Date.now()}</time>
+}
+
+// Unaware component level 2.
+// The component uses the signal as a primitve value in its own logic.
+function FormatProp({prop}) {
+    console.log('FormatProp');
+    return `The prop says "${prop}"`;
+}
+
+// Unaware component level 2.
+// Since this one only puts attr in JSX, it won't itself be rerendered.
+function FormatPropJSX({prop}) {
+    console.log('FormatPropJSX');
+    return <Fragment>The prop says "{prop}"</Fragment>;
+}
+
+// Unaware component level 2.
+// This type of usage does not cause coercion to a primitive value.
+// As a result, it will not call the hook and obviously won't receive
+// the right value.
+// Since the attr is always the same object, this component will never
+// rerender.
+function INCOMPATIBLE__FormatProp({attr}) {
+    console.log('INCOMPATIBLE__FormatProp');
+    return attr === 'all' ? 'The prop is equal to "all"' : 'The prop is not equal to "all"';
+}
+
+// Unaware component level 1.
+function ShowProp({prop, area}) {
+    const areaDouble = area * 2;
+
+    return <div>
+        <span>
+            <FormatProp prop={prop} />
+            <br />
+            <FormatPropJSX prop={prop} />
+            <br />
+            <b>Expected to not work: </b>
+            <br />
+            <INCOMPATIBLE__FormatProp prop={prop} />
+        </span>
+        <div>
+            {/* <input type="text" value={$.annoyingPrefix} /> */}
+        </div>
+        <div>
+            {areaDouble}
+        </div>
+        <div>
+            <TimeAtRender />
+        </div>
+    </div>
 }
 
 export function SignalExample() {
@@ -25,7 +76,11 @@ export function SignalExample() {
         <p>
             <Checkbox controls={[on, setOn]}>memo</Checkbox>
             <br/>
-            { !on ? 'No expensive memo done' : $.area}
+            { !on ? 'Avoided calling signal' : $.area}
+        </p>
+        <h3>Inject into unaware components</h3>
+        <p>
+            <ShowProp prop={$.propertyFilter} area={$.area} />
         </p>
     </div>
 }
