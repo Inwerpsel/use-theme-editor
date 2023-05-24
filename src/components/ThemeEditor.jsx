@@ -36,6 +36,7 @@ import { ColorSettings } from './ui/ColorSettings';
 import { InformationVisibilitySettings } from './ui/InformationVisibilitySettings';
 import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
+import { VoiceCommands } from './ui/VoiceCommands';
 
 export const ThemeEditorContext = createContext({});
 
@@ -275,6 +276,7 @@ export const ThemeEditor = (props) => {
               {/* <ExampleTabs/> */}
               <NameReplacements/>
               <SignalExample />
+              <VoiceCommands />
             </Drawer>
           </div>
         </MovablePanels>
