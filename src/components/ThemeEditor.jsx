@@ -37,6 +37,7 @@ import { InformationVisibilitySettings } from './ui/InformationVisibilitySetting
 import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
 import { VoiceCommands } from './ui/VoiceCommands';
+import { SpeakGlobalHooks } from '../voice/menu/state';
 
 export const ThemeEditorContext = createContext({});
 
@@ -173,6 +174,7 @@ export const ThemeEditor = (props) => {
         openGroups, setOpenGroups,
       }}
     >
+      <SpeakGlobalHooks hooks={use} />
       <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
       <span>AAAAAAA</span>
       <div className="theme-editor">

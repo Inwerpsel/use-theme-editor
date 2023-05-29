@@ -1,14 +1,22 @@
 import { useEffect, useState } from 'react';
-import { hooks, startRecognition, stopRecognition } from '../../voice';
+import { hooks, recognitionIsRunning, startRecognition, stopRecognition } from '../../voice';
 
 export function VoiceCommands() {
-    const [on, setOn] = useState(false);
+    const [on, setOn] = useState(true);
     const lastText = hooks.lastText();
     const menu = hooks.currentMenu();
     const commands = Object.keys(menu);
 
     useEffect(() => {
-        on ? startRecognition() : stopRecognition();
+      if (on) {
+          try {
+            startRecognition();
+          } catch (e) {
+            // It's already running.
+          }
+      } else {
+        stopRecognition();
+      }
     }, [on])
 
     return (
@@ -29,10 +37,12 @@ export function VoiceCommands() {
         <span>{lastText}</span>
         <br/>
         <br/>
-        <ul>
+        <ul style={{listStyleType: 'none'}}>
           {commands.map((c) => (
             <li key={c}>
-              <h4>{c}</h4>
+              <h4 style={{
+                border: lastText.includes(c) ? '1px solid lightblue' : 'none',
+              }}>{c}</h4>
             </li>
           ))}
         </ul>

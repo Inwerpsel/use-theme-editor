@@ -6,10 +6,10 @@ import { isColorProperty } from '../inspector/TypedControl';
 
 export function Inspector(props) {
   const { unfilteredGroups } = props;
-  const { propertyFilter, propertySearch } = get;
+  const { propertyFilter, search } = get;
 
   const groups = useMemo(() => {
-    const searched = filterSearched(unfilteredGroups, propertySearch);
+    const searched = filterSearched(unfilteredGroups, search);
     if (propertyFilter === 'all') {
       return searched;
     }
@@ -19,7 +19,7 @@ export function Inspector(props) {
         cssVar.usages.some((usage) => isColorProperty(usage.property))
       ),
     }));
-  }, [unfilteredGroups, propertyFilter, propertySearch]);
+  }, [unfilteredGroups, propertyFilter, search]);
 
     return (
       <ul className={'group-list'}>

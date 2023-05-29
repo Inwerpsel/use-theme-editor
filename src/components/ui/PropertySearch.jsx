@@ -5,7 +5,7 @@ import { TextControl } from '../controls/TextControl';
 
 
 export function PropertySearch() {
-  const [value, setValue] = use.propertySearch();
+  const [value, setValue] = use.search();
 
   // const ref = useRef();
 

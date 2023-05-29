@@ -19,7 +19,7 @@ export const use = {
     () => useResumableLocalStorage('panel-rearrangements', {}),
   propertyFilter:
     () => useResumableLocalStorage('property-filter', 'all'),
-  propertySearch:
+  search:
     () => useResumableLocalStorage('property-search', ''),
   frameClickBehavior:
     () => useLocalStorage('theme-editor-frame-click-behavior', 'any'),
@@ -52,7 +52,7 @@ export const use = {
   // State below this is only used in a demo element.
   //
   area: 
-    () => [memo(calculateArea)],
+    () => [memoAnon(get => get.width * get.height)],
   areaAnon: 
     // "memoAnon" is temporary name, probably just memo if I eliminate the other.
     // This should also work for non anonymous functions.
@@ -61,10 +61,10 @@ export const use = {
     () => [memoAnon(get => get.width * get.height)],
   areaDoubled: 
     // Staggered memo.
-    () => [memoAnon(get => get.area * 2)],
-  areaBroken: 
-    // Just to demonstrate types are working inside the anonymous function.
-    () => [memoAnon(get => get.area * get.fileName)],
+    () => [memoAnon(get => get.areaAnon * 2)],
+  // areaBroken: 
+  //   // Just to demonstrate types are working inside the anonymous function.
+  //   () => [memoAnon(get => get.area * get.fileName)],
   areaNomemo: 
     // What would actually make sense as this is not very expensive.
     () => [get.width * get.height],
@@ -77,6 +77,8 @@ function calculateArea(get: EasyAccessors) {
   return get.width * get.height;
 }
 
+// Let's time this for now to show this doesn't take long even if we're creating
+// signals that aren't yet used.
 console.time('Getters and signals');
 
 export const get = getters(use);

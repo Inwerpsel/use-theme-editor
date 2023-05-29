@@ -12,7 +12,7 @@ import {isColorProperty} from '../inspector/TypedControl';
 import { get } from '../../state';
 
 export function CurrentTheme() {
-  const { propertyFilter, propertySearch } = get;
+  const { propertyFilter, search } = get;
   const {
     theme,
     dispatch,
@@ -38,8 +38,8 @@ export function CurrentTheme() {
 
     return Object.keys(base).sort().reduce((grouped, k) => {
       const cssVar = allVars.find(allVar => allVar.name === k);
-      const term = propertySearch.replace(/^\!/, '');
-      const isInverse = term.length !== propertySearch.length
+      const term = search.replace(/^\!/, '');
+      const isInverse = term.length !== search.length
       if (!cssVar) {
         if (term && k.replace(/-+/g, ' ').match(term) || isInverse) {
           return grouped;
@@ -75,7 +75,7 @@ export function CurrentTheme() {
 
       return grouped;
     }, {});
-  }, [theme, isOpen, useDefaultValues, propertyFilter, propertySearch]);
+  }, [theme, isOpen, useDefaultValues, propertyFilter, search]);
 
   return (
     <div>
