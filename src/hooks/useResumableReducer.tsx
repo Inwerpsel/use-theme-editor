@@ -82,7 +82,7 @@ function historyReducer(state, action, options) {
       return {
         ...state,
         oldStates,
-        historyOffset: historyOffset + amount,
+        historyOffset: +historyOffset + amount,
       };
     }
     case 'HISTORY_FORWARD': {
@@ -145,7 +145,7 @@ function historyReducer(state, action, options) {
       // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
       const now = performance.now();
-      const slowEnough = now - state.lastSet > 500;
+      const slowEnough = now - state.lastSet > (options?.debounceTime || 500);
       const skipHistory = !slowEnough || options?.skipHistory;
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
@@ -278,7 +278,7 @@ function checkNotifyAll() {
 //   };
 // }
 
-const historyDispatch = (action, options = {}) => {
+export const historyDispatch = (action, options = {}) => {
   const newState = historyReducer(state, action, options);
   if (newState === state) {
     return
@@ -388,7 +388,7 @@ export function useResumableReducer<T>(
   initialState: T,
   initializer = (s) => s,
   id: string
-): [T, (action) => void] {
+): [T, (action, options) => void] {
   if (!reducers.hasOwnProperty(id)) {
     // First one for an id gets to add the reducer.
     addReducer(id, reducer, initialState, initializer);
