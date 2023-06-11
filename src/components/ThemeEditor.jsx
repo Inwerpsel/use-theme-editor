@@ -121,7 +121,7 @@ export const ThemeEditor = (props) => {
   // Open first group.
   // I don't like how this is done but it's tricky to replace at the moment.
   useLayoutEffect(() => {
-    if (isNewInspection && openFirstOnInspect && unfilteredGroups.length > 0) {
+    if (isNewInspection && currentInspected === inspectedIndex && openFirstOnInspect && unfilteredGroups.length > 0) {
       setOpenGroups(
         {
           [unfilteredGroups[0].label]: true,
@@ -129,7 +129,7 @@ export const ThemeEditor = (props) => {
         { skipHistory: true }
       );
     }
-  }, [unfilteredGroups, openFirstOnInspect]);
+  }, [unfilteredGroups, openFirstOnInspect, currentInspected, inspectedIndex, isNewInspection]);
 
   useInsertionEffect(() => {
     updateScopedVars(scopes, true);
@@ -176,7 +176,6 @@ export const ThemeEditor = (props) => {
     >
       <SpeakGlobalHooks hooks={use} />
       <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
-      <span>AAAAAAA</span>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiArrangement}>
           <div
