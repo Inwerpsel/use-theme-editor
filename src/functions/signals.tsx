@@ -12,8 +12,9 @@ export function signals(use: BunchOfHooks): Signals  {
   // Todo: Check at compile time which signals are actually used.
 
   for (const k in use) {
+    const hook = use[k];
     // Uppercase name so it can be used in JSX element.
-    const Signal = () => use[k]()[0];
+    const Signal = () => hook()[0];
     // We create the element here already. It can be returned in multiple places.
     const $signal = <Signal />;
     // React does nothing with this object beyond putting it in the DOM as a textnode and
@@ -47,11 +48,7 @@ export function signals(use: BunchOfHooks): Signals  {
     // and exist for use cases like this.
     $signal.toString = Signal;
 
-    Object.defineProperty(signals, k, {
-      get() {
-        return $signal;
-      },
-   });
+    signals[k] = $signal;
   }
   
   return signals;
