@@ -22,10 +22,13 @@ export function createMagicObject(use): void {
 }
 
 function runAndCapture(create) {
+  const origDeps = magicObject._deps;
   magicObject._deps = {};
   const result = create(magicObject);
+  const newDeps = magicObject._deps;
+  magicObject._deps = origDeps;
 
-  return [result, magicObject._deps];
+  return [result, newDeps];
 }
 
 function getLatestValues(old: {}): [{}, boolean] {
