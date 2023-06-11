@@ -16,6 +16,10 @@ export const isColorProperty = property => {
 };
 
 export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
+  if (!/^--/.test(cssVar.name)) {
+    // For now these can't be adjusted anyway, saves some performance.
+    return null;
+  }
 
   if (cssVar.usages.some(usage => isColorProperty(usage.property))) {
     return <ColorControl {...{onChange, value, cssVar, cssFunc}}/>;

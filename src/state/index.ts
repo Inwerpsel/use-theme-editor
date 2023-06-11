@@ -70,13 +70,6 @@ export const use = {
     () => [get.width * get.height],
 } as const;
 
-
-// This is the reason why it's worth using the anon func source as string.
-// You need to put this function somewhere else. And you need to name it.
-function calculateArea(get: EasyAccessors) {
-  return get.width * get.height;
-}
-
 // Let's time this for now to show this doesn't take long even if we're creating
 // signals that aren't yet used.
 console.time('Getters and signals');

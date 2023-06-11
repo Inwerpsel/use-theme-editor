@@ -25,6 +25,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
   const [elements, setElements] = useState([]);
   const [currentElement, setCurrentElement] = useState(0);
   const id = useId();
+  // Should happen up front for all selectors, so that they're properly grouped from the start.
   const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
 
   useEffect(() => {
@@ -79,7 +80,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
     }
     return <Fragment>
       {showLabel && <div className='monospace-code'>
-        {selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}
+        {selector.trim()}
           <span className={'var-control-property'}>{property}</span>
       </div>}
 
@@ -100,7 +101,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
     <Fragment>
       {showLabel && (
         <div className="monospace-code">
-          {selector.replaceAll(/\s*\,\s*/g, ',\n    ').trim()}
+          {selector.trim()}
           <span className={'var-control-property'}>{property}</span>
         </div>
       )}

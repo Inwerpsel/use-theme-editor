@@ -18,7 +18,7 @@ export const GroupControl = props => {
 
   const { propertyFilter } = get;
 
-  const [propertySearch, setPropertySearch] = use.propertySearch();
+  const [search, setSearch] = use.search();
 
   const {
     element,
@@ -118,9 +118,9 @@ export const GroupControl = props => {
         {label} ({vars.length})
         {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
         >{propertyFilter}</span>}
-        { propertySearch !== '' && <span style={{color: 'grey', fontSize: '12px'}}
+        { search !== '' && <span style={{color: 'grey', fontSize: '12px'}}
         >
-           - "{propertySearch}"
+           - "{search}"
           <button
             style={{
               fontSize: '7px',
@@ -130,7 +130,7 @@ export const GroupControl = props => {
               borderColor: 'grey'
                }}
             title="Clear search"
-            onClick={() => { setPropertySearch('') }}
+            onClick={() => { setSearch('') }}
           >X</button>
            </span>}
 

@@ -4,7 +4,6 @@ import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
 import { useCompactSetting } from "../movable/DispatchedElement";
 import { DragHandle } from "../movable/DragHandle";
-import { ThemeEditorContext } from "../ThemeEditor";
 import { CompactModeButton } from "./CompactModeButton";
 
 function generateId () {

@@ -7,6 +7,8 @@ export const hotkeysOptions = {
   enableOnTags: ['INPUT', 'SELECT', 'RADIO'],
 };
 
+// The hotkeys code is a bit old, I just moved it here to improve performance (it started being the only render trigger).
+// Ideally I want to add hotkeys with more flexibility and without dependency arrays.
 export function Hotkeys(props) {
   const { modifiedServerVersion, scopes, uploadTheme, frameRef } = props;
   const { fileName } = get;
