@@ -77,7 +77,7 @@ tags you see in [other example HTML pages at the end of the body](https://github
 ### [Draggable elements](https://github.com/Inwerpsel/use-theme-editor/tree/main/src/components/movable)
 I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
 
-### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.js)
+### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.tsx)
 Using `useSyncExternalStore`, these hooks make it possible to put multiple pieces of state into a single history timeline,
 while offering a similar function signature as `useState` and `useReducer`. Any code that uses either should just work
 with history by replacing the function, and adding a string key.
