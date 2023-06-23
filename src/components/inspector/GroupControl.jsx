@@ -1,6 +1,6 @@
 import {addHighlight, removeHighlight} from '../../functions/highlight';
 import {getValueFromDefaultScopes, VariableControl} from './VariableControl';
-import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
+import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';

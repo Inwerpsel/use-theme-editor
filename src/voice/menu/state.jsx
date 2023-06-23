@@ -36,6 +36,7 @@ export const state = {
         if (!hookSetters.hasOwnProperty(k)) {
           continue;
         }
+        // Ensure command key text is in same format as returned by Web Speech API.
         base[splitCamelCase(k).toLocaleLowerCase()] = (...v) => {
           let actualValue;
           if (v.length === 1) {
@@ -46,6 +47,8 @@ export const state = {
           if (actualValue === '') {
             return;
           }
+
+          // Quick hack to clear the search box.
           if (typeof actualValue === 'string' && actualValue.trim() === 'nothing') {
             actualValue = '';
           }
@@ -60,6 +63,8 @@ export const state = {
 export function SpeakGlobalHooks({ hooks }) {
   globalsHooks = hooks;
 
+  // Quick hack to get access to all setters, quite contrived.
+  // But loading the state raw in the voice menu is just tmp anyway.
   return Object.entries(hooks).map(([name, hook]) => (
     <PopulateSetter {...{ name, hook }} />
   ));

@@ -163,6 +163,17 @@ export const setupThemeEditor = async (config) => {
         inline: 'end',
         behavior: 'smooth'});
     }
+    // This algorithm was created in a case with certain assumptions that made it more than fast enough.
+    // - Not more than 4 or 5 custom props per selector on average.
+    // - Not a lot of selectors per HTML element.
+    // - Not a lot of properties on root elements (body and html).
+    // Now that the goal is to support any CSS, I'm running into pages with CSS that is far enough
+    // from these assumptions to make the performance not ideal and sometimes really poor.
+    // Possibly the whole approach doesn't make sense as a general one, and overall the efficiency of 
+    // just checking each element individually could be better.
+    // Additionally, this approach makes it unavoidable that properties are only shown in the element nearest
+    // to the root, even if they're also used deeper down. Though you can get used to that and will always find
+    // everything.
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target);
     const groups = filterMostSpecific(rawGroups, target);

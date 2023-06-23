@@ -15,11 +15,18 @@ const INITIAL_STATE = {
       payload: {},
     },
   },
+  // Timestamp of last change, used for debouncing.
   lastSet: 0,
+  // All elements in history, except the most recent states.
   historyStack: [],
+  // How far back in history are we?
   historyOffset: 0,
+  // When should user be prompted before erasing future with update?
   historyWarnOnUpdateLimit: 5,
+  // The most recent states. This one gets updates, older history is
+  // read only (but also delete).
   states: {},
+  // The previous state, used for change detection only.
   oldStates: {},
 };
 
@@ -248,7 +255,7 @@ function checkNotifyAll() {
 //     history.go(-history.state.length + history.state.historyOffset - 1);
 //   }
 //   const initialHistoryState = { historyOffset: 0, length: 0 };
-//   if ('length' in (history.state || {})) {
+//   if (history?.state.hasOwnProperty('length')) {
 //     history.pushState(initialHistoryState, '');
 //   } else {
 //     history.replaceState(initialHistoryState, '');
@@ -404,7 +411,7 @@ export function useResumableReducer<T>(
 
 const stateReducer = (s, v) => v;
 
-export function useResumableState(initial = null, id) {
+export function useResumableState(initial, id) {
   return useResumableReducer(
     stateReducer,
     null,
