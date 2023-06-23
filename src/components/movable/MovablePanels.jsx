@@ -79,24 +79,39 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
   const [drawerOpen, setDrawerOpen] = hooks.drawerOpen();
   const [dragEnabled, setDragEnabled] = hooks.dragEnabled();
 
-  const movePanelTo = useCallback((id, areaId, overElementId) => {
-    setOverElement(null);
+  const movePanelTo = useCallback(
+    (id, areaId, overElementId) => {
+      setOverElement(null);
 
-    // Create initial area order if the area wasn't used before.
-    if (!Object.values(panelMap).some(([otherAreaId]) => otherAreaId === areaId)) {
-      let i = 0;
-      Object.entries(origLocationsRef.current).forEach(([element, area]) => {
-        if (area === areaId && !(element in panelMap)) {
-          panelMap[element] = [area, i];
-          i += 1;
-        }
-      });
-    }
+      // Create initial area order if the area wasn't used before.
+      if (
+        !Object.values(panelMap).some(
+          ([otherAreaId]) =>
+            otherAreaId === areaId &&
+            // Quick fix to make it ignore outdated element ids.
+            origLocationsRef.current.hasOwnProperty(otherAreaId)
+        )
+      ) {
+        let i = 0;
+        Object.entries(origLocationsRef.current).forEach(([element, area]) => {
+          if (area === areaId && !(element in panelMap)) {
+            panelMap[element] = [area, i];
+            i += 1;
+          }
+        });
+      }
 
-    const newPanelMap = updateElementLocation(panelMap, id, areaId, overElementId);
+      const newPanelMap = updateElementLocation(
+        panelMap,
+        id,
+        areaId,
+        overElementId
+      );
 
-    setPanelMap(newPanelMap);
-  }, [panelMap]);
+      setPanelMap(newPanelMap);
+    },
+    [panelMap]
+  );
 
   // A 3 pass render is needed. Should not involve overhead.
   // Contained elements won't get rendered more than once.
