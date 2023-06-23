@@ -13,15 +13,19 @@ import { Checkbox } from "../controls/Checkbox";
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
-import { rootScopes } from '../../functions/extractPageVariables';
 import { useResumableState } from '../../hooks/useResumableReducer';
 import { get } from '../../state';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
+  if (!/^--/.test(name)) {
+    return ['', ''];
+  }
   // todo: make this make more sense
-  const raw = name.replace(/^--/, '').replace(/--/g, ': ').replace(/[-_]/g, ' ');
-  const parts = raw.split(':');
+  const raw = name
+    .replace(/^--/, '')
+    .replace(/[-_]/g, ' ');
+  const parts =  raw.split('--');
 
   return [
     parts.slice(0, - 1).join(' — '),
@@ -97,9 +101,9 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
             height: size,
             border: '1px solid black',
             borderRadius: '6px',
-            backgroundImage:  `${value}`,
-            backgroundColor:  `${value}`,
-            backgroundRepeat:  `no-repeat`,
+            backgroundImage: `${value}`,
+            backgroundColor: `${value}`,
+            backgroundRepeat: `no-repeat`,
             backgroundSize: 'cover',
             // background:,
             float: 'right',
@@ -165,7 +169,7 @@ export const VariableControl = (props) => {
     currentScope = ROOT_SCOPE,
   } = props;
 
-  const { width, annoyingPrefix, nameReplacements, showCssProperties } = get;
+  const { width, annoyingPrefix, nameReplacements, showCssProperties, linkCssProperties } = get;
 
   const {
     scopes,
@@ -185,10 +189,10 @@ export const VariableControl = (props) => {
   } = cssVar;
 
   const defaultValue =
+    getValueFromDefaultScopes(elementScopes, cssVar) ||
     definedValues[':root'][name] ||
     definedValues[':where(html)'][name] ||
-    defaultValues[name] ||
-    getValueFromDefaultScopes(elementScopes, cssVar);
+    defaultValues[name];
 
   const [
     showSelectors, setShowSelectors
@@ -313,25 +317,26 @@ export const VariableControl = (props) => {
         <div>
           {!!showCssProperties && <Fragment>
             {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
-            {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => (
-              <span
-                key={property}
-                className="monospace-code"
-                style={{ 
-                  fontSize: '14px',
-                  ...(property !== maxSpecific?.property ? {background: 'grey'} : {})
-                 }}
-                title={
-                  isFullProperty
+            {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => {
+              const comp = (
+                <span
+                  key={property}
+                  className="monospace-code"
+                  style={{
+                    fontSize: '14px',
+                    ...(property !== maxSpecific?.property ? { background: 'grey' } : {})
+                  }}
+                  title={isFullProperty
                     ? ''
-                    : fullValue
-                }
-              >
-                {property}
-                {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
-                {!!isImportant && <b style={{fontWeight: 'bold', color: 'darkorange'}}>!important</b>}
-              </span>
-            ))}
+                    : fullValue}
+                >
+                  {property}
+                  {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
+                  {!!isImportant && <b style={{ fontWeight: 'bold', color: 'darkorange' }}>!important</b>}
+                </span>
+              );
+              return !linkCssProperties ? comp : <a target={'_blank'} href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}>{comp}</a>;
+            })}
           </Fragment>}
         </div>
       </div>
@@ -389,14 +394,14 @@ export const VariableControl = (props) => {
               </button>
             )}
 
-            <button
+            {/^--/.test(cssVar.name) && <button
               style={{borderWidth: openVariablePicker ? '4px' : '1px'}}
               onClick={(event) => {
               setOpenVariablePicker(!openVariablePicker);
               event.stopPropagation();
             }}>
               Link
-            </button>
+            </button>}
 
             {!usages[0].isFake && (
               <button onClick={toggleSelectors}>
