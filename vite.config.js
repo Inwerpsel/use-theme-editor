@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   mode: 'development',
   root: 'docs',
-  base: '/use-theme-editor',
+  // base: '/use-theme-editor',
   build: {
     target: 'es2015',
     rollupOptions: {
