@@ -12,7 +12,7 @@ Eventually it will be expanded to allow any CSS edit without needing custom prop
 
 ## Demo
 
-> ⚠️The demo is currently NOT WORKING on GitHub Pages, while the build is being set up.
+> ⚠️The demo is currently NOT ALWAYS WORKING on GitHub Pages, while the build is being set up.
 
 > Currently, demos live inside of `/docs` just to make them work with GitHub Pages.
 
