@@ -1,14 +1,18 @@
-# CSS variables based theme editor
+# `use-theme-editor`: Your app is your design system, your pages are your designs
 
-A collection of React components and hooks that can be used standalone or together to provide theme editing capabilities
-based on the contents of the stylesheets on a page.
+Are you tired of slow design iterations, keeping designs up to date, and oversimplified mockups that miss 99% of your app's complexity?
+Do you have a waterfall process just so that you can update a few colors?
+Do you need to have your designers spend literal months setting up and maintaining a separate design system that duplicates information already encoded in the source code?
 
-All CSS rules that use a `var()` statement in the value are included in the UI.
-It can easily be integrated into any HTML page by injecting the same script.
+With this repo you can directly use your content to inspect every part of the design and create new design variations.
 
-There's a dedicated UI element for most common CSS properties, with more to follow.
-It takes all relevant data in the CSS files into account, and you can change quite a lot of it by swapping out custom props.
-Eventually it will be expanded to allow any CSS edit without needing custom properties.
+This works on literally any HTML page, whether it's from a SSR, SPA, CMS... It parses all CSS on the page and makes it
+browsable.
+
+You can use this repo in various ways:
+- Integrate the standalone theme editor page with almost no coding required (exact steps to follow)
+- Import 1 function in your own app
+- Anything in between the previous options
 
 ## Demo
 
@@ -47,7 +51,7 @@ Less consistent, but still a usable result. Makes heavy use of scoped custom pro
 
 ### Other sites
 
-It should work for any site that uses custom properties, but you'll have to test those locally for now.
+It should work for any site (even complex sites like GitHub, StackOverflow, YouTube), but you'll have to test those locally for now.
 Only with the current selection of demo pages I was confident enough hosting this content on GitHub Pages
 wouldn't be a problem (as the source HTML is on GitHub already).
 
@@ -76,7 +80,7 @@ tags you see in [other example HTML pages at the end of the body](https://github
 ### [Draggable elements](https://github.com/Inwerpsel/use-theme-editor/tree/main/src/components/movable)
 I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
 
-### [History management](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.tsx)
+### [State management with history](https://github.com/Inwerpsel/use-theme-editor/blob/main/src/hooks/useResumableReducer.tsx)
 Using `useSyncExternalStore`, these hooks make it possible to put multiple pieces of state into a single history timeline,
 while offering a similar function signature as `useState` and `useReducer`. Any code that uses either should just work
 with history by replacing the function, and adding a string key.
@@ -87,12 +91,6 @@ with history by replacing the function, and adding a string key.
 * Register a custom component per action to visualize in the timeline.
 * Debounces everything by default (you'd never want history without it).
 
-## How to use
-
-For now, there are 2 main ways you could use this repo:
-- inject the self contained theme editor into existing pages
-- as a component and hooks library for React apps
-
 ## Known issues
 A few components are not (fully) working at the moment, mostly because they depend on other changes, but also some small bugs.
 
@@ -100,7 +98,6 @@ A few components are not (fully) working at the moment, mostly because they depe
 - Not all references in other variables are listed
 - Import/export exports wrong data format.
 - Add alias for raw values not working.
-- Some issues in the presence of specific root selectors
 
 <details>
 <summary>
