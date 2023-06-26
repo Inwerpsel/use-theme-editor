@@ -14,6 +14,12 @@ You can use this repo in various ways:
 - Import 1 function in your own app
 - Anything in between the previous options
 
+## Status
+
+While most features are quite stable, various parts are being worked on at the moment. If you'd like to
+make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
+functionality), feel free to open a new issue describing your needs and they'll be prioritized.
+
 ## Demo
 
 > ⚠️The demo is currently NOT ALWAYS WORKING on GitHub Pages, while the build is being set up.
