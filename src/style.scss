@@ -128,18 +128,6 @@ body {
   list-style-type: none;
 }
 
-html.hide-wp-admin-bar {
-  margin-top: 0 !important;
-
-  #wpadminbar {
-    display: none;
-  }
-
-  nav#header, .top-navigation {
-    top: 0;
-  }
-}
-
 .server-theme-list {
   flex-shrink: 0;
 }
@@ -353,10 +341,6 @@ div[id^=font-picker] ul {
   }
 }
 
-.fake-wp-button:hover {
-  cursor: pointer;
-}
-
 .render-info {
   --bg-opacity: calc(var(--current-renders, 1) / max(var(--max-tracked-renders, 1), 2));
   // Uncomment if the var breaks your IDE color picker.
@@ -410,10 +394,6 @@ div[id^=font-picker] ul {
   padding: 0 !important;
   border: none !important;
   padding-bottom: 12px !important;
-}
-
-#wpadminbar {
-  display: none;
 }
 
 .history {

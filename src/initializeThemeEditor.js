@@ -70,7 +70,6 @@ export function updateScopedVars(scopes, resetAll = false) {
  });
 }
 
-let destroyedDoc = false;
 function destroyDoc() {
   [...document.body.childNodes].forEach(el => {
     if (el.id === 'theme-editor-root' || ['STYLE', 'LINK', 'SCRIPT', ].includes(el.nodeName)) {
@@ -80,7 +79,6 @@ function destroyDoc() {
   });
   destroyedDoc = true;
 }
-
 
 export const setupThemeEditor = async (config) => {
   updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
@@ -99,7 +97,6 @@ export const setupThemeEditor = async (config) => {
 
   if (!isRunningAsFrame) {
     const renderEmptyEditor = () => {
-      document.documentElement.classList.add('hide-wp-admin-bar');
       renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
       // Since the original page can be accessed with a refresh, destroy it to save resources.
       destroyDoc();
@@ -108,20 +105,6 @@ export const setupThemeEditor = async (config) => {
     if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') !== 'false') {
       renderEmptyEditor();
     }
-
-    const customizeMenu = document.getElementById('wp-admin-bar-customize');
-
-    if (customizeMenu) {
-      const button = document.createElement('a');
-      button.textContent = 'Customize';
-      button.className = 'ab-item fake-wp-button';
-      button.onclick = () => {
-        renderEmptyEditor();
-      };
-      customizeMenu.removeChild(customizeMenu.firstChild);
-      customizeMenu.appendChild(button);
-    }
-
   }
 
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';

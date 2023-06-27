@@ -4,8 +4,6 @@ import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
 
 // For now only extract from the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
-// For now hard coded exclude of WP core files. Could be made configurable.
-export const isNotCoreFile = ({ href }) => !href || !href.includes('wp-includes');
 
 const sourceMapConsumers = {};
 

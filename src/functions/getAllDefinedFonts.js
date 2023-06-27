@@ -1,4 +1,4 @@
-import {isNotCoreFile, isSameDomain} from './extractPageVariables';
+import {isSameDomain} from './extractPageVariables';
 
 const GOOGLE_FONTS_URL = 'https://fonts.googleapis.com';
 
@@ -64,6 +64,6 @@ export const getAllDefinedFonts = async () => {
   //
   // const inStyleElements = styleElements.reduce(extractFonts, {});
 
-  const sheets = [...document.styleSheets].filter(ourDomainOrGoogleFonts).filter(isNotCoreFile);
+  const sheets = [...document.styleSheets].filter(ourDomainOrGoogleFonts);
   return Object.values(await sheets.reduce(extractFonts, {}));
 };
