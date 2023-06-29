@@ -72,60 +72,53 @@ export function updateScopedVars(scopes, resetAll = false) {
 
 function destroyDoc() {
   [...document.body.childNodes].forEach(el => {
-    if (el.id === 'theme-editor-root' || ['STYLE', 'LINK', 'SCRIPT', ].includes(el.nodeName)) {
+    if (['STYLE', 'LINK', 'SCRIPT', ].includes(el.nodeName)) {
       return;
     }
     document.body.removeChild(el);
   });
-  destroyedDoc = true;
 }
 
 export const setupThemeEditor = async (config) => {
   updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   setLocalStorageNamespace(config.localStorageNamespace || '');
 
-  const editorRoot = document.createElement( 'div' );
-
-  if (!isRunningAsFrame) {
-    editorRoot.id = 'theme-editor-root';
-    document.body.appendChild( editorRoot );
-  }
 
   await dependencyReady;
   const cssVars = await extractPageVariables();
   const defaultValues = getAllDefaultValues(cssVars);
 
   if (!isRunningAsFrame) {
-    const renderEmptyEditor = () => {
+    const editorRoot = document.createElement( 'div' );
+    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') !== 'false') {
       renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
       // Since the original page can be accessed with a refresh, destroy it to save resources.
       destroyDoc();
-    };
-
-    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') !== 'false') {
-      renderEmptyEditor();
     }
+
+    editorRoot.id = 'theme-editor-root';
+    document.body.appendChild( editorRoot );
+
+    window.addEventListener('message', event => {
+      if (event.data?.type === 'render-vars') {
+        const { payload } = event.data;
+        renderSelectedVars(
+          editorRoot,
+          null,
+          payload.groups,
+          cssVars,
+          config,
+          defaultValues,
+          payload.index
+        );
+      }
+    }, false);
   }
 
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
   let inspectedIndex = -1;
   let inspectedElements = [];
   let lastGroups = [];
-
-  window.addEventListener('message', event => {
-    if (event.data?.type === 'render-vars') {
-      const { payload } = event.data;
-      renderSelectedVars(
-        editorRoot,
-        null,
-        payload.groups,
-        cssVars,
-        config,
-        defaultValues,
-        payload.index
-      );
-    }
-  }, false);
 
   const locatedElements = {};
 
@@ -137,6 +130,7 @@ export const setupThemeEditor = async (config) => {
   function inspect(targetOrIndex) {
     const isPrevious = typeof targetOrIndex === 'number';
     const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
+
     if (!isPrevious) {
       inspectedElements.push(target);
       ++inspectedIndex
@@ -163,34 +157,23 @@ export const setupThemeEditor = async (config) => {
 
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
-    if (!isRunningAsFrame) {
-      renderSelectedVars(
-        editorRoot,
-        target,
-        groups,
-        cssVars,
-        config, 
-        defaultValues,
-        currentInspectedIndex
-      );
-    } else {
-      // It's not possible to send a message that includes a reference to a DOM element. 
-      // Instead, every time we update the groups, we store the last groups. This
-      // way we still know which element to access when a message gets back from the parent window.
-      lastGroups = groups;
-      const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
+    // It's not possible to send a message that includes a reference to a DOM element. 
+    // Instead, every time we update the groups, we store the last groups. This
+    // way we still know which element to access when a message gets back from the parent window.
+    lastGroups = groups;
+    const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
 
-      window.parent.postMessage(
-        {
-          type: 'render-vars',
-          payload: {
-            groups: withElementIndexes,
-            index: currentInspectedIndex,
-          },
+    window.parent.postMessage(
+      {
+        type: 'render-vars',
+        payload: {
+          groups: withElementIndexes,
+          index: currentInspectedIndex,
         },
-        window.location.href
-      );
-    }
+      },
+      window.location.href
+    );
+
     if (groups.length > 0) {
       const {element} = groups[0];
       addHighlight(element);
@@ -212,6 +195,11 @@ export const setupThemeEditor = async (config) => {
       lastHighlightTimeout = [setTimeout(handler, isPrevious ? 2400 : 700), handler, element];    }
   }
 
+  // Below are only listeners for messages sent from the parent frame.
+  if (!isRunningAsFrame) {
+    return;
+  }
+
   document.addEventListener('click', event => {
     const ignoreClick = requireAlt && !event.altKey;
     if (ignoreClick) {
@@ -220,11 +208,6 @@ export const setupThemeEditor = async (config) => {
     event.preventDefault();
     inspect(event.target);
   });
-
-  // Below are only listeners for messages sent from the parent frame.
-  if (!isRunningAsFrame) {
-    return;
-  }
 
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
