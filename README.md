@@ -110,18 +110,9 @@ A few components are not (fully) working at the moment, mostly because they depe
   Here's a long list / braindump of some in progress work and ideas. I'll gradually convert some to issues.
 </summary>
 
-### STALLED
-- Facilitate other variables as a value
-  - Needs to be aware of types, which is currently handled in a very ad-hoc way. Setting up proper type handling
-    requires some focus, so I'll first wrap up other in progress stuff.
-
 ### IN PROGRESS
 - Improve state management
   - Move top level state that uses useResumableReducer down
-    - External store is very efficient, allows minimizing render complexity
-    - Trade off: A large amount of notifiers possibly performs worse (e.g. large list => don't use in lists > certain size?)
-    - Investigate impact on React's ability to render concurrently
-    - Move local storage out of React this way?
     - Complex state (open groups) vs many keys (open variable controls) vs reducer (theme editor)?
       - complex state (without reducer):
         - pro: less work performed by store, less keys to change detect, stable amount of instances
@@ -133,12 +124,6 @@ A few components are not (fully) working at the moment, mostly because they depe
         - pro: components can use dispatched actions (history view), replayable unless semantically impossible
         - con: more coupled state, hard to detect whether 2 states are equivalent, replay requires error handling
     - Questions on useResumableReducer
-      - How efficient is equality comparison in different cases?
-      - How many keys can a store have before any significant impact on performance?
-      - Is there a more efficient way to write and read this kind of data?
-      - Does the current approach of using a separate object for the latest state have any benefits?
-        - Compared to immediately pushing on the history stack and returning the state from that.
-        - I assume minimizing operations on the history array as new actions are dispatched is worth it.
   - Decouple state implementations in movable panels so it can be used standalone
     - Maybe better with reducer?
 
@@ -180,12 +165,11 @@ A few components are not (fully) working at the moment, mostly because they depe
 
 - Support "locally" scoped custom properties
   - Problem: Selector specificity when adding a rule after the existing rules
-    - Any equally specific selector  occurring in source after the one we're overriding in the theme
-      will start being overridden (i.e. it's not after that selector anymore).
-    - Hence, there's probably no choice but to figure out and repeat all rules that could be affected.
-    - Unless updates would actually change rules with a variable to their resolved value.
-      - No additional CSS
-      - Recalculations affect (potentially much) less elements, because cascading no longer needed
+    - For now this is solved using `!important`, which surprisingly seems to work 100% of the time.
+    - However, an even better solution is to take full control over the stylesheets on the page so
+      that no overriding rules are needed.
+      - No additional CSS rules
+      - Recalculations affect (often much) less elements, because cascading no longer needed
       - No specificity challenges at all
       - Also supports regular CSS edits
 
@@ -210,7 +194,7 @@ A few components are not (fully) working at the moment, mostly because they depe
   - Fix handling of multiple variables on a single rule
   - Support typing of variables surrounded by just 1 function
     - It's apparently a common thing for frameworks to hard code which color function to use, and have the variables only
-      contain the arguments. (e.g. BS and derivatives)
+      contain the arguments. (e.g. BS and derivatives, mostly in DaisyUI)
     - Even though this is a bad idea for multiple reasons, I don't expect common frameworks to change it soon.
     - Can be somewhat generalized. Perhaps check type of function arguments in CSS syntax?
 
@@ -240,9 +224,6 @@ A few components are not (fully) working at the moment, mostly because they depe
 - Personal editor theme that is applied separately from the theme that is being edited. (detect own stylesheets?)
 - Use sourcemap location and edits to auto generate a PR.
 - Improve elements with a hidden or hard to access state
-- Make keyboard shortcuts work when focus is inside the frame.
-- Ensure button elements are used where appropriate.
-- Better text inputs (clear button, debounce where needed)
 - Show current changes compared to server (maybe integrate with "current theme" component?)
 - As browser extension?
   - Address CORS (or detect + warn)
@@ -250,18 +231,15 @@ A few components are not (fully) working at the moment, mostly because they depe
 - Optimize root property updates
   - Updating root causes full style recalculation
     - Doesn't work well on large pages
-  - Solve by updating rules instead?
-    - Probably has the best performance
-    - Solves issues with scoped custom properties of equal selector specificity (i.e. order dependent)
-- Move expensive logic (regex and searching lists) into initial data extraction where possible.
-- Inspector as a separate package?
+    - e.g. Halfmoon
+  - Could modify the CSS to work differently with the same result
 - Drop tokens onto page like Figma tokens plugin
   - Can reuse inspect function and auto apply the innermost fitting the token type.
   - If multiple options possible
     - Show dialog on nearest side of iframe (or configurable)
     - Hover an option previews it
 - Visualize overridden scope values, so that you can see what happens when removed from a scope.
-- Visualize spacing properties with overlay
+  - However, it shouldn't result in a devtools like experience, where over half of what's shown is overridden rules.
 - Allow mapping hotkeys to any reducer action
   - Since reducers are already collected for history, it should be a small step to list this
     collection and allow setting a mapping.
@@ -280,17 +258,17 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Save any "chopped" off futures?
     - Options determining which scenario (e.g. save when > 3 edits, discard when < 2)
   - Keep alternate futures and merge them like branches
-  - Restore from local storage
-    - Store initial state + actions, then replay
-      - more space efficient
-      - minimal writes (though how to incrementally update local storage efficiently?)
-      - history can rely on object equality like newly constructed
-    - Some components can't reliably be resumed
-      - Inspected HTML can be (slightly to completely) different
-      - Could be solved partially using path of element in tree
-    - Some states are inconsequential / uninteresting
-      - E.g. open an editor UI window and close it with no changes
-      - hard to detect if this is the case
+- Restore history from local storage
+  - Store initial state + actions, then replay
+    - more space efficient
+    - minimal writes (though how to incrementally update local storage efficiently?)
+    - history can rely on object equality like newly constructed
+  - Some components can't reliably be resumed
+    - Inspected HTML can be (slightly to completely) different
+    - Could be solved partially using path of element in tree
+- Some history states are inconsequential / uninteresting
+  - E.g. open an editor UI window and close it with no changes
+  - hard to detect if this is the case
 
 ## Future theme structure
 
