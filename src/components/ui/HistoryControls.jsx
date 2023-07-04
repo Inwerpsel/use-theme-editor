@@ -23,7 +23,7 @@ export function HistoryControls() {
 
         <button
           onClick={() => {
-            dispatch({ type: 'CLEAR_HISTORY' });
+            confirm('Clear all history, keeping only current state?') && dispatch({ type: 'CLEAR_HISTORY' });
           }}
         >
           Clear
