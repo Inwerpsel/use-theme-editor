@@ -1,5 +1,5 @@
 import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {ROOT_SCOPE, useThemeEditor} from '../hooks/useThemeEditor';
+import {useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {ResizableFrame} from './ResizableFrame';
@@ -7,7 +7,6 @@ import {ServerThemesList} from './ui/ServerThemesList';
 import {CustomVariableInput} from './ui/CustomVariableInput';
 import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
-import {isColorProperty} from './inspector/TypedControl';
 import {PropertySearch} from './ui/PropertySearch';
 import {Checkbox} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
@@ -73,6 +72,7 @@ export const ThemeEditor = (props) => {
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
 
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
+  const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   const [
     {
@@ -94,7 +94,6 @@ export const ThemeEditor = (props) => {
     return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
   }, [serverThemes[fileName]?.scopes, scopes]);
 
-  const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   useLayoutEffect(() => {
     if (currentInspected !== -1 && currentInspected !== inspectedIndex) {
@@ -274,7 +273,6 @@ export const ThemeEditor = (props) => {
               <FrameSizeSettings />
               <ThemeEditorExtraOptions />
               <RemoveAnnoyingPrefix />
-              {/* <ExampleTabs/> */}
               <NameReplacements/>
               <SignalExample />
               <VoiceCommands />

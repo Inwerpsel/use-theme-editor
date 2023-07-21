@@ -2,6 +2,7 @@ import React, {Fragment} from 'react';
 import { use } from '../../state';
 // import {useHotkeys} from 'react-hotkeys-hook';
 import { TextControl } from '../controls/TextControl';
+import { Checkbox } from "../controls/Checkbox";
 
 
 export function PropertySearch() {
@@ -30,5 +31,8 @@ export function PropertySearch() {
       title="clear"
       onClick={() => setValue('')}
     >x</button>}
+    <Checkbox id={'show-raw-values'} controls={use.showRawValues()} title='View only'>
+      Raw values
+    </Checkbox>
   </Fragment>;
 }

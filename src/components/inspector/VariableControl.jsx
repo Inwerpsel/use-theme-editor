@@ -15,6 +15,7 @@ import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
 import { useResumableState } from '../../hooks/useResumableReducer';
 import { get } from '../../state';
+import { MediaQueries } from './MediaQueries';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -227,7 +228,47 @@ export const VariableControl = (props) => {
   const {overridingMedia} = cssVar.allVar || cssVar;
   const matchesQuery =
     !media ||
-    match(media, { type: 'screen', width: width || window.screen.width });
+    match(media, {
+      type: 'screen',
+      width: width || window.screen.width,
+      // Below are some values which can later be pulled from settings.
+      // This way the `match` dependency can properly resolve all media rules.
+      // Hence this list will contain some obscure entries that will likely never be used.
+      // Entries for which no clear value can be determined are not included for now.
+      'any-hover': 'hover',
+      'any-pointer': 'fine',
+      'prefers-reduced-motion': 'no-preference',
+      // It seems like `match` doesn't properly handle this comparison.
+      // The ratio should be evaluated and normalized, to then compare the dividend.
+      // Instead, it just does a numerical comparison on the whole media value, which will be wrong.
+      // 'aspect-ratio': '',
+      // 'color': '',
+      // 'color-gamut': '',
+      // 'color-index': '',
+      // The following 3 are deprecated, but perhaps still common enough?
+      // 'device-aspect-ratio': '',
+      // 'device-height': '',
+      // 'device-width': '',
+      // 'display-mode': '',
+      // 'dynamic-range': 'standard',
+      'forced-colors': 'none',
+      // grid: '',
+      hover: 'hover',
+      'inverted-colors': 'none',
+      // monochrome: '',
+      // orientation: width > height ? 'landscape' : 'portrait',
+      // 'overflow-block': '',
+      // 'overflow-inline': '',
+      pointer: 'fine',
+      'prefers-color-scheme': get.prefersColorScheme,
+      'prefers-contrast': 'no-preference',
+      'prefers-reduced-motion': 'no-preference',
+      'prefers-reduced-transparency': 'no-preference',
+      // resolution: '',
+      scripting: 'enabled',
+      update: 'fast',
+      // 'video-dynamic-range': 'standard',
+    });
   const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width}));
 
   let currentLevel = referenceChain.length;
@@ -315,6 +356,7 @@ export const VariableControl = (props) => {
         </h5>
         {previewValue(value, cssVar, toggleOpen, isDefault, referencedVariable, isOpen)}
         <div>
+          {media && <MediaQueries {...{media}} />}
           {!!showCssProperties && <Fragment>
             {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
             {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => {
@@ -326,16 +368,26 @@ export const VariableControl = (props) => {
                     fontSize: '14px',
                     ...(property !== maxSpecific?.property ? { background: 'grey' } : {})
                   }}
-                  title={isFullProperty
-                    ? ''
-                    : fullValue}
+                  title={isFullProperty ? '' : fullValue} 
                 >
                   {property}
                   {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
                   {!!isImportant && <b style={{ fontWeight: 'bold', color: 'darkorange' }}>!important</b>}
                 </span>
               );
-              return !linkCssProperties ? comp : <a target={'_blank'} href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}>{comp}</a>;
+              if (!linkCssProperties) {
+                return comp;
+              }
+              return (
+                <a
+                  key={property}
+                  target={'_blank'}
+                  href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}
+                  style={{ cursor: 'help' }}
+                >
+                  {comp}
+                </a>
+              );
             })}
           </Fragment>}
         </div>
