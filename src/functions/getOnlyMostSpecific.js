@@ -63,9 +63,19 @@ export function getMaxMatchingSpecificity(usages, element) {
     const actualParts = getActualParts(pass1);
 
     const comparePart = (max, part) => {
-      const selector = part.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '').trim();
-      if (selector === '' || !element.matches(selector)) {
-        return max;
+      const selector = part
+        .replace(pseudoStateRegex, '')
+        .replaceAll(residualNotRegexp, '')
+        .trim()
+        .replaceAll(/^\s*>\s*/g, '')
+        .replaceAll(/\s*>\s*$/g, '> *');
+      try {
+        if (selector === '' || !element.matches(selector)) {
+          return max;
+        }
+      } catch (e) {
+        console.log(selector)
+        return max
       }
       // Return part if it's equally or more specific.
       const winner = compare(max, part) !== -1 ? part : max;
