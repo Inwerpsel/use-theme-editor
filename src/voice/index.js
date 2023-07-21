@@ -103,7 +103,7 @@ recognition.lang = 'en-US';
 recognition.maxAlternatives = 1;
 // Even though getting just 1 final result is a lot easier to work with,
 // it just takes too long for it to be usable.
-// Since it's decounced, you really need a long pause to get it to run the commands you spoke.
+// Since it's debounced, you really need a long pause to get it to run the commands you spoke.
 // To make things worse, it's very inconsistent, though for a given short phrase it's usually consistent.
 // e.g. the word "nothing" is always processed really fast, almost instantaneously.
 // Then, a phrase with a few words would take from around 500ms to a few seconds, depending on how ambiguous it sounds.
