@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react';
 import { useCompactSetting } from '../movable/DispatchedElement';
-import { CompactModeButton } from '../inspector/CompactModeButton';
+import { CompactModeButton } from '../movable/CompactModeButton';
 import { SelectControl } from '../controls/SelectControl';
 import { RadioControl } from '../controls/RadioControl';
 import { get, use } from '../../state';

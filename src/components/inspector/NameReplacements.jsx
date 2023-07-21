@@ -4,7 +4,7 @@ import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
 import { useCompactSetting } from "../movable/DispatchedElement";
 import { DragHandle } from "../movable/DragHandle";
-import { CompactModeButton } from "./CompactModeButton";
+import { CompactModeButton } from "../movable/CompactModeButton";
 
 function generateId () {
   return '_' + Math.random().toString(36).substr(2, 9);
