@@ -137,6 +137,9 @@ let activeScopes = [];
 export let rootScopes = [];
 export const sourceReferences = {}
 
+// Sorry for the code below.
+// With regex you can get close to a solution, however to completely get there
+// you run into diminishing returns and start needing increasingly more and disgusting regexes.
 export function statelessSelector(selectors) {
   return (
     includeDescendants(selectors)

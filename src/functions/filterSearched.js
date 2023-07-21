@@ -2,13 +2,6 @@ export function varMatchesTerm(cssVar, term) {
   if (term === '') {
     return true;
   }
-  try {
-
-  } catch (e) {
-    // Ensure invalid regexes don't add a filter
-    return true;
-  }
-
   if (cssVar.name.replace(/-+/g, ' ').match(term)) {
     return true;
   }
@@ -36,3 +29,19 @@ export const filterSearched = (groups, term) => {
   }
 };
 
+export function filterSelectors(groups, filteredSelectors) {
+  if (filteredSelectors.length === 0) {
+    return groups;
+  }
+
+  return groups.map(group => ({
+    ...group,
+    vars: group.vars.filter(cssVar => {
+      const hasIt = filteredSelectors.some(filteredSelector => {
+        return cssVar.maxSpecific.selector.includes(filteredSelector)
+        // return cssVar.maxSpecific.winningSelector.includes(filteredSelector)
+      })
+      return hasIt;
+    }),
+  }));
+}

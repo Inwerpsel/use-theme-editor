@@ -26,7 +26,8 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
       // A stylemap should not have any empty values where this is not the case.
       const isPartOfShorthand = couldBeValue === '';
       // In case of shorthand we can't test yet.
-      const isPotentialVar = isPartOfShorthand || /var\(/.test(couldBeValue);
+      // const isPotentialVar = isPartOfShorthand || /var\(/.test(couldBeValue);
+      const isPotentialVar = true;
 
       if (!isCustomDeclaration && !isPotentialVar) {
         continue;
@@ -76,7 +77,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
         }
 
         const fullValue = value;
-        const isImportant = rule.style.getPropertyPriority(property);
+        const isImportant = rule.style.getPropertyPriority(property) === 'important';
       
         while ((match = balancedVar(value))) {
           // Split at the comma to find variable name and fallback value.
@@ -123,12 +124,37 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
             match.body.replace(variableName, '') +
             (match.post || '');
         }
+
+        // Collect non variable values.
+        if (value?.trim() || '' !== '' && value !== 'initial') {
+          if (!(fullValue in collected)) {
+            collected[fullValue] = {
+              isRawValue: true,
+              properties: {},
+              usages: [],
+              statelessSelector: null,
+            };
+          }
+          collected[fullValue].usages.push({
+            selector,
+            property,
+            defaultValue: fullValue,
+            media,
+            supports,
+            sheet: sheet.href,
+            isFullProperty: true,
+            fullValue,
+            isImportant,
+            index,
+          });
+          collected[fullValue].properties[property] = {isFullProperty: true, fullValue, isImportant};
+        }
       }
     }
   }
   if (rule.type === 4) {
     // No nested media queries for now.
-    [...rule.cssRules].forEach(innerRule => collectRuleVars(collected, innerRule, sheet, rule.conditionText.includes('prefers-reduced-motion') ?  null : rule.conditionText, supports));
+    [...rule.cssRules].forEach(innerRule => collectRuleVars(collected, innerRule, sheet, rule.conditionText, supports));
   }
   if (rule.type === 12) {
     // No support for nested supports queries for now.

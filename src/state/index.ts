@@ -1,9 +1,18 @@
-import { EasyAccessors, getters } from "../functions/getters";
-import { createMagicObject, memo, memoAnon } from "../hooks/useGlobalMemo";
+import { getters } from "../functions/getters";
+import { createMagicObject, memoAnon } from "../hooks/useGlobalMemo";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { signals } from "../functions/signals";
 
+// TODO: Since each of these requires a string key as an argument,
+// it could be more convenient to fabricate the object from a simpler config.
+// The downside of that is it makes the overall approach less simple.
+// In the current form, you can easily move in any argumentless hook.
+// Would be nice if TypeScript could enforce using the same string key
+// in certain functions. Perhaps a linting rule is easier to achieve.
+// TODO: How to order these things? In general, each piece of state is independent,
+// and can potentially be combined with any other piece. Still, it's annoying
+// to not have a rule of where to put things.
 export const use = {
   isSimpleSizes:
     () => useResumableLocalStorage('responsive-simple-sizes', true),
@@ -15,14 +24,23 @@ export const use = {
     () => useResumableLocalStorage('responsive-height', 640),
   scales:
     () => useResumableLocalStorage('responsive-scales', {} as {[index: string]: string}),
+  prefersColorScheme:
+    () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
   uiArrangement:
     () => useResumableLocalStorage('panel-rearrangements', {}),
   propertyFilter:
-    () => useResumableLocalStorage('property-filter', 'all'),
+    () => useResumableLocalStorage('property-filter', 'all' as 'all' | 'colors'),
   search:
     () => useResumableLocalStorage('property-search', ''),
+  filteredSelectors:
+    () => [[]],
+    // () => useResumableLocalStorage('class-filter', ['.btn-rounded', '.btn-lg'] as string[]),
+  showRawValues:
+    () => useResumableLocalStorage('displayRawValues', false),
+  excludedRawValues:
+    () => useResumableLocalStorage('excludedRawValues', ['initial', 'none'] as string[]),
   frameClickBehavior:
-    () => useLocalStorage('theme-editor-frame-click-behavior', 'any'),
+    () => useLocalStorage('theme-editor-frame-click-behavior', 'any' as 'any' | 'alt'),
   nativeColorPicker:
     () => useLocalStorage('native-color-picker', true),
   includeDefaultPalette:
