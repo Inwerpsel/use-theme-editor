@@ -16,28 +16,27 @@ export function ScopeControl(props) {
 
     const { scopes, vars, element } = props;
 
-    const nonRootScopes = useMemo(() => {
-        return scopes.filter(s => !rootScopes.includes(s.selector));
-    }, [scopes])
+    // const nonRootScopes = useMemo(() => {
+    //     return scopes.filter(s => !rootScopes.includes(s.selector));
+    // }, [scopes])
 
-    if (nonRootScopes.length === 0) {
+    if (scopes.length === 0) {
         return null;
     }
 
     const usedVars = [];
 
     return <div style={{ background: 'lightyellow', marginBottom: '24px', padding: '4px', border: '1px solid black' }}>
-        <h5>Variations</h5>
         <Checkbox controls={[showLocator, setShowLocator]} style={{float: 'right'}}>Find on page</Checkbox>
         <ul>
-            {nonRootScopes.map(({ selector, matchingSelector, scopeVars }) => {
+            {scopes.map(({ selector, matchingSelector, scopeVars }) => {
               const selectors = selector.split();
 
               // Scopes are already sorted by most specific first.
               // If a scope is completely overridden, don't show it.
-              if (!scopeVars.some((v) => !usedVars.includes(v))) {
-                return null;
-              }
+              // if (!scopeVars.some((v) => !usedVars.includes(v))) {
+              //   return null;
+              // }
 
               usedVars.push(...scopeVars);
 
@@ -66,7 +65,7 @@ export function ScopeControl(props) {
                       return selector;
                     })}
                   </span>
-                  {showLocator && <ElementLocator
+                  {showLocator && !selector.includes(':root') && !selector.includes(':where(html)') && <ElementLocator
                     {...{ selector }}
                     initialized
                     // hideIfOne

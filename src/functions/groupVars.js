@@ -104,11 +104,7 @@ export const groupVars = (vars, target) => {
         vars: vars.map(v => {
           let currentScope;
           for (const key in scopesByProperty[v.name] || {}) {
-            if (
-              scopes && 
-              !rootScopes.includes(key) &&
-              scopes.some(s=>s.selector === key)
-            ) {
+            if (scopes?.some((s) => s.selector === key)) {
               currentScope = key;
             }
           }

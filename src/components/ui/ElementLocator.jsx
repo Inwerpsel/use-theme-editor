@@ -17,11 +17,17 @@ function removeStateSelectors(selector) {
   .trim()
 }
 
-export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne, children, showLabel = true, property = null}) {
-  const {
-    frameRef,
-    lastInspectTime,
-  } = useContext(ThemeEditorContext);
+export function ElementLocator({
+  selector,
+  initialized,
+  hideIfNotFound,
+  hideIfOne,
+  children,
+  showLabel = true,
+  property = null,
+  label,
+}) {
+  const { frameRef, lastInspectTime } = useContext(ThemeEditorContext);
   const [elements, setElements] = useState([]);
   const [currentElement, setCurrentElement] = useState(0);
   const id = useId();
@@ -75,7 +81,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
   }, [currentElement]);
 
   if (elements.length === 0) {
-    if (hideIfNotFound && initialized || hideIfOne) {
+    if ((hideIfNotFound && initialized) || hideIfOne) {
       return null;
     }
     return <Fragment>
@@ -101,7 +107,7 @@ export function ElementLocator({selector, initialized, hideIfNotFound, hideIfOne
     <Fragment>
       {showLabel && (
         <div className="monospace-code">
-          {selector.trim()}
+          {(label || selector).trim()}
           <span className={'var-control-property'}>{property}</span>
         </div>
       )}

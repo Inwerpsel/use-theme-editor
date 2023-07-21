@@ -5,12 +5,12 @@ import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 
 export function getMatchingScopes(target, vars) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
-    if (rawSelector === ':root') {
-      // We're only interested in local scopes here.
-      // Technically this should return true, as there may be definitions in the code for the global scope.
-      // But so far the editor just considers these the same as default values.
-      return false;
-    }
+    // if (rawSelector === ':root') {
+    //   // We're only interested in local scopes here.
+    //   // Technically this should return true, as there may be definitions in the code for the global scope.
+    //   // But so far the editor just considers these the same as default values.
+    //   return false;
+    // }
     const selector = statelessSelector(rawSelector);
 
     try {

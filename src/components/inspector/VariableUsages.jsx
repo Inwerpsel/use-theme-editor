@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import {IdeLink} from './IdeLink';
 import {ElementLocator} from '../ui/ElementLocator';
 import { ROOT_SCOPE } from '../../hooks/useThemeEditor';
-import { rootScopes } from '../../functions/extractPageVariables';
 
 const currentSelectorStyle = {
   background: 'yellow',
@@ -12,7 +11,7 @@ function Usage(props) {
   const {scope, selector, highLightMatch, position, property} = props;
 
   const locateSelector =
-    !scope || scope === selector || scope === ROOT_SCOPE || scope === 'body' || scope === ':root' || scope === 'html'
+    !scope || scope === selector || scope === ROOT_SCOPE || scope === 'body' || scope === ':root' || scope === 'html' || scope === ':where(html)'
       ? selector
       : `:where(
     ${scope},
@@ -25,6 +24,7 @@ function Usage(props) {
     <li key={selector} style={!highLightMatch ? {} : currentSelectorStyle}>
       {!!position && <IdeLink {...position} />}
       <ElementLocator
+        label={selector}
         selector={locateSelector}
         initialized
         showLabel
