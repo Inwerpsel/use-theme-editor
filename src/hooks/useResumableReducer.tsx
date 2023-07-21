@@ -52,7 +52,7 @@ function addReducer(id, reducer, initialState, initializer) {
     );
   };
   subscribers[id] = (notify) => {
-    if (!(id in notifiers)) {
+    if (!(notifiers.hasOwnProperty(id))) {
       notifiers[id] = new Set();
     }
     notifiers[id].add(notify);
@@ -141,7 +141,7 @@ function historyReducer(state, action, options) {
       const {states: baseStates, lastActions} = historyEntry;
 
       const performedAction = action.payload.action;
-      const baseState = id in baseStates ? baseStates[id] : initialStates[id];
+      const baseState = baseStates.hasOwnProperty(id) ? baseStates[id] : initialStates[id];
       const newState = forwardedReducer(
         baseState,
         // Action can be a function in case of setState.
@@ -154,6 +154,7 @@ function historyReducer(state, action, options) {
       const now = performance.now();
       const slowEnough = now - state.lastSet > (options?.debounceTime || 500);
       const skipHistory = !slowEnough || options?.skipHistory;
+      // Afaik there is no possible benefit to having two consecutive identical states in history.
       const skippedHistoryNowSameAsPrevious =
         skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
 
@@ -183,8 +184,8 @@ function historyReducer(state, action, options) {
             ],
         // If the previous state was removed from the history because it was duplicate,
         // it should result in a new entry in any subsequent dispatches to the same id.
-        // Otherwise, it would be possible to remove multiple recent entries just by
-        // having the same value for any short amount of time.
+        // Otherwise, it would be possible to remove multiple recent entries (with different values)
+        // just by having the same value for any short amount of time.
         lastSet: skippedHistoryNowSameAsPrevious ? 0 : now,
         lastActions: !skipHistory
           ? { [id]: performedAction }
@@ -206,6 +207,10 @@ const notifiers = {};
 
 // All browser history related code was commented for now.
 // It works, but it's not that user friendly and hard to support.
+// Not user friendly because:
+// * Interferes with normal usage of browser history.
+// * The amount of entries gets really big, probably triggering max lengths.
+
 // const USE_BROWSER_HISTORY = false;
 
 // Notify one ID without checking.
@@ -227,6 +232,7 @@ function checkNotifyAll() {
   for (const id of bothKeys.values()) {
     const keyNotifiers = notifiers[id];
     if (!keyNotifiers) {
+      // No need to compare if nobody's listening.
       continue;
     }
     const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
