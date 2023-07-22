@@ -230,17 +230,13 @@ export const VariableControl = (props) => {
     !media ||
     match(media, {
       type: 'screen',
-      width: width || window.screen.width,
+      width,
       // Below are some values which can later be pulled from settings.
       // This way the `match` dependency can properly resolve all media rules.
       // Hence this list will contain some obscure entries that will likely never be used.
       // Entries for which no clear value can be determined are not included for now.
       'any-hover': 'hover',
       'any-pointer': 'fine',
-      'prefers-reduced-motion': 'no-preference',
-      // It seems like `match` doesn't properly handle this comparison.
-      // The ratio should be evaluated and normalized, to then compare the dividend.
-      // Instead, it just does a numerical comparison on the whole media value, which will be wrong.
       // 'aspect-ratio': '',
       // 'color': '',
       // 'color-gamut': '',
