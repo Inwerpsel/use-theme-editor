@@ -417,7 +417,7 @@ export function useResumableReducer<T>(
 
 const stateReducer = (s, v) => v;
 
-export function useResumableState(initial, id) {
+export function useResumableState(id, initial) {
   return useResumableReducer(
     stateReducer,
     null,

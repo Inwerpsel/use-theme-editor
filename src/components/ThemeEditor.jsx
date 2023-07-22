@@ -57,9 +57,9 @@ export const ThemeEditor = (props) => {
 
   const { fileName } = get;
 
-  const [currentInspected, setCurrentInspected] = useResumableState(-1, 'inspected-index');
+  const [currentInspected, setCurrentInspected] = useResumableState('inspected-index', -1);
   const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
-  const [_openGroups, setOpenGroups] = useResumableState({}, 'OPEN_GROUPS');
+  const [_openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
   const openGroups = prevOpengroups !== null ? prevOpengroups : _openGroups;
   prevOpengroups = null;
   

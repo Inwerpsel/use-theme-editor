@@ -273,7 +273,7 @@ export const VariableControl = (props) => {
   const [
     isOpen, setIsOpen
     // Open all variables that refer to variables immediately.
-  ] = useResumableState(initialOpen || (currentLevel > 0 && !!referencedVariable), `OPEN${key}`);
+  ] = useResumableState(`OPEN${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
 
   const toggleOpen = () => setIsOpen(!isOpen );
 

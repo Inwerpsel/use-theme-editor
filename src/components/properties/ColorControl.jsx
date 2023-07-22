@@ -88,7 +88,7 @@ export const ColorControl = props => {
 
   const {name, usages} = cssVar;
 
-  const [hideColorPicker, setHideColorPicker] = useResumableState(true, `color-picker~~${cssVar.name}`);
+  const [hideColorPicker, setHideColorPicker] = useResumableState(`color-picker~~${cssVar.name}`, true);
 
   const {
     dispatch,
