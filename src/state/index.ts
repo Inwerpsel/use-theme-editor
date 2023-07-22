@@ -5,8 +5,9 @@ import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { signals } from "../functions/signals";
 
 // TODO: Since each of these requires a string key as an argument,
-// it could be more convenient to fabricate the object from a simpler config.
-// The downside of that is it makes the overall approach less simple.
+// it could be more convenient to fabricate the object from a simpler config,
+// rather than defining the full hook call each time.
+// The downside of that is it makes the overall approach less simple in other ways.
 // In the current form, you can easily move in any argumentless hook.
 // Would be nice if TypeScript could enforce using the same string key
 // in certain functions. Perhaps a linting rule is easier to achieve.
@@ -66,6 +67,7 @@ export const use = {
     () => useLocalStorage('window-arrangments', {}),
   webpackHome:
     () => useLocalStorage('webpack-home', ''),
+
   // 
   // State below this is only used in a demo element.
   //
@@ -91,13 +93,6 @@ export const use = {
 // Let's time this for now to show this doesn't take long even if we're creating
 // signals that aren't yet used.
 console.time('Getters and signals');
-
 export const get = getters(use);
-
 export const $ = signals(use);
-
-
-// Quick fix to resolve dependency situation.
-createMagicObject(use);
-
 console.timeEnd('Getters and signals');

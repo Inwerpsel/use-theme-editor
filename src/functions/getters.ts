@@ -1,3 +1,4 @@
+import { createMagicObject } from "../hooks/useGlobalMemo";
 import { use } from "../state";
 
 // Crucial about this signature is that it uses argumentless hooks.
@@ -23,6 +24,10 @@ export function getters(use: BunchOfHooks): EasyAccessors {
       },
     });
   }
+
+  // This seems like a reasonable place to create this capturing object,
+  // which depends on only hooks from the "get" object being used.
+  createMagicObject(use);
   
   return get;
 }
