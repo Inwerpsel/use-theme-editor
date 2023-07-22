@@ -95,13 +95,13 @@ export function useResumableLocalStorage<T>(key: string, defaultValue: T): [T, (
   const type = typeof defaultValue;
   const isObject = type === 'object';
 
-  const [value, setValue] = useResumableState(() => {
+  const [value, setValue] = useResumableState(key, () => {
     const stored = localStorage.getItem(scopedKey);
     if (stored === null) {
       return defaultValue;
     }
     return apply(type, stored);
-  }, key);
+  });
 
   const update = useCallback((arg: T, options = {}) => {
     const newValue = typeof arg === 'function' ? arg(value) : arg;

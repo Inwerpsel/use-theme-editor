@@ -1,4 +1,4 @@
-import { createMagicObject } from "../hooks/useGlobalMemo";
+import { createMagicObject } from "../hooks/mem";
 import { use } from "../state";
 
 // Crucial about this signature is that it uses argumentless hooks.

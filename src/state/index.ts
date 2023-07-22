@@ -1,5 +1,5 @@
 import { getters } from "../functions/getters";
-import { createMagicObject, memoAnon } from "../hooks/useGlobalMemo";
+import { mem } from "../hooks/mem";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { signals } from "../functions/signals";
@@ -72,16 +72,10 @@ export const use = {
   // State below this is only used in a demo element.
   //
   area: 
-    () => [memoAnon(get => get.width * get.height)],
-  areaAnon: 
-    // "memoAnon" is temporary name, probably just memo if I eliminate the other.
-    // This should also work for non anonymous functions.
-    // If there is no performance penalty to getting the function code as string,
-    // it could replace the previous function.
-    () => [memoAnon(get => get.width * get.height)],
+    () => [mem(get => get.width * get.height)],
   areaDoubled: 
     // Staggered memo.
-    () => [memoAnon(get => get.areaAnon * 2)],
+    () => [mem(get => get.area * 2)],
   // areaBroken: 
   //   // Just to demonstrate types are working inside the anonymous function.
   //   () => [memoAnon(get => get.area * get.fileName)],
