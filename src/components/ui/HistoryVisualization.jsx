@@ -3,7 +3,6 @@ import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 
 function getName(action) {
-  // console.log(action);
   return !action
     ? ''
     : typeof action.type === 'function'
@@ -81,9 +80,6 @@ export function HistoryVisualization() {
     dispatch,
   } = useContext(HistoryNavigateContext);
 
-
-  // const {THEME_EDITOR, ...otherState} = states;
-
   const currentIndex = historyStack.length - historyOffset;
   let isInFuture = false;
 
@@ -111,6 +107,8 @@ export function HistoryVisualization() {
           const amount = Math.abs(index - currentIndex);
           const type = isInFuture ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
 
+          // Check if simple state would be changed by replaying.
+          // Reducer actions are assumed to always be able to change state.
           const canReplay = Object.entries(lastActions).some(
             ([id, action]) =>
               typeof action === 'object' || states[id] !== currentStates[id]
@@ -119,7 +117,6 @@ export function HistoryVisualization() {
           return (
             <li
               className='historical-actions'
-              title={`${type} ${index} - ${currentIndex} === ${amount}`}
               key={index}
               style={{
                 position: 'relative',
@@ -137,24 +134,21 @@ export function HistoryVisualization() {
                 style={{
                   display: 'flex',
                   justifyContent: 'stretch',
-                  // position: 'absolute',
-                  // top: 0,
-                  // bottom: 0,
-                  // right: 0,
-                  // left: 0,
                 }}
               >
                 <button
                   style={{width: '50%'}}
                   onClick={
                     isPresent
-                      ? null
+                      ? () => {
+                          dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
+                        }
                       : () => {
                           dispatch({ type, payload: { amount } });
                         }
                   }
                 >
-                  jump here
+                  {isPresent ? 'jump to end' : 'jump here'}
                 </button>
                 {canReplay && (
                   <button
