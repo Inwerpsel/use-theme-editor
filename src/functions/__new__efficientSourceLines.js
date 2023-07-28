@@ -1,3 +1,36 @@
+const allStateSelectorsRegexp = /:(active|focus(-(visible|within))?|visited|hover|disabled|:[\w-]+)/g;
+
+function includeDescendants(selector) {
+  if (selector === '' || selector === '*' || selector === ':root') {
+    return selector
+  }
+  return `${selector}, :where(${selector}) *`;
+}
+
+function statelessSelector(selectors) {
+  const cleaned = selectors
+    .replace(allStateSelectorsRegexp, '')
+    .replace(/:?:(before|after|first\-letter)/, '')
+    // Try fix remaining descendants pointing to nothing.
+    .trim()
+    .replaceAll(/^\s*[\>+~]/g, '*>')
+    .replaceAll(/,\s*[\>+~]/g, ',*>')
+    .replaceAll(/[\>+~]\s*,/g, '>*,')
+    .replaceAll(/[\>+~]\s*$/g, '~*')
+    .replaceAll(/[\>+~]\s*\)/g, '~*)')
+    // .replaceAll(/\(\s*[\>+~]/g, '(')
+    .replaceAll(/,(\s*,)+/g, ',')
+    .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
+    .replace(/^(\s*,\s*)+/, '')
+    .replace(/(\s*,\s*)+$/, '')
+    .replaceAll(/\s*,\s*/g, ',')
+    // Seems to happen for Tailwind special.
+    // .replaceAll(/\//g, '\\/')
+    .replaceAll(/,\s*\)/g, ')');
+
+    const deduped = [...(new Set(cleaned.split(/\s*\,\s*/)))].join();
+    return includeDescendants(deduped)
+}
 // import {big, nestedWithComment, tailwindLike} from './__exampleCSS'
 const css = `/* Bootstrap  v5.2.0 (https://getbootstrap.com/)
 * Copyright 2011-2022 The Bootstrap Authors
@@ -69,8 +102,8 @@ const tailwindLike = `
 function parseCss() {
   const comments = [];
 
-  const atRules = {};
-  const selectors = [];
+  // const atRules = {};
+  const rulesWithMap = [];
   const currentAtRules = [];
 
   let lineNumber = 0;
@@ -78,11 +111,8 @@ function parseCss() {
   let lineIndex = 0;
 
   let buffer = '';
-
-  let currentSelector = '';
-  let ruleIndex = 0;
+  // let ruleIndex = 0;
   let inStylemap = false;
-  let currentStylemap = '';
 
   let commentBody = '';
   let commentStartLine = 0;
@@ -92,9 +122,7 @@ function parseCss() {
   let inlineIsInComment = false;
   let isEscape = false;
 
-  let atRule = '';
   let inAtRule = false;
-//   let inAtRuleBody = false;
   let parenthesesLevel = 0;
   let newSelector;
 
@@ -112,28 +140,29 @@ function parseCss() {
             break;
           }
           recordChar = false;
+          const text = buffer.trim();
           if (inAtRule) {
             inAtRule = false;
-            currentSelector = '';
+            // atRules[trimmed] = {
+            //   line: lineNumber,
+            //   col: ruleIndex,
+            // };
+            currentAtRules.push(text)
             buffer = '';
-            atRules[atRule.trim()] = {
-              line: lineNumber,
-              col: ruleIndex,
-            };
-            currentAtRules.push(atRule.trim())
             break;
           }
 
           newSelector = {
-            text: currentSelector,
+            text,
             start: {
               line: lineNumber,
-              col: currentIndex - lineIndex - currentSelector.length - 1,
+              col: currentIndex - lineIndex - buffer.length - 1,
             },
+            end: null,
             stylemap: '',
             atRules: [...currentAtRules],
           };
-          currentSelector = currentSelector.trim();
+          buffer = '';
           inStylemap = true;
           break;
         case '}':
@@ -143,19 +172,13 @@ function parseCss() {
           recordChar = false;
           if (inStylemap) {
             inStylemap = false;
-            newSelector.stylemap = currentStylemap;
-            newSelector.end = {col: currentIndex }
-            selectors.push(newSelector)
-            currentStylemap = '';
+            newSelector.stylemap = buffer;
+            newSelector.end = {line: lineNumber ,col: currentIndex - lineIndex - 1 }
+            rulesWithMap.push(newSelector)
           } else {
             currentAtRules.pop()
-            //   if (atRule === '') {
-            //     throw new Error('This should not happen.');
-            //   }
-            atRule = '';
           }
           buffer = '';
-          currentSelector = '';
           break;
         case '\n':
           if (inlineIsInComment) {
@@ -196,11 +219,9 @@ function parseCss() {
             commentStartCol = currentIndex - lineIndex - 1;
             commentBody = '';
             recordChar = false;
-            if (inStylemap) {
-              currentStylemap = currentStylemap.replace(/\/$/, '');
-            } else if (currentSelector.length > 0) {
-              currentSelector = currentSelector.replace(/\/$/, '');
-            }
+
+            // We already know the previous character is a slash, so remove it.
+            buffer = buffer.substring(0, -1);
           }
           break;
         case '*':
@@ -210,18 +231,15 @@ function parseCss() {
             commentStartLine = lineNumber;
             commentStartCol = currentIndex - lineIndex - 1;
 
-            if (inStylemap) {
-              currentStylemap = currentStylemap.replace(/\/$/, '');
-            } else if (currentSelector.length > 0) {
-              currentSelector = currentSelector.replace(/\/$/, '');
-            }
+            // We already know the previous character is a slash, so remove it.
+            buffer = buffer.substring(0, -1);
           }
           break;
         case '@':
           if (!isInComment && !inlineIsInComment) {
             inAtRule = true;
-            atRule = '';
-            ruleIndex = currentIndex;
+            buffer = '';
+            // ruleIndex = currentIndex;
             // Let's assume for now @ can only occur at the start of an at rule.
           }
           break;
@@ -229,10 +247,11 @@ function parseCss() {
           if (inAtRule) {
             inAtRule = false;
             recordChar = false;
-            atRules[atRule.trim()] = {
-              line: lineNumber,
-              col: ruleIndex,
-            };
+            // atRules[buffer.trim()] = {
+            //   line: lineNumber,
+            //   col: ruleIndex,
+            // };
+            buffer = '';
           }
           break;
         case '(':
@@ -260,17 +279,13 @@ function parseCss() {
     if (recordChar) {
         if (isInComment || inlineIsInComment) {
           commentBody += char;
-        } else if (inStylemap) {
-          currentStylemap += char;
-        } else if (inAtRule) {
-          atRule += char;
         } else {
           const isWhiteSpace = /\s/.test(char);
-          if (currentSelector === '' && !isWhiteSpace) {
-            ruleIndex = currentIndex;
-          }
-          if (!isWhiteSpace || currentSelector !== '') {
-            currentSelector += char;
+          // if (!inStylemap && !isWhiteSpace && buffer === '') {
+          //   ruleIndex = currentIndex;
+          // }
+          if (!isWhiteSpace || buffer !== '') {
+            buffer += char;
           }
         }
     }
@@ -278,12 +293,57 @@ function parseCss() {
     currentIndex++;
     prevChar = char;
   }
-  const anim = selectors.filter(s => s.atRules.some(r=>r.includes('keyf')))
-  console.log(comments);
+  // const anim = selectors.filter(s => s.atRules.some(r=>r.includes('keyf')))
+  // console.log(comments);
   // console.log(atRules);
   // console.log(selectors);
+  return rulesWithMap;
 }
 
 console.time('a')
-parseCss()
+const rulesWithMap = parseCss()
 console.timeEnd('a')
+
+console.time('b')
+
+function parseMap(mapString) {
+  // Whitespace should be skipped from start already.
+  return mapString
+  // remove possible trailing ";" and whitespace
+  .replace(/\s*;?\s*$/, '')
+  .split(/\s*;\s*/)
+  .reduce((map, declString) => {
+    const [key, value] = declString.split(':').map(s=>s.trim())
+    map[key] = value;
+
+    return map;
+  }, {})
+}
+
+const keyframes = {};
+const selectors = [];
+const replaceRegex = /:(active|focus(-(visible|within))?|visited|hover)/g;
+
+function forceablePseudos(selector) {
+  // We have to use `:is` to preserve specificity.
+  // The added class does not increase the `is:` block specificity.
+  return selector.replaceAll(replaceRegex, `:is(:$1, ._force-$1)`);
+}
+
+for (const rule of rulesWithMap) {
+  rule.style = parseMap(rule.stylemap)
+  const firstAtRule = rule.atRules[0]
+  if (firstAtRule && firstAtRule.includes('keyframes')) {
+    if (!keyframes.hasOwnProperty(firstAtRule)) {
+      keyframes[firstAtRule] = {};
+    }
+    keyframes[firstAtRule][rule.text] = rule;
+
+    continue;
+  }
+  rule.statelessSelector = statelessSelector(rule.text);
+  rule.adaptedSelector = forceablePseudos(rule.text);
+  selectors.push(rule);
+}
+
+console.timeEnd('b')
