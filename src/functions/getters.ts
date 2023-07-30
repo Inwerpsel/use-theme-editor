@@ -8,6 +8,11 @@ export interface BunchOfHooks {
 };
 
 // For now this uses the object literal directly for simplicity.
+// This obviously has to change before this code can be used as a standalone library.
+// It's not clear what's best here, or what's even possible.
+// Some options:
+// - Infer the type from `getters` argument. I tried this but ran into challenges.
+// - Require consumers to declare such a type, perhaps facilitated with some template type.
 export type EasyAccessors = {
   [P in keyof typeof use]: ReturnType<(typeof use)[P]>[0];
 }
