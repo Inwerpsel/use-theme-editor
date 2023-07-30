@@ -68,7 +68,7 @@ export function SignalExample() {
         <h2>Signal example</h2>
         <p>
             The current area is {$.width} * {$.height} = {$.area}. * 2 = {$.areaDoubled}
-            This string was rendered at <TimeAtRender />, yet the values are always up to date.
+            This component was rendered at <TimeAtRender />, yet the values are always up to date.
         </p>
         <p>
             Area without memo: {$.areaNomemo}
