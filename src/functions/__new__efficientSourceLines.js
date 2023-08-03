@@ -124,156 +124,185 @@ function parseCss() {
 
   let inAtRule = false;
   let parenthesesLevel = 0;
-  let newSelector;
+  let currentSelector;
+  let currentProperty = '';
 
-  let prevChar;
+  let prevChar, recordChar;
+  const parser = {
+    '{'() {
+      if (isInComment || inlineIsInComment) {
+        return;
+      }
+      recordChar = false;
+      const text = buffer.trim();
+      if (inAtRule) {
+        inAtRule = false;
+        // atRules[trimmed] = {
+        //   line: lineNumber,
+        //   col: ruleIndex,
+        // };
+        currentAtRules.push(text);
+        buffer = '';
+      }
+
+      currentSelector = {
+        text,
+        start: {
+          line: lineNumber,
+          col: currentIndex - lineIndex - buffer.length - 1,
+        },
+        end: null,
+        stylemap: {},
+        atRules: [...currentAtRules],
+      };
+      buffer = '';
+      inStylemap = true;
+    },
+    '}'() {
+      if (isInComment || inlineIsInComment) {
+        return;
+      }
+      recordChar = false;
+      if (inStylemap) {
+        inStylemap = false;
+        if (currentProperty) {
+          currentSelector.stylemap[currentProperty] = buffer.trim();
+          currentProperty = '';
+        }
+        currentSelector.end = {
+          line: lineNumber,
+          col: currentIndex - lineIndex - 1,
+        };
+        rulesWithMap.push(currentSelector);
+        currentSelector = null;
+      } else {
+        currentAtRules.pop();
+      }
+      buffer = '';
+    },
+    '\n'() {
+      recordChar = isInComment;
+      if (inlineIsInComment) {
+        comments.push({
+          line: commentStartLine,
+          col: commentStartCol,
+          text: commentBody,
+          inline: true,
+        });
+        commentBody = '';
+        inlineIsInComment = false;
+      }
+
+      lineNumber++;
+      lineIndex = currentIndex;
+    },
+    '/'() {
+      if (isInComment && prevChar === '*') {
+        recordChar = false;
+            isInComment = false;
+            isInComment = false;
+            recordChar = false;
+        isInComment = false;
+            recordChar = false;
+
+        comments.push({
+          line: commentStartLine,
+          col: commentStartCol,
+          // Exclude '*' at the end.
+          text: commentBody.slice(0, -1),
+          inline: false,
+        });
+        commentBody = '';
+      } else if (
+        !inlineIsInComment &&
+        // quick fix for url()
+        parenthesesLevel === 0 &&
+        prevChar === '/'
+      ) {
+        recordChar = false;
+        inlineIsInComment = true;
+
+        commentStartLine = lineNumber;
+        commentStartCol = currentIndex - lineIndex - 1;
+        commentBody = '';
+
+        // remove "/"
+        buffer = buffer.substring(0, -1);
+      }
+    },
+    '*'() {
+      if (!isInComment && !inlineIsInComment && prevChar === '/') {
+        recordChar = false;
+            isInComment = true;
+            isInComment = true;
+            recordChar = false;
+        isInComment = true;
+            recordChar = false;
+        commentStartLine = lineNumber;
+        commentStartCol = currentIndex - lineIndex - 1;
+
+        // remove "/"
+        buffer = buffer.substring(0, -1);
+      }
+    },
+    '@'() {
+      if (!isInComment && !inlineIsInComment && !inStylemap) {
+        inAtRule = true;
+        buffer = '';
+        // ruleIndex = currentIndex;
+        // Let's assume for now @ can only occur at the start of an at rule.
+      }
+    },
+    ':'() {
+      if (inStylemap && currentProperty === '') {
+        currentProperty = buffer.trim();
+        buffer = '';
+        recordChar = false;
+      }
+    },
+    ';'() {
+      if (inStylemap && parenthesesLevel === 0) {
+        currentSelector.stylemap[currentProperty] = buffer.trim();
+
+        buffer = '';
+        currentProperty = '';
+        recordChar = false;
+      } else if (inAtRule) {
+        inAtRule = false;
+        // atRules[buffer.trim()] = {
+        //   line: lineNumber,
+        //   col: ruleIndex,
+        // };
+        buffer = '';
+        recordChar = false;
+      }
+    },
+    '('() {
+      // This helps prevent starting a line comment in case of a url().
+      // It probably doesn't work if the rule contains unbalanced parentheses.
+      if (!isInComment && !inlineIsInComment) {
+        parenthesesLevel += 1;
+      }
+    },
+    ')'() {
+      if (!isInComment && !inlineIsInComment) {
+        parenthesesLevel -= 1;
+      }
+    },
+    '\\'() {
+      isEscape = true;
+      recordChar = false;
+    },
+  };
 
   for (const char of css) {
-    let recordChar = true;
+    recordChar = true;
 
     if (isEscape) {
       isEscape = false;
     } else {
-      switch (char) {
-        case '{':
-          if (isInComment || inlineIsInComment) {
-            break;
-          }
-          recordChar = false;
-          const text = buffer.trim();
-          if (inAtRule) {
-            inAtRule = false;
-            // atRules[trimmed] = {
-            //   line: lineNumber,
-            //   col: ruleIndex,
-            // };
-            currentAtRules.push(text)
-            buffer = '';
-            break;
-          }
-
-          newSelector = {
-            text,
-            start: {
-              line: lineNumber,
-              col: currentIndex - lineIndex - buffer.length - 1,
-            },
-            end: null,
-            stylemap: '',
-            atRules: [...currentAtRules],
-          };
-          buffer = '';
-          inStylemap = true;
-          break;
-        case '}':
-          if (isInComment || inlineIsInComment) {
-            break;
-          }
-          recordChar = false;
-          if (inStylemap) {
-            inStylemap = false;
-            newSelector.stylemap = buffer;
-            newSelector.end = {line: lineNumber ,col: currentIndex - lineIndex - 1 }
-            rulesWithMap.push(newSelector)
-          } else {
-            currentAtRules.pop()
-          }
-          buffer = '';
-          break;
-        case '\n':
-          if (inlineIsInComment) {
-            comments.push({
-              line: commentStartLine,
-              col: commentStartCol,
-              text: commentBody,
-              inline: true,
-            });
-            commentBody = '';
-            inlineIsInComment = false;
-          }
-
-          recordChar = isInComment;
-          lineNumber++;
-          lineIndex = currentIndex;
-
-          break;
-        case '/':
-          if (isInComment && prevChar === '*') {
-            isInComment = false;
-            recordChar = false;
-
-            comments.push({
-              line: commentStartLine,
-              col: commentStartCol,
-              // Exclude '*' at the end.
-              text: commentBody.slice(0, -1),
-              inline: false,
-            });
-            commentBody = '';
-            break;
-          }
-          if (!isInComment && !inlineIsInComment && parenthesesLevel === 0 && prevChar === '/') {
-            inlineIsInComment = true;
-
-            commentStartLine = lineNumber;
-            commentStartCol = currentIndex - lineIndex - 1;
-            commentBody = '';
-            recordChar = false;
-
-            // We already know the previous character is a slash, so remove it.
-            buffer = buffer.substring(0, -1);
-          }
-          break;
-        case '*':
-          if (!isInComment && !inlineIsInComment && prevChar === '/') {
-            isInComment = true;
-            recordChar = false;
-            commentStartLine = lineNumber;
-            commentStartCol = currentIndex - lineIndex - 1;
-
-            // We already know the previous character is a slash, so remove it.
-            buffer = buffer.substring(0, -1);
-          }
-          break;
-        case '@':
-          if (!isInComment && !inlineIsInComment) {
-            inAtRule = true;
-            buffer = '';
-            // ruleIndex = currentIndex;
-            // Let's assume for now @ can only occur at the start of an at rule.
-          }
-          break;
-        case ';':
-          if (inAtRule) {
-            inAtRule = false;
-            recordChar = false;
-            // atRules[buffer.trim()] = {
-            //   line: lineNumber,
-            //   col: ruleIndex,
-            // };
-            buffer = '';
-          }
-          break;
-        case '(':
-          // This helps prevent starting a line comment in case of a url().
-          // It probably doesn't work if the rule contains unbalanced parentheses.
-          if (!isInComment && !inlineIsInComment) {
-            parenthesesLevel += 1;
-          }
-          break;
-        case ')':
-          if (!isInComment && !inlineIsInComment) {
-            parenthesesLevel -= 1;
-          }
-          break;
-        case '\\':
-          isEscape = true;
-          recordChar = false;
-          break;
-        // case ':':
-
-        //   break;
-      }
+      const f = parser[char];
+      !f || f();
     }
 
     if (recordChar) {
@@ -293,14 +322,11 @@ function parseCss() {
     currentIndex++;
     prevChar = char;
   }
-  // const anim = selectors.filter(s => s.atRules.some(r=>r.includes('keyf')))
-  // console.log(comments);
-  // console.log(atRules);
-  // console.log(selectors);
   return rulesWithMap;
 }
 
 console.time('a')
+// Flattened list of rules with a (style)map.
 const rulesWithMap = parseCss()
 console.timeEnd('a')
 
@@ -331,7 +357,6 @@ function forceablePseudos(selector) {
 }
 
 for (const rule of rulesWithMap) {
-  rule.style = parseMap(rule.stylemap)
   const firstAtRule = rule.atRules[0]
   if (firstAtRule && firstAtRule.includes('keyframes')) {
     if (!keyframes.hasOwnProperty(firstAtRule)) {
