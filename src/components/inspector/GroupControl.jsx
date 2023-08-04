@@ -43,6 +43,10 @@ export const GroupControl = props => {
     return vars.reduce((colorVars, someVar) => {
       if (isColorProperty(someVar.usages[0].property)) {
         const { name } = someVar;
+        if (!name.startsWith('--')) {
+          colorVars.push([someVar, name]);
+          return colorVars;
+        }
 
         const propertyScopes = scopesByProperty[name];
         let currentScope = null;
@@ -146,7 +150,10 @@ export const GroupControl = props => {
                 lineHeight: '1.5',
                 border: '1px solid black',
                 borderRadius: '6px',
-                background: value,
+                backgroundImage: `${value}`,
+                backgroundColor: `${value}`,
+                backgroundRepeat: `no-repeat`,
+                backgroundSize: 'cover',
                 marginTop: '7px',
                 marginLeft: '6px',
                 fontSize: '12px',

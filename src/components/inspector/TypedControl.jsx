@@ -12,7 +12,7 @@ export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
 export const isColorProperty = property => {
   return !!property && property.match(/color$/)
-    || ['background', 'fill', 'stroke'].includes(property);
+    || ['background', 'background-image', 'fill', 'stroke'].includes(property);
 };
 
 export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
