@@ -16,7 +16,7 @@ export function CreateAlias(props) {
             return null;
         }
         if (COLOR_VALUE_REGEX.test(value)) {
-            return nameThatColor(value).colorName;
+            return nameThatColor(value).colorName.toLowerCase();
         }
         return '';
     } , [wasOpened])
@@ -39,7 +39,7 @@ export function CreateAlias(props) {
     return <Fragment>
         <TextControl value={name || colorSuggestion} onChange={setName} />
         <button onClick={() => {
-            dispatch({type: ACTIONS.createAlias, payload: {name, value}})
+            dispatch({ type: ACTIONS.createAlias, payload: { name: name || colorSuggestion, value } });
         }}>submit</button>
         <button onClick={() => setOpen(false)}>cancel</button>
     </Fragment>
