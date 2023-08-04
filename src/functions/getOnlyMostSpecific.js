@@ -101,6 +101,10 @@ export function getMaxMatchingSpecificity(usages, element) {
       return usage;
     }
 
+    if (max?.isImportant) {
+      return max;
+    }
+
     if (hasInlineStyle) {
       return max;
     }
