@@ -3,15 +3,13 @@ import { compare } from './compare';
 import { statelessSelector } from './extractPageVariables';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 
-export function getMatchingScopes(target, vars) {
+// This has been patched up recently, but eventually most things in this file will be completely rewritten.
+export function getMatchingScopes(target, allVars) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
-    // if (rawSelector === ':root') {
-    //   // We're only interested in local scopes here.
-    //   // Technically this should return true, as there may be definitions in the code for the global scope.
-    //   // But so far the editor just considers these the same as default values.
-    //   return false;
-    // }
     const selector = statelessSelector(rawSelector);
+    if (selector === ':root') {
+      return true;
+    }
 
     try {
       return target.matches(selector);
@@ -22,11 +20,9 @@ export function getMatchingScopes(target, vars) {
 
   // Matches that actually can affect a custom property
   const withMatchingVars = matchingSelectors.reduce((all, selector) => {
-    const scopeVars = vars.filter(({ name }) => name in definedValues[selector]);
+    const scopeVars = allVars.filter(({ name }) => name in definedValues[selector]);
 
-    if (scopeVars.length > 0) {
-      all.push({ selector, scopeVars });
-    }
+    all.push({ selector, scopeVars });
 
     return all;
   }, []);

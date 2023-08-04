@@ -3,6 +3,7 @@ import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
 // import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
 import {reducerOf} from '../functions/reducerOf';
 import { useResumableReducer } from './useResumableReducer';
+import { definedValues } from '../functions/collectRuleVars';
 
 // const PROP_REGEX = /\w+(-\w+)*$/;
 export const PSEUDO_REGEX = /--?(active|focus|visited|hover|disabled)--?/;
@@ -26,7 +27,9 @@ const DEFAULT_STATE = {
 // we can't just use `html`. Using both still has the lower number of recalculations and fixes that.
 // Not sure where this number is coming from. The recalc does actually take longer, though not
 // by the same factor. 24ms vs 18ms on a quite complex page.
-export const ROOT_SCOPE = 'html:root';
+export const ROOT_SCOPE = ':root';
+
+type Handler = (state: typeof DEFAULT_STATE, action: { [index: string]: any }) => typeof DEFAULT_STATE;
 
 export const ACTIONS = {
   set: (state, { name, value, scope = ROOT_SCOPE }) => {
@@ -71,14 +74,44 @@ export const ACTIONS = {
       },
     };
   },
-  createAlias(state, {name, value}) {
-    const newVarName = `--${name.replaceAll(' ', '-')}`;
-    const newVarString = `var(${newVarName})`;
+  createAlias(state, {name: origName, value}) {
+
+    let name = `--${origName.replaceAll(' ', '-')}`;
+    let i = 0;
+    function scopeUsesForOther(vars) {
+        return vars.hasOwnProperty(name) && vars[name] !== value;
+    }
+
+    function nameUsedForOtherValue() {
+      const usedInSource = Object.values(definedValues).some(scopeUsesForOther);
+
+      return usedInSource || Object.values(state.scopes).some(scopeUsesForOther);
+    }
+
+    while (nameUsedForOtherValue()) {
+      i++;
+      name = `--${origName.replaceAll(' ', '-')}-${i}`;
+    }
+
+    const newVarString = `var(${name})`;
     const newScopes = {};
 
     let hasRoot = false;
+    for (const selector of Object.keys(definedValues)) {
+      for (const [k, v] of Object.entries(definedValues[selector])) {
+        if (v === value) {
+          if (!newScopes.hasOwnProperty(selector)) {
+            newScopes[selector] = {}
+          }
+          newScopes[selector][k] = newVarString;
+        }
+      }
+    }
+
     for (const selector in state.scopes) {
-      newScopes[selector] = {};
+      if (!newScopes[selector]) {
+        newScopes[selector] = {};
+      }
       const scopeVars = state.scopes[selector];
 
       for (const varName in scopeVars) {
@@ -89,13 +122,16 @@ export const ACTIONS = {
       }
 
       if (selector === ROOT_SCOPE) {
-        newScopes[selector][newVarName] = value;
+        newScopes[selector][name] = value;
         hasRoot = true;
       }
     }
 
     if (!hasRoot) {
-      newScopes[ROOT_SCOPE][newVarName] = value;
+      if (!newScopes[ROOT_SCOPE]) {
+        newScopes[ROOT_SCOPE] = {};
+      }
+      newScopes[ROOT_SCOPE][name] = value;
     }
 
     return {

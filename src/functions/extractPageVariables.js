@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-undef
+import { styleId } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
 
@@ -135,38 +136,41 @@ const warmup = async (vars, sheets) => {
 
 let activeScopes = [];
 export let rootScopes = [];
-export const sourceReferences = {}
+// export const sourceReferences = {}
 
 // Sorry for the code below.
 // With regex you can get close to a solution, however to completely get there
 // you run into diminishing returns and start needing increasingly more and disgusting regexes.
 export function statelessSelector(selectors) {
-  return (
-    includeDescendants(selectors)
-      .replace(allStateSelectorsRegexp, '')
-      .replace(/:?:(before|after|first\-letter)/g, '')
-      // Try fix remaining descendants pointing to nothing.
-      .trim()
-      .replaceAll(/^\s*[\>+~]/g, '')
-      .replaceAll(/,\s*[\>+~]/g, ',')
-      .replaceAll(/[\>+~]\s*,/g, ',')
-      .replaceAll(/[\>+~]\s*$/g, '')
-      .replaceAll(/[\>+~]\s*\)/g, ')')
-      .replaceAll(/\(\s*[\>+~]/g, '(')
-      .replaceAll(/,(\s*,)+/g, ',')
-      .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
-      .replace(/^(\s*,\s*)+/, '')
-      .replace(/(\s*,\s*)+$/, '')
-      .replaceAll(/\s*,\s*/g, ',')
-      // Seems to happen for Tailwind special.
-      // .replaceAll(/\//g, '\\/')
-      .replaceAll(/,\s*\)/g, ')')
-  );
+  // if (selectors.some(s=>s === '*'))
+  const cleaned = selectors
+    .replace(allStateSelectorsRegexp, '')
+    .replace(/:?:(before|after|first\-letter)/, '')
+    // Try fix remaining descendants pointing to nothing.
+    .trim()
+    .replaceAll(/^\s*[\>+~]/g, '')
+    .replaceAll(/,\s*[\>+~]/g, ',')
+    .replaceAll(/\(,/g, '(')
+    .replaceAll(/[\>+~]\s*,/g, '>*,')
+    .replaceAll(/[\>+~]\s*$/g, '~*')
+    .replaceAll(/[\>+~]\s*\)/g, '~*)')
+    .replaceAll(/\(\s*[\>+~]/g, '(')
+    .replaceAll(/,(\s*,)+/g, ',')
+    .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
+    .replace(/^(\s*,\s*)+/, '')
+    .replace(/(\s*,\s*)+$/, '')
+    .replaceAll(/\s*,\s*/g, ',')
+    // Seems to happen for Tailwind special.
+    // .replaceAll(/\//g, '\\/')
+    .replaceAll(/,\s*\)/g, ')');
+
+    // const deduped = [...(new Set(cleaned.split(/\s*\,\s*/)))].join();
+    return includeDescendants(cleaned)
 }
 
 export const extractPageVariables = async() => {
   const startTime = performance.now();
-  const sheets = [...document.styleSheets];
+  const sheets = [...document.styleSheets].filter(s=>s.ownerNode?.id!==styleId);
   const asObject = await sheets.reduce(collectSheetVars, {});
 
   activeScopes = Object.keys(definedValues).filter(scopeSelector => document.querySelectorAll(scopeSelector).length > 0);
@@ -176,11 +180,11 @@ export const extractPageVariables = async() => {
 
   const allVars = Object.entries(asObject).map(([k, v]) => ({
     name: k,
-    sourceReferences: Object.keys(asObject).filter(
-      otherV => asObject[otherV].usages.some(u => u.fullValue.includes(`var(${k},`) || u.fullValue.includes(`var${k})`))
-    ),
+    // sourceReferences: Object.keys(asObject).filter(
+    //   otherV => asObject[otherV].usages.some(u => u.fullValue.includes(`var(${k},`) || u.fullValue.includes(`var${k})`))
+    // ),
     ...v,
-    statelessSelector: statelessSelector([...new Set(v.usages.map(usage => usage.selector))]),
+    statelessSelector: [...new Set(v.usages.map(usage => usage.statelessSelector))].join(),
   }));
   // console.log(allVars.filter(v => v.sourceReferences.length > 0));
 

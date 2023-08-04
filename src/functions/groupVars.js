@@ -61,7 +61,7 @@ export const sortForUI = (
   return stateA < stateB ? -1 : 1;
 };
 
-export const groupVars = (vars, target) => {
+export const groupVars = (vars, target, allVars) => {
   const groups = [];
   // 
   const labelCounts = {};
@@ -69,6 +69,7 @@ export const groupVars = (vars, target) => {
     previous = target,
     previousMatches = vars;
 
+  // const times = [];
   // Walk up the tree to the root to assign each variable to the deepest element they apply to. Each time we go up we
   // test the remaining variables. If the current element doesn't match all anymore, the non matching are assigned to
   // the previous (one level deeper) element.
@@ -86,11 +87,12 @@ export const groupVars = (vars, target) => {
     }
 
     const currentMatchesLess = currentMatches.length < previousMatches.length;
+    // times.push(performance.now() - tStart);
 
     if (previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
-      const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, vars);
+      const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars);
 
       const labelText = toLabel(element);
       const count = labelCounts[labelText] || 0;
@@ -118,10 +120,14 @@ export const groupVars = (vars, target) => {
         inlineStyles: previousInlineStyles,
       });
       previousMatches = currentMatches;
+      // times.push([label, performance.now() - tStart])
     }
 
     previous = current;
+    
   }
+  // console.log(groups)
+  // console.log(times)
 
   return groups;
 };

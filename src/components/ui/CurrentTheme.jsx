@@ -5,16 +5,16 @@ import {ACTIONS} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import {ElementLocator} from './ElementLocator';
 import {ToggleButton} from '../controls/ToggleButton';
-import {allStateSelectorsRegexp} from '../../functions/getMatchingVars';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {varMatchesTerm} from '../../functions/filterSearched';
 import {isColorProperty} from '../inspector/TypedControl';
 import { get } from '../../state';
+import { definedValues } from '../../functions/collectRuleVars';
 
 export function CurrentTheme() {
   const { propertyFilter, search } = get;
   const {
-    theme,
+    scopes,
     dispatch,
     allVars,
     defaultValues,
@@ -23,8 +23,7 @@ export function CurrentTheme() {
 
   const [showObsolete, setShowObsolete] = useState(false);
   const [showActive, setShowActive] = useState(true);
-  const [useDefaultValues, setUseDefaultValues] = useState(false);
-  const [hideNotFound, setHideNotFound] = useState(false);
+  const [hideNotFound, setHideNotFound] = useState(true);
 
   const [isOpen, setIsOpen] = useLocalStorage('current-theme-open', true);
   const UNFOUND = 'UNFOUND';
@@ -34,9 +33,8 @@ export function CurrentTheme() {
       return {};
     }
 
-    const base = !useDefaultValues ? theme : {...defaultValues, ...theme};
 
-    return Object.keys(base).sort().reduce((grouped, k) => {
+    return Object.keys(defaultValues).reduce((grouped, k) => {
       const cssVar = allVars.find(allVar => allVar.name === k);
       const term = search.replace(/^\!/, '');
       const isInverse = term.length !== search.length
@@ -59,14 +57,7 @@ export function CurrentTheme() {
         return grouped;
       }
 
-      const selector = [...new Set(cssVar.usages.map(usage => usage.selector))]
-        .join()
-        .replace(allStateSelectorsRegexp, '')
-        .replace(/:?:(before|after)/g, '')
-        .split(',')
-        .map(s=>s.trim())
-        .filter((value,index,self) => self.indexOf(value) === index)
-        .join();
+      const selector = cssVar.statelessSelector.replace(/,\s\:where.*\*$/, '');
 
       if (!grouped[selector]) {
         grouped[selector] = [];
@@ -75,12 +66,12 @@ export function CurrentTheme() {
 
       return grouped;
     }, {});
-  }, [theme, isOpen, useDefaultValues, propertyFilter, search]);
+  }, [scopes, isOpen, propertyFilter, search]);
 
   return (
     <div>
       <h4>
-        Current theme ({Object.keys(theme).length} out of{' '}
+        {/* Current theme ({Object.keys(theme).length} out of{' '} */}
         {Object.keys(defaultValues).length})
         <ToggleButton style={{ float: 'right' }} controls={[isOpen, setIsOpen]}>
           {isOpen ? 'Close' : 'Open'}
@@ -94,9 +85,6 @@ export function CurrentTheme() {
           </Checkbox>
           <Checkbox controls={[showObsolete, setShowObsolete]}>
             Show unknown
-          </Checkbox>
-          <Checkbox controls={[useDefaultValues, setUseDefaultValues]}>
-            Include default values
           </Checkbox>
           <Checkbox controls={[hideNotFound, setHideNotFound]}>
             Hide not found

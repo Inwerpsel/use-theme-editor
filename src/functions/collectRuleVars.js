@@ -1,4 +1,5 @@
 import {balancedVar} from './balancedVar';
+import { statelessSelector } from './extractPageVariables';
 import { resolveOriginalShorthand } from './resolveOriginalShorthand';
 
 export const definedValues = { 
@@ -29,10 +30,6 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
       // const isPotentialVar = isPartOfShorthand || /var\(/.test(couldBeValue);
       const isPotentialVar = true;
 
-      if (!isCustomDeclaration && !isPotentialVar) {
-        continue;
-      }
-
       let value = rule.style.getPropertyValue(property).trim();
 
       if (isCustomDeclaration) {
@@ -52,104 +49,115 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
         continue;
       }
 
-      if (isPotentialVar) {
-        let match;
-        let first = true;
-        let index = 0;
+      let match;
+      let first = true;
+      let index = 0;
 
-        if (isPartOfShorthand) {
-          const [shorthandProperty, shorthandValue] = resolveOriginalShorthand(property, rule);
+      if (isPartOfShorthand) {
+        const [shorthandProperty, shorthandValue] = resolveOriginalShorthand(property, rule);
 
-          if (visitedShorthands.includes(shorthandProperty)) {
-            continue;
-          }
-
-          if (shorthandValue === '') {
-            // In some cases shorthand value can't be resolved, skip these for now.
-            // Happens when a shorthand containing mulitple custom properties is used,
-            // and the syntax doesn't allow unambiguously determining the type of each.
-           continue;
-          }
-
-          visitedShorthands.push(shorthandProperty);
-          value = shorthandValue;
-          property = shorthandProperty;
+        if (visitedShorthands.includes(shorthandProperty)) {
+          continue;
         }
 
-        const fullValue = value;
-        const isImportant = rule.style.getPropertyPriority(property) === 'important';
-      
-        while ((match = balancedVar(value))) {
-          // Split at the comma to find variable name and fallback value.
-          const varArguments = match.body.split(',').map((str) => str.trim());
-          const isFullProperty =
-            first &&
-            match.pre.trim() === '' &&
-            (match.post.replace(/\s*\!important$/, '') === '');
-          // Does the variable represent all the arguments of a function?
-          const isOnlyFunctionArgument = /^\s*\)/.test(match.post) && /\w+(-\w+)*\(\s*$/.test(match.pre);
-          const cssFunc = !isOnlyFunctionArgument ? null : match.pre.match(/(\w+(-\w+)*)\(\s*$/)[1];
-
-          first = false;
-
-          // There may be other commas in the values so this isn't necessarily just 2 pieces.
-          // By spec everything after the first comma (including commas) is a single default value we'll join again.
-          const [variableName, ...defaultValueSplit] = varArguments;
-
-          const defaultValue = defaultValueSplit.join(',');
-
-          const usage = {
-            selector,
-            property,
-            defaultValue,
-            media,
-            supports,
-            sheet: sheet.href,
-            isFullProperty,
-            fullValue,
-            isImportant,
-            index,
-            cssFunc,
-          };
-          index++;
-          if (!(variableName in collected)) {
-            collected[variableName] = { properties: {}, usages: [], statelessSelector: null };
-          }
-          collected[variableName].usages.push(usage);
-          collected[variableName].properties[property] = {isFullProperty, fullValue, isImportant};
-
-          // Replace variable name (first occurrence only) from result, to avoid circular loop
-          value =
-            (match.pre || '') +
-            match.body.replace(variableName, '') +
-            (match.post || '');
+        if (shorthandValue === '') {
+          // In some cases shorthand value can't be resolved, skip these for now.
+          // Happens when a shorthand containing mulitple custom properties is used,
+          // and the syntax doesn't allow unambiguously determining the type of each.
+          continue;
         }
 
-        // Collect non variable values.
-        if (value?.trim() || '' !== '' && value !== 'initial') {
-          if (!(fullValue in collected)) {
-            collected[fullValue] = {
-              isRawValue: true,
-              properties: {},
-              usages: [],
-              statelessSelector: null,
-            };
-          }
-          collected[fullValue].usages.push({
-            selector,
-            property,
-            defaultValue: fullValue,
-            media,
-            supports,
-            sheet: sheet.href,
-            isFullProperty: true,
-            fullValue,
-            isImportant,
-            index,
-          });
-          collected[fullValue].properties[property] = {isFullProperty: true, fullValue, isImportant};
-        }
+        visitedShorthands.push(shorthandProperty);
+        value = shorthandValue;
+        property = shorthandProperty;
       }
+
+      const fullValue = value;
+      const isImportant = rule.style.getPropertyPriority(property) === 'important';
+    
+      while ((match = balancedVar(value))) {
+        // Split at the comma to find variable name and fallback value.
+        const varArguments = match.body.split(',').map((str) => str.trim());
+        const isFullProperty =
+          first &&
+          match.pre.trim() === '' &&
+          (match.post.replace(/\s*\!important$/, '') === '');
+        // Does the variable represent all the arguments of a function?
+        const isOnlyFunctionArgument = /^\s*\)/.test(match.post) && /\w+(-\w+)*\(\s*$/.test(match.pre);
+        const cssFunc = !isOnlyFunctionArgument ? null : match.pre.match(/(\w+(-\w+)*)\(\s*$/)[1];
+
+        first = false;
+
+        // There may be other commas in the values so this isn't necessarily just 2 pieces.
+        // By spec everything after the first comma (including commas) is a single default value we'll join again.
+        const [variableName, ...defaultValueSplit] = varArguments;
+
+        const defaultValue = defaultValueSplit.join(',');
+
+        const usage = {
+          selector,
+          statelessSelector: statelessSelector(selector),
+          property,
+          defaultValue,
+          media,
+          supports,
+          sheet: sheet.href,
+          isFullProperty,
+          fullValue,
+          isImportant,
+          index,
+          cssFunc,
+        };
+        index++;
+        if (!(variableName in collected)) {
+          collected[variableName] = { properties: {}, usages: [], statelessSelector: null };
+        }
+        collected[variableName].usages.push(usage);
+        collected[variableName].properties[property] = {isFullProperty, fullValue, isImportant};
+
+        // Replace variable name (first occurrence only) from result, to avoid circular loop
+        value =
+          (match.pre || '') +
+          match.body.replace(variableName, '') +
+          (match.post || '');
+      }
+      const remaining = value?.trim() || '';
+      // if (remaining.startsWith(',') ) {
+      //   console.log(fullValue, remaining)
+      // }
+      // Collect non variable values.
+      if (remaining !== '' && !remaining.startsWith(',')) {
+        // if (fullValue.includes('--')) {
+        //   console.log('========');
+        //   console.log(property);
+        //   console.log(fullValue);
+        //   console.log(value);
+        // }
+
+        if (!(fullValue in collected)) {
+          collected[fullValue] = {
+            isRawValue: true,
+            properties: {},
+            usages: [],
+            statelessSelector: null,
+          };
+        }
+        collected[fullValue].usages.push({
+          selector,
+          statelessSelector: statelessSelector(selector),
+          property,
+          defaultValue: fullValue,
+          media,
+          supports,
+          sheet: sheet.href,
+          isFullProperty: true,
+          fullValue,
+          isImportant,
+          index,
+        });
+        collected[fullValue].properties[property] = {isFullProperty: true, fullValue, isImportant};
+      }
+
     }
   }
   if (rule.type === 4) {

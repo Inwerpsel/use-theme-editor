@@ -24,6 +24,8 @@ const toggleStylesheets = (disabledSheets) => {
 
 let scopesStyleElement = document.createElement('style');
 document.head.appendChild(scopesStyleElement);
+export const styleId = '__forced-styles__'
+scopesStyleElement.id = styleId;
 
 let ruleIndexes = {};
 
@@ -152,7 +154,7 @@ export const setupThemeEditor = async (config) => {
     // to the root, even if they're also used deeper down. Though you can get used to that and will always find
     // everything.
     const matchedVars = getMatchingVars({ cssVars, target });
-    const rawGroups = groupVars(matchedVars, target);
+    const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
 
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;

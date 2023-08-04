@@ -3,21 +3,12 @@ export const allStateSelectorsRegexp = /:(active|focus(-(visible|within))?|visit
 export const residualNotRegexp = /:not\([\s,\*]*\)/g;
 
 export function includeDescendants(selector) {
-    // const isBodySelector = !!selector.match(/^body(\.[\w-]*)?$/);
-    // const isRootSelector = selector.trim() === ':root';
-    // const isGlobalSelector = isBodySelector || isRootSelector;
-
-    // if (!isRootSelector && /^:/.test(selector)) {
-    //   // Quick hack. These are filtered below.
-    //   return null;
-    // }
-
-    // Prevent body selector from always showing up, unless a body or paragraph was clicked.
-    // const shouldIncludeStar = !isGlobalSelector || ['p', 'body', 'h'].includes(target.tagName?.toLowerCase().replace(/\d$/, ''));
-    // const shouldIncludeStar = true;
-
-    // Remove any pseudo selectors that might not match the clicked element right now.
-    return `${selector}, :where(${selector}) *`;
+  if (selector === '' || selector === '*' || selector === ':root') {
+    // When selector is only pseudo elements (e.g. ::placeholder),
+    // we want to show it on root element.
+    return '*';
+  }
+  return `${selector}, :where(${selector}) *`.replace('\\\\', '\\');
 }
 
 let cache;
@@ -53,4 +44,3 @@ export const getMatchingVars = ({ cssVars, target }) => {
     return [];
   }
 };
-

@@ -276,6 +276,7 @@ export const ThemeEditor = (props) => {
               <NameReplacements/>
               <SignalExample />
               <VoiceCommands />
+              <CurrentTheme />
             </Drawer>
           </div>
         </MovablePanels>

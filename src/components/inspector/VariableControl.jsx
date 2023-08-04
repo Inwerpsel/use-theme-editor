@@ -16,6 +16,7 @@ import { VariableUsages } from './VariableUsages';
 import { useResumableState } from '../../hooks/useResumableReducer';
 import { get } from '../../state';
 import { MediaQueries } from './MediaQueries';
+import { ToggleButton } from '../controls/ToggleButton';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -141,12 +142,8 @@ export function getValueFromDefaultScopes(scopes, cssVar) {
   if (!scopes) {
     return null;
   }
-  for (const {selector, scopeVars} of scopes) {
-
-    if (!scopeVars) {
-      console.log('A scope with no vars?!', selector, cssVar)
-    }
-    if (scopeVars && scopeVars.some(v=>v.name === cssVar.name)) {
+  for (const {selector} of scopes) {
+    if (definedValues[selector]?.hasOwnProperty(cssVar.name)) {
       return definedValues[selector][cssVar.name];
     }
   }
@@ -191,9 +188,8 @@ export const VariableControl = (props) => {
 
   const defaultValue =
     getValueFromDefaultScopes(elementScopes, cssVar) ||
-    definedValues[':root'][name] ||
-    definedValues[':where(html)'][name] ||
-    defaultValues[name];
+    defaultValues[name] ||
+    cssVar.usages[0].defaultValue;
 
   const [
     showSelectors, setShowSelectors
@@ -210,8 +206,8 @@ export const VariableControl = (props) => {
   const {media} = maxSpecific || {};
 
   const varMatches = value && value.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
-  const referencedVariable = useMemo(() => {
-    return !varMatches || varMatches.length === 0
+  const [referencedVariable, usedScope] = useMemo(() => {
+    const referredVar = !varMatches || varMatches.length === 0
       ? null
       : allVars.find((cssVar) => cssVar.name === varMatches[1]) || {
           name: varMatches[1],
@@ -224,6 +220,13 @@ export const VariableControl = (props) => {
           properties: {},
           positions: [],
         };
+    if (!referredVar) {
+      return [];
+    }
+    const usedScope = elementScopes?.find((scope) =>
+      scope.scopeVars.some((v) => v.name === varMatches[1])
+    )?.selector;
+    return [referredVar, usedScope];
   }, [value]);
   const {overridingMedia} = cssVar.allVar || cssVar;
   const matchesQuery =
@@ -284,23 +287,37 @@ export const VariableControl = (props) => {
     if (!isOpen) {
       return null;
     }
+    if (!cssVar.name.startsWith('--')) {
+      return [];
+    }
     const regexp = new RegExp(
       `var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
     );
 
-    return allVars.filter(({ name, usages }) => {
+    const currentValues = Object.values(scopes);
+    const defaultValues = Object.values(definedValues);
+
+    return allVars.filter(({ name }) => {
+      if (!name.startsWith('--')) {
+        return false;
+      }
       if (name === excludedVarName) {
         return false;
       }
-      if (theme[name]) {
-        return regexp.test(theme[name]);
+      const fromCurrentScope = currentValues.some(s=>s[name] && regexp.test(s[name]));
+      if (fromCurrentScope) {
+        return true;
       }
-      if (definedValues[name]) {
-        return regexp.test(definedValues[name]);
-      }
-      return regexp.test(usages[0].defaultValue);
+      return defaultValues.some((scope) => {
+        const value = scope[name];
+        return value && value.includes('--') && regexp.test(value)
+      });
+      // if (definedValues[name]) {
+      //   return regexp.test(definedValues[name]);
+      // }
+      // return regexp.test(usages[0].defaultValue);
     });
-  }, [theme, excludedVarName, isOpen]);
+  }, [scopes, excludedVarName, isOpen]);
 
   const [showReferences, setShowReferences] = useState(false);
   const [openVariablePicker, setOpenVariablePicker] = useState(false);
@@ -393,13 +410,13 @@ export const VariableControl = (props) => {
         <Fragment>
           {references.length > 0 && (
             <div>
-              <Checkbox
+              <ToggleButton
                 title={references.map((r) => r.name).join('\n')}
                 style={{ fontSize: '14px' }}
                 controls={[showReferences, setShowReferences]}
               >
                 Used by {references.length} other
-              </Checkbox>
+              </ToggleButton>
               {showReferences && <VariableReferences {...{ references }} />}
             </div>
           )}
@@ -508,19 +525,20 @@ export const VariableControl = (props) => {
           )}
           {!!referencedVariable && !overwriteVariable && (
             <ul style={{ margin: 0 }}>
+              <span className='monospace-code'>{usedScope}</span>
               <VariableControl
-                {...{ scopes: elementScopes }}
+                {...{ scopes: elementScopes, currentScope: usedScope }}
                 cssVar={referencedVariable}
                 onChange={(value) => {
                   dispatch({
                     type: ACTIONS.set,
-                    payload: { name: referencedVariable.name, value },
+                    payload: { name: referencedVariable.name, value, scope: usedScope },
                   });
                 }}
                 onUnset={() => {
                   dispatch({
                     type: ACTIONS.unset,
-                    payload: { name: referencedVariable.name },
+                    payload: { name: referencedVariable.name, scope: usedScope },
                   });
                 }}
                 key={referencedVariable.name}

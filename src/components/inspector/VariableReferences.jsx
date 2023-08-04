@@ -31,7 +31,8 @@ export function VariableReferences(props) {
             <ElementLocator
               hideIfNotFound={filterFound}
               initialized
-              selector={cssVar.usages.reduce((a, u) => a + u.selector, '')}
+              // Quick fix, this won't be needed once inspection is rewritten.
+              selector={cssVar.usages.reduce((a, u) => a + ',' + u.selector, '').replace(/^,/,'')}
             >
             </ElementLocator>
           </li>

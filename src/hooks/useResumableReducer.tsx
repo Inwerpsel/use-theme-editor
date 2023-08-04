@@ -147,6 +147,9 @@ function historyReducer(state, action, options) {
         // Action can be a function in case of setState.
         typeof performedAction === 'function' ? performedAction(baseState) : performedAction
       );
+      if (newState === baseState) {
+        return state;
+      }
       // const isNowDefaultState = newState === initialStates[id];
       // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
       // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;

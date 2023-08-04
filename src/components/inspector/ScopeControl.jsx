@@ -9,13 +9,11 @@ import { ElementLocator } from "../ui/ElementLocator";
 import { VariableControl } from "./VariableControl";
 
 export function ScopeControl(props) {
+    const { scopes, vars, element } = props;
     const { dispatch } = useContext(ThemeEditorContext);
     // Remove locator for now as it makes the UI jump too much.
     const [showLocator, setShowLocator] = useLocalStorage('show-scope-locators', false);
     // const showLocator = true;
-
-    const { scopes, vars, element } = props;
-
     // const nonRootScopes = useMemo(() => {
     //     return scopes.filter(s => !rootScopes.includes(s.selector));
     // }, [scopes])
@@ -41,6 +39,10 @@ export function ScopeControl(props) {
               usedVars.push(...scopeVars);
 
               const elementScopeVars = vars.filter((v) => v.currentScope === selector);
+
+              if (elementScopeVars.length === 0) {
+                return null;
+              }
 
               return (
                 <li
