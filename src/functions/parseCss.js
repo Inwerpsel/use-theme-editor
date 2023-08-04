@@ -32,7 +32,7 @@ function statelessSelector(selectors) {
     return includeDescendants(deduped)
 }
 // import {big, nestedWithComment, tailwindLike} from './__exampleCSS'
-const css = `/* Bootstrap  v5.2.0 (https://getbootstrap.com/)
+const big = `/* Bootstrap  v5.2.0 (https://getbootstrap.com/)
 * Copyright 2011-2022 The Bootstrap Authors
 * Copyright 2011-2022 Twitter, Inc.
 * Licensed under MIT (https://github.com/twbs/bootstrap/blob/main/LICENSE)
@@ -62,6 +62,57 @@ conditional at-rule */
   }
 }`;
 
+const bunchOfAtrules = `
+@media (screen and (min-width: 768px)) {
+  .max-w-\\[28\\.75rem\\] {
+      max-width: 38.75rem; 
+      height: 0;
+  }
+}
+@counter-style thumbs {
+  system: cyclic;
+  symbols: "\\1F44D";
+  suffix: " ";
+}
+ul {
+  list-style: thumbs;
+}
+@font-face {
+  font-family: "Trickster";
+  src:
+    local("Trickster"),
+    url("trickster-COLRv1.otf") format("opentype") tech(color-COLRv1),
+    url("trickster-outline.otf") format("opentype"),
+    url("trickster-outline.woff") format("woff");
+}
+@keyframes slidein {
+  from {
+    transform: translateX(0%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+@keyframes identifier {
+  0% {
+    top: 0;
+    left: 0;
+  }
+  30% {
+    top: 50px;
+  }
+  68%,
+  72% {
+    left: 50px;
+  }
+  100% {
+    top: 100px;
+    left: 100%;
+  }
+}
+`;
+
 const tailwindLike = `
 .max-w-\\[28\\.75rem\\] {
     max-width: 28.75rem
@@ -83,6 +134,8 @@ const tailwindLike = `
   }
 }
 `
+// const css = bunchOfAtrules;
+const css = big;
 // const css = tailwindLike + nestedWithComment
 
 /**
@@ -105,12 +158,14 @@ function parseCss() {
   // const atRules = {};
   const rulesWithMap = [];
   const currentAtRules = [];
+  const rogueAtRules = [];
+  let currentSelectors = [];
 
   let lineNumber = 0;
   let currentIndex = 0;
   let lineIndex = 0;
 
-  let buffer = '';
+  let buffer = '', bufferLine, bufferCol;
   // let ruleIndex = 0;
   let inStylemap = false;
 
@@ -124,10 +179,11 @@ function parseCss() {
 
   let inAtRule = false;
   let parenthesesLevel = 0;
-  let currentSelector;
-  let currentProperty = '';
+  let selectorRule;
+  let currentProperty = '', currentPropertyStart;
 
   let prevChar, recordChar;
+
   const parser = {
     '{'() {
       if (isInComment || inlineIsInComment) {
@@ -138,15 +194,19 @@ function parseCss() {
       if (inAtRule) {
         inAtRule = false;
         // atRules[trimmed] = {
-        //   line: lineNumber,
-        //   col: ruleIndex,
+        //   line: bufferLine,
+        //   col: bufferPos,
         // };
         currentAtRules.push(text);
         buffer = '';
+        return;
       }
 
-      currentSelector = {
-        text,
+      currentSelectors.push([[bufferLine, bufferCol],text]);
+
+      selectorRule = {
+        text: currentSelectors.map(([, text]) => text).join(),
+        selectors: currentSelectors,
         start: {
           line: lineNumber,
           col: currentIndex - lineIndex - buffer.length - 1,
@@ -155,6 +215,7 @@ function parseCss() {
         stylemap: {},
         atRules: [...currentAtRules],
       };
+      currentSelectors = [];
       buffer = '';
       inStylemap = true;
     },
@@ -166,17 +227,27 @@ function parseCss() {
       if (inStylemap) {
         inStylemap = false;
         if (currentProperty) {
-          currentSelector.stylemap[currentProperty] = buffer.trim();
+          selectorRule.stylemap[currentProperty] = buffer.trim();
           currentProperty = '';
         }
-        currentSelector.end = {
+        selectorRule.end = {
           line: lineNumber,
           col: currentIndex - lineIndex - 1,
         };
-        rulesWithMap.push(currentSelector);
-        currentSelector = null;
+        rulesWithMap.push(selectorRule);
+        selectorRule = null;
       } else {
-        currentAtRules.pop();
+        const closedRule = currentAtRules.pop();
+        let body = buffer.trim();
+        if (body !== '') {
+          // Some atrules have a (non-style) map which can have commas in rare cases (main font-face and counter-style).
+          // To avoid complex handling, we just let it be a bit wrong, then correct here.
+          if (currentSelectors.length > 0) {
+            body = currentSelectors.map(([, text]) => text).join() + ',' + body;
+          }
+          rogueAtRules.push({text: closedRule, body})
+        }
+        currentSelectors = [];
       }
       buffer = '';
     },
@@ -192,6 +263,12 @@ function parseCss() {
         commentBody = '';
         inlineIsInComment = false;
       }
+
+      // Parentheses in CSS cannot span multiple lines.
+      // While the parser should properly close unescaped parentheses,
+      // in case that would fail, resetting limits the consequences to the line,
+      // and not everything after it.
+      parenthesesLevel = 0;
 
       lineNumber++;
       lineIndex = currentIndex;
@@ -233,11 +310,7 @@ function parseCss() {
     '*'() {
       if (!isInComment && !inlineIsInComment && prevChar === '/') {
         recordChar = false;
-            isInComment = true;
-            isInComment = true;
-            recordChar = false;
         isInComment = true;
-            recordChar = false;
         commentStartLine = lineNumber;
         commentStartCol = currentIndex - lineIndex - 1;
 
@@ -256,13 +329,14 @@ function parseCss() {
     ':'() {
       if (inStylemap && currentProperty === '') {
         currentProperty = buffer.trim();
+        currentPropertyStart = [bufferLine, bufferCol];
         buffer = '';
         recordChar = false;
       }
     },
     ';'() {
       if (inStylemap && parenthesesLevel === 0) {
-        currentSelector.stylemap[currentProperty] = buffer.trim();
+        selectorRule.stylemap[currentProperty] = buffer.trim();
 
         buffer = '';
         currentProperty = '';
@@ -293,6 +367,14 @@ function parseCss() {
       isEscape = true;
       recordChar = false;
     },
+    ','() {
+      if (!isInComment && !inlineIsInComment && !inStylemap && !inAtRule && parenthesesLevel === 0) {
+        const selector = buffer.trim();
+        currentSelectors.push([[bufferLine, bufferCol], selector]);
+        recordChar = false;
+        buffer = '';
+      }
+    },
   };
 
   for (const char of css) {
@@ -302,7 +384,7 @@ function parseCss() {
       isEscape = false;
     } else {
       const f = parser[char];
-      !f || f();
+      f && f();
     }
 
     if (recordChar) {
@@ -310,11 +392,16 @@ function parseCss() {
           commentBody += char;
         } else {
           const isWhiteSpace = /\s/.test(char);
+          const wasEmpty = buffer === '';
           // if (!inStylemap && !isWhiteSpace && buffer === '') {
           //   ruleIndex = currentIndex;
           // }
-          if (!isWhiteSpace || buffer !== '') {
+          if (!isWhiteSpace || !wasEmpty) {
             buffer += char;
+          }
+          if (wasEmpty && !isWhiteSpace) {
+            bufferLine = lineNumber;
+            bufferCol = currentIndex - lineIndex - 1;
           }
         }
     }
@@ -322,12 +409,12 @@ function parseCss() {
     currentIndex++;
     prevChar = char;
   }
-  return rulesWithMap;
+  return [rulesWithMap, rogueAtRules];
 }
 
 console.time('a')
 // Flattened list of rules with a (style)map.
-const rulesWithMap = parseCss()
+const [rulesWithMap, rogueAtrules] = parseCss()
 console.timeEnd('a')
 
 console.time('b')
@@ -346,8 +433,8 @@ function parseMap(mapString) {
   }, {})
 }
 
-const keyframes = {};
-const selectors = [];
+const keyframesRules = {};
+const selectorRules = [];
 const replaceRegex = /:(active|focus(-(visible|within))?|visited|hover)/g;
 
 function forceablePseudos(selector) {
@@ -359,16 +446,18 @@ function forceablePseudos(selector) {
 for (const rule of rulesWithMap) {
   const firstAtRule = rule.atRules[0]
   if (firstAtRule && firstAtRule.includes('keyframes')) {
-    if (!keyframes.hasOwnProperty(firstAtRule)) {
-      keyframes[firstAtRule] = {};
+    if (!keyframesRules.hasOwnProperty(firstAtRule)) {
+      keyframesRules[firstAtRule] = {};
     }
-    keyframes[firstAtRule][rule.text] = rule;
+    keyframesRules[firstAtRule][rule.text] = rule;
 
     continue;
   }
+
   rule.statelessSelector = statelessSelector(rule.text);
   rule.adaptedSelector = forceablePseudos(rule.text);
-  selectors.push(rule);
+
+  selectorRules.push(rule);
 }
 
 console.timeEnd('b')
