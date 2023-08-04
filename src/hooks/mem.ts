@@ -1,9 +1,9 @@
 import { EasyAccessors } from "../functions/getters";
 import { get } from "../state";
 
-const cache = new Map<(state: {}) => any, [any, {}]>();
+const cache = new Map<string, [any, {}]>();
 
-let magicObject = {_deps: {}};
+const magicObject = {_deps: {}};
 // This relies on all hook calls happening in a way that can be intercepted.
 // Will enforce later with types.
 export function createMagicObject(use): void {
@@ -47,37 +47,6 @@ function getLatestValues(old: {}): [{}, boolean] {
   return [state, hasChanged];
 }
 
-// Usage: only with function literals, or other way to guarantee a stable instance.
-// I don't know yet how to handle cleaning up old instances if they can change.
-// Currently this would result in the cache getting bigger over time.
-
-// If a function respects the rules of hooks, you can intercept the calls,
-// and replay them to avoid running the function + check if recalc needs to happen.
-export function memoInstance<T>(create: (state: EasyAccessors|{}) => T): T {
-  if (cache.has(create)) {
-    const [cached, cachedState] = cache.get(create);
-    // This should be guaranteed to run the same hooks as are called during capturing.
-    const [latestState, hasChanged] = getLatestValues(cachedState);
-
-    const value = hasChanged ? create(latestState) : cached;
-    if (hasChanged) {
-      cache.set(create, [value, latestState])
-    }
-    // console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
-
-    return value;
-  }
-
-  const [result, state] = runAndCapture(create);
-  cache.set(create, [result, state]);
-
-  // console.log('NEW', create.name, result)
-
-  return result;
-}
-
-const cacheAnon = new Map<string, [any, {}]>();
-
 // Because writing a separate function is not very ergonomical, especially for very simple logic,
 // it's much more convenient to support anonymous functions.
 // This imposes some rules upon the anonymous function because the source code is used as unique identifier.
@@ -92,43 +61,73 @@ export function mem<T>(create: (state: EasyAccessors) => T): T {
   // Then again, there are not that many use cases in any given app, so probably you'll never get more than a 
   // few tens of these anonymous functions being globally memo'd.
   const key = create.toString();
-  if (cacheAnon.has(key)) {
-    const [cached, cachedState] = cacheAnon.get(key);
-    // This should be guaranteed to run the same hooks as are called during capturing.
+
+  if (cache.has(key)) {
+    const [cached, cachedState] = cache.get(key);
     const [latestState, hasChanged] = getLatestValues(cachedState);
 
-    const value = hasChanged ? create(latestState as EasyAccessors) : cached;
-    if (hasChanged) {
-      cacheAnon.set(key, [value, latestState])
+    if (!hasChanged) {
+      return cached;
     }
-    // console.log( hasChanged ? 'RECALC' : 'CACHED' , key, value)
+
+    const value = create(latestState as EasyAccessors);
+    cache.set(key, [value, latestState])
 
     return value;
   }
 
   const [result, state] = runAndCapture(create);
-  cacheAnon.set(key, [result, state]);
-
-  // console.log('NEW', key, result)
+  cache.set(key, [result, state]);
 
   return result;
 }
 
-// There is no usage in this repo yet, unfortunately.
-{
-  // Example.
-  // This is not actually expensive, but it's easy to test.
-  
-  function calculateArea({width, height, scales}: typeof get) {
-    const scale = Number(scales[`${width}x${height}`]);
-    return width * height * scale;
-  }
 
-  function useArea() {
-    // Look ma, no deps!
-    return memoInstance(calculateArea);
-  }
-}
+// const cacheInstance = new Map<(state: {}) => any, [any, {}]>();
+// // Usage: only with function literals, or other way to guarantee a stable instance.
+// // I don't know yet how to handle cleaning up old instances if they can change.
+// // Currently this would result in the cache getting bigger over time.
+
+// // If a function respects the rules of hooks, you can intercept the calls,
+// // and replay them to avoid running the function + check if recalc needs to happen.
+// export function memoInstance<T>(create: (state: EasyAccessors|{}) => T): T {
+//   if (cacheInstance.has(create)) {
+//     const [cached, cachedState] = cacheInstance.get(create);
+//     // This should be guaranteed to run the same hooks as are called during capturing.
+//     const [latestState, hasChanged] = getLatestValues(cachedState);
+
+//     const value = hasChanged ? create(latestState) : cached;
+//     if (hasChanged) {
+//       cacheInstance.set(create, [value, latestState])
+//     }
+//     // console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
+
+//     return value;
+//   }
+
+//   const [result, state] = runAndCapture(create);
+//   cacheInstance.set(create, [result, state]);
+
+//   // console.log('NEW', create.name, result)
+
+//   return result;
+// }
+
+// // There is no usage in this repo yet, unfortunately.
+// {
+//   // Example.
+//   // This is not actually expensive, but it's easy to test.
+  
+//   function calculateArea({width, height, scales}: typeof get) {
+//     const scale = Number(scales[`${width}x${height}`]);
+//     return width * height * scale;
+//   }
+
+//   function useArea() {
+//     // Look ma, no deps!
+//     return memoInstance(calculateArea);
+//   }
+// }
 
 // Incomplete attempt at a version that can memo based on args.
 // In my use case every memo depends on data that is not retrieved from hooks,
@@ -136,34 +135,34 @@ export function mem<T>(create: (state: EasyAccessors) => T): T {
 // It would be nice to do the same thing as above, but without requiring all args to be hooks.
 // Even if multi map works and is efficient, invalidating old entries is likely pretty hard.
 
-function __incomplete__GetCached(func: (any) => any, args: {} ) {
-  // Get result from multi map of func + args.
+// function __incomplete__GetCached(func: (any) => any, args: {} ) {
+//   // Get result from multi map of func + args.
 
-  for (const [key, value] of Object.entries(args)) {
+//   for (const [key, value] of Object.entries(args)) {
 
-  }
+//   }
 
-  // Nothing found
-  return null;
-}
+//   // Nothing found
+//   return null;
+// }
 
-function calculateArea(width: number, height: number, scale: number) {
-  return width * height * scale;
-}
+// function calculateArea(width: number, height: number, scale: number) {
+//   return width * height * scale;
+// }
 
-function useMemoedArea() {
-  const {width, height, scales} = get;
+// function useMemoedArea() {
+//   const {width, height, scales} = get;
 
-  // Todo in TS: remaining arguments should be the arguments of calculateArea.
-  return __incomplete__memoGlobal(calculateArea, width, height, Number(scales[`${width}x${height}`]));
-}
+//   // Todo in TS: remaining arguments should be the arguments of calculateArea.
+//   return __incomplete__memoGlobal(calculateArea, width, height, Number(scales[`${width}x${height}`]));
+// }
 
-function __incomplete__memoGlobal(func: (...args: any[]) => any, ...args: any[]): any {
-  const fromCache = __incomplete__GetCached(func, args);
+// function __incomplete__memoGlobal(func: (...args: any[]) => any, ...args: any[]): any {
+//   const fromCache = __incomplete__GetCached(func, args);
 
-  if (fromCache !== null) { 
-    return fromCache;
-  }
+//   if (fromCache !== null) { 
+//     return fromCache;
+//   }
 
-  // Create object to 
-}
+//   // Create object to 
+// }
