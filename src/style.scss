@@ -111,6 +111,9 @@ body {
 .responsive-frame-container {
   transform-origin: 0 0;
   //overflow: hidden;
+  iframe {
+    background-color: white;
+  }
 }
 
 .responsive-frame-container::-webkit-scrollbar {
@@ -153,6 +156,10 @@ body {
 .theme-editor ul {
   margin-left: 0;
   padding-left: 0;
+}
+
+.var-control li {
+  list-style-type: none;
 }
 
 .group-list, .server-theme-list {
@@ -414,10 +421,5 @@ div[id^=font-picker] ul {
 }
 
 button {
-
   width: auto;
-}
-
-header.Header _-- {
-  position: static;
 }
