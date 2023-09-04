@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
-// import {applyPseudoPreviews} from '../functions/applyPseudoPreviews';
 import {reducerOf} from '../functions/reducerOf';
 import { useResumableReducer } from './useResumableReducer';
 import { definedValues } from '../functions/collectRuleVars';
