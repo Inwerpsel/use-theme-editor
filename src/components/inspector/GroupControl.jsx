@@ -8,7 +8,6 @@ import { ScopeControl } from './ScopeControl';
 import { isColorProperty } from './TypedControl';
 import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
 import { ScrollInViewButton } from './ScrollInViewButton';
-import { rootScopes } from '../../functions/extractPageVariables';
 import { get, use } from '../../state';
 
 export const GroupControl = props => {
@@ -41,10 +40,14 @@ export const GroupControl = props => {
 
   const groupColors = useMemo(() => {
     return vars.reduce((colorVars, someVar) => {
-      if (isColorProperty(someVar.usages[0].property)) {
+      if (isColorProperty(someVar.maxSpecific?.property || someVar.usages[0].property)) {
         const { name } = someVar;
         if (!name.startsWith('--')) {
-          colorVars.push([someVar, name]);
+          // Quick fix to prevent currently non-presentable value.
+          if (name.toLowerCase() !== 'currentcolor') {
+          // Quick fix to make it work with raw values.
+            colorVars.push([someVar, name]);
+          }
           return colorVars;
         }
 
@@ -52,10 +55,8 @@ export const GroupControl = props => {
         let currentScope = null;
         if (elementScopes.length > 0) {
           for (const key in propertyScopes || {}) {
-            if (!rootScopes.includes(key)) {
-              currentScope =
-                elementScopes.find((s) => s.selector === key) || currentScope;
-            }
+            currentScope =
+              elementScopes.find((s) => s.selector === key) || currentScope;
           }
         }
         const valueFromScope =
@@ -68,8 +69,9 @@ export const GroupControl = props => {
           definedValues[':root'][name] ||
           defaultValues[name] ||
           getValueFromDefaultScopes(elementScopes, someVar)
-        if (value) {
-          colorVars.push([someVar, value]);
+
+        if (value && value.toLowerCase() !== 'currentcolor') {
+          colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value]);
         }
       }
       return colorVars;
@@ -141,6 +143,8 @@ export const GroupControl = props => {
         {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
           {groupColors.map(([{name}, value]) => {
             return <div
+              draggable
+              onDragStart={e=>e.dataTransfer.setData('value', value)}
               key={name}
               title={`${name}: ${value}`}
               style={{

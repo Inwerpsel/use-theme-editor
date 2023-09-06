@@ -8,7 +8,7 @@ export function VariableReferences(props) {
   const { references } = props;
   const { annoyingPrefix, nameReplacements } = get;
 
-  const [filterFound, setFilterFound] = useState(false);
+  const [filterFound, setFilterFound] = useState(true);
 
   if (references.length === 0) {
     return null;

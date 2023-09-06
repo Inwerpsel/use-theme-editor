@@ -76,25 +76,25 @@ export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
 
 const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isOpen) => {
   const size = PREVIEW_SIZE;
-
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
-
   const isUrl = /url\(/.test(value);
-  const property = cssVar.usages && cssVar.usages[0]?.property;
+  const property = cssVar.maxSpecific?.property || cssVar.usages && cssVar.usages[0]?.property;
   const isColor =
     isColorProperty(property) ||
     COLOR_VALUE_REGEX.test(value) ||
     GRADIENT_REGEX.test(value);
   const presentable = isColor || isUrl;
 
-  if (value && presentable) {
-    if (!!referencedVariable && isOpen) {
+  if (value && presentable && !/currentcolor/i.test(value)) {
+    if (referencedVariable && isOpen) {
       // Both value and preview are shown on the referenced variable when open.
       return null;
     }
     return (
       <Fragment>
         <span
+          draggable
+          onDragStart={e=>e.dataTransfer.setData('value', value)}
           key={1}
           onClick={onClick}
           title={title}
@@ -104,7 +104,7 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
             border: '1px solid black',
             borderRadius: '6px',
             backgroundImage: `${value}`,
-            backgroundColor: `${value}`,
+            backgroundColor: cssVar.cssFunc ? `${cssVar.cssFunc}(${value})` : value,
             backgroundRepeat: `no-repeat`,
             backgroundSize: 'cover',
             // background:,
@@ -189,7 +189,7 @@ export const VariableControl = (props) => {
   const defaultValue =
     getValueFromDefaultScopes(elementScopes, cssVar) ||
     defaultValues[name] ||
-    cssVar.usages[0].defaultValue;
+    cssVar.maxSpecific?.defaultValue || cssVar.usages[0].defaultValue;
 
   const [
     showSelectors, setShowSelectors
@@ -213,7 +213,7 @@ export const VariableControl = (props) => {
           name: varMatches[1],
           usages: [
             {
-              property: cssVar.usages[0].property,
+              property: cssVar.maxSpecific?.defaultValue || cssVar.usages[0].property,
               isFake: true,
             },
           ],
@@ -322,7 +322,7 @@ export const VariableControl = (props) => {
   const [showReferences, setShowReferences] = useState(false);
   const [openVariablePicker, setOpenVariablePicker] = useState(false);
 
-  const cssFunc = cssVar.usages.find((u) => u.cssFunc !== null)?.cssFunc;
+  const cssFunc = cssVar.cssFunc;
 
   if (currentLevel > 20) {
     // Very long dependency chain, probably cyclic, let's break it here.
