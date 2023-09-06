@@ -16,13 +16,13 @@ You can use this repo in various ways:
 
 ## Status
 
-While most features are quite stable, various parts are being worked on at the moment. If you'd like to
+While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
 make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
 functionality), feel free to open a new issue describing your needs and they'll be prioritized.
 
 ## Demo
 
-> ⚠️The demo is currently NOT ALWAYS WORKING on GitHub Pages, while the build is being set up.
+> ⚠️The demo is currently **not always working** on GitHub Pages, while the build is being set up.
 
 > Currently, demos live inside of `/docs` just to make them work with GitHub Pages.
 
@@ -45,13 +45,9 @@ A selection from their documentation site:
 
 [🖌 Buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
 [🖌 Forms](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms)
-[🖌 Grids](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/grids)
-[🖌 Intro](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/intro)
 [🖌 Sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
 ### Bootstrap ([source](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
-
-Less consistent, but still a usable result. Makes heavy use of scoped custom properties.
 
 [🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
 
