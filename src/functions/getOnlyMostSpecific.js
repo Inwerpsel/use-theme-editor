@@ -78,15 +78,19 @@ export function getMaxMatchingSpecificity(usages, element) {
         return max
       }
       // Return part if it's equally or more specific.
-      const winner = compare(max, part) !== -1 ? part : max;
-      if (winner === part) {
-        if (previousMatchedSelectors[selector] && part.length > previousMatchedSelectors[selector].length) {
-          // One of the previous selectors was shorter, let's keep that one (should be max).
-          return max;
+      try {
+        const winner = compare(max, part) !== -1 ? part : max;
+        if (winner === part) {
+          if (previousMatchedSelectors[selector] && part.length > previousMatchedSelectors[selector].length) {
+            // One of the previous selectors was shorter, let's keep that one (should be max).
+            return max;
+          }
+          previousMatchedSelectors[selector] = part;
         }
-        previousMatchedSelectors[selector] = part;
+        return winner;
+      } catch (e) {
+        return max;
       }
-      return winner;
     };
     usage.winningSelector = actualParts.reduce(comparePart);
 
@@ -97,11 +101,11 @@ export function getMaxMatchingSpecificity(usages, element) {
       return max;
     }
 
-    if (usage.isImportant) {
+    if (usage.isImportant && !max?.isImportant) {
       return usage;
     }
 
-    if (max?.isImportant) {
+    if (max?.isImportant && !usage.isImportant) {
       return max;
     }
 
