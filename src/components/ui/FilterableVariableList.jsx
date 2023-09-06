@@ -44,7 +44,7 @@ export function FilterableVariableList(props) {
         <Checkbox controls={[includeRoot, setIncludeRoot]}>Global values</Checkbox>
         <div style={{ display: 'flex', width: '100%' }}>
           <TextControl 
-            placeholder="Filter name..."
+            placeholder={`Filter name ${filtered.length}`}
             value={filter}
             onChange={setFilter}
           />
@@ -73,6 +73,8 @@ export function FilterableVariableList(props) {
                     <span style={{ maxWidth: '30%' }}>{optionValue}</span>
                   )}
                   <span
+                    draggable
+                    onDragStart={e=>e.dataTransfer.setData('value', varValue)}
                     key={name}
                     title={optionValue}
                     style={{

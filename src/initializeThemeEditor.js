@@ -202,6 +202,50 @@ export const setupThemeEditor = async (config) => {
     return;
   }
 
+  const preventDefault = e=>e.preventDefault();
+
+  document.addEventListener('drop', event => {
+    // console.log(event, event.dataTransfer, event.dataTransfer?.getData('varName'))
+    const value = event.dataTransfer.getData('value')
+    const target = event.target
+    const matchedVars = getMatchingVars({ cssVars, target });
+    const rawGroups = groupVars(matchedVars, target, cssVars);
+    const groups = filterMostSpecific(rawGroups, target);
+
+    const options = [];
+
+    let i = 0;
+    for (const group of groups) {
+      i++;
+      const colorProps = ['background-color', 'background', 'background-image', 'color', 'border-color', 'outline-color']
+      for (const prop of colorProps) {
+        for (const v of group.vars) {
+          if (v.maxSpecific?.property === prop && !v.isRawValue && v.usages[0]?.isFullProperty) {
+            options.push({
+              element: i,
+              property: prop,
+              varName: v.name,
+              scope: group.scopes.find((s) =>
+                s.scopeVars.some((sv) => sv.name === v.name)
+              )?.selector,
+            });
+          }
+        }
+      }
+    }
+    window.parent.postMessage(
+      {
+        type: 'dropped-options',
+        payload: { options, value },
+      },
+      window.location.href
+    );
+    event.stopPropagation();
+  });
+
+  document.addEventListener('dragenter', preventDefault);
+  document.addEventListener('dragover', preventDefault);
+
   document.addEventListener('click', event => {
     const ignoreClick = requireAlt && !event.altKey;
     if (ignoreClick) {

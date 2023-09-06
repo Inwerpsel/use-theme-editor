@@ -1,5 +1,5 @@
 import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {useThemeEditor} from '../hooks/useThemeEditor';
+import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {ResizableFrame} from './ResizableFrame';
@@ -81,6 +81,21 @@ export const ThemeEditor = (props) => {
     },
     dispatch,
   ] = useThemeEditor({allVars, defaultValues});
+
+  useEffect(() => {
+    window.addEventListener('message', (event) => {
+      if (event.data.type === 'dropped-options') {
+        const {options, value} = event.data.payload;
+        console.log(options, value)
+        const [firstOption, ...otherOptions] = options;
+        dispatch({
+          type: ACTIONS.set,
+          payload: { name: firstOption.varName, scope: firstOption.scope, value, alternatives: otherOptions },
+        });
+      }
+    }, false);
+    // No cleanup needed, component doesn't dismount.
+  }, []);
 
   const {
     serverThemes,
@@ -173,7 +188,7 @@ export const ThemeEditor = (props) => {
         openGroups, setOpenGroups,
       }}
     >
-      <SpeakGlobalHooks hooks={use} />
+      {/* <SpeakGlobalHooks hooks={use} /> */}
       <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiArrangement}>
@@ -275,7 +290,7 @@ export const ThemeEditor = (props) => {
               <RemoveAnnoyingPrefix />
               <NameReplacements/>
               <SignalExample />
-              <VoiceCommands />
+              {/* <VoiceCommands /> */}
               <CurrentTheme />
             </Drawer>
           </div>
