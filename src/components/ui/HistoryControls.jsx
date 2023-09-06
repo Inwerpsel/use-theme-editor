@@ -5,12 +5,13 @@ import { Checkbox } from '../controls/Checkbox';
 import { HistoryBack} from "./HistoryBack";
 import { HistoryForward} from "./HistoryForward";
 import { HistoryVisualization } from "./HistoryVisualization";
+import { use } from '../../state';
 
 export function HistoryControls() { 
     const { dispatch, historyOffset } = useContext(HistoryNavigateContext);
 
     const [visualize, setVissualize] = useLocalStorage('visualize-history', false);
-    const [visualizeAlways, setVissualizeAlways] = useLocalStorage('visualize-history-always', true);
+    const [visualizeAlways, setVissualizeAlways] = use.visualizeHistoryAlways();
 
     const showHistory = visualize && (visualizeAlways || historyOffset !== 0);
 

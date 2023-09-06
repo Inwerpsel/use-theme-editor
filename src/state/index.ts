@@ -67,6 +67,8 @@ export const use = {
     () => useLocalStorage('window-arrangments', {}),
   webpackHome:
     () => useLocalStorage('webpack-home', ''),
+  visualizeHistoryAlways: 
+    () => useLocalStorage('visualizeHistoryAlways', false),
 
   // 
   // State below this is only used in a demo element.

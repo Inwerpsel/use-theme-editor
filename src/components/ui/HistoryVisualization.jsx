@@ -1,6 +1,7 @@
 import React, { useContext, useState } from 'react';
 import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
+import { use } from '../../state';
 
 function getName(action) {
   return !action
@@ -70,6 +71,7 @@ function ActionList(props) {
 }
 
 export function HistoryVisualization() {
+  const [, setVissualizeAlways] = use.visualizeHistoryAlways();
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
@@ -141,6 +143,8 @@ export function HistoryVisualization() {
                   onClick={
                     isPresent
                       ? () => {
+                        // Ensure history doesn't collapse.
+                          setVissualizeAlways(true);
                           dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
                         }
                       : () => {
