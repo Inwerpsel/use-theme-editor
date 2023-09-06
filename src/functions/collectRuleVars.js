@@ -38,13 +38,15 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           definedValues[selector] = {};
         }
 
-        definedValues[selector][property] = value;
+        if (!media || !/prefers\-color\-scheme\: ?dark/.test(media)) {
+          definedValues[selector][property] = value;
 
-        // Index them both ways, might pick just one later.
-        if (!scopesByProperty[property]) {
-          scopesByProperty[property] = {};
+          // Index them both ways, might pick just one later.
+          if (!scopesByProperty[property]) {
+            scopesByProperty[property] = {};
+          }
+          scopesByProperty[property][selector] = value;
         }
-        scopesByProperty[property][selector] = value;
 
         continue;
       }
@@ -83,7 +85,7 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           match.pre.trim() === '' &&
           (match.post.replace(/\s*\!important$/, '') === '');
         // Does the variable represent all the arguments of a function?
-        const isOnlyFunctionArgument = /^\s*\)/.test(match.post) && /\w+(-\w+)*\(\s*$/.test(match.pre);
+        const isOnlyFunctionArgument = /^\s*\)\s*/.test(match.post) && /\w+(-\w+)*\(\s*$/.test(match.pre);
         const cssFunc = !isOnlyFunctionArgument ? null : match.pre.match(/(\w+(-\w+)*)\(\s*$/)[1];
 
         first = false;
@@ -109,10 +111,11 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           cssFunc,
         };
         index++;
-        if (!(variableName in collected)) {
-          collected[variableName] = { properties: {}, usages: [], statelessSelector: null };
+        if (!collected.hasOwnProperty(variableName)) {
+          collected[variableName] = { properties: {}, usages: [], statelessSelector: null, cssFunc };
         }
         collected[variableName].usages.push(usage);
+        collected[variableName].cssFunc = collected[variableName].cssFunc || cssFunc;
         collected[variableName].properties[property] = {isFullProperty, fullValue, isImportant};
 
         // Replace variable name (first occurrence only) from result, to avoid circular loop
