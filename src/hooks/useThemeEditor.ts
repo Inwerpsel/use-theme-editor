@@ -73,23 +73,39 @@ export const ACTIONS = {
       },
     };
   },
-  createAlias(state, {name: origName, value}) {
+  // If the exact same payload is dispatched again, it makes sense for some state
+  // to "stick to" the payload during the first dispatch.
+  // It can safely be assumed that if the same payload object gets dispatched a second time,
+  // it's because history is being kept of these actions.
+  // Since we're dealing with looping many entries to generate a unique name by suffixing it,
+  // it's much safer to ensure this behavior only happens on new actions, not on replaying history.
+  // As a bonus, this "internal state" can be used in the history view to drag and drop the newly created
+  // alias, which is not really possible otherwise.
+  createAlias(state, payload) {
+    const {name: origName, value, generatedName} = payload;
 
-    let name = `--${origName.replaceAll(' ', '-')}`;
-    let i = 0;
-    function scopeUsesForOther(vars) {
-        return vars.hasOwnProperty(name) && vars[name] !== value;
-    }
+    let name;
+    if (generatedName) {
+      name = generatedName;
+    } else {
+      name = `--${origName.replaceAll(' ', '-')}`;
+      let i = 0;
+      function scopeUsesForOther(vars) {
+          return vars.hasOwnProperty(name) && vars[name] !== value;
+      }
 
-    function nameUsedForOtherValue() {
-      const usedInSource = Object.values(definedValues).some(scopeUsesForOther);
+      function nameUsedForOtherValue() {
+        const usedInSource = Object.values(definedValues).some(scopeUsesForOther);
 
-      return usedInSource || Object.values(state.scopes).some(scopeUsesForOther);
-    }
+        return usedInSource || Object.values(state.scopes).some(scopeUsesForOther);
+      }
 
-    while (nameUsedForOtherValue()) {
-      i++;
-      name = `--${origName.replaceAll(' ', '-')}-${i}`;
+      while (nameUsedForOtherValue()) {
+        i++;
+        name = `--${origName.replaceAll(' ', '-')}-${i}`;
+      }
+      // Store the name for history and later replays of same payload object.
+      payload.generatedName = name;
     }
 
     const newVarString = `var(${name})`;

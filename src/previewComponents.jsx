@@ -83,8 +83,11 @@ export const previewComponents = {
       </div>
     ),
 
-    createAlias: ({ payload: { name, value } }) => (
-      <div>
+    createAlias: ({ payload: { name, value, generatedName } }) => (
+      <div
+        draggable
+        onDragStart={e=>e.dataTransfer.setData('value', `var(${generatedName})`)}
+      >
         Alias
         <br />
         {(COLOR_VALUE_REGEX.test(value) ||
@@ -105,7 +108,7 @@ export const previewComponents = {
             }}
           ></span>
         )}
-        {value} = <b>{name}</b>
+        <b>{generatedName} = {value}</b>
       </div>
     ),
   },
