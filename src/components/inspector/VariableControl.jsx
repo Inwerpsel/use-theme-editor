@@ -34,6 +34,7 @@ const format = name => {
     parts[parts.length - 1].trim().replace(/ /g, '-')
   ];
 };
+const preventDefault = e=>e.preventDefault();
 export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
   const [prefix, prop] = format(name);
   let formattedProp = prop.replaceAll(/-/g, ' ').trim();
@@ -335,6 +336,20 @@ export const VariableControl = (props) => {
 
   return (
     <li
+      onDragEnter={cssVar.isRawValue ? null : preventDefault}
+      onDragOver={cssVar.isRawValue ? null : preventDefault}
+      onDrop={e=> {
+        if (cssVar.isRawValue) {
+          return;
+        }
+        const value = e.dataTransfer.getData('value');
+        if (value) {
+          onChange(value)
+        }
+        // e.preventDefault();
+        e.stopPropagation();
+        // e.stopImmediatePropagation();
+      }}
       data-nesting-level={currentLevel}
       key={name}
       className={classnames('var-control', {
@@ -355,6 +370,8 @@ export const VariableControl = (props) => {
       {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media }} />}
       <div style={{ paddingTop: '6px' }} onClick={() => isOpen && toggleOpen()}>
         <h5
+          draggable
+          onDragStart={e=>e.dataTransfer.setData('value', `var(${name})`)}
           style={{
             display: 'inline-block',
             fontSize: '16px',
@@ -427,7 +444,7 @@ export const VariableControl = (props) => {
               justifyContent: 'flex-end',
             }}
           >
-            {isDefault && (
+            {isDefault && !cssVar.isRawValue && (
               <span
                 style={{
                   margin: '6px 6px 0',
