@@ -206,7 +206,8 @@ export const setupThemeEditor = async (config) => {
 
   document.addEventListener('drop', event => {
     // console.log(event, event.dataTransfer, event.dataTransfer?.getData('varName'))
-    const value = event.dataTransfer.getData('value')
+    const value = event.dataTransfer.getData('value') || event.dataTransfer.getData('text/plain');
+    if (!value ) return
     const target = event.target
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
