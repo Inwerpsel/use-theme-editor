@@ -21,6 +21,10 @@ export const GroupControl = props => {
 
   const {
     element,
+    elSrc,
+    elSrcset,
+    elAlt,
+    elTitle,
     label,
     vars,
     scopes: elementScopes,
@@ -118,54 +122,57 @@ export const GroupControl = props => {
       {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{element}}/>}
       
       <h4
-        style={{fontWeight: 400, marginBottom: 0, cursor: 'pointer'}}
+        style={{fontWeight: 400, marginBottom: 0, paddingRight: '4px',cursor: 'pointer', display: 'flex', justifyContent: 'space-between'}}
         onClick={() => toggleGroup(label)}
       >
-        {label} ({vars.length})
-        {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
-        >{propertyFilter}</span>}
-        { search !== '' && <span style={{color: 'grey', fontSize: '12px'}}
-        >
-           - "{search}"
-          <button
-            style={{
-              fontSize: '7px',
-              padding: '3px 3px 1px',
-              position: 'relative',
-              bottom: '4px',
-              borderColor: 'grey'
-               }}
-            title="Clear search"
-            onClick={() => { setSearch('') }}
-          >X</button>
-           </span>}
-
-        {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
-          {groupColors.map(([{name}, value]) => {
-            return <div
-              draggable
-              onDragStart={e=>e.dataTransfer.setData('value', value)}
-              key={name}
-              title={`${name}: ${value}`}
+        <div>
+          {label} ({vars.length})
+          {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
+          >{propertyFilter}</span>}
+          { search !== '' && <span style={{color: 'grey', fontSize: '12px'}}
+          >
+            - "{search}"
+            <button
               style={{
-                display: 'inline-block',
-                width: previewSize,
-                height: previewSize,
-                lineHeight: '1.5',
-                border: '1px solid black',
-                borderRadius: '6px',
-                backgroundImage: `${value}`,
-                backgroundColor: `${value}`,
-                backgroundRepeat: `no-repeat`,
-                backgroundSize: 'cover',
-                marginTop: '7px',
-                marginLeft: '6px',
-                fontSize: '12px',
-                textAlign: 'center',
-                textShadow: 'white 0px 3px'
-              }}>{/^var\(/.test(value) ? 'v' : <Fragment>&nbsp;</Fragment>}</div>
-            })}
-        </ul>}
+                fontSize: '7px',
+                padding: '3px 3px 1px',
+                position: 'relative',
+                bottom: '4px',
+                borderColor: 'grey'
+                }}
+              title="Clear search"
+              onClick={() => { setSearch('') }}
+            >X</button>
+            </span>}
+          {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
+            {groupColors.map(([{name}, value]) => {
+              return <div
+                draggable
+                onDragStart={e=>e.dataTransfer.setData('value', value)}
+                key={name}
+                title={`${name}: ${value}`}
+                style={{
+                  display: 'inline-block',
+                  width: previewSize,
+                  height: previewSize,
+                  lineHeight: '1.5',
+                  border: '1px solid black',
+                  borderRadius: '6px',
+                  backgroundImage: `${value}`,
+                  backgroundColor: `${value}`,
+                  backgroundRepeat: `no-repeat`,
+                  backgroundSize: 'cover',
+                  marginTop: '7px',
+                  marginLeft: '6px',
+                  fontSize: '12px',
+                  textAlign: 'center',
+                  textShadow: 'white 0px 3px'
+                }}>{/^var\(/.test(value) ? 'v' : <Fragment>&nbsp;</Fragment>}</div>
+              })}
+          </ul>}
+        </div>
+
+        {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{maxHeight: '52px', float: 'right'}}/>}
         
       </h4>
     </div>

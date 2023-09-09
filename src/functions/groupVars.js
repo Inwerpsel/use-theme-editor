@@ -92,7 +92,7 @@ export const groupVars = (vars, target, allVars) => {
     if (previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
-      const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars);
+      const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars, groups);
 
       const labelText = toLabel(element);
       const count = labelCounts[labelText] || 0;
@@ -101,6 +101,10 @@ export const groupVars = (vars, target, allVars) => {
 
       groups.push({
         element,
+        elSrc: element.src,
+        elSrcset: element.srcset,
+        elAlt: element.alt,
+        elTitle: element.title,
         isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
         label,
         vars: vars.map(v => {
