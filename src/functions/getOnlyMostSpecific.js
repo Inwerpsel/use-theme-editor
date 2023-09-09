@@ -27,12 +27,7 @@ function getPropertyKeys ({ selector, winningSelector = '', property, index }, m
 export function getMaxMatchingSpecificity(usages, element) {
   const previousMatchedSelectors = {};
   return usages.reduce((max, usage) => {
-    // // This should not be here but needs testing before remove.
-    // if (!usage) {
-    //   return max;
-    // }
-    // const strippedSelector = usage.selector.replace(pseudoStateRegex, '').replaceAll(residualNotRegexp, '');
-    const strippedSelector = statelessSelector(usage.selector);
+    const strippedSelector = usage.statelessSelector;
     try {
       if (!strippedSelector || !element.matches(strippedSelector)) {
         return max;

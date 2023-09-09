@@ -4,7 +4,7 @@ import { statelessSelector } from './extractPageVariables';
 import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 
 // This has been patched up recently, but eventually most things in this file will be completely rewritten.
-export function getMatchingScopes(target, allVars) {
+export function getMatchingScopes(target, allVars, prevGroups) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
     const selector = statelessSelector(rawSelector);
     if (rawSelector.endsWith(':root')) {
@@ -29,6 +29,7 @@ export function getMatchingScopes(target, allVars) {
 
   const withMostSpecific = withMatchingVars.map((scope) => {
     const { selector } = scope;
+    const _statelessSelector = statelessSelector(selector);
     if (!/,/.test(selector)) {
       scope.matchingSelector = selector;
     } else {
@@ -37,14 +38,32 @@ export function getMatchingScopes(target, allVars) {
       while (max === null && currentParent?.parentNode) {
         // Quick hack using an existing function that checks if the property exists on the element's style.
         // We're only matching the whole scope and don't care about the property.
-        max = getMaxMatchingSpecificity([{ selector, property: '__definitely_not_exists__' }], currentParent);
+        max = getMaxMatchingSpecificity([{ selector, statelessSelector: _statelessSelector, property: '__definitely_not_exists__' }], currentParent);
         currentParent = currentParent.parentNode;
       }
-      scope.matchingSelector = max.winningSelector;
+      scope.matchingSelector = max?.winningSelector;
     }
 
     return scope;
   });
+
+  for (const prevGroup of prevGroups) {
+    if (prevGroup.scopes.length > withMostSpecific.length) {
+      prevGroup.scopes = prevGroup.scopes.map((s,i) => [s, i]).sort(([a, ia], [b, ib]) => {
+        const hasA = withMostSpecific.some((x) => x.selector === a.selector);
+        const hasB = withMostSpecific.some((x) => x.selector === b.selector);
+
+        if (hasA && hasB) {
+          return ia - ib;
+        }
+        if (!hasA && !hasB) {
+          return ia - ib;
+        }
+        return hasA ? 1 : -1;
+      }).map(([s]) =>s);
+      // console.log(withMostSpecific, prevGroup);
+    }
+  }
 
   return withMostSpecific.sort((a,b) => {
     try {
