@@ -343,6 +343,11 @@ export const VariableControl = (props) => {
           return;
         }
         const value = e.dataTransfer.getData('value');
+        const regex = new RegExp(`var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`);
+        // Prevent dropping any direct references to itself.
+        if (regex.test(value)) {
+          return;
+        }
         if (value) {
           onChange(value)
         }
