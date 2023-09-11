@@ -7,7 +7,7 @@ export function ElementInlineStyles(props) {
   const { dispatch } = useContext(ThemeEditorContext);
   const { group, elementScopes } = props;
 
-  const styles = Object.entries(group.inlineStyles)
+  const styles = Object.entries(group.inlineStyles || {})
 
   if (styles.length === 0) {
       return null;
