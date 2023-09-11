@@ -30,7 +30,8 @@ export function ElementInlineStyles(props) {
                     property,
                   },
                 ],
-                properties: {},
+                properties: {[property]: {isFullProperty: true, fullValue: value, isImportant: false}},
+                maxSpecific: {property},
                 positions: [],
             };
 

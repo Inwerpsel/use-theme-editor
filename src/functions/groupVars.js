@@ -121,7 +121,7 @@ export const groupVars = (vars, target, allVars) => {
           });
         }),
         scopes,
-        inlineStyles: previousInlineStyles,
+        inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
       });
       previousMatches = currentMatches;
       // times.push([label, performance.now() - tStart])

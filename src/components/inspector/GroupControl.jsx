@@ -172,7 +172,8 @@ export const GroupControl = props => {
           </ul>}
         </div>
 
-        {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{maxHeight: '52px', float: 'right'}}/>}
+        {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
+        {group.inlineStyles && <span style={{...{border: '1px solid black'}, ...group.inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
         
       </h4>
     </div>
