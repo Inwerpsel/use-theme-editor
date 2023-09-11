@@ -7,11 +7,10 @@ export function ElementInlineStyles(props) {
   const { dispatch } = useContext(ThemeEditorContext);
   const { group, elementScopes } = props;
 
-  const styles = Object.entries(group.inlineStyles || {})
-
-  if (styles.length === 0) {
+  if (!group.inlineStyles) {
       return null;
   }
+  const styles = Object.entries(group.inlineStyles)
 
   return <div>
       <h5 style={{color: 'red'}}>Inline styles</h5>

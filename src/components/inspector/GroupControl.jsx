@@ -82,7 +82,7 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && Object.keys(group.inlineStyles).length === 0 ) { 
+  if (vars.length === 0 && !group.inlineStyles) { 
     return null;
   }
 
