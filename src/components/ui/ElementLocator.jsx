@@ -84,15 +84,15 @@ export function ElementLocator({
     if ((hideIfNotFound && initialized) || hideIfOne) {
       return null;
     }
-    return <Fragment>
+    return <div style={{opacity: 0.6}}>
       {showLabel && <div className='monospace-code'>
-        {selector.trim()}
-          <span className={'var-control-property'}>{property}</span>
+      {(label || selector).trim()}
+          <span className={'var-control-property monospace-code'}>{property}</span>
       </div>}
 
         <span>Not found on page</span>
         {children}
-    </Fragment>;
+    </div>;
   }
 
   if (hideIfOne && elements.length === 1) {
@@ -104,11 +104,11 @@ export function ElementLocator({
   const element = elements[currentElement];
 
   return (
-    <Fragment>
+    <div>
       {showLabel && (
         <div className="monospace-code">
           {(label || selector).trim()}
-          <span className={'var-control-property'}>{property}</span>
+          <span className={'var-control-property monospace-code'}>{property}</span>
         </div>
       )}
       <div
@@ -119,7 +119,7 @@ export function ElementLocator({
           fontSize: '16px'
         }}
       >
-        <div style={{flexShrink: 0}}>
+        <div style={{flexShrink: 0, display: 'flex', flexDirection: 'row'}}>
           {elements.length > 0 && <button
             className='scroll-in-view'
               onClick={() => {
@@ -204,6 +204,6 @@ export function ElementLocator({
         </div>
       </div>
       {children}
-    </Fragment>
+    </div>
   );
 }

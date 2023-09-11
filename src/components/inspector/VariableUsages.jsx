@@ -58,17 +58,16 @@ export const VariableUsages = ({usages, maxSpecificSelector, winningSelector, sc
       const selectors = selector.split(',');
       const highLightMatch = usages.length > 1 && selector === maxSpecificSelector;
       
-      if (selectors.length > 1 && selectors.some(selector => selector.length > 10)) {
-        return <li key={selector}>
+      if (selectors.length > 1) {
+        return <li key={selector} style={{border: '1px solid gray'}}>
           {!!position && <IdeLink {...position}/>}
           <h4
             style={!highLightMatch ? {} : currentSelectorStyle}
             onClick={() => setOpenSelectors({ ...openSelectors, [selector]: !openSelectors[selector] })}
             >
-            Combined: 
-            <div className='monospace-code'>{selector.replaceAll(/\s*\,\s*/g, ',\n').trim().substring(0, 100)}</div>
+            <div className='monospace-code' style={{backgroundColor: '#d0d7de'}}>{selector.replaceAll(/\s*\,\s*/g, ',\n').trim().substring(0, 100)}</div>
           </h4>
-          {!!openSelectors[selector] && <ul style={{marginLeft: '16px'}}>
+          {!openSelectors[selector] && <ul style={{marginLeft: '16px'}}>
             {selectors.map(selector => <Usage {...{scope, selector, highLightMatch, position, property}}/>)}
           </ul>}
         </li>;
