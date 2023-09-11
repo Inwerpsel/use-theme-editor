@@ -24,8 +24,11 @@ export function VariableReferences(props) {
       </Checkbox>
       <ul style={{ marginTop: '0' }}>
         {references.map((cssVar) => (
-          <li key={cssVar.name}>
-            <div>
+          <li key={cssVar.name} style={{borderBottom: '1px solid gray'}}>
+            <div
+              draggable
+              onDragStart={e=>e.dataTransfer.setData('value', `var(${cssVar.name})`)}
+            >
               {formatTitle(cssVar.name, annoyingPrefix, nameReplacements)}
             </div>
             <ElementLocator
