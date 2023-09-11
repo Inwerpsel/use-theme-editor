@@ -187,18 +187,14 @@ export const VariableControl = (props) => {
     properties,
   } = cssVar;
 
+  const uniqueSelectors = new Set(usages.map(u=>u.selector)).size;
+
   const defaultValue =
     getValueFromDefaultScopes(elementScopes, cssVar) ||
     defaultValues[name] ||
     cssVar.maxSpecific?.defaultValue || cssVar.usages[0].defaultValue;
 
-  const [
-    showSelectors, setShowSelectors
-  ] = useState(false);
-
   const [overwriteVariable, setOverwriteVariable] = useState(false);
-
-  const toggleSelectors = () => setShowSelectors(!showSelectors);
 
   const valueFromScope = !scopes || !scopes[currentScope] ? null : scopes[currentScope][name];
 
@@ -277,9 +273,13 @@ export const VariableControl = (props) => {
   const [
     isOpen, setIsOpen
     // Open all variables that refer to variables immediately.
-  ] = useResumableState(`OPEN${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
+  ] = useResumableState(`open_${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
 
   const toggleOpen = () => setIsOpen(!isOpen );
+
+  const [
+    showSelectors, setShowSelectors
+  ] = useResumableState(`showSelectors_${key}`, false);
 
   const excludedVarName = parentVar?.name;
 
@@ -491,9 +491,9 @@ export const VariableControl = (props) => {
             </button>}
 
             {!usages[0].isFake && (
-              <button onClick={toggleSelectors}>
-                Selectors ({usages.length})
-              </button>
+              <ToggleButton controls={[showSelectors, setShowSelectors]}>
+                Selectors ({uniqueSelectors})
+              </ToggleButton>
             )}
 
             {typeof element !== 'undefined' && (
