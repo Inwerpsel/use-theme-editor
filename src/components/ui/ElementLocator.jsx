@@ -114,7 +114,7 @@ export function ElementLocator({
       <div
         style={{
           display: 'flex',
-          justifyContent: 'flex-start',
+          alignItems: 'flex-start',
           maxWidth: '372px',
           fontSize: '16px'
         }}
