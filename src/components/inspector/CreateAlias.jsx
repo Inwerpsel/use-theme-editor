@@ -4,6 +4,7 @@ import { COLOR_VALUE_REGEX } from "../properties/ColorControl";
 import nameThatColor from '@yatiac/name-that-color';
 import { ThemeEditorContext } from "../ThemeEditor";
 import { ACTIONS } from "../../hooks/useThemeEditor";
+import tinycolor from 'tinycolor2';
 
 export function CreateAlias(props) {
     const {value} = props;
@@ -15,8 +16,14 @@ export function CreateAlias(props) {
         if (!wasOpened) {
             return null;
         }
+        const parsed = tinycolor(value);
+        if (parsed.isValid()) {
+          const alphaSuffix = parsed.getAlpha() === 1 ? '' : ` ${parsed.getAlpha().toString().replace('.', '')}`;
+          return nameThatColor(parsed.toHexString()).colorName.toLowerCase() + alphaSuffix;
+        }
         if (COLOR_VALUE_REGEX.test(value)) {
-            return nameThatColor(value).colorName.toLowerCase();
+          console.log('valid color not parsed by tinycolor (should not happen)');
+          return nameThatColor(value).colorName.toLowerCase();
         }
         return '';
     } , [wasOpened])
