@@ -147,11 +147,11 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 
   #### What works well?
   - Most semantic markup ever, makes for very short inspector titles (maybe even too short)
-  - Minimalistic defaults: 
   #### What doesn't work well?
   - `--background-color` is defined in a few scopes. Because of how the inspector currently works,
   it will only show such variable on the topmost element. Unfortunately this affects buttons.
   - Some custom properties are defined in too hairy selectors. E.g. `[role="link"]:is([aria-current], :hover, :active, :focus), a:is([aria-current], :hover, :active, :focus)`
+  - Some not so sensible defaults
  
 </details>
 
