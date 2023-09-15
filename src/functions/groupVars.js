@@ -99,10 +99,12 @@ export const groupVars = (vars, target, allVars) => {
 
       groups.push({
         element,
-        elSrc: element.src,
-        elSrcset: element.srcset,
-        elAlt: element.alt,
-        elTitle: element.title,
+        elSrc: element.getAttribute('src'),
+        elSrcset: element.getAttribute('srcset'),
+        elAlt: element.getAttribute('alt'),
+        // Previously this was `element.title`, however if a form element contains an input with name "title",
+        // that DOM element would be returned. This causes a crash when this data is sent as a message.
+        elTitle: element.getAttribute('title'),
         isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
         label,
         vars: vars.map(v => {
