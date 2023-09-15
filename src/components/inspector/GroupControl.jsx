@@ -167,7 +167,7 @@ export const GroupControl = props => {
                   fontSize: '12px',
                   textAlign: 'center',
                   textShadow: 'white 0px 3px'
-                }}>{/^var\(/.test(value) ? 'v' : <Fragment>&nbsp;</Fragment>}</div>
+                }}>{/^var\(/.test(value) ? 'v' : value === 'transparent' ? '👻' : <Fragment>&nbsp;</Fragment>}</div>
               })}
           </ul>}
         </div>

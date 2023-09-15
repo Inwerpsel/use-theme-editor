@@ -115,6 +115,7 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
           }}
         >
           {/var\(/.test(value) && 'var'}
+          {value === 'transparent' && '👻'}
         </span>
         <span style={{ float: 'right', marginRight: '4px' }}>
           {(referencedVariable?.name || '').replaceAll(/-+/g, ' ').trim() ||
