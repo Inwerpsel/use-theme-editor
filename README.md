@@ -48,7 +48,6 @@ A selection from their documentation site:
 [🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
 #### Smaller pages
 [🖌 album](https://inwerpsel.github.io/use-theme-editor/bs/album)
-[🖌 assets](https://inwerpsel.github.io/use-theme-editor/bs/assets)
 [🖌 blog](https://inwerpsel.github.io/use-theme-editor/bs/blog)
 [🖌 carousel](https://inwerpsel.github.io/use-theme-editor/bs/carousel)
 [🖌 checkout](https://inwerpsel.github.io/use-theme-editor/bs/checkout)
