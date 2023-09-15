@@ -609,6 +609,7 @@ div[id^=font-picker] ul {
 
 button {
   width: auto;
+  display: inline-block;
 }
 
 /*# sourceMappingURL=main.css.map*/
