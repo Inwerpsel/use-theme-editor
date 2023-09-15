@@ -28,22 +28,65 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 
 ### Openprops ([source](https://open-props.style/))
 
-Just a great looking page and a great palette of values.
+<details>
+  <summary>Info/instructions</summary>
+
+  #### What works well?
+  - Most complete palette of custom properties.
+  - Great design
+  - Mostly short and readable selectors (I just love `small.green-badge` and `circle#sun`)
+  #### What doesn't work well?
+  - Over-usage of `:where()` (e.g. `:where(html)`), this leads to a few bugs in the inspector.
+  - Almost no semantic tokens (e.g. button-color), so adding aliases doesn't really make sense here. It also
+  makes drag and dropping values pretty much useless: you'd get something like `--orange: var(--purple)`.
+  - Some inline styles (e.g. border radius) not properly handled.
+</details>
 
 [🖌 Home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/)
 
 ### Halfmoon ([source](https://github.com/halfmoonui/halfmoon))
 
-This CSS framework currently has the most (sensible) editable styles.
-It has an enormous amount of custom properties covering almost every property.
+<details>
+  <summary>Info/instructions</summary>
 
-A selection from their documentation site:
+  #### What works well?
+  - Enormous amount of custom properties => able to edit almost every part of the design.
+  - Mostly 1 selector per custom property => easy to understand info in the UI
+  - Great demonstration of linking variables in various ways (chains of 3 or 4 variables that actually make sense)
+  - Only defines values in the `:root` scope => easier to understand and less bugs in the editor
+  #### What doesn't work well?
+  - A very large portion (~1/3 of the ~1500) of variables are just a dark mode version of something that has a light
+  mode version. Since the whole point of custom props is theming, dark mode should have been a theme
+  consisting entirely of custom props. Since the editor only loads the light mode, it should only show
+  the light mode variants. You can remove the annoying `lm` prefix from the displayed variables.
+  - The approach is sometimes a bit contrived, with a lot of variables defined "just in case". This inflates
+  the CSS if you never end up overriding. This is not a problem if the eventual production build filters these.
+  E.g. `--lm-button-danger-bg-image-hover: none` (similar exists for every state of every variant of button, for both light and dark mode)
+  - The documentation site still relies on a few overrides that don't use custom props, which kind of spoils the experience.
+</details>
 
 [🖌 Buttons](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/buttons)
 [🖌 Forms](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/forms)
 [🖌 Sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
 ### Bootstrap ([source](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
+
+<details>
+  <summary>Info/instructions</summary>
+
+  #### What works well?
+  - Properties defined in non-root scope. While this approach has some drawbacks too, the result here is pretty good overall.
+  - Mostly quite consistent in how similar things are implemented
+  - Great for testing alias creation (but has issue in few cases, see below)
+  #### What doesn't work well?
+  - Quite a lot of custom properties are overridden with regular rules
+  - Uses `!important` quite heavily.
+  - Creating aliases has the wrong result sometimes, because the added CSS rules cannot yet properly respect
+  order, and thus specificity. Specifically this happens if you change properties that should be overridden
+  by a more specfic scope. For example: `.btn` and `.btn-primary`. This currently happens if you create an alias
+  for a property on `.btn`.
+</details>
+
 #### Big page with most things
 [🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
 #### Smaller pages
@@ -80,12 +123,38 @@ A selection from their documentation site:
 
 ### Mozilla developers
 
+<details>
+  <summary>Info/instructions</summary>
+
+  #### What works well?
+  - A lot of real world complex markup and variants
+  - Clean and semantic markup
+  - Relatively successful mix of root and non-root scoped custom properties (doesn't seem inconsistent or confusing)
+  #### What doesn't work well?
+  - Specificity related bug prevents created aliases from being picked up in the editor in some cases.
+  Possible related to the `:root:not(.light):not(.dark)` selector
+</details>
+
 [🖌 How CSS is structured](https://inwerpsel.github.io/use-theme-editor/mozilladocs/how-is-css-structured/)
 [🖌 Basic math in JavaScript — numbers and operators](https://inwerpsel.github.io/use-theme-editor/mozilladocs/jsmath/)
 [🖌 @media hover](https://inwerpsel.github.io/use-theme-editor/mozilladocs/media-hover/)
 [🖌 Using CSS custom properties](https://inwerpsel.github.io/use-theme-editor/mozilladocs/use-custom-properties/)
 
 ### Pico CSS
+
+<details>
+  <summary>Info/instructions</summary>
+
+  #### What works well?
+  - Most semantic markup ever, makes for very short inspector titles (maybe even too short)
+  - Minimalistic defaults: 
+  #### What doesn't work well?
+  - `--background-color` is defined in a few scopes. Because of how the inspector currently works,
+  it will only show such variable on the topmost element. Unfortunately this affects buttons.
+  - Some custom properties are defined in too hairy selectors. E.g. `[role="link"]:is([aria-current], :hover, :active, :focus), a:is([aria-current], :hover, :active, :focus)`
+ 
+</details>
+
 [🖌 accordions](https://inwerpsel.github.io/use-theme-editor/pico/docs/accordions.html)
 [🖌 buttons](https://inwerpsel.github.io/use-theme-editor/pico/docs/buttons.html)
 [🖌 cards](https://inwerpsel.github.io/use-theme-editor/pico/docs/cards.html)
