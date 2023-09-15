@@ -16,7 +16,10 @@ export function CreateAlias(props) {
         if (!wasOpened) {
             return null;
         }
-        const parsed = tinycolor(value);
+        // No valid syntax besides hsl can include the string "deg".
+        // Perhaps it's possible removing "deg" makes certain invalid color strings valid,
+        // but that's not a problem here.
+        const parsed = tinycolor(value.replace('deg', ''));
         if (parsed.isValid()) {
           const alphaSuffix = parsed.getAlpha() === 1 ? '' : ` ${parsed.getAlpha().toString().replace('.', '')}`;
           return nameThatColor(parsed.toHexString()).colorName.toLowerCase() + alphaSuffix;
