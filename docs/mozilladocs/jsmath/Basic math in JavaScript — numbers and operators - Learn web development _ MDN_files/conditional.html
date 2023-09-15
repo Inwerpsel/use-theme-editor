@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<!-- saved from url=(0090)https://mdn.github.io/learning-area/javascript/introduction-to-js-1/maths/conditional.html -->
+<html lang="en-us"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width">
+    <title>First conditional example</title>
+  <meta id="ConnectiveDocSignExtentionInstalled" name="ConnectiveDocSignExtentionInstalled" data-extension-version="1.0.6"></head>
+  <body>
+    <button>Start machine</button>
+    <p>The machine is stopped.</p>
+  
+
+  <script>
+    const btn = document.querySelector('button');
+    const txt = document.querySelector('p');
+
+    btn.addEventListener('click', updateBtn);
+
+    function updateBtn() {
+      if(btn.textContent === 'Start machine') {
+        btn.textContent = 'Stop machine';
+        txt.textContent = 'The machine has started!';
+      } else {
+        btn.textContent = 'Start machine';
+        txt.textContent = 'The machine is stopped.';
+      }
+    }
+  </script>
+
+</body></html>

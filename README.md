@@ -22,10 +22,6 @@ functionality), feel free to open a new issue describing your needs and they'll 
 
 ## Demo
 
-> ⚠️The demo is currently **not always working** on GitHub Pages, while the build is being set up.
-
-> Currently, demos live inside of `/docs` just to make them work with GitHub Pages.
-
 > I used some open source page content that seemed ok to use.
 If you're the owner of some of this content and would like to have it removed / updated,
 please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) on this repo.
@@ -34,7 +30,7 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 
 Just a great looking page and a great palette of values.
 
-[🖌 Home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/Open%20Props_%20sub-atomic%20styles)
+[🖌 Home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/)
 
 ### Halfmoon ([source](https://github.com/halfmoonui/halfmoon))
 
@@ -48,8 +44,70 @@ A selection from their documentation site:
 [🖌 Sidebar](https://inwerpsel.github.io/use-theme-editor/halfmoon/docs/sidebar)
 
 ### Bootstrap ([source](https://github.com/twbs/bootstrap/blob/main/site/content/docs/5.3/examples/cheatsheet/index.html))
-
+#### Big page with most things
 [🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/bs/cheatsheet/)
+#### Smaller pages
+[🖌 album](https://inwerpsel.github.io/use-theme-editor/bs/album)
+[🖌 assets](https://inwerpsel.github.io/use-theme-editor/bs/assets)
+[🖌 blog](https://inwerpsel.github.io/use-theme-editor/bs/blog)
+[🖌 carousel](https://inwerpsel.github.io/use-theme-editor/bs/carousel)
+[🖌 checkout](https://inwerpsel.github.io/use-theme-editor/bs/checkout)
+[🖌 cover](https://inwerpsel.github.io/use-theme-editor/bs/cover)
+[🖌 dashboard](https://inwerpsel.github.io/use-theme-editor/bs/dashboard)
+[🖌 dropdowns](https://inwerpsel.github.io/use-theme-editor/bs/dropdowns)
+[🖌 features](https://inwerpsel.github.io/use-theme-editor/bs/features)
+[🖌 footers](https://inwerpsel.github.io/use-theme-editor/bs/footers)
+[🖌 grid](https://inwerpsel.github.io/use-theme-editor/bs/grid)
+[🖌 headers](https://inwerpsel.github.io/use-theme-editor/bs/headers)
+[🖌 heroes](https://inwerpsel.github.io/use-theme-editor/bs/heroes)
+[🖌 jumbotron](https://inwerpsel.github.io/use-theme-editor/bs/jumbotron)
+[🖌 list-groups](https://inwerpsel.github.io/use-theme-editor/bs/list)
+[🖌 masonry](https://inwerpsel.github.io/use-theme-editor/bs/masonry)
+[🖌 modals](https://inwerpsel.github.io/use-theme-editor/bs/modals)
+[🖌 navbar-bottom](https://inwerpsel.github.io/use-theme-editor/bs/navbar)
+[🖌 navbar-fixed](https://inwerpsel.github.io/use-theme-editor/bs/navbar)
+[🖌 navbar-static](https://inwerpsel.github.io/use-theme-editor/bs/navbar)
+[🖌 navbars](https://inwerpsel.github.io/use-theme-editor/bs/navbars)
+[🖌 navbars-offcanvas](https://inwerpsel.github.io/use-theme-editor/bs/navbars)
+[🖌 offcanvas-navbar](https://inwerpsel.github.io/use-theme-editor/bs/offcanvas)
+[🖌 pricing](https://inwerpsel.github.io/use-theme-editor/bs/pricing)
+[🖌 product](https://inwerpsel.github.io/use-theme-editor/bs/product)
+[🖌 rtl](https://inwerpsel.github.io/use-theme-editor/bs/rtl)
+[🖌 sidebars](https://inwerpsel.github.io/use-theme-editor/bs/sidebars)
+[🖌 sign-in](https://inwerpsel.github.io/use-theme-editor/bs/sign)
+[🖌 starter-template](https://inwerpsel.github.io/use-theme-editor/bs/starter)
+[🖌 sticky-footer](https://inwerpsel.github.io/use-theme-editor/bs/sticky)
+[🖌 sticky-footer-navbar](https://inwerpsel.github.io/use-theme-editor/bs/sticky)
+
+### Mozilla developers
+
+[🖌 How CSS is structured](https://inwerpsel.github.io/use-theme-editor/mozilladocs/how-is-css-structured/)
+[🖌 Basic math in JavaScript — numbers and operators](https://inwerpsel.github.io/use-theme-editor/mozilladocs/jsmath/)
+[🖌 @media hover](https://inwerpsel.github.io/use-theme-editor/mozilladocs/media-hover/)
+[🖌 Using CSS custom properties](https://inwerpsel.github.io/use-theme-editor/mozilladocs/use-custom-properties/)
+
+### Pico CSS
+[🖌 accordions](https://inwerpsel.github.io/use-theme-editor/pico/docs/accordions.html)
+[🖌 buttons](https://inwerpsel.github.io/use-theme-editor/pico/docs/buttons.html)
+[🖌 cards](https://inwerpsel.github.io/use-theme-editor/pico/docs/cards.html)
+[🖌 classless](https://inwerpsel.github.io/use-theme-editor/pico/docs/classless.html)
+[🖌 containers](https://inwerpsel.github.io/use-theme-editor/pico/docs/containers.html)
+[🖌 customization](https://inwerpsel.github.io/use-theme-editor/pico/docs/customization.html)
+[🖌 dropdowns](https://inwerpsel.github.io/use-theme-editor/pico/docs/dropdowns.html)
+[🖌 forms](https://inwerpsel.github.io/use-theme-editor/pico/docs/forms.html)
+[🖌 grid](https://inwerpsel.github.io/use-theme-editor/pico/docs/grid.html)
+[🖌 home](https://inwerpsel.github.io/use-theme-editor/pico/docs/home.html)
+[🖌 loading](https://inwerpsel.github.io/use-theme-editor/pico/docs/loading.html)
+[🖌 modal](https://inwerpsel.github.io/use-theme-editor/pico/docs/modal.html)
+[🖌 navs](https://inwerpsel.github.io/use-theme-editor/pico/docs/navs.html)
+[🖌 progress](https://inwerpsel.github.io/use-theme-editor/pico/docs/progress.html)
+[🖌 rtl](https://inwerpsel.github.io/use-theme-editor/pico/docs/rtl.html)
+[🖌 scroller](https://inwerpsel.github.io/use-theme-editor/pico/docs/scroller.html)
+[🖌 tables](https://inwerpsel.github.io/use-theme-editor/pico/docs/tables.html)
+[🖌 themes](https://inwerpsel.github.io/use-theme-editor/pico/docs/themes.html)
+[🖌 tooltips](https://inwerpsel.github.io/use-theme-editor/pico/docs/tooltips.html)
+[🖌 typography](https://inwerpsel.github.io/use-theme-editor/pico/docs/typography.html)
+[🖌 we-love-classes](https://inwerpsel.github.io/use-theme-editor/pico/docs/we-love-classes.html)
 
 ### Other sites
 

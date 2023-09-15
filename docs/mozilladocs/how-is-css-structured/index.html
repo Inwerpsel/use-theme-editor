@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<!-- saved from url=(0084)https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured -->
+<html lang="en-US" prefix="og: https://ogp.me/ns#" class="light" style=""><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="https://developer.mozilla.org/favicon-48x48.cbbd161b.png"><link rel="apple-touch-icon" href="https://developer.mozilla.org/apple-touch-icon.6803c6f0.png"><meta name="theme-color" content="#ffffff"><link rel="manifest" href="https://developer.mozilla.org/manifest.56b1cedc.json"><link rel="search" type="application/opensearchdescription+xml" href="https://developer.mozilla.org/opensearch.xml" title="MDN Web Docs"><title>How CSS is structured - Learn web development | MDN</title><link rel="alternate" title="Cómo se estructura el CSS" href="https://developer.mozilla.org/es/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="es"><link rel="alternate" title="Comment CSS est structuré" href="https://developer.mozilla.org/fr/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="fr"><link rel="alternate" title="CSS の全体像" href="https://developer.mozilla.org/ja/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="ja"><link rel="alternate" title="CSS 의 구조" href="https://developer.mozilla.org/ko/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="ko"><link rel="alternate" title="Como CSS é estruturado" href="https://developer.mozilla.org/pt-BR/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="pt"><link rel="alternate" title="Как структурирован CSS" href="https://developer.mozilla.org/ru/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="ru"><link rel="alternate" title="如何构建 CSS" href="https://developer.mozilla.org/zh-CN/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="zh"><link rel="alternate" title="How CSS is structured" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured" hreflang="en"><meta name="robots" content="index, follow"><meta name="description" content="At this point, you should have a better idea about how CSS is structured. It&#39;s also useful to understand how the browser uses HTML and CSS to display a webpage. The next article, How CSS works, explains the process."><meta property="og:url" content="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured"><meta property="og:title" content="How CSS is structured - Learn web development | MDN"><meta property="og:locale" content="en-US"><meta property="og:description" content="At this point, you should have a better idea about how CSS is structured. It&#39;s also useful to understand how the browser uses HTML and CSS to display a webpage. The next article, How CSS works, explains the process."><meta property="og:image" content="https://developer.mozilla.org/mdn-social-share.cd6c4a5a.png"><meta property="twitter:card" content="summary_large_image"><link rel="canonical" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured"><style media="print">.article-actions-container,.document-toc-container,.language-menu,.main-menu-toggle,.mdn-cta-container,.on-github,.page-footer,.sidebar,.top-navigation-main,ul.prev-next{display:none!important}.main-page-content,.main-page-content pre{padding:2px}.main-page-content pre{border-left-width:2px}</style><link href="./How CSS is structured - Learn web development _ MDN_files/main.fd73557b.css" rel="stylesheet"><meta id="ConnectiveDocSignExtentionInstalled" name="ConnectiveDocSignExtentionInstalled" data-extension-version="1.0.6"></head><body><div id="root"><ul id="nav-access" class="a11y-nav"><li><a id="skip-main" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#content">Skip to main content</a></li><li><a id="skip-search" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#top-nav-search-input">Skip to search</a></li><li><a id="skip-select-language" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#languages-switcher-button">Skip to select language</a></li></ul><div class="mdn-cta-container"><div id="mdn-cta-content" class="mdn-cta-content"><div id="plus_launch_announcement" class="mdn-cta-content-container"><p class="mdn-cta-copy"><a href="https://developer.mozilla.org/en-US/plus" class="mdn-plus">MDN Plus</a> now available in <span class="underlined">your</span> country! Support MDN <span class="underlined">and</span> make it your own. <a href="https://hacks.mozilla.org/2022/04/mdn-plus-now-available-in-more-markets" target="_blank" rel="noopener noreferrer">Learn more</a> ✨</p></div></div><div class="mdn-cta-controls"><button type="button" id="mdn-cta-close" class="mdn-cta-close" aria-label="Close banner"><svg class="icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img"><g fill="currentColor" transform="rotate(-45 50 50)"><rect height="121.7" rx="6.76" width="13.52" x="43.24" y="-10.85"></rect><rect height="13.52" rx="6.76" width="121.7" x="-10.85" y="43.24"></rect></g></svg></button></div></div><div class="page-wrapper  category-css document-page"><div class="main-document-header-container"><header class="main-document-header-container top-navigation 
+      
+      "><div class="container "><div class="top-navigation-wrap"><a href="https://developer.mozilla.org/en-US/" class="logo" aria-label="MDN homepage"><svg id="mdn-docs-logo" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 694.9 104.4" style="enable-background:new 0 0 694.9 104.4" xml:space="preserve" role="img"><title>MDN Web Docs</title><style>.logo-m{fill:var(--text-link)}</style><g class="logo-m"><path d="M40.3 0 11.7 92.1H0L28.5 0h11.8zM50.7 0v92.1H40.3V0h10.4zM91 0 62.5 92.1H50.8L79.3 0H91zM101.4 0v92.1H91V0h10.4z"></path></g><path class="logo-m" d="M627.9 95.6h67v8.8h-67v-8.8z"></path><g style="fill:var(--text-primary)"><path d="M367 42h-4l-10.7 30.8h-5.5l-10.8-26h-.4l-10.5 26h-5.2L308.7 42h-3.8v-5.6H323V42h-6.5l6.8 20.4h.4l10.3-26h4.7l11.2 26h.5l5.7-20.3h-6.2v-5.6H367V42zM401.9 62c-.4 3.2-2 5.9-4.7 8.2-2.8 2.3-6.5 3.4-11.3 3.4-5.4 0-9.7-1.6-13.1-4.7-3.3-3.2-5-7.7-5-13.7 0-5.7 1.6-10.3 4.7-14s7.4-5.5 12.9-5.5c5.1 0 9.1 1.6 11.9 4.7s4.3 6.9 4.3 11.3c0 1.5-.2 3-.5 4.7h-25.6c.3 7.7 4 11.6 10.9 11.6 2.9 0 5.1-.7 6.5-2 1.5-1.4 2.5-3 3-4.9l6 .9zM394 51.3c.2-2.4-.4-4.7-1.8-6.9s-3.8-3.3-7-3.3c-3.1 0-5.3 1-6.9 3-1.5 2-2.5 4.4-2.8 7.2H394zM445 53.7c0 5-1.3 9.5-4 13.7s-6.9 6.2-12.7 6.2c-6 0-10.3-2.2-12.7-6.7-.1.4-.2 1.4-.4 2.9s-.3 2.5-.4 2.9h-7.3c.3-1.7.6-3.5.8-5.3.3-1.8.4-3.7.4-5.5V22.3h-6v-5.6H416v27c1.1-2.2 2.7-4.1 4.7-5.7 2-1.6 4.8-2.4 8.4-2.4 4.6 0 8.4 1.6 11.4 4.7 3 3.2 4.5 7.6 4.5 13.4zm-7.7.6c0-4.2-1-7.4-3-9.5-2-2.2-4.4-3.3-7.4-3.3-3.4 0-6 1.2-8 3.7-1.9 2.4-2.9 5-3 7.7V57c0 3 1 5.6 3 7.7s4.5 3.1 7.6 3.1c3.6 0 6.3-1.3 8.1-3.9 1.8-2.7 2.7-5.9 2.7-9.6zM506.5 72.8h-13.2v-7.2c-1.2 2.2-2.8 4.1-4.9 5.6-2.1 1.6-4.8 2.4-8.3 2.4-4.8 0-8.7-1.6-11.6-4.9-2.9-3.2-4.3-7.7-4.3-13.3 0-5 1.3-9.6 4-13.7 2.6-4.1 6.9-6.2 12.8-6.2 5.7 0 9.8 2.2 12.3 6.5V22.3h-8.6v-5.6h15.8v50.6h6v5.5zM493.2 56v-4.4c-.1-3-1.2-5.5-3.2-7.3s-4.4-2.8-7.2-2.8c-3.6 0-6.3 1.3-8.2 3.9-1.9 2.6-2.8 5.8-2.8 9.6 0 4.1 1 7.3 3 9.5s4.5 3.3 7.4 3.3c3.2 0 5.8-1.3 7.8-3.8 2.1-2.6 3.1-5.3 3.2-8zM546.3 54.6c0 5.6-1.8 10.2-5.3 13.7s-8.2 5.3-13.9 5.3-10.1-1.7-13.4-5.1c-3.3-3.4-5-7.9-5-13.5 0-5.3 1.6-9.9 4.7-13.7 3.2-3.8 7.9-5.7 14.2-5.7s11 1.9 14.1 5.7c3 3.7 4.6 8.1 4.6 13.3zm-7.7-.2c0-4-1-7.2-3-9.5s-4.8-3.5-8.2-3.5c-3.6 0-6.4 1.2-8.3 3.7s-2.9 5.6-2.9 9.5c0 3.7.9 6.8 2.8 9.4 1.9 2.6 4.6 3.9 8.3 3.9 3.6 0 6.4-1.3 8.4-3.8 1.9-2.6 2.9-5.8 2.9-9.7zM583.6 60.2c-.4 3.2-1.9 6.3-4.4 9.1-2.5 2.9-6.4 4.3-11.8 4.3-5.2 0-9.4-1.6-12.6-4.8-3.2-3.2-4.8-7.7-4.8-13.7 0-5.5 1.6-10.1 4.7-13.9 3.2-3.8 7.6-5.7 13.2-5.7 2.3 0 4.6.3 6.7.8 2.2.5 4.2 1.5 6.2 2.9l1.5 9.5-5.9.7-1.3-6.1c-2.1-1.2-4.5-1.8-7.2-1.8-3.5 0-6.1 1.2-7.7 3.7-1.7 2.5-2.5 5.7-2.5 9.6 0 4.1.9 7.3 2.7 9.5 1.8 2.3 4.4 3.4 7.8 3.4 5.2 0 8.2-2.9 9.2-8.8l6.2 1.3zM618.3 62.1c0 3.6-1.5 6.5-4.6 8.5s-7 3-11.7 3c-5.7 0-10.6-1.2-14.6-3.6l1.2-8.8 5.7.6-.2 4.7c1.1.5 2.3.9 3.6 1.1s2.6.3 3.9.3c2.4 0 4.5-.4 6.5-1.3 1.9-.9 2.9-2.2 2.9-4.1 0-1.8-.8-3.1-2.3-3.8s-3.5-1.3-5.8-1.7-4.6-.9-6.9-1.4c-2.3-.6-4.2-1.6-5.7-2.9-1.6-1.4-2.3-3.5-2.3-6.3 0-4.1 1.5-6.9 4.6-8.5s6.4-2.4 9.9-2.4c2.6 0 5 .3 7.2.9 2.2.6 4.3 1.4 6.1 2.4l.8 8.8-5.8.7-.8-5.7c-2.3-1-4.7-1.6-7.2-1.6-2.1 0-3.7.4-5.1 1.1-1.3.8-2 2-2 3.8 0 1.7.8 2.9 2.3 3.6 1.5.7 3.4 1.2 5.7 1.6 2.2.4 4.5.8 6.7 1.4 2.2.6 4.1 1.6 5.7 3 1.4 1.6 2.2 3.7 2.2 6.6zM197.6 73.2h-17.1v-5.5h3.8V51.9c0-3.7-.7-6.3-2.1-7.9-1.4-1.6-3.3-2.3-5.7-2.3-3.2 0-5.6 1.1-7.2 3.4s-2.4 4.6-2.5 6.9v15.6h6v5.5h-17.1v-5.5h3.8V51.9c0-3.8-.7-6.4-2.1-7.9-1.4-1.5-3.3-2.3-5.6-2.3-3.2 0-5.5 1.1-7.2 3.3-1.6 2.2-2.4 4.5-2.5 6.9v15.8h6.9v5.5h-20.2v-5.5h6V42.4h-6.1v-5.6h13.4v6.4c1.2-2.1 2.7-3.8 4.7-5.2 2-1.3 4.4-2 7.3-2s5.3.7 7.5 2.1c2.2 1.4 3.7 3.5 4.5 6.4 1.1-2.5 2.7-4.5 4.9-6.1s4.8-2.4 7.9-2.4c3.5 0 6.5 1.1 8.9 3.3s3.7 5.6 3.7 10.2v18.2h6.1v5.5zm42.5 0h-13.2V66c-1.2 2.2-2.8 4.1-4.9 5.6-2.1 1.6-4.8 2.4-8.3 2.4-4.8 0-8.7-1.6-11.6-4.9-2.9-3.2-4.3-7.7-4.3-13.3 0-5 1.3-9.6 4-13.7 2.6-4.1 6.9-6.2 12.8-6.2s9.8 2.2 12.3 6.5V22.7h-8.6v-5.6h15.8v50.6h6v5.5zm-13.3-16.8V52c-.1-3-1.2-5.5-3.2-7.3s-4.4-2.8-7.2-2.8c-3.6 0-6.3 1.3-8.2 3.9-1.9 2.6-2.8 5.8-2.8 9.6 0 4.1 1 7.3 3 9.5s4.5 3.3 7.4 3.3c3.2 0 5.8-1.3 7.8-3.8 2.1-2.6 3.1-5.3 3.2-8zm61.5 16.8H269v-5.5h6V51.9c0-3.7-.7-6.3-2.2-7.9-1.4-1.6-3.4-2.3-5.7-2.3-3.1 0-5.6 1-7.4 3s-2.8 4.4-2.9 7v15.9h6v5.5h-19.3v-5.5h6V42.4h-6.2v-5.6h13.6V43c2.6-4.6 6.8-6.9 12.7-6.9 3.6 0 6.7 1.1 9.2 3.3s3.7 5.6 3.7 10.2v18.2h6v5.4h-.2z"></path></g></svg></a><button title="Open main menu" type="button" class="button action has-icon main-menu-toggle" aria-haspopup="menu" aria-label="Open main menu" aria-expanded="false"><span class="button-wrap"><span class="icon icon-menu "></span><span class="visually-hidden">Open main menu</span></span></button></div><div class="top-navigation-main"><nav class="main-nav" aria-label="Main menu"><ul class="main-menu"><li class="top-level-entry-container"><button type="button" id="references-button" class="top-level-entry menu-toggle" aria-controls="references-menu" aria-expanded="false">References</button><a href="https://developer.mozilla.org/en-US/docs/Web" class="top-level-entry">References</a><ul id="references-menu" class="submenu references hidden inline-submenu-lg" aria-labelledby="references-button"><li class="apis-link-container mobile-only "><a href="https://developer.mozilla.org/en-US/docs/Web" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Overview / Web Technology</div><p class="submenu-item-description">Web technology reference for developers</p></div></a></li><li class="html-link-container "><a href="https://developer.mozilla.org/en-US/docs/Web/HTML" class="submenu-item "><div class="submenu-icon html"></div><div class="submenu-content-container"><div class="submenu-item-heading">HTML</div><p class="submenu-item-description">Structure of content on the web</p></div></a></li><li class="css-link-container "><a href="https://developer.mozilla.org/en-US/docs/Web/CSS" class="submenu-item "><div class="submenu-icon css"></div><div class="submenu-content-container"><div class="submenu-item-heading">CSS</div><p class="submenu-item-description">Code used to describe document style</p></div></a></li><li class="javascript-link-container "><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript" class="submenu-item "><div class="submenu-icon javascript"></div><div class="submenu-content-container"><div class="submenu-item-heading">JavaScript</div><p class="submenu-item-description">General-purpose scripting language</p></div></a></li><li class="http-link-container "><a href="https://developer.mozilla.org/en-US/docs/Web/HTTP" class="submenu-item "><div class="submenu-icon http"></div><div class="submenu-content-container"><div class="submenu-item-heading">HTTP</div><p class="submenu-item-description">Protocol for transmitting web resources</p></div></a></li><li class="apis-link-container "><a href="https://developer.mozilla.org/en-US/docs/Web/API" class="submenu-item "><div class="submenu-icon apis"></div><div class="submenu-content-container"><div class="submenu-item-heading">Web APIs</div><p class="submenu-item-description">Interfaces for building web applications</p></div></a></li><li class="apis-link-container "><a href="https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Web Extensions</div><p class="submenu-item-description">Developing extensions for web browsers</p></div></a></li><li class="apis-link-container desktop-only "><a href="https://developer.mozilla.org/en-US/docs/Web" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Web Technology</div><p class="submenu-item-description">Web technology reference for developers</p></div></a></li></ul></li><li class="top-level-entry-container"><button type="button" id="guides-button" class="top-level-entry menu-toggle" aria-controls="guides-menu" aria-expanded="false">Guides</button><a href="https://developer.mozilla.org/en-US/docs/Learn" class="top-level-entry">Guides</a><ul id="guides-menu" class="submenu guides hidden inline-submenu-lg" aria-labelledby="guides-button"><li class="apis-link-container mobile-only "><a href="https://developer.mozilla.org/en-US/docs/Learn" class="submenu-item "><div class="submenu-icon learn"></div><div class="submenu-content-container"><div class="submenu-item-heading">Overview / MDN Learning Area</div><p class="submenu-item-description">Learn web development</p></div></a></li><li class="apis-link-container desktop-only "><a href="https://developer.mozilla.org/en-US/docs/Learn" class="submenu-item "><div class="submenu-icon learn"></div><div class="submenu-content-container"><div class="submenu-item-heading">MDN Learning Area</div><p class="submenu-item-description">Learn web development</p></div></a></li><li class="html-link-container "><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML" class="submenu-item "><div class="submenu-icon html"></div><div class="submenu-content-container"><div class="submenu-item-heading">HTML</div><p class="submenu-item-description">Learn to structure web content with HTML</p></div></a></li><li class="css-link-container "><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS" class="submenu-item "><div class="submenu-icon css"></div><div class="submenu-content-container"><div class="submenu-item-heading">CSS</div><p class="submenu-item-description">Learn to style content using CSS</p></div></a></li><li class="javascript-link-container "><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript" class="submenu-item "><div class="submenu-icon javascript"></div><div class="submenu-content-container"><div class="submenu-item-heading">JavaScript</div><p class="submenu-item-description">Learn to run scripts in the browser</p></div></a></li><li class=" "><a href="https://developer.mozilla.org/en-US/docs/Web/Accessibility" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Accessibility</div><p class="submenu-item-description">Learn to make the web accessible to all</p></div></a></li></ul></li><li class="top-level-entry-container"><button type="button" id="mdn-plus-button" class="top-level-entry menu-toggle" aria-controls="mdn-plus-menu" aria-expanded="false">MDN Plus</button><a href="https://developer.mozilla.org/en-US/plus" class="top-level-entry">MDN Plus</a><ul id="mdn-plus-menu" class="submenu mdn-plus hidden inline-submenu-lg" aria-labelledby="mdn-plus-button"><li class=" "><a href="https://developer.mozilla.org/en-US/plus" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Overview</div><p class="submenu-item-description">A customized MDN experience</p></div></a></li><li class=" "><a href="https://developer.mozilla.org/en-US/plus/updates" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Updates</div><p class="submenu-item-description">All browser compatibility updates at a glance</p></div></a></li><li class=" "><a href="https://developer.mozilla.org/en-US/plus/docs/features/overview" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">Documentation</div><p class="submenu-item-description">Learn how to use MDN Plus</p></div></a></li><li class=" "><a href="https://developer.mozilla.org/en-US/plus/docs/faq" class="submenu-item "><div class="submenu-icon"></div><div class="submenu-content-container"><div class="submenu-item-heading">FAQ</div><p class="submenu-item-description">Frequently asked questions about MDN Plus</p></div></a></li></ul></li></ul></nav><div class="header-search"><form action="https://developer.mozilla.org/en-US/search" role="search" aria-haspopup="listbox" aria-owns="top-nav-search-menu" aria-expanded="false" class="search-form search-widget" id="top-nav-search-form"><label id="top-nav-search-label" for="top-nav-search-input" class="visually-hidden">Search MDN</label><input id="top-nav-search-input" aria-autocomplete="list" aria-controls="top-nav-search-menu" aria-labelledby="top-nav-search-label" autocomplete="off" type="search" class="search-input-field" name="q" placeholder="   " required="" value=""><button type="button" class="button action has-icon clear-search-button"><span class="button-wrap"><span class="icon icon-cancel "></span><span class="visually-hidden">Clear search input</span></span></button><button type="submit" class="button action has-icon search-button"><span class="button-wrap"><span class="icon icon-search "></span><span class="visually-hidden">Search</span></span></button><div id="top-nav-search-menu" role="listbox" aria-labelledby="top-nav-search-label"></div></form></div><div class="theme-switcher-menu"><button type="button" class="button action has-icon theme-switcher-menu small" aria-haspopup="menu"><span class="button-wrap"><span class="icon icon-theme-light "></span>Theme</span></button></div><ul class="auth-container"><li><a href="https://developer.mozilla.org/users/fxa/login/authenticate/?next=%2Fen-US%2Fdocs%2FLearn%2FCSS%2FFirst_steps%2FHow_CSS_is_structured" class="signin-link" rel="nofollow">Log in</a></li><li><a class="button primary mdn-plus-subscribe-link" href="https://developer.mozilla.org/en-US/plus"><span class="button-wrap">Get MDN Plus</span></a></li></ul></div></div></header><div class="article-actions-container"><div class="container"><button type="button" class="button action has-icon sidebar-button" aria-label="Expand sidebar" aria-expanded="false" aria-controls="sidebar-quicklinks"><span class="button-wrap"><span class="icon icon-sidebar "></span></span></button><nav class="breadcrumbs-container" aria-label="Breadcrumb"><ol typeof="BreadcrumbList" vocab="https://schema.org/" aria-label="breadcrumbs"><li property="itemListElement" typeof="ListItem"><a class="breadcrumb" property="item" typeof="WebPage" href="https://developer.mozilla.org/en-US/docs/Learn"><span property="name">Guides</span></a><meta property="position" content="1"></li><li property="itemListElement" typeof="ListItem"><a class="breadcrumb" property="item" typeof="WebPage" href="https://developer.mozilla.org/en-US/docs/Learn/CSS"><span property="name">CSS</span></a><meta property="position" content="2"></li><li property="itemListElement" typeof="ListItem"><a class="breadcrumb" property="item" typeof="WebPage" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps"><span property="name">CSS first steps overview</span></a><meta property="position" content="3"></li><li property="itemListElement" typeof="ListItem"><a class="breadcrumb-current-page" property="item" typeof="WebPage" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured"><span property="name">How CSS is structured</span></a><meta property="position" content="4"></li></ol></nav><div class="article-actions"><button type="button" class="button action has-icon article-actions-toggle" aria-label="Article actions"><span class="button-wrap"><span class="icon icon-ellipses "></span><span class="article-actions-dialog-heading">Article Actions</span></span></button><ul class="article-actions-entries"><li class="article-actions-entry"><div class="languages-switcher-menu open-on-focus-within"><button id="languages-switcher-button" type="button" class="button action small has-icon languages-switcher-menu" aria-haspopup="menu"><span class="button-wrap"><span class="icon icon-language "></span>English (US)</span></button></div></li></ul></div></div></div></div><div class="main-wrapper"><aside id="sidebar-quicklinks" class="sidebar"><button type="button" class="button action backdrop" aria-label="Collapse sidebar"><span class="button-wrap"></span></button><nav aria-label="Related Topics" class="sidebar-inner"><div class="in-nav-toc"><div class="document-toc-container"><section class="document-toc"><header><h2 class="document-toc-heading">In this article</h2></header><ul class="document-toc-list"><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#applying_css_to_html">Applying CSS to HTML</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#playing_with_the_css_in_this_article">Playing with the CSS in this article</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#selectors">Selectors</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#properties_and_values">Properties and values</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#rules">@rules</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#shorthands">Shorthands</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#comments">Comments</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#white_space">White space</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#summary">Summary</a></li></ul></section></div></div><div>
+
+<ol>
+  <li data-default-state=""><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web"><strong>Complete beginners start here!</strong></a></li>
+  <li class="toggle">
+      <details>
+          <summary>Getting started with the web</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web">Getting started with the web overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/Installing_basic_software">Installing basic software</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/What_will_your_website_look_like">What will your website look like?</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/Dealing_with_files">Dealing with files</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics">HTML basics</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics">CSS basics</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/JavaScript_basics">JavaScript basics</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/Publishing_your_website">Publishing your website</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/How_the_Web_works">How the web works</a></li>
+          </ol>
+      </details>
+  </li>
+  <li data-default-state=""><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML"><strong>HTML — Structuring the web</strong></a></li>
+  <li class="toggle">
+      <details>
+          <summary>Introduction to HTML</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML">Introduction to HTML overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Getting_started">Getting started with HTML</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/The_head_metadata_in_HTML">What's in the head? Metadata in HTML</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/HTML_text_fundamentals">HTML text fundamentals</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Creating_hyperlinks">Creating hyperlinks</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Advanced_text_formatting">Advanced text formatting</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Document_and_website_structure">Document and website structure</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Debugging_HTML">Debugging HTML</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Marking_up_a_letter">Assessment: Marking up a letter</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML/Structuring_a_page_of_content">Assessment: Structuring a page of content</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>Multimedia and embedding</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding">Multimedia and embedding overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Images_in_HTML">Images in HTML</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Video_and_audio_content">Video and audio content</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Other_embedding_technologies">From object to iframe — other embedding technologies</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Adding_vector_graphics_to_the_Web">Adding vector graphics to the web</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Responsive_images">Responsive images</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Multimedia_and_embedding/Mozilla_splash_page">Assessment: Mozilla splash page</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>HTML tables</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables">HTML tables overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Basics">HTML table basics</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Advanced">HTML table advanced features and accessibility</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Tables/Structuring_planet_data">Assessment: Structuring planet data</a></li>
+          </ol>
+      </details>
+  </li>
+  <li data-default-state="open"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS"><strong>CSS — Styling the web</strong></a></li>
+  <li class="toggle">
+      <details open="">
+          <summary>CSS first steps</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps">CSS first steps overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/What_is_CSS">What is CSS?</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started">Getting started with CSS</a></li>
+            <li><em><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured" aria-current="page">How CSS is structured</a></em></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_works">How CSS works</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Styling_a_biography_page">Assessment: Styling a biography page</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>CSS building blocks</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks">CSS building blocks overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors">CSS selectors</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Type_Class_and_ID_Selectors">Type, class, and ID selectors</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Attribute_selectors">Attribute selectors</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Pseudo-classes_and_pseudo-elements">Pseudo-classes and pseudo-elements</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors/Combinators">Combinators</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance">Cascade, specificity, and inheritance</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_layers">Cascade layers</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/The_box_model">The box model</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Backgrounds_and_borders">Backgrounds and borders</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Handling_different_text_directions">Handling different text directions</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Overflowing_content">Overflowing content</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Values_and_units">CSS values and units</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Sizing_items_in_CSS">Sizing items in CSS</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Images_media_form_elements">Images, media, and form elements</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Styling_tables">Styling tables</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Debugging_CSS">Debugging CSS</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Organizing">Organizing your CSS</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Fundamental_CSS_comprehension">Assessment: Fundamental CSS comprehension</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Creating_fancy_letterheaded_paper">Assessment: Creating fancy letterheaded paper</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/A_cool_looking_box">Assessment: A cool-looking box</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>Styling text</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text">Styling text overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Fundamentals">Fundamental text and font styling</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Styling_lists">Styling lists</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Styling_links">Styling links</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Web_fonts">Web fonts</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Styling_text/Typesetting_a_homepage">Assessment: Typesetting a community school homepage</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>CSS layout</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout">CSS layout overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Introduction">Introduction to CSS layout</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Normal_Flow">Normal Flow</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Flexbox">Flexbox</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Grids">Grids</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Floats">Floats</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Positioning">Positioning</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Multiple-column_Layout">Multiple-column layout</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Responsive_Design">Responsive design</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Media_queries">Beginner's guide to media queries</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Legacy_Layout_Methods">Legacy layout methods</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Supporting_Older_Browsers">Supporting older browsers</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/CSS_layout/Fundamental_Layout_Comprehension">Assessment: Fundamental layout comprehension</a></li>
+          </ol>
+      </details>
+  </li>
+  <li data-default-state=""><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript"><strong>JavaScript — Dynamic client-side scripting</strong></a></li>
+  <li class="toggle">
+      <details>
+          <summary>JavaScript first steps</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps">JavaScript first steps overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_is_JavaScript">What is JavaScript?</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/A_first_splash">A first splash into JavaScript</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/What_went_wrong">What went wrong? Troubleshooting JavaScript</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Variables">Storing the information you need — Variables</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Math">Basic math in JavaScript — Numbers and operators</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Strings">Handling text — Strings in JavaScript</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Useful_string_methods">Useful string methods</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Arrays">Arrays</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/First_steps/Silly_story_generator">Assessment: Silly story generator</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>JavaScript building blocks</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks">JavaScript building blocks overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/conditionals">Making decisions in your code — Conditionals</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Looping_code">Looping code</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Functions">Functions — Reusable blocks of code</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Build_your_own_function">Build your own function</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Return_values">Function return values</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Events">Introduction to events</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Building_blocks/Image_gallery">Assessment: Image gallery</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+      <details>
+          <summary>Introducing JavaScript objects</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects">Introducing JavaScript objects overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Basics">Object basics</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_prototypes">Object prototypes</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object-oriented_programming">Object-oriented programming concepts</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Classes_in_JavaScript">Classes in JavaScript</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/JSON">Working with JSON data</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Object_building_practice">Object building practice</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Objects/Adding_bouncing_balls_features">Assessment: Adding features to our bouncing balls demo</a></li>
+          </ol>
+      </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Asynchronous JavaScript</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous">Asynchronous JavaScript overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introducing">Introducing asynchronous JavaScript</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Promises">How to use promises</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Implementing_a_promise-based_API">Implementing a promise-based API</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Introducing_workers">Introducing workers</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Asynchronous/Sequencing_animations">Assessment: sequencing animations</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Client-side web APIs</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs">Client-side web APIs</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Introduction">Introduction to web APIs</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Manipulating_documents">Manipulating documents</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Fetching_data">Fetching data from the server</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Third_party_APIs">Third party APIs</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Drawing_graphics">Drawing graphics</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Video_and_audio_APIs">Video and audio APIs</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Client-side_web_APIs/Client-side_storage">Client-side storage</a></li>
+        </ol>
+    </details>
+  </li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms"><strong>Web forms — Working with user data</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>Core forms learning pathway</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms">Web forms overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Your_first_form">Your first form</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/How_to_structure_a_web_form">How to structure a web form</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Basic_native_form_controls">Basic native form controls</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/HTML5_input_types">The HTML5 input types</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Other_form_controls">Other form controls</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Styling_web_forms">Styling web forms</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Advanced_form_styling">Advanced form styling</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/UI_pseudo-classes">UI pseudo-classes</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Form_validation">Client-side form validation</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_and_retrieving_form_data">Sending form data</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Advanced forms articles</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/How_to_build_custom_form_controls">How to build custom form controls</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Sending_forms_through_JavaScript">Sending forms through JavaScript</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Forms/Property_compatibility_table_for_form_controls">CSS property compatibility table for form controls</a></li>
+        </ol>
+    </details>
+  </li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility"><strong>Accessibility — Make the web usable by everyone</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>Accessibility guides</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility">Accessibility overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/What_is_accessibility">What is accessibility?</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/HTML">HTML: A good basis for accessibility</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/CSS_and_JavaScript">CSS and JavaScript accessibility best practices</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/WAI-ARIA_basics">WAI-ARIA basics</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/Multimedia">Accessible multimedia</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/Mobile">Mobile accessibility</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Accessibility assessment</summary>
+        <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Accessibility/Accessibility_troubleshooting">Assessment: Accessibility troubleshooting</a></li>
+        </ol>
+    </details>
+  </li>
+<li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance"><strong>Performance — Making websites fast and responsive</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>Performance guides</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance">Performance overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/why_web_performance">The why of performance</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/What_is_web_performance">What is performance?</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/Perceived_performance">How do users perceive performance?</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/Measuring_performance">Measuring performance</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/Multimedia">Multimedia: Images</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/video">Multimedia: Video</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/JavaScript">JavaScript performance best practices</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/HTML">HTML performance features</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/CSS">CSS performance features</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Performance/business_case_for_performance">The business case for performance</a></li>
+        </ol>
+    </details>
+  </li>
+  <li data-default-state=""><a href="https://developer.mozilla.org/en-US/docs/Learn/MathML"><strong>MathML — Writing mathematics with MathML</strong></a></li>
+  <li class="toggle">
+      <details>
+          <summary>MathML first steps</summary>
+          <ol>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/MathML/First_steps">MathML first steps overview</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/MathML/First_steps/Getting_started">Getting started with MathML</a></li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Learn/MathML/First_steps/Three_famous_mathematical_formulas">Assessment: Three famous mathematical formulas</a></li>
+          </ol>
+      </details>
+  </li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing"><strong>Tools and testing</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>Client-side web development tools</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools">Client-side web development tools index</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Overview">Client-side tooling overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Command_line">Command line crash course</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Package_management">Package management basics</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Introducing_complete_toolchain">Introducing a complete toolchain</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Understanding_client-side_tools/Deployment">Deploying our app</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Introduction to client-side frameworks</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Introduction">Client-side frameworks overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Main_features">Framework main features</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>React</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_getting_started">Getting started with React</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_todo_list_beginning">Beginning our React todo list</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_components">Componentizing our React app</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_interactivity_events_state">React interactivity: Events and state</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_interactivity_filtering_conditional_rendering">React interactivity: Editing, filtering, conditional rendering</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_accessibility">Accessibility in React</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/React_resources">React resources</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Ember</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_getting_started">Getting started with Ember</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_structure_componentization">Ember app structure and componentization</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_interactivity_events_state">Ember interactivity: Events, classes and state</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_conditional_footer">Ember Interactivity: Footer functionality, conditional rendering</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_routing">Routing in Ember</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Ember_resources">Ember resources and troubleshooting</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Vue</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_getting_started">Getting started with Vue</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_first_component">Creating our first Vue component</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_rendering_lists">Rendering a list of Vue components</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_methods_events_models">Adding a new todo form: Vue events, methods, and models</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_styling">Styling Vue components with CSS</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_computed_properties">Using Vue computed properties</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_conditional_rendering">Vue conditional rendering: editing existing todos</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_refs_focus_management">Focus management with Vue refs</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Vue_resources">Vue resources</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Svelte</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_getting_started">Getting started with Svelte</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_Todo_list_beginning">Starting our Svelte Todo list app</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_variables_props">Dynamic behavior in Svelte: working with variables and props</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_components">Componentizing our Svelte app</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_reactivity_lifecycle_accessibility">Advanced Svelte: Reactivity, lifecycle, accessibility</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_stores">Working with Svelte stores</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_TypeScript">TypeScript support in Svelte</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Svelte_deployment_next">Deployment and next steps</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Angular</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_getting_started">Getting started with Angular</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_todo_list_beginning">Beginning our Angular todo list app</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_styling">Styling our Angular app</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_item_component">Creating an item component</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_filtering">Filtering our to-do items</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Client-side_JavaScript_frameworks/Angular_building">Building Angular applications and further resources</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Git and GitHub</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/GitHub">Git and GitHub overview</a></li>
+          <li><a href="https://guides.github.com/activities/hello-world/">Hello World</a></li>
+          <li><a href="https://guides.github.com/introduction/git-handbook/">Git Handbook</a></li>
+          <li><a href="https://guides.github.com/activities/forking/">Forking Projects</a></li>
+          <li><a href="https://help.github.com/en/github/collaborating-with-issues-and-pull-requests/about-pull-requests">About pull requests</a></li>
+          <li><a href="https://guides.github.com/features/issues/">Mastering Issues</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Cross browser testing</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing">Cross browser testing overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Introduction">Introduction to cross browser testing</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Testing_strategies">Strategies for carrying out testing</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/HTML_and_CSS">Handling common HTML and CSS problems</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/JavaScript">Handling common JavaScript problems</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Accessibility">Handling common accessibility problems</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Feature_detection">Implementing feature detection</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Automated_testing">Introduction to automated testing</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Tools_and_testing/Cross_browser_testing/Your_own_automation_environment">Setting up your own test automation environment</a></li>
+        </ol>
+    </details>
+  </li>
+  <li data-default-state=""><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side"><strong>Server-side website programming</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>First steps</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps">First steps overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Introduction">Introduction to the server-side</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Client-Server_overview">Client-Server overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Web_frameworks">Server-side web frameworks</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Website_security">Website security</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Django web framework (Python)</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django">Django web framework (Python) overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Introduction">Introduction</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/development_environment">Setting up a development environment</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Tutorial_local_library_website">Tutorial: The Local Library website</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/skeleton_website">Tutorial Part 2: Creating a skeleton website</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Models">Tutorial Part 3: Using models</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Admin_site">Tutorial Part 4: Django admin site</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Home_page">Tutorial Part 5: Creating our home page</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Generic_views">Tutorial Part 6: Generic list and detail views</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Sessions">Tutorial Part 7: Sessions framework</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Authentication">Tutorial Part 8: User authentication and permissions</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Forms">Tutorial Part 9: Working with forms</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Testing">Tutorial Part 10: Testing a Django web application</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Deployment">Tutorial Part 11: Deploying Django to production</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/web_application_security">Web application security</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/django_assessment_blog">Assessment: DIY mini blog</a></li>
+        </ol>
+    </details>
+  </li>
+  <li class="toggle">
+    <details>
+        <summary>Express Web Framework (node.js/JavaScript)</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs">Express Web Framework (Node.js/JavaScript) overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Introduction">Express/Node introduction</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/development_environment">Setting up a Node (Express) development environment</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Tutorial_local_library_website">Express tutorial: The Local Library website</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/skeleton_website">Express Tutorial Part 2: Creating a skeleton website</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/mongoose">Express Tutorial Part 3: Using a database (with Mongoose)</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/routes">Express Tutorial Part 4: Routes and controllers</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/Displaying_data">Express Tutorial Part 5: Displaying library data</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/forms">Express Tutorial Part 6: Working with forms</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Server-side/Express_Nodejs/deployment">Express Tutorial Part 7: Deploying to production</a></li>
+        </ol>
+    </details>
+  </li>
+  <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#"><strong>Further resources</strong></a></li>
+  <li class="toggle">
+    <details>
+        <summary>Common questions</summary>
+        <ol>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions">Common questions overview</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Howto">HTML questions</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Howto">CSS questions</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/JavaScript/Howto">JavaScript questions</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions#Web_mechanics">Web mechanics</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions#Tools_and_setup">Tools and setup</a></li>
+          <li><a href="https://developer.mozilla.org/en-US/docs/Learn/Common_questions#Design_and_accessibility">Design and accessibility</a></li>
+        </ol>
+    </details>
+  </li>
+</ol>
+
+</div></nav></aside><aside class="toc"><nav><div class="document-toc-container"><section class="document-toc"><header><h2 class="document-toc-heading">In this article</h2></header><ul class="document-toc-list"><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#applying_css_to_html">Applying CSS to HTML</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#playing_with_the_css_in_this_article">Playing with the CSS in this article</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#selectors">Selectors</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#properties_and_values">Properties and values</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#rules">@rules</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#shorthands">Shorthands</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#comments">Comments</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#white_space">White space</a></li><li class="document-toc-item "><a class="document-toc-link" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#summary">Summary</a></li></ul></section></div></nav></aside><main id="content" class="main-content  "><article class="main-page-content" lang="en-US"><h1>How CSS is structured</h1><div class="section-content"><ul class="prev-next">
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started"><span class="button-wrap"> Previous </span></a></li>
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps"><span class="button-wrap"> Overview: First steps</span></a></li>
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_works"><span class="button-wrap"> Next  </span></a></li>
+</ul>
+<p>Now that you are beginning to understand the purpose and use of CSS, let's examine the structure of CSS.</p>
+<figure class="table-container"><table>
+  <tbody>
+    <tr>
+      <th scope="row">Prerequisites:</th>
+      <td>
+        Basic computer literacy,
+        <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/Installing_basic_software">basic software installed</a>, basic knowledge of
+        <a href="https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/Dealing_with_files">working with files</a>, HTML basics (study
+        <a href="https://developer.mozilla.org/en-US/docs/Learn/HTML/Introduction_to_HTML">Introduction to HTML</a>), and an idea of
+        <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_works">How CSS works</a>.
+      </td>
+    </tr>
+    <tr>
+      <th scope="row">Objective:</th>
+      <td>To learn CSS's fundamental syntax structures in detail.</td>
+    </tr>
+  </tbody>
+</table></figure></div><section aria-labelledby="applying_css_to_html"><h2 id="applying_css_to_html"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#applying_css_to_html">Applying CSS to HTML</a></h2><div class="section-content"><p>First, let's examine three methods of applying CSS to a document: with an external stylesheet, with an internal stylesheet, and with inline styles.</p></div></section><section aria-labelledby="external_stylesheet"><h3 id="external_stylesheet"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#external_stylesheet">External stylesheet</a></h3><div class="section-content"><p>An external stylesheet contains CSS in a separate file with a <code>.css</code> extension. This is the most common and useful method of bringing CSS to a document. You can link a single CSS file to multiple web pages, styling all of them with the same CSS stylesheet. In the <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started">Getting started with CSS</a>, we linked an external stylesheet to our web page.</p>
+<p>You reference an external CSS stylesheet from an HTML <code>&lt;link&gt;</code> element:</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en-GB<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>utf-8<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My CSS experiment<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>styles.css<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello World!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is my first CSS example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>The CSS stylesheet file might look like this:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">h1</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> yellow<span class="token punctuation">;</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> 1px solid black<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>The <code>href</code> attribute of the <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/link"><code>&lt;link&gt;</code></a> element needs to reference a file on your file system. In the example above, the CSS file is in the same folder as the HTML document, but you could place it somewhere else and adjust the path. Here are three examples:</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token comment">&lt;!-- Inside a subdirectory called styles inside the current directory --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>styles/style.css<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+
+<span class="token comment">&lt;!-- Inside a subdirectory called general, which is in a subdirectory called styles, inside the current directory --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>styles/general/style.css<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+
+<span class="token comment">&lt;!-- Go up one directory level, then inside a subdirectory called styles --&gt;</span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>../styles/style.css<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div></div></section><section aria-labelledby="internal_stylesheet"><h3 id="internal_stylesheet"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#internal_stylesheet">Internal stylesheet</a></h3><div class="section-content"><p>An internal stylesheet resides within an HTML document. To create an internal stylesheet, you place CSS inside a <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/style"><code>&lt;style&gt;</code></a> element contained inside the HTML <a href="https://developer.mozilla.org/en-US/docs/Web/HTML/Element/head"><code>&lt;head&gt;</code></a>.</p>
+<p>The HTML for an internal stylesheet might look like this:</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en-GB<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>utf-8<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My CSS experiment<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>style</span><span class="token punctuation">&gt;</span></span><span class="token style"><span class="token language-css">
+      <span class="token selector">h1</span> <span class="token punctuation">{</span>
+        <span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+        <span class="token property">background-color</span><span class="token punctuation">:</span> yellow<span class="token punctuation">;</span>
+        <span class="token property">border</span><span class="token punctuation">:</span> 1px solid black<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+
+      <span class="token selector">p</span> <span class="token punctuation">{</span>
+        <span class="token property">color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+      <span class="token punctuation">}</span>
+    </span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>style</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span><span class="token punctuation">&gt;</span></span>Hello World!<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>This is my first CSS example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>In some circumstances, internal stylesheets can be useful. For example, perhaps you're working with a content management system where you are blocked from modifying external CSS files.</p>
+<p>But for sites with more than one page, an internal stylesheet becomes a less efficient way of working. To apply uniform CSS styling to multiple pages using internal stylesheets, you must have an internal stylesheet in every web page that will use the styling. The efficiency penalty carries over to site maintenance too. With CSS in internal stylesheets, there is the risk that even one simple styling change may require edits to multiple web pages.</p></div></section><section aria-labelledby="inline_styles"><h3 id="inline_styles"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#inline_styles">Inline styles</a></h3><div class="section-content"><p>Inline styles are CSS declarations that affect a single HTML element, contained within a <code>style</code> attribute. The implementation of an inline style in an HTML document might look like this:</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en-GB<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>utf-8<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My CSS experiment<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>h1</span> <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value css language-css"><span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span><span class="token property">background-color</span><span class="token punctuation">:</span> yellow<span class="token punctuation">;</span><span class="token property">border</span><span class="token punctuation">:</span> 1px solid black<span class="token punctuation">;</span></span><span class="token punctuation">"</span></span></span><span class="token punctuation">&gt;</span></span>
+      Hello World!
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>h1</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token special-attr"><span class="token attr-name">style</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span><span class="token value css language-css"><span class="token property">color</span><span class="token punctuation">:</span>red<span class="token punctuation">;</span></span><span class="token punctuation">"</span></span></span><span class="token punctuation">&gt;</span></span>This is my first CSS example<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p><strong>Avoid using CSS in this way, when possible.</strong> It is the opposite of a best practice. First, it is the least efficient implementation of CSS for maintenance. One styling change might require multiple edits within a single web page. Second, inline CSS also mixes (CSS) presentational code with HTML and content, making everything more difficult to read and understand. Separating code and content makes maintenance easier for all who work on the website.</p>
+<p>There are a few circumstances where inline styles are more common. You might have to resort to using inline styles if your working environment is very restrictive. For example, perhaps your CMS only allows you to edit the HTML body. You may also see a lot of inline styles in HTML email to achieve compatibility with as many email clients as possible.</p></div></section><section aria-labelledby="playing_with_the_css_in_this_article"><h2 id="playing_with_the_css_in_this_article"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#playing_with_the_css_in_this_article">Playing with the CSS in this article</a></h2><div class="section-content"><p>For the exercise that follows, create a folder on your computer. You can name the folder whatever you want. Inside the folder, copy the text below to create two files:</p>
+<p><strong>index.html:</strong></p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token doctype"><span class="token punctuation">&lt;!</span><span class="token doctype-tag">DOCTYPE</span> <span class="token name">html</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>html</span> <span class="token attr-name">lang</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>en<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>head</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>meta</span> <span class="token attr-name">charset</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>utf-8<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>title</span><span class="token punctuation">&gt;</span></span>My CSS experiments<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>title</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>link</span> <span class="token attr-name">rel</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>stylesheet<span class="token punctuation">"</span></span> <span class="token attr-name">href</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>styles.css<span class="token punctuation">"</span></span> <span class="token punctuation">/&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>head</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>body</span><span class="token punctuation">&gt;</span></span>
+    <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span><span class="token punctuation">&gt;</span></span>Create your test HTML here<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+  <span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>body</span><span class="token punctuation">&gt;</span></span>
+<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>html</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p><strong>styles.css:</strong></p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token comment">/* Create your test CSS here */</span>
+
+<span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>When you find CSS that you want to experiment with, replace the HTML <code>&lt;body&gt;</code> contents with some HTML to style, and then add your test CSS code to your CSS file.</p>
+<p>As an alternative, you can also use the interactive editor below.</p><iframe width="100%" height="800" src="./How CSS is structured - Learn web development _ MDN_files/experiment-sandbox.html" loading="lazy"></iframe>
+<p>Read on and have fun!</p></div></section><section aria-labelledby="selectors"><h2 id="selectors"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#selectors">Selectors</a></h2><div class="section-content"><p>A selector targets HTML to apply styles to content. We have already discovered a variety of selectors in the <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started">Getting started with CSS</a> tutorial. If CSS is not applying to content as expected, your selector may not match the way you think it should match.</p>
+<p>Each CSS rule starts with a selector — or a list of selectors — in order to tell the browser which element or elements the rules should apply to. All the examples below are valid selectors or lists of selectors.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code>h1
+<span class="token property">a</span><span class="token punctuation">:</span>link
+.manythings
+#onething
+*
+.box p
+.box <span class="token property">p</span><span class="token punctuation">:</span>first-child
+h1<span class="token punctuation">,</span> h2<span class="token punctuation">,</span> .intro
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>Try creating some CSS rules that use the selectors above. Add HTML to be styled by the selectors. If any of the syntax above is not familiar, try searching MDN.</p>
+<div class="notecard note" id="sect1">
+  <p><strong>Note:</strong> You will learn more about selectors in the next module: <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Selectors">CSS selectors</a>.</p>
+</div></div></section><section aria-labelledby="specificity"><h3 id="specificity"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#specificity">Specificity</a></h3><div class="section-content"><p>You may encounter scenarios where two selectors select the same HTML element. Consider the stylesheet below, with a <code>p</code> selector that sets paragraph text to blue. However, there is also a class that sets the text of selected elements to red.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">.special</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>Suppose that in our HTML document, we have a paragraph with a class of <code>special</code>. Both rules apply. Which selector prevails? Do you expect to see blue or red paragraph text?</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>p</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>special<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>What color am I?<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>p</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>The CSS language has rules to control which selector is stronger in the event of a conflict. These rules are called <strong>cascade</strong> and <strong>specificity</strong>. In the code block below, we define two rules for the <code>p</code> selector, but the paragraph text will be blue. This is because the declaration that sets the paragraph text to blue appears later in the stylesheet. Later styles replace conflicting styles that appear earlier in the stylesheet. This is the <strong>cascade</strong> rule.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>However, in the case of our earlier example with the conflict between the class selector and the element selector, the class prevails, rendering the paragraph text red. How can this happen even though a conflicting style appears later in the stylesheet? A class is rated as being more specific, as in having more <strong>specificity</strong> than the element selector, so it cancels the other conflicting style declaration.</p>
+<p>Try this experiment for yourself! Add HTML, then add the two <code>p { }</code> rules to your stylesheet. Next, change the first <code>p</code> selector to <code>.special</code> to see how it changes the styling.</p>
+<p>The rules of specificity and the cascade can seem complicated at first. These rules are easier to understand as you become more familiar with CSS. The <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Cascade_and_inheritance">Cascade and inheritance</a> section in the next module explains this in detail, including how to calculate specificity.</p>
+<p>For now, remember that specificity exists. Sometimes, CSS might not apply as you expected because something else in the stylesheet has more specificity. Recognizing that more than one rule could apply to an element is the first step in fixing these kinds of issues.</p></div></section><section aria-labelledby="properties_and_values"><h2 id="properties_and_values"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#properties_and_values">Properties and values</a></h2><div class="section-content"><p>At its most basic level, CSS consists of two components:</p>
+<ul>
+  <li><strong>Properties</strong>: These are human-readable identifiers that indicate which stylistic features you want to modify. For example, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-size"><code>font-size</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/width"><code>width</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background-color"><code>background-color</code></a>.</li>
+  <li><strong>Values</strong>: Each property is assigned a value. This value indicates how to style the property.</li>
+</ul>
+<p>The example below highlights a single property and value. The property name is <code>color</code> and the value is <code>blue</code>.</p>
+<p>
+  <img src="./How CSS is structured - Learn web development _ MDN_files/declaration.png" alt="A declaration highlighted in the CSS" width="471" height="218" loading="lazy">
+</p>
+<p>When a property is paired with a value, this pairing is called a <em>CSS declaration</em>. CSS declarations are found within <em>CSS Declaration Blocks</em>. In the example below, highlighting identifies the CSS declaration block.</p>
+<p>
+  <img src="./How CSS is structured - Learn web development _ MDN_files/declaration-block.png" alt="A highlighted declaration block" width="471" height="218" loading="lazy">
+</p>
+<p>Finally, CSS declaration blocks are paired with <em>selectors</em> to produce <em>CSS rulesets</em> (or <em>CSS rules</em>). The example below contains two rules: one for the <code>h1</code> selector and one for the <code>p</code> selector. The colored highlighting identifies the <code>h1</code> rule.</p>
+<p>
+  <img src="./How CSS is structured - Learn web development _ MDN_files/rules.png" alt="The rule for h1 highlighted" width="471" height="218" loading="lazy">
+</p>
+<p>Setting CSS properties to specific values is the primary way of defining layout and styling for a document. The CSS engine calculates which declarations apply to every single element of a page.</p>
+<p>CSS properties and values are case-insensitive. The property and value in a property-value pair are separated by a colon (<code>:</code>).</p>
+<p><strong>Look up different values of properties listed below. Write CSS rules that apply styling to different HTML elements:</strong></p>
+<ul>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font-size"><code>font-size</code></a></strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/width"><code>width</code></a></strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background-color"><code>background-color</code></a></strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color"><code>color</code></a></strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/border"><code>border</code></a></strong></li>
+</ul>
+<div class="notecard warning" id="sect2">
+  <p><strong>Warning:</strong> If a property is unknown, or if a value is not valid for a given property, the declaration is processed as <em>invalid</em>. It is completely ignored by the browser's CSS engine.</p>
+</div>
+<div class="notecard warning" id="sect3">
+  <p><strong>Warning:</strong> In CSS (and other web standards), it has been agreed that US spelling is the standard where there is language variation or uncertainty. For example, <code>colour</code> should be spelled <code>color</code>, as <code>colour</code> will not work.</p>
+</div></div></section><section aria-labelledby="functions"><h3 id="functions"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#functions">Functions</a></h3><div class="section-content"><p>While most values are relatively simple keywords or numeric values, there are some values that take the form of a function.</p>
+<h4 id="the_calc_function">The calc() function</h4>
+<p>An example would be the <code>calc()</code> function, which can do simple math within CSS:</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>outer<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>box<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span>The inner box is 90% - 30px.<span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">.outer</span> <span class="token punctuation">{</span>
+  <span class="token property">border</span><span class="token punctuation">:</span> 5px solid black<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">.box</span> <span class="token punctuation">{</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+  <span class="token property">width</span><span class="token punctuation">:</span> <span class="token function">calc</span><span class="token punctuation">(</span>90% - 30px<span class="token punctuation">)</span><span class="token punctuation">;</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> rebeccapurple<span class="token punctuation">;</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> white<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>This renders as:</p><iframe class="sample-code-frame" title="The calc function sample" id="frame_the_calc_function" width="100%" height="200" src="./How CSS is structured - Learn web development _ MDN_files/_sample_.the_calc_function.html" loading="lazy"></iframe>
+<p>A function consists of the function name, and parentheses to enclose the values for the function. In the case of the <code>calc()</code> example above, the values define the width of this box to be 90% of the containing block width, minus 30 pixels. The result of the calculation isn't something that can be computed in advance and entered as a static value.</p>
+<h4 id="transform_functions">Transform functions</h4>
+<p>Another example would be the various values for <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/transform"><code>transform</code></a>, such as <code>rotate()</code>.</p>
+<div class="code-example"><pre class="brush: html notranslate"><code><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;</span>div</span> <span class="token attr-name">class</span><span class="token attr-value"><span class="token punctuation attr-equals">=</span><span class="token punctuation">"</span>box<span class="token punctuation">"</span></span><span class="token punctuation">&gt;</span></span><span class="token tag"><span class="token tag"><span class="token punctuation">&lt;/</span>div</span><span class="token punctuation">&gt;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">.box</span> <span class="token punctuation">{</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 30px<span class="token punctuation">;</span>
+  <span class="token property">width</span><span class="token punctuation">:</span> 100px<span class="token punctuation">;</span>
+  <span class="token property">height</span><span class="token punctuation">:</span> 100px<span class="token punctuation">;</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> rebeccapurple<span class="token punctuation">;</span>
+  <span class="token property">transform</span><span class="token punctuation">:</span> <span class="token function">rotate</span><span class="token punctuation">(</span>0.8turn<span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>The output from the above code looks like this:</p><iframe class="sample-code-frame" title="Transform functions sample" id="frame_transform_functions" width="100%" height="200" src="./How CSS is structured - Learn web development _ MDN_files/_sample_.transform_functions.html" loading="lazy"></iframe>
+<p><strong>Look up different values of properties listed below. Write CSS rules that apply styling to different HTML elements:</strong></p>
+<ul>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/transform"><code>transform</code></a></strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background-image"><code>background-image</code></a>, in particular gradient values</strong></li>
+  <li><strong><a href="https://developer.mozilla.org/en-US/docs/Web/CSS/color"><code>color</code></a>, in particular rgb and hsl values</strong></li>
+</ul></div></section><section aria-labelledby="rules"><h2 id="rules"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#rules">@rules</a></h2><div class="section-content"><p>CSS <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/At-rule">@rules</a> (pronounced "at-rules") provide instruction for what CSS should perform or how it should behave. Some @rules are simple with just a keyword and a value. For example, <code>@import</code> imports a stylesheet into another CSS stylesheet:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token atrule"><span class="token rule">@import</span> <span class="token string">"styles2.css"</span><span class="token punctuation">;</span></span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>One common @rule that you are likely to encounter is <code>@media</code>, which is used to create <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Media_Queries">media queries</a>. Media queries use conditional logic for applying CSS styling.</p>
+<p>In the example below, the stylesheet defines a default pink background for the <code>&lt;body&gt;</code> element. However, a media query follows that defines a blue background if the browser viewport is wider than 30em.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">body</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> pink<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token atrule"><span class="token rule">@media</span> <span class="token punctuation">(</span><span class="token property">min-width</span><span class="token punctuation">:</span> 30em<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+  <span class="token selector">body</span> <span class="token punctuation">{</span>
+    <span class="token property">background-color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>You will encounter other @rules throughout these tutorials.</p>
+<p><strong>See if you can add a media query that changes styles based on the viewport width. Change the width of your browser window to see the result.</strong></p></div></section><section aria-labelledby="shorthands"><h2 id="shorthands"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#shorthands">Shorthands</a></h2><div class="section-content"><p>Some properties like <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/font"><code>font</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/background"><code>background</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/padding"><code>padding</code></a>, <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/border"><code>border</code></a>, and <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/margin"><code>margin</code></a> are called <strong>shorthand properties.</strong> This is because shorthand properties set several values in a single line.</p>
+<p>For example, this one line of code:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token comment">/* In 4-value shorthands like padding and margin, the values are applied
+   in the order top, right, bottom, left (clockwise from the top). There are also other
+   shorthand types, for example 2-value shorthands, which set padding/margin
+   for top/bottom, then left/right */</span>
+<span class="token property">padding</span><span class="token punctuation">:</span> 10px 15px 15px 5px<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>is equivalent to these four lines of code:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token property">padding-top</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+<span class="token property">padding-right</span><span class="token punctuation">:</span> 15px<span class="token punctuation">;</span>
+<span class="token property">padding-bottom</span><span class="token punctuation">:</span> 15px<span class="token punctuation">;</span>
+<span class="token property">padding-left</span><span class="token punctuation">:</span> 5px<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>This one line:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token property">background</span><span class="token punctuation">:</span> red <span class="token url"><span class="token function">url</span><span class="token punctuation">(</span>bg-graphic.png<span class="token punctuation">)</span></span> 10px 10px repeat-x fixed<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>is equivalent to these five lines:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token property">background-color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+<span class="token property">background-image</span><span class="token punctuation">:</span> <span class="token url"><span class="token function">url</span><span class="token punctuation">(</span>bg-graphic.png<span class="token punctuation">)</span></span><span class="token punctuation">;</span>
+<span class="token property">background-position</span><span class="token punctuation">:</span> 10px 10px<span class="token punctuation">;</span>
+<span class="token property">background-repeat</span><span class="token punctuation">:</span> repeat-x<span class="token punctuation">;</span>
+<span class="token property">background-attachment</span><span class="token punctuation">:</span> fixed<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>Later in the course, you will encounter many other examples of shorthand properties. MDN's <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/Reference">CSS reference</a> is a good resource for more information about any shorthand property.</p>
+<p><strong>Try using the declarations (above) in your own CSS exercise to become more familiar with how it works. You can also experiment with different values.</strong></p>
+<div class="notecard warning" id="sect4">
+  <p><strong>Warning:</strong> One less obvious aspect of using CSS shorthand is how omitted values reset. A value not specified in CSS shorthand reverts to its initial value. This means an omission in CSS shorthand can <strong>override previously set values</strong>.</p>
+</div></div></section><section aria-labelledby="comments"><h2 id="comments"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#comments">Comments</a></h2><div class="section-content"><p>As with any coding work, it is best practice to write comments along with CSS. This helps you to remember how the code works as you come back later for fixes or enhancement. It also helps others understand the code.</p>
+<p>CSS comments begin with <code>/*</code> and end with <code>*/</code>. In the example below, comments mark the start of distinct sections of code. This helps to navigate the codebase as it gets larger. With this kind of commenting in place, searching for comments in your code editor becomes a way to efficiently find a section of code.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token comment">/* Handle basic element styling */</span>
+<span class="token comment">/* -------------------------------------------------------------------------------------------- */</span>
+<span class="token selector">body</span> <span class="token punctuation">{</span>
+  <span class="token property">font</span><span class="token punctuation">:</span> 1em/150% Helvetica<span class="token punctuation">,</span> Arial<span class="token punctuation">,</span> sans-serif<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 0 auto<span class="token punctuation">;</span>
+  <span class="token property">max-width</span><span class="token punctuation">:</span> 33em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token atrule"><span class="token rule">@media</span> <span class="token punctuation">(</span><span class="token property">min-width</span><span class="token punctuation">:</span> 70em<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+  <span class="token comment">/* Increase the global font size on larger screens or windows
+     for better readability */</span>
+  <span class="token selector">body</span> <span class="token punctuation">{</span>
+    <span class="token property">font-size</span><span class="token punctuation">:</span> 130%<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">h1</span> <span class="token punctuation">{</span>
+  <span class="token property">font-size</span><span class="token punctuation">:</span> 1.5em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token comment">/* Handle specific elements nested in the DOM */</span>
+<span class="token selector">div p,
+#id:first-line</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+  <span class="token property">border-radius</span><span class="token punctuation">:</span> 3px<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">div p</span> <span class="token punctuation">{</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">div p + p</span> <span class="token punctuation">{</span>
+  <span class="token property">padding-top</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>"Commenting out" code is also useful for temporarily disabling sections of code for testing. In the example below, the rules for <code>.special</code> are disabled by "commenting out" the code.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token comment">/*.special {
+  color: red;
+}*/</span>
+
+<span class="token selector">p</span> <span class="token punctuation">{</span>
+  <span class="token property">color</span><span class="token punctuation">:</span> blue<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p><strong>Add comments to your CSS.</strong></p></div></section><section aria-labelledby="white_space"><h2 id="white_space"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#white_space">White space</a></h2><div class="section-content"><p>White space means actual spaces, tabs and new lines. Just as browsers ignore white space in HTML, browsers ignore white space inside CSS. The value of white space is how it can improve readability.</p>
+<p>In the example below, each declaration (and rule start/end) has its own line. This is arguably a good way to write CSS. It makes it easier to maintain and understand CSS.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">body</span> <span class="token punctuation">{</span>
+  <span class="token property">font</span><span class="token punctuation">:</span> 1em/150% Helvetica<span class="token punctuation">,</span> Arial<span class="token punctuation">,</span> sans-serif<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 0 auto<span class="token punctuation">;</span>
+  <span class="token property">max-width</span><span class="token punctuation">:</span> 33em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token atrule"><span class="token rule">@media</span> <span class="token punctuation">(</span><span class="token property">min-width</span><span class="token punctuation">:</span> 70em<span class="token punctuation">)</span></span> <span class="token punctuation">{</span>
+  <span class="token selector">body</span> <span class="token punctuation">{</span>
+    <span class="token property">font-size</span><span class="token punctuation">:</span> 130%<span class="token punctuation">;</span>
+  <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">h1</span> <span class="token punctuation">{</span>
+  <span class="token property">font-size</span><span class="token punctuation">:</span> 1.5em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">div p,
+#id:first-line</span> <span class="token punctuation">{</span>
+  <span class="token property">background-color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span>
+  <span class="token property">border-radius</span><span class="token punctuation">:</span> 3px<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">div p</span> <span class="token punctuation">{</span>
+  <span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+  <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token selector">div p + p</span> <span class="token punctuation">{</span>
+  <span class="token property">padding-top</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>The next example shows the equivalent CSS in a more compressed format. Although the two examples work the same, the one below is more difficult to read.</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token selector">body</span> <span class="token punctuation">{</span><span class="token property">font</span><span class="token punctuation">:</span> 1em/150% Helvetica<span class="token punctuation">,</span> Arial<span class="token punctuation">,</span> sans-serif<span class="token punctuation">;</span> <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span> <span class="token property">margin</span><span class="token punctuation">:</span> 0 auto<span class="token punctuation">;</span> <span class="token property">max-width</span><span class="token punctuation">:</span> 33em<span class="token punctuation">;</span><span class="token punctuation">}</span>
+<span class="token atrule"><span class="token rule">@media</span> <span class="token punctuation">(</span><span class="token property">min-width</span><span class="token punctuation">:</span> 70em<span class="token punctuation">)</span></span> <span class="token punctuation">{</span> <span class="token selector">body</span> <span class="token punctuation">{</span> <span class="token property">font-size</span><span class="token punctuation">:</span> 130%<span class="token punctuation">;</span><span class="token punctuation">}</span><span class="token punctuation">}</span>
+
+<span class="token selector">h1</span> <span class="token punctuation">{</span><span class="token property">font-size</span><span class="token punctuation">:</span> 1.5em<span class="token punctuation">;</span><span class="token punctuation">}</span>
+
+<span class="token selector">div p, #id:first-line</span> <span class="token punctuation">{</span><span class="token property">background-color</span><span class="token punctuation">:</span> red<span class="token punctuation">;</span> <span class="token property">border-radius</span><span class="token punctuation">:</span> 3px<span class="token punctuation">;</span><span class="token punctuation">}</span>
+<span class="token selector">div p</span> <span class="token punctuation">{</span><span class="token property">margin</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span> <span class="token property">padding</span><span class="token punctuation">:</span> 1em<span class="token punctuation">;</span><span class="token punctuation">}</span>
+<span class="token selector">div p + p</span> <span class="token punctuation">{</span><span class="token property">padding-top</span><span class="token punctuation">:</span> 0<span class="token punctuation">;</span><span class="token punctuation">}</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>For your own projects, you will format your code according to personal preference. For team projects, you may find that a team or project has its own style guide.</p>
+<div class="notecard warning" id="sect5">
+  <p><strong>Warning:</strong> Though white space separates values in CSS declarations, <strong>property names never have white space</strong>.</p>
+</div>
+<p>For example, these declarations are valid CSS:</p>
+<div class="code-example"><pre class="brush: css notranslate"><code><span class="token property">margin</span><span class="token punctuation">:</span> 0 auto<span class="token punctuation">;</span>
+<span class="token property">padding-left</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>But these declarations are invalid:</p>
+<div class="code-example"><pre class="brush: css example-bad notranslate"><code><span class="token property">margin</span><span class="token punctuation">:</span> 0auto<span class="token punctuation">;</span>
+padding- <span class="token property">left</span><span class="token punctuation">:</span> 10px<span class="token punctuation">;</span>
+</code></pre><button type="button" class="icon copy-icon"><span class="visually-hidden">Copy to Clipboard</span></button><span class="copy-icon-message visually-hidden" role="alert" style="top: 52px;"></span></div>
+<p>Do you see the spacing errors? First, <code>0auto</code> is not recognized as a valid value for the <code>margin</code> property. The entry <code>0auto</code> is meant to be two separate values: <code>0</code> and <code>auto</code>. Second, the browser does not recognize <code>padding-</code> as a valid property. The correct property name (<code>padding-left</code>) is separated by an errant space.</p>
+<p>You should always make sure to separate distinct values from one another by at least one space. Keep property names and property values together as single unbroken strings.</p>
+<p><strong>To find out how spacing can break CSS, try playing with spacing inside your test CSS.</strong></p></div></section><section aria-labelledby="summary"><h2 id="summary"><a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured#summary">Summary</a></h2><div class="section-content"><p>At this point, you should have a better idea about how CSS is structured. It's also useful to understand how the browser uses HTML and CSS to display a webpage. The next article, <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_works">How CSS works</a>, explains the process.</p><ul class="prev-next">
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/Getting_started"><span class="button-wrap"> Previous </span></a></li>
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps"><span class="button-wrap"> Overview: First steps</span></a></li>
+    <li><a class="button secondary" href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_works"><span class="button-wrap"> Next  </span></a></li>
+</ul></div></section><aside class="metadata"><div class="metadata-content-container"><div id="on-github" class="on-github"><h3>Found a content problem with this page?</h3><ul><li>Edit the page <a href="https://github.com/mdn/content/edit/main/files/en-us/learn/css/first_steps/how_css_is_structured/index.md" title="This will take you to GitHub, where you&#39;ll need to sign in first." target="_blank" rel="noopener noreferrer">on GitHub</a>.</li><li>Report the <a href="https://github.com/mdn/content/issues/new?template=page-report.yml&amp;mdn-url=https%3A%2F%2Fdeveloper.mozilla.org%2Fen-US%2Fdocs%2FLearn%2FCSS%2FFirst_steps%2FHow_CSS_is_structured&amp;metadata=%3C%21--+Do+not+make+changes+below+this+line+--%3E%0A%3Cdetails%3E%0A%3Csummary%3EPage+report+details%3C%2Fsummary%3E%0A%0A*+Folder%3A+%60en-us%2Flearn%2Fcss%2Ffirst_steps%2Fhow_css_is_structured%60%0A*+MDN+URL%3A+https%3A%2F%2Fdeveloper.mozilla.org%2Fen-US%2Fdocs%2FLearn%2FCSS%2FFirst_steps%2FHow_CSS_is_structured%0A*+GitHub+URL%3A+https%3A%2F%2Fgithub.com%2Fmdn%2Fcontent%2Fblob%2Fmain%2Ffiles%2Fen-us%2Flearn%2Fcss%2Ffirst_steps%2Fhow_css_is_structured%2Findex.md%0A*+Last+commit%3A+https%3A%2F%2Fgithub.com%2Fmdn%2Fcontent%2Fcommit%2F1b6001b69cb763c78222ac0049af533b1e614271%0A*+Document+last+modified%3A+2023-02-17T19%3A36%3A39.000Z%0A%0A%3C%2Fdetails%3E" title="This will take you to GitHub to file a new issue." target="_blank" rel="noopener noreferrer">content issue</a>.</li><li>View the source <a href="https://github.com/mdn/content/blob/main/files/en-us/learn/css/first_steps/how_css_is_structured/index.md?plain=1" title="Folder: en-us/learn/css/first_steps/how_css_is_structured (Opens in a new tab)" target="_blank" rel="noopener noreferrer">on GitHub</a>.</li></ul>Want to get more involved? Learn<!-- --> <a href="https://github.com/mdn/content/blob/main/CONTRIBUTING.md" title="This will take you to our contribution guidelines on GitHub." target="_blank" rel="noopener noreferrer">how to contribute</a>.</div><p class="last-modified-date">This page was last modified on<!-- --> <time datetime="2023-02-17T19:36:39.000Z">Feb 17, 2023</time> by<!-- --> <a href="https://developer.mozilla.org/en-US/docs/Learn/CSS/First_steps/How_CSS_is_structured/contributors.txt">MDN contributors</a>.</p></div></aside></article></main></div></div><footer id="nav-footer" class="page-footer"><div class="page-footer-grid"><div class="page-footer-logo-col"><a href="https://developer.mozilla.org/" class="mdn-footer-logo" aria-label="MDN homepage"><svg width="48" height="17" viewBox="0 0 48 17" fill="none" xmlns="http://www.w3.org/2000/svg"><title id="mdn-footer-logo-svg">MDN logo</title><path d="M20.04 16.512H15.504V10.416C15.504 9.488 15.344 8.824 15.024 8.424C14.72 8.024 14.264 7.824 13.656 7.824C12.92 7.824 12.384 8.064 12.048 8.544C11.728 9.024 11.568 9.64 11.568 10.392V14.184H13.008V16.512H8.472V10.416C8.472 9.488 8.312 8.824 7.992 8.424C7.688 8.024 7.232 7.824 6.624 7.824C5.872 7.824 5.336 8.064 5.016 8.544C4.696 9.024 4.536 9.64 4.536 10.392V14.184H6.6V16.512H0V14.184H1.44V8.04H0.024V5.688H4.536V7.32C5.224 6.088 6.32 5.472 7.824 5.472C8.608 5.472 9.328 5.664 9.984 6.048C10.64 6.432 11.096 7.016 11.352 7.8C11.992 6.248 13.168 5.472 14.88 5.472C15.856 5.472 16.72 5.776 17.472 6.384C18.224 6.992 18.6 7.936 18.6 9.216V14.184H20.04V16.512Z" fill="currentColor"></path><path d="M33.6714 16.512H29.1354V14.496C28.8314 15.12 28.3834 15.656 27.7914 16.104C27.1994 16.536 26.4154 16.752 25.4394 16.752C24.0154 16.752 22.8954 16.264 22.0794 15.288C21.2634 14.312 20.8554 12.984 20.8554 11.304C20.8554 9.688 21.2554 8.312 22.0554 7.176C22.8554 6.04 24.0634 5.472 25.6794 5.472C26.5594 5.472 27.2794 5.648 27.8394 6C28.3994 6.352 28.8314 6.8 29.1354 7.344V2.352H26.9754V0H32.2314V14.184H33.6714V16.512ZM29.1354 11.04V10.776C29.1354 9.88 28.8954 9.184 28.4154 8.688C27.9514 8.176 27.3674 7.92 26.6634 7.92C25.9754 7.92 25.3674 8.176 24.8394 8.688C24.3274 9.2 24.0714 10.008 24.0714 11.112C24.0714 12.152 24.3114 12.944 24.7914 13.488C25.2714 14.032 25.8394 14.304 26.4954 14.304C27.3114 14.304 27.9514 13.96 28.4154 13.272C28.8954 12.584 29.1354 11.84 29.1354 11.04Z" fill="currentColor"></path><path d="M47.9589 16.512H41.9829V14.184H43.4229V10.416C43.4229 9.488 43.2629 8.824 42.9429 8.424C42.6389 8.024 42.1829 7.824 41.5749 7.824C40.8389 7.824 40.2709 8.056 39.8709 8.52C39.4709 8.968 39.2629 9.56 39.2469 10.296V14.184H40.6869V16.512H34.7109V14.184H36.1509V8.04H34.5909V5.688H39.2469V7.344C39.9669 6.096 41.1269 5.472 42.7269 5.472C43.7509 5.472 44.6389 5.776 45.3909 6.384C46.1429 6.992 46.5189 7.936 46.5189 9.216V14.184H47.9589V16.512Z" fill="currentColor"></path></svg></a><p>Your blueprint for a better internet.</p><ul class="social-icons"><li><a class="icon icon-twitter" href="https://twitter.com/mozdevnet" target="_blank" rel="noopener noreferrer"><span class="visually-hidden">MDN on Twitter</span></a></li><li><a class="icon icon-github-mark-small" href="https://github.com/mdn/" target="_blank" rel="noopener noreferrer"><span class="visually-hidden">MDN on GitHub</span></a></li></ul></div><div class="page-footer-nav-col-1"><h2 class="footer-nav-heading">MDN</h2><ul class="footer-nav-list"><li class="footer-nav-item"><a href="https://developer.mozilla.org/en-US/about">About</a></li><li class="footer-nav-item"><a href="https://hacks.mozilla.org/" target="_blank" rel="noopener noreferrer">Hacks Blog</a></li><li class="footer-nav-item"><a href="https://www.mozilla.org/en-US/careers/listings/?team=Marketing" target="_blank" rel="noopener noreferrer">Careers</a></li><li class="footer-nav-item"><a href="https://developer.mozilla.org/en-US/advertising/with_us">Advertise with us</a></li></ul></div><div class="page-footer-nav-col-2"><h2 class="footer-nav-heading">Support</h2><ul class="footer-nav-list"><li class="footer-nav-item"><a class="footer-nav-link" href="https://support.mozilla.org/products/mdn-plus">Product help</a></li><li class="footer-nav-item"><a class="footer-nav-link" href="https://developer.mozilla.org/en-US/docs/MDN/Community/Issues">Report an issue</a></li></ul></div><div class="page-footer-nav-col-3"><h2 class="footer-nav-heading">Our communities</h2><ul class="footer-nav-list"><li class="footer-nav-item"><a class="footer-nav-link" href="https://developer.mozilla.org/en-US/community">MDN Community</a></li><li class="footer-nav-item"><a class="footer-nav-link" href="https://discourse.mozilla.org/c/mdn/236" target="_blank" rel="noopener noreferrer">MDN Forum</a></li><li class="footer-nav-item"><a class="footer-nav-link" href="https://wiki.mozilla.org/Matrix" target="_blank" rel="noopener noreferrer">MDN Chat</a></li></ul></div><div class="page-footer-nav-col-4"><h2 class="footer-nav-heading">Developers</h2><ul class="footer-nav-list"><li class="footer-nav-item"><a class="footer-nav-link" href="https://developer.mozilla.org/en-US/docs/Web">Web Technologies</a></li><li class="footer-nav-item"><a class="footer-nav-link" href="https://developer.mozilla.org/en-US/docs/Learn">Learn Web Development</a></li><li class="footer-nav-item"><a class="footer-nav-link" href="https://developer.mozilla.org/en-US/plus">MDN Plus</a></li></ul></div><div class="page-footer-moz"><a href="https://www.mozilla.org/" class="footer-moz-logo-link" target="_blank" rel="noopener noreferrer"><svg width="112" height="32" fill="none" xmlns="http://www.w3.org/2000/svg"><title id="mozilla-footer-logo-svg">Mozilla logo</title><path d="M41.753 14.218c-2.048 0-3.324 1.522-3.324 4.157 0 2.423 1.119 4.286 3.29 4.286 2.082 0 3.447-1.678 3.447-4.347 0-2.826-1.522-4.096-3.413-4.096Zm54.89 7.044c0 .901.437 1.618 1.645 1.618 1.427 0 2.949-1.024 3.044-3.352-.649-.095-1.365-.185-2.02-.185-1.426-.005-2.668.397-2.668 1.92Z" fill="currentColor"></path><path d="M0 0v32h111.908V0H0Zm32.56 25.426h-5.87v-7.884c0-2.423-.806-3.352-2.39-3.352-1.924 0-2.702 1.365-2.702 3.324v4.868h1.864v3.044h-5.864v-7.884c0-2.423-.806-3.352-2.39-3.352-1.924 0-2.702 1.365-2.702 3.324v4.868h2.669v3.044H6.642v-3.044h1.863v-7.918H6.642V11.42h5.864v2.11c.839-1.489 2.3-2.39 4.252-2.39 2.02 0 3.878.963 4.566 3.01.778-1.862 2.361-3.01 4.566-3.01 2.512 0 4.812 1.522 4.812 4.84v6.402h1.863v3.044h-.005Zm9.036.307c-4.314 0-7.296-2.635-7.296-7.106 0-4.096 2.484-7.481 7.514-7.481s7.481 3.38 7.481 7.29c0 4.472-3.228 7.297-7.699 7.297Zm22.578-.307H51.942l-.403-2.11 7.7-8.846h-4.376l-.621 2.17-2.888-.313.498-4.907h12.294l.313 2.11-7.767 8.852h4.533l.654-2.172 3.167.308-.872 4.908Zm7.99 0h-4.191v-5.03h4.19v5.03Zm0-8.976h-4.191v-5.03h4.19v5.03Zm2.618 8.976 6.054-21.358h3.945l-6.054 21.358h-3.945Zm8.136 0 6.048-21.358h3.945l-6.054 21.358h-3.939Zm21.486.307c-1.863 0-2.887-1.085-3.072-2.792-.805 1.427-2.232 2.792-4.498 2.792-2.02 0-4.314-1.085-4.314-4.006 0-3.447 3.323-4.253 6.518-4.253.778 0 1.584.034 2.3.124v-.465c0-1.427-.034-3.133-2.3-3.133-.84 0-1.488.061-2.143.402l-.453 1.578-3.195-.34.549-3.224c2.45-.996 3.692-1.27 5.992-1.27 3.01 0 5.556 1.55 5.556 4.75v6.083c0 .805.314 1.085.963 1.085.184 0 .375-.034.587-.095l.034 2.11a5.432 5.432 0 0 1-2.524.654Z" fill="currentColor"></path></svg></a><ul class="footer-moz-list"><li class="footer-moz-item"><a href="https://www.mozilla.org/privacy/websites/" class="footer-moz-link" target="_blank" rel="noopener noreferrer">Website Privacy Notice</a></li><li class="footer-moz-item"><a href="https://www.mozilla.org/privacy/websites/#cookies" class="footer-moz-link" target="_blank" rel="noopener noreferrer">Cookies</a></li><li class="footer-moz-item"><a href="https://www.mozilla.org/about/legal/terms/mozilla" class="footer-moz-link" target="_blank" rel="noopener noreferrer">Legal</a></li><li class="footer-moz-item"><a href="https://www.mozilla.org/about/governance/policies/participation/" class="footer-moz-link" target="_blank" rel="noopener noreferrer">Community Participation Guidelines</a></li></ul></div><div class="page-footer-legal"><p id="license" class="page-footer-legal-text">Visit<!-- --> <a href="https://www.mozilla.org/" target="_blank" rel="noopener noreferrer">Mozilla Corporation’s</a> <!-- -->not-for-profit parent, the<!-- --> <a target="_blank" rel="noopener noreferrer" href="https://foundation.mozilla.org/">Mozilla Foundation</a>.<br>Portions of this content are ©1998–<!-- -->2023<!-- --> by individual mozilla.org contributors. Content available under<!-- --> <a href="https://developer.mozilla.org/en-US/docs/MDN/Writing_guidelines/Attrib_copyright_license">a Creative Commons license</a>.</p></div></div></footer></div><div id="a11y-status-message" role="status" aria-live="polite" aria-relevant="additions text" style="border: 0px; clip: rect(0px, 0px, 0px, 0px); height: 1px; margin: -1px; overflow: hidden; padding: 0px; position: absolute; width: 1px;"></div>
+
+<link rel="stylesheet" href="../../dist/main.css">
+<script type="module" src="../../dist/bundle.js"></script>
+</body></html>
