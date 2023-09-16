@@ -32,14 +32,17 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
   <summary>Info/instructions</summary>
 
   #### What works well?
-  - Most complete palette of custom properties.
+  - Most complete palette of custom properties
   - Great design
   - Mostly short and readable selectors (I just love `small.green-badge` and `circle#sun`)
+  - Modern CSS
+  - A few pretty advanced use cases (gradients with noisefilters, > 4 border radii blobs, )
   #### What doesn't work well?
-  - Over-usage of `:where()` (e.g. `:where(html)`), this leads to a few bugs in the inspector.
+  - Special heading style applies also to editor headings. Looks a bit broken but also cute so I didn't intervene yet.
+  - Over-usage of `:where()` (e.g. `:where(html)`), currently leading to a few bugs in the inspector (e.g. selector locator doesn't properly handle this)
   - Almost no semantic tokens (e.g. button-color), so adding aliases doesn't really make sense here. It also
   makes drag and dropping values pretty much useless: you'd get something like `--orange: var(--purple)`.
-  - Some inline styles (e.g. border radius) not properly handled.
+  - Some inline styles (e.g. border radius) not properly handled
 </details>
 
 [🖌 Home page](https://inwerpsel.github.io/use-theme-editor/openprops/home/)
