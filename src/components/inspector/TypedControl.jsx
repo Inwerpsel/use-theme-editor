@@ -10,9 +10,13 @@ import { TextControl } from '../controls/TextControl';
 
 export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 
-export const isColorProperty = property => {
-  return !!property && property.match(/color$/)
-    || ['background', 'background-image', 'fill', 'stroke'].includes(property);
+// If any of the usages must be a <color>, then this restricts the type of the custom property,
+// even if other usages would allow other types. Otherwise the color-only usages would be invalid.
+// NOTE: for now this also includes background and background-image, because for now these have no
+// separate control anyway for the other types they allow.
+export const mustBeColor = cssVar => {
+  return cssVar.usages.some(({property}) => property.match(/color$/)
+    || ['background', 'background-image', 'fill', 'stroke'].includes(property))
 };
 
 export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
@@ -21,7 +25,7 @@ export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
     return null;
   }
 
-  if (cssVar.usages.some(usage => isColorProperty(usage.property))) {
+  if (mustBeColor(cssVar)) {
     return <ColorControl {...{onChange, value, cssVar, cssFunc}}/>;
   }
 

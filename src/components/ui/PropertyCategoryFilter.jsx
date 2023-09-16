@@ -1,5 +1,4 @@
 import React, {memo} from 'react';
-import {isColorProperty} from '../inspector/TypedControl';
 import { SelectControl } from '../controls/SelectControl';
 import { use } from '../../state';
 
@@ -9,7 +8,6 @@ const filters = {
   },
   colors: {
     label: 'Colors',
-    test: isColorProperty,
   },
 };
 

@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 import { filterSelectors, filterSearched } from '../../functions/filterSearched';
 import { get } from '../../state';
 import { GroupControl } from "../inspector/GroupControl";
-import { isColorProperty } from '../inspector/TypedControl';
+import { mustBeColor } from '../inspector/TypedControl';
 
 export function Inspector(props) {
   const { unfilteredGroups } = props;
@@ -31,9 +31,9 @@ export function Inspector(props) {
           return false;
         }
         if (propertyFilter === 'all') {
-          return searched;
+          return true;
         }
-        return cssVar.usages.some((usage) => isColorProperty(usage.property));
+        return mustBeColor(cssVar);
       }),
     }));
   }, [unfilteredGroups, propertyFilter, search, filteredSelectors]);

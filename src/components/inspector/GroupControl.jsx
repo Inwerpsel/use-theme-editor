@@ -5,7 +5,7 @@ import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
 import { ScopeControl } from './ScopeControl';
-import { isColorProperty } from './TypedControl';
+import { mustBeColor } from './TypedControl';
 import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { get, use } from '../../state';
@@ -44,7 +44,7 @@ export const GroupControl = props => {
 
   const groupColors = useMemo(() => {
     return vars.reduce((colorVars, someVar) => {
-      if (isColorProperty(someVar.maxSpecific?.property || someVar.usages[0].property)) {
+      if (mustBeColor(someVar)) {
         const { name } = someVar;
         if (!name.startsWith('--')) {
           // Quick fix to prevent currently non-presentable value.

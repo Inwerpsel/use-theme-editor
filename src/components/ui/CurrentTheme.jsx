@@ -7,7 +7,7 @@ import {ElementLocator} from './ElementLocator';
 import {ToggleButton} from '../controls/ToggleButton';
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import {varMatchesTerm} from '../../functions/filterSearched';
-import {isColorProperty} from '../inspector/TypedControl';
+import {mustBeColor} from '../inspector/TypedControl';
 import { get } from '../../state';
 import { definedValues } from '../../functions/collectRuleVars';
 
@@ -28,6 +28,7 @@ export function CurrentTheme() {
   const [isOpen, setIsOpen] = useLocalStorage('current-theme-open', true);
   const UNFOUND = 'UNFOUND';
 
+  // Also filters.
   const groupedBySelector = useMemo(() => {
     if (!isOpen) {
       return {};
@@ -53,7 +54,7 @@ export function CurrentTheme() {
         return grouped;
       }
 
-      if (propertyFilter !== 'all' && !cssVar.usages.some(usage => isColorProperty(usage.property))) {
+      if (propertyFilter !== 'all' && !mustBeColor(cssVar)) {
         return grouped;
       }
 

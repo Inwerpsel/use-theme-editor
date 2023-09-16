@@ -1,5 +1,5 @@
 import React, {useState, useMemo, Fragment, useContext} from 'react';
-import {isColorProperty, TypedControl} from './TypedControl';
+import {mustBeColor, TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
 import {COLOR_VALUE_REGEX, GRADIENT_REGEX, PREVIEW_SIZE} from '../properties/ColorControl';
@@ -79,9 +79,8 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
   const size = PREVIEW_SIZE;
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(value);
-  const property = cssVar.maxSpecific?.property || cssVar.usages && cssVar.usages[0]?.property;
   const isColor =
-    isColorProperty(property) ||
+    mustBeColor(cssVar) ||
     COLOR_VALUE_REGEX.test(value) ||
     GRADIENT_REGEX.test(value);
   const presentable = isColor || isUrl;
