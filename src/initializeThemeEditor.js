@@ -207,7 +207,10 @@ export const setupThemeEditor = async (config) => {
   document.addEventListener('drop', event => {
     // console.log(event, event.dataTransfer, event.dataTransfer?.getData('varName'))
     const value = event.dataTransfer.getData('value') || event.dataTransfer.getData('text/plain');
-    if (!value ) return
+    // If you drag any link or image and immediately drop it on the page, it will have a link here.
+    // I didn't come across any valid custom prop value starting with "http".
+    // URLs are always enclosed in "url()" in custom props.
+    if (!value || value.startsWith('http') ) return
     const target = event.target
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
