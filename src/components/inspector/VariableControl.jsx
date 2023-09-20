@@ -202,6 +202,28 @@ export const VariableControl = (props) => {
   const isDefault = value === defaultValue;
   const {media} = maxSpecific || {};
 
+  // Resolve variables inside the value.
+  // WIP: doesn't do all substitutions yet, but simple work.
+  let resolvedValue = value;
+  while (resolvedValue.includes('var(--')) {
+    const name = '--' + resolvedValue.split('var(--')[1].replace(/[\s\),].*/, '')
+    let replacingValue
+    for (const {selector} of elementScopes) {
+      if (name in (scopes[selector] || {})) {
+        replacingValue = scopes[selector][name]
+        break;
+      }
+      if (name in (definedValues[selector] || {})) {
+        replacingValue = definedValues[selector][name]
+        break;
+      }
+    }
+    if (!replacingValue) {
+      break;
+    }
+    resolvedValue = resolvedValue.replace(/var\(.*\)/, replacingValue)
+  }
+
   const varMatches = value && value.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
   const [referencedVariable, usedScope] = useMemo(() => {
     const referredVar = !varMatches || varMatches.length === 0
@@ -542,7 +564,7 @@ export const VariableControl = (props) => {
               // }}
             >
               <br />
-              <TypedControl {...{ cssVar, value, onChange, cssFunc }} />
+              <TypedControl {...{ cssVar, value, resolvedValue, onChange, cssFunc }} />
             </div>
           )}
           {!!referencedVariable && !overwriteVariable && (

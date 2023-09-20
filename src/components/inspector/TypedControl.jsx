@@ -19,14 +19,14 @@ export const mustBeColor = cssVar => {
     || ['background', 'background-image', 'fill', 'stroke'].includes(property))
 };
 
-export const TypedControl = ({ cssVar, value, onChange, cssFunc}) => {
+export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc}) => {
   if (!/^--/.test(cssVar.name)) {
     // For now these can't be adjusted anyway, saves some performance.
     return null;
   }
 
   if (mustBeColor(cssVar)) {
-    return <ColorControl {...{onChange, value, cssVar, cssFunc}}/>;
+    return <ColorControl {...{onChange, value, resolvedValue, cssVar, cssFunc}}/>;
   }
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
