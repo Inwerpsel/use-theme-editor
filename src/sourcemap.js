@@ -10,6 +10,6 @@ const fetchDependency = () => {
     document.head.appendChild(s);
   });
 };
-export const initializeConsumer = async () => await fetchDependency() && window.sourceMap.SourceMapConsumer.initialize({
+export const initializeConsumer = async () => await fetchDependency() && window.sourceMap?.SourceMapConsumer.initialize({
   'lib/mappings.wasm': 'https://unpkg.com/source-map@0.7.3/lib/mappings.wasm'
 });
