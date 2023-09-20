@@ -205,7 +205,7 @@ export const VariableControl = (props) => {
   // Resolve variables inside the value.
   // WIP: doesn't do all substitutions yet, but simple work.
   let resolvedValue = value;
-  while (resolvedValue.includes('var(--')) {
+  while (resolvedValue?.includes('var(--')) {
     const name = '--' + resolvedValue.split('var(--')[1].replace(/[\s\),].*/, '')
     let replacingValue
     for (const {selector} of elementScopes) {

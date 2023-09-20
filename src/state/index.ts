@@ -69,6 +69,8 @@ export const use = {
     () => useLocalStorage('webpack-home', ''),
   visualizeHistoryAlways: 
     () => useLocalStorage('visualizeHistoryAlways', false),
+  svgDarkBg:
+    () => useLocalStorage('svgDarkBg', false),
 
   // 
   // State below this is only used in a demo element.

@@ -86,8 +86,10 @@ export const groupVars = (vars, target, allVars) => {
 
     const currentMatchesLess = currentMatches.length < previousMatches.length;
     // times.push(performance.now() - tStart);
+    const isSvg = previous.tagName === 'svg';
+    const isImage = previous.tagName === 'IMG';
 
-    if (previousHasInlineStyles || currentMatchesLess) {
+    if (isImage || isSvg || previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
       const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars, groups);
@@ -102,6 +104,7 @@ export const groupVars = (vars, target, allVars) => {
         elSrc: element.getAttribute('src'),
         elSrcset: element.getAttribute('srcset'),
         elAlt: element.getAttribute('alt'),
+        elHtml: !isSvg ? null : element.outerHTML,
         // Previously this was `element.title`, however if a form element contains an input with name "title",
         // that DOM element would be returned. This causes a crash when this data is sent as a message.
         elTitle: element.getAttribute('title'),

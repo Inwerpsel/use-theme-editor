@@ -18,6 +18,7 @@ export const GroupControl = props => {
   const { propertyFilter } = get;
 
   const [search, setSearch] = use.search();
+  const [darkSvg, setDarkSvg] = use.svgDarkBg();
 
   const {
     element,
@@ -25,6 +26,7 @@ export const GroupControl = props => {
     elSrcset,
     elAlt,
     elTitle,
+    elHtml,
     label,
     vars,
     scopes: elementScopes,
@@ -82,7 +84,7 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && !group.inlineStyles) { 
+  if (vars.length === 0 && !group.inlineStyles && !group.elSrc && !group.elHtml) { 
     return null;
   }
 
@@ -173,6 +175,11 @@ export const GroupControl = props => {
         </div>
 
         {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
+        {elHtml?.length > 0 && <div
+          style={{display: 'inline',position: 'relative', maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
+          onClick={(e) => {setDarkSvg(!darkSvg); e.stopPropagation()}}
+          dangerouslySetInnerHTML={{__html: elHtml}}
+        ></div>}
         {group.inlineStyles && <span style={{...{border: '1px solid black'}, ...group.inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
         
       </h4>
