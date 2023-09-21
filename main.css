@@ -34,6 +34,9 @@ body {
   font-size: 16px !important;
   margin-top: 0 !important;
 }
+.theme-editor li :before {
+  content: none !important;
+}
 
 .theme-length-controls {
   clear: both;
@@ -610,6 +613,13 @@ div[id^=font-picker] ul {
 button {
   width: auto;
   display: inline-block;
+}
+
+.svg-inspect-wrapper {
+  align-self: flex-start;
+}
+.svg-inspect-wrapper > svg {
+  max-width: 100%;
 }
 
 /*# sourceMappingURL=main.css.map*/
