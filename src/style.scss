@@ -38,6 +38,12 @@ body {
       margin-top: 0 !important;
   }
 
+  li {
+    :before {
+      // Protect against hacked list decoration. Had to do this for web.dev, of all sites...
+      content: none !important;
+    }
+  }
 }
 
 .theme-length-controls {
@@ -423,4 +429,12 @@ div[id^=font-picker] ul {
 button {
   width: auto;
   display: inline-block;
+}
+
+.svg-inspect-wrapper {
+  align-self: flex-start;
+
+  > svg {
+    max-width: 100%;
+  }
 }

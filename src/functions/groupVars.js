@@ -104,13 +104,29 @@ export const groupVars = (vars, target, allVars) => {
         elSrc: element.getAttribute('src'),
         elSrcset: element.getAttribute('srcset'),
         elAlt: element.getAttribute('alt'),
-        elHtml: !isSvg ? null : element.outerHTML,
+        elHtml: !isSvg
+          ? null
+          : element.outerHTML + '<div style="display:none"><svg>' +
+          // Also grab HTML of each referenced symbol.
+            [...element.childNodes].reduce(
+              (html, node) =>
+                {
+                  if (node.nodeName !== 'use') {
+                    return html;
+                  }
+                  const id = node.href.baseVal.replace('#', '')
+                  const dep = document.getElementById(id);
+                  return html + dep.outerHTML;
+                },
+              ''
+            ) +  '</svg></div>',
+        elWidth: !isSvg ? null : element.getBoundingClientRect().width,
         // Previously this was `element.title`, however if a form element contains an input with name "title",
         // that DOM element would be returned. This causes a crash when this data is sent as a message.
         elTitle: element.getAttribute('title'),
         isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
         label,
-        vars: vars.map(v => {
+        vars: vars.map((v) => {
           let currentScope;
           for (const key in scopesByProperty[v.name] || {}) {
             if (scopes?.some((s) => s.selector === key)) {
@@ -118,10 +134,10 @@ export const groupVars = (vars, target, allVars) => {
             }
           }
 
-          return ({
+          return {
             ...v,
             currentScope,
-          });
+          };
         }),
         scopes,
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,

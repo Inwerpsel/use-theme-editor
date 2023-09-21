@@ -27,6 +27,7 @@ export const GroupControl = props => {
     elAlt,
     elTitle,
     elHtml,
+    elWidth,
     label,
     vars,
     scopes: elementScopes,
@@ -176,7 +177,8 @@ export const GroupControl = props => {
 
         {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
         {elHtml?.length > 0 && <div
-          style={{display: 'inline',position: 'relative', maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
+          className='svg-inspect-wrapper'
+          style={{display: 'inline', position: 'relative', minWidth: `${elWidth}px`, maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
           onClick={(e) => {setDarkSvg(!darkSvg); e.stopPropagation()}}
           dangerouslySetInnerHTML={{__html: elHtml}}
         ></div>}
