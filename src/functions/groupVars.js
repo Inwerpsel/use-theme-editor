@@ -116,7 +116,7 @@ export const groupVars = (vars, target, allVars) => {
                   }
                   const id = node.href.baseVal.replace('#', '')
                   const dep = document.getElementById(id);
-                  return html + dep.outerHTML;
+                  return html + dep?.outerHTML || '';
                 },
               ''
             ) +  '</svg></div>',
