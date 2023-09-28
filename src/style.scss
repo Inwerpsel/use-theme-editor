@@ -37,13 +37,6 @@ body {
       font-size: 16px !important;
       margin-top: 0 !important;
   }
-
-  li {
-    :before {
-      // Protect against hacked list decoration. Had to do this for web.dev, of all sites...
-      content: none !important;
-    }
-  }
 }
 
 .theme-length-controls {
