@@ -13,16 +13,20 @@ export const exportJson = (fileName) => {
   a.click();
 };
 
-const formatCss = vars => {
-  const lines = Object.keys(vars).map(k => `${ k }: ${ vars[k] };`);
+const formatVars = vars => {
+  const lines = Object.keys(vars).map(k => `  ${ k }: ${ vars[k] };`);
 
   return lines.join('\n');
 };
 
+function formatCss(scopes) {
+  return Object.entries(scopes).map(([k,v]) => `${k} {\n${formatVars(v)}\n}`).join('\n');
+}
+
 export const exportCss = (fileName) => {
   const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-  const vars = JSON.parse(raw);
-  const css = formatCss(vars);
+  const scopes = JSON.parse(raw);
+  const css = formatCss(scopes);
   const blob = new Blob([css], {type: 'application/css'});
   const url  = URL.createObjectURL(blob);
 
