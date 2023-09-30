@@ -221,6 +221,11 @@ export const VariableControl = (props) => {
     if (!replacingValue) {
       break;
     }
+    const regex = new RegExp(`var\\(\\s*${name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`);
+    if (regex.test(replacingValue)) {
+      resolvedValue = '<<invalid: self-reference>>';
+      break;
+    }
     resolvedValue = resolvedValue.replace(/var\(.*\)/, replacingValue)
   }
 
