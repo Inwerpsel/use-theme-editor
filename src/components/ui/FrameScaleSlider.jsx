@@ -6,7 +6,6 @@ const overOneScale = 5;
 
 const config = {
   min: 0.2,
-  max: 1.4,
   step: 0.02,
 };
 
@@ -30,10 +29,11 @@ export function FrameScaleSlider() {
         type="range"
         list="scale-points" 
         value={normalized}
+        max={1.4}
         {...config}
         onChange={updateScales}
       />
-      <input type="number" list="scale-points" value={scale} {...config} onChange={updateScales} />
+      <input type="number" max={3} value={scale} {...config} onChange={e=>setScales({ ...scales, [`${width}x${height}`]: e.target.value})} />
       <datalist id="scale-points">
         <option value="1"/>
         <option value="1.2"/>
