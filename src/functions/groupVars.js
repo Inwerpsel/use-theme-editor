@@ -59,6 +59,15 @@ export const sortForUI = (
   return stateA < stateB ? -1 : 1;
 };
 
+function svgPartHtml(part) {
+  let html = part.outerHTML, el = part;
+  while (el.tagName !== 'svg') {
+    el = el.parentNode;
+    html = el.cloneNode(false).outerHTML.replace(/<\//, html + '</');
+  }
+  return html;
+}
+
 export const groupVars = (vars, target, allVars) => {
   const groups = [];
   // 
@@ -87,9 +96,10 @@ export const groupVars = (vars, target, allVars) => {
     const currentMatchesLess = currentMatches.length < previousMatches.length;
     // times.push(performance.now() - tStart);
     const isSvg = previous.tagName === 'svg';
+    const isInSvg = !isSvg && !!previous.closest('svg');
     const isImage = previous.tagName === 'IMG';
 
-    if (isImage || isSvg || previousHasInlineStyles || currentMatchesLess) {
+     if (isImage || isSvg || isInSvg || previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
       const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars, groups);
@@ -99,14 +109,7 @@ export const groupVars = (vars, target, allVars) => {
       labelCounts[labelText] = count + 1;
       const label = labelText + (count === 0 ? '' : `#${count}`);
 
-      groups.push({
-        element,
-        elSrc: element.getAttribute('src'),
-        elSrcset: element.getAttribute('srcset'),
-        elAlt: element.getAttribute('alt'),
-        elHtml: !isSvg
-          ? null
-          : element.outerHTML + '<div style="display:none"><svg>' +
+      const elHtml = isInSvg ? svgPartHtml(element) : !isSvg ? null : element.outerHTML + '<div style="display:none"><svg>' +
           // Also grab HTML of each referenced symbol.
             [...element.childNodes].reduce(
               (html, node) =>
@@ -119,7 +122,14 @@ export const groupVars = (vars, target, allVars) => {
                   return html + dep?.outerHTML || '';
                 },
               ''
-            ) +  '</svg></div>',
+            ) +  '</svg></div>';
+
+      groups.push({
+        element,
+        elSrc: element.getAttribute('src'),
+        elSrcset: element.getAttribute('srcset'),
+        elAlt: element.getAttribute('alt'),
+        elHtml,
         elWidth: !isSvg ? null : element.getBoundingClientRect().width,
         // Previously this was `element.title`, however if a form element contains an input with name "title",
         // that DOM element would be returned. This causes a crash when this data is sent as a message.
