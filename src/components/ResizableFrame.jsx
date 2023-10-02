@@ -36,7 +36,8 @@ export const ResizableFrame = props => {
         transform: `scale(${scale})`,
         resize: 'both',
         minWidth: '200px',
-        width: `${ wrapperMargin + parseInt(width) }px`,
+        // Quick fix, calc doesn't really make sense here.
+        width: `max(calc(${ wrapperMargin + parseInt(width) }px * ${scale}), ${ wrapperMargin + parseInt(width) }px)`,
         minHeight: '200px',
         height: `${ wrapperMargin + parseInt(height) }px`,
         overflow: 'hidden',
