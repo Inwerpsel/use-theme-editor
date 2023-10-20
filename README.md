@@ -14,6 +14,10 @@ You can use this repo in various ways:
 - Import 1 function in your own app
 - Anything in between the previous options
 
+
+https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-95e2-011204e9e8c2
+
+
 ## Status
 
 While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
