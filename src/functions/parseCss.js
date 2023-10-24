@@ -7,30 +7,6 @@ function includeDescendants(selector) {
   return `${selector}, :where(${selector}) *`;
 }
 
-function statelessSelector(selectors) {
-  const cleaned = selectors
-    .replace(allStateSelectorsRegexp, '')
-    .replace(/:?:(before|after|first\-letter)/, '')
-    // Try fix remaining descendants pointing to nothing.
-    .trim()
-    .replaceAll(/^\s*[\>+~]/g, '*>')
-    .replaceAll(/,\s*[\>+~]/g, ',*>')
-    .replaceAll(/[\>+~]\s*,/g, '>*,')
-    .replaceAll(/[\>+~]\s*$/g, '~*')
-    .replaceAll(/[\>+~]\s*\)/g, '~*)')
-    // .replaceAll(/\(\s*[\>+~]/g, '(')
-    .replaceAll(/,(\s*,)+/g, ',')
-    .replaceAll(/:(where|is|not)\([\s,]*\)/g, '')
-    .replace(/^(\s*,\s*)+/, '')
-    .replace(/(\s*,\s*)+$/, '')
-    .replaceAll(/\s*,\s*/g, ',')
-    // Seems to happen for Tailwind special.
-    // .replaceAll(/\//g, '\\/')
-    .replaceAll(/,\s*\)/g, ')');
-
-    const deduped = [...(new Set(cleaned.split(/\s*\,\s*/)))].join();
-    return includeDescendants(deduped)
-}
 // import {big, nestedWithComment, tailwindLike} from './__exampleCSS'
 const big = `/* Bootstrap  v5.2.0 (https://getbootstrap.com/)
 * Copyright 2011-2022 The Bootstrap Authors
@@ -76,6 +52,23 @@ const bunchOfAtrules = `
 }
 ul {
   list-style: thumbs;
+}
+@supports (display: flex) {
+  @media (screen and (min-width: 600px)) {
+    li, span:nth-child(2n + 1) {
+      align-self: flex-start;
+    }
+  }
+}
+@foobar {
+  code {
+    align-self: flex-start;
+  }
+}
+@foobar (baz: hmm) {
+  code {
+    align-self: flex-start;
+  }
 }
 @font-face {
   font-family: "Trickster";
@@ -135,8 +128,8 @@ const tailwindLike = `
 }
 `
 // const css = bunchOfAtrules;
-const css = big;
-// const css = tailwindLike + nestedWithComment
+// const css = big;
+const css = big+tailwindLike + nestedWithComment + bunchOfAtrules
 
 /**
  * Parse CSS to extract
@@ -205,7 +198,7 @@ function parseCss() {
       currentSelectors.push([[bufferLine, bufferCol],text]);
 
       selectorRule = {
-        text: currentSelectors.map(([, text]) => text).join(),
+        text: currentSelectors.map(([, text]) => text).join(', '),
         selectors: currentSelectors,
         start: {
           line: lineNumber,
@@ -243,7 +236,7 @@ function parseCss() {
           // Some atrules have a (non-style) map which can have commas in rare cases (main font-face and counter-style).
           // To avoid complex handling, we just let it be a bit wrong, then correct here.
           if (currentSelectors.length > 0) {
-            body = currentSelectors.map(([, text]) => text).join() + ',' + body;
+            body = currentSelectors.map(([, text]) => text).join() + ', ' + body;
           }
           rogueAtRules.push({text: closedRule, body})
         }
@@ -381,6 +374,8 @@ function parseCss() {
     recordChar = true;
 
     if (isEscape) {
+      // The previous character was an escape character.
+      // Reset to false to allow escaping the escape character.
       isEscape = false;
     } else {
       const f = parser[char];
@@ -396,10 +391,14 @@ function parseCss() {
           // if (!inStylemap && !isWhiteSpace && buffer === '') {
           //   ruleIndex = currentIndex;
           // }
+
+          // Don't record whitespace at start of names.
           if (!isWhiteSpace || !wasEmpty) {
             buffer += char;
           }
+
           if (wasEmpty && !isWhiteSpace) {
+            // Record start of buffer.
             bufferLine = lineNumber;
             bufferCol = currentIndex - lineIndex - 1;
           }
@@ -412,26 +411,13 @@ function parseCss() {
   return [rulesWithMap, rogueAtRules];
 }
 
+console.time('all')
 console.time('a')
 // Flattened list of rules with a (style)map.
 const [rulesWithMap, rogueAtrules] = parseCss()
 console.timeEnd('a')
 
 console.time('b')
-
-function parseMap(mapString) {
-  // Whitespace should be skipped from start already.
-  return mapString
-  // remove possible trailing ";" and whitespace
-  .replace(/\s*;?\s*$/, '')
-  .split(/\s*;\s*/)
-  .reduce((map, declString) => {
-    const [key, value] = declString.split(':').map(s=>s.trim())
-    map[key] = value;
-
-    return map;
-  }, {})
-}
 
 const keyframesRules = {};
 const selectorRules = [];
@@ -444,8 +430,8 @@ function forceablePseudos(selector) {
 }
 
 for (const rule of rulesWithMap) {
-  const firstAtRule = rule.atRules[0]
-  if (firstAtRule && firstAtRule.includes('keyframes')) {
+  const firstAtRule = rule.atRules[0];
+  if (firstAtRule && firstAtRule.startsWith('@keyframes')) {
     if (!keyframesRules.hasOwnProperty(firstAtRule)) {
       keyframesRules[firstAtRule] = {};
     }
@@ -453,11 +439,14 @@ for (const rule of rulesWithMap) {
 
     continue;
   }
+  // TODO: also handle fonts and other @ stuff.
 
-  rule.statelessSelector = statelessSelector(rule.text);
+  // Get every unique component selector from each (possibly) combined selector.
+  // Also create an adapted selector if needed.
   rule.adaptedSelector = forceablePseudos(rule.text);
 
   selectorRules.push(rule);
 }
 
 console.timeEnd('b')
+console.timeEnd('all')

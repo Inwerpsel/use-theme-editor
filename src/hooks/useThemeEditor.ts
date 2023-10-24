@@ -19,13 +19,6 @@ const DEFAULT_STATE = {
   // changeRequiresReset: false,
 };
 
-// For some reason, updates using only `:root` resulted in more than double the amount
-// of elements reported by Chrome in the style recalculation, compared to using `html`.
-// Weird as both selectors target the same element, which should be only the root element.
-// However `:root` is more specific, so it's needed to win over source declarations and
-// we can't just use `html`. Using both still has the lower number of recalculations and fixes that.
-// Not sure where this number is coming from. The recalc does actually take longer, though not
-// by the same factor. 24ms vs 18ms on a quite complex page.
 export const ROOT_SCOPE = ':root';
 
 type Handler = (state: typeof DEFAULT_STATE, action: { [index: string]: any }) => typeof DEFAULT_STATE;
@@ -111,6 +104,7 @@ export const ACTIONS = {
     const newVarString = `var(${name})`;
     const newScopes = {};
 
+    // Replace source
     let hasRoot = false;
     for (const selector of Object.keys(definedValues)) {
       for (const [k, v] of Object.entries(definedValues[selector])) {
@@ -123,6 +117,7 @@ export const ACTIONS = {
       }
     }
 
+    // Replace in editor state
     for (const selector in state.scopes) {
       if (!newScopes[selector]) {
         newScopes[selector] = {};

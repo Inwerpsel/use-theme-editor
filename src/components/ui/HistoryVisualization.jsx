@@ -178,7 +178,6 @@ export function HistoryVisualization() {
         })}
         <li
           onClick={!isInFuture ? null : () => {
-            // Whether the present is in the future?
             dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
           }}
           key={'latest'}

@@ -13,10 +13,10 @@ export const scopesByProperty = {};
 
 export const collectRuleVars = (collected, rule, sheet, media = null, supports = null) => {
   if (rule.type === 1) {
+    // Rule is a selector.
+
     // Keep track of visited shorthands so they're only added once.
     const visitedShorthands = [];
-    // Rule is a selector.
-    // Parse cssText to get original declarations.
     const selector = rule.selectorText;
 
     for (let property of rule.style) {
@@ -26,18 +26,16 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
       // If empty value is returned, it should be from a shorthand.
       // A stylemap should not have any empty values where this is not the case.
       const isPartOfShorthand = couldBeValue === '';
-      // In case of shorthand we can't test yet.
-      // const isPotentialVar = isPartOfShorthand || /var\(/.test(couldBeValue);
-      const isPotentialVar = true;
 
       let value = rule.style.getPropertyValue(property).trim();
 
       if (isCustomDeclaration) {
-        // The rule is setting a custom property.
         if (!definedValues[selector]) {
           definedValues[selector] = {};
         }
 
+        // For now exclude dark theme rules, they're not properly handled yet.
+        // This check will obviously break some use cases, but for now it fixes more.
         if (!media || !/prefers\-color\-scheme\: ?dark/.test(media)) {
           definedValues[selector][property] = value;
 
@@ -125,18 +123,9 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           (match.post || '');
       }
       const remaining = value?.trim() || '';
-      // if (remaining.startsWith(',') ) {
-      //   console.log(fullValue, remaining)
-      // }
+
       // Collect non variable values.
       if (remaining !== '' && !remaining.startsWith(',')) {
-        // if (fullValue.includes('--')) {
-        //   console.log('========');
-        //   console.log(property);
-        //   console.log(fullValue);
-        //   console.log(value);
-        // }
-
         if (!(fullValue in collected)) {
           collected[fullValue] = {
             isRawValue: true,

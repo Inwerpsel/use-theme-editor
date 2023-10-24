@@ -3,7 +3,7 @@ import { styleId } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
 
-// For now only extract from the same domain.
+// Inline style tags are also considered on the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
 
 const sourceMapConsumers = {};
@@ -95,6 +95,8 @@ const getVarPositions = (sheet, varName, sourceMapConsumer) => {
 
 const collectSheetVars = async (vars, sheet) => {
   let rules;
+
+  // Sheets from the same domain can be read directly.
   if (isSameDomain(sheet)) {
     rules = sheet.cssRules;
   } else {
