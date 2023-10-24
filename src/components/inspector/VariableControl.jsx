@@ -208,7 +208,7 @@ export const VariableControl = (props) => {
   while (resolvedValue?.includes('var(--')) {
     const name = '--' + resolvedValue.split('var(--')[1].replace(/[\s\),].*/, '')
     let replacingValue
-    for (const {selector} of elementScopes) {
+    for (const {selector} of elementScopes || []) {
       if (name in (scopes[selector] || {})) {
         replacingValue = scopes[selector][name]
         break;
