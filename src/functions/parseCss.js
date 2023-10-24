@@ -198,7 +198,7 @@ function parseCss() {
       currentSelectors.push([[bufferLine, bufferCol],text]);
 
       selectorRule = {
-        text: currentSelectors.map(([, text]) => text).join(', '),
+        text: currentSelectors.map(([, text]) => text).join(),
         selectors: currentSelectors,
         start: {
           line: lineNumber,
@@ -412,8 +412,8 @@ function parseCss() {
 }
 
 console.time('all')
-console.time('a')
 // Flattened list of rules with a (style)map.
+console.time('a')
 const [rulesWithMap, rogueAtrules] = parseCss()
 console.timeEnd('a')
 
@@ -423,11 +423,45 @@ const keyframesRules = {};
 const selectorRules = [];
 const replaceRegex = /:(active|focus(-(visible|within))?|visited|hover)/g;
 
-function forceablePseudos(selector) {
+function forceableStates(selector) {
   // We have to use `:is` to preserve specificity.
   // The added class does not increase the `is:` block specificity.
   return selector.replaceAll(replaceRegex, `:is(:$1, ._force-$1)`);
 }
+
+// First capturing group simplifies the logic as it allows to use `replaceAll` while
+// "keeping" the last char of the previous component (take away and immediately put back).
+const removablePseudoComponents = /([\w\])-]):(:[\w-]+|before|after|active|focus(-(visible|within))?|visited|hover)/g;
+
+// Remove all pseudo state and pseudo element components from a selector.
+// Note that this results in some pseudo elements matching all elements, even when they refer to
+// pseudo elements that can only occur in a subset of HTML elements (many `::-webkit-` prefixed), or under specific conditions (scrollbar).
+// With the current logic, these would all bubble up to the root element (but should be all shown and not compete for the same property).
+// At a later point, every such pseudo element could have more matching logic to detect whether it's really there (e.g. is scrollbar present?).
+function getRidOfPseudos(selector) {
+  const replaced = selector
+    // Remove pseudo state component where possible.
+    // This is necessary to be able to dedupe while locating/testing, but doesn't always work.
+    .replaceAll(removablePseudoComponents, '$1')
+    // What remains should be standalone occurences like `.foo :hover` and `.foo>:hover`.
+    // Simply removing this like in the previous step would result in an invalid selector.
+    .replaceAll(replaceRegex, '*')
+    // Attempt to remove excess whitespace to decrease the amount of different selectors.
+    .replaceAll(/\s+/g, ' ')
+    // I think this is safe to do. (ok, in theory this will break some attribute selectors)
+    .replaceAll(/\s*,\s*/g, ',');
+
+    // 1. Possibly all components were removed.
+    // 2. Pseudo elements are only valid at the end.
+    if (replaced === '' || replaced.startsWith('::')) {
+      return '*';
+    }
+
+    return replaced.trim();
+}
+
+// All unique stripped selectors, used to see if an element matches a rule.
+const testSelectors = new Map();
 
 for (const rule of rulesWithMap) {
   const firstAtRule = rule.atRules[0];
@@ -443,7 +477,26 @@ for (const rule of rulesWithMap) {
 
   // Get every unique component selector from each (possibly) combined selector.
   // Also create an adapted selector if needed.
-  rule.adaptedSelector = forceablePseudos(rule.text);
+  rule.adaptedSelector = forceableStates(rule.text);
+  rule.testSelectors = new Set();
+
+  for (const [,sel] of rule.selectors) {
+    const stripped = getRidOfPseudos(sel);
+
+    if (testSelectors.has(stripped)) {
+      rule.testSelectors.add(testSelectors.get(stripped))
+    } else {
+      const newOne = {
+        text: stripped,
+        // For now, let's keep the inspection state on these selectors.
+        // I think it will only be used during the inspection.
+        matchesLast: false,
+      };
+      testSelectors.set(stripped, newOne);
+      rule.testSelectors.add(newOne);
+    }
+  }
+
 
   selectorRules.push(rule);
 }
