@@ -2,7 +2,7 @@ import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './functions/getMatchingVars';
 import { addHighlight, removeHighlight } from './functions/highlight';
 import { groupVars } from './functions/groupVars';
-import { extractPageVariables } from './functions/extractPageVariables';
+import { extractPageVariables, extractionResults } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
 import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
@@ -129,9 +129,88 @@ export const setupThemeEditor = async (config) => {
   let ignoreScroll = false;
   let scrollDebounceTimeout = null;
 
+  function furthest(element, selector) {
+    let i = 0;
+      let closest = element.closest(selector);
+
+      while (closest?.parentNode) {
+        i++;
+        try {
+          const parentClosest = closest.parentNode.closest(selector);
+          if (parentClosest) {
+            closest = parentClosest;
+          } else {
+            break;
+          }
+        } catch (e) {
+          break;
+        }
+      }
+
+      return closest;
+    }
+
+  function inspectNew(element) {
+    // TODO: Cache (perhaps WeakMap or WeakRef on the DOM element)
+    console.time('new');
+    const {testSelectors, selectorRules} = extractionResults();
+    for (const [, rule] of testSelectors) {
+      try {
+        rule.lastEl = furthest(element, rule.text);
+      } catch (e) {
+        console.log(e, rule);
+      }
+    }
+
+    const mappedRules = selectorRules.reduce((groups,r) => {
+      const matches = [...r.testSelectors].filter(s => s.lastEl).map(s=>s.lastEl);
+      if (matches.length > 1) {
+        console.log('rule has multiple matches', r, matches)
+      }
+
+      if (matches.length === 1) {
+        const el = matches[0];
+        let group = groups.get(el);
+        if (!group) {
+          group = [];
+          groups.set(el, group)
+        }
+        group.push(r);
+      }
+
+      return groups;
+    }, new Map());
+
+    let cur = element, groups = [];
+
+    while (cur) {
+      const rules = mappedRules.get(cur);
+      if (rules) {
+        let calcedStyle = new Map();
+        // style calc stubbed for now but should be quite close result and performance
+        for (const [, rule] of rules.entries()) {
+          for (const [property, value] of rule.stylemap.entries()) {
+            calcedStyle.set(property, value);
+          }
+        }
+        groups.push({element: cur, calcedStyle, rules});
+      }
+      cur = cur.parentNode;
+    }
+
+    console.timeEnd('new');
+    // console.log('matches', [...testSelectors].filter(([k,v])=>{
+    //   return v.lastEl;
+    // }));
+    // console.log('mapped', mappedRules);
+    console.log('groups', groups);
+  }
+
   function inspect(targetOrIndex) {
     const isPrevious = typeof targetOrIndex === 'number';
     const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
+
+    inspectNew(target);
 
     if (!isPrevious) {
       inspectedElements.push(target);
@@ -153,9 +232,11 @@ export const setupThemeEditor = async (config) => {
     // Additionally, this approach makes it unavoidable that properties are only shown in the element nearest
     // to the root, even if they're also used deeper down. Though you can get used to that and will always find
     // everything.
+    console.time('old');
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
+    console.timeEnd('old');
 
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
@@ -194,7 +275,8 @@ export const setupThemeEditor = async (config) => {
         lastHighlightTimeout = null;
       };
 
-      lastHighlightTimeout = [setTimeout(handler, isPrevious ? 2400 : 700), handler, element];    }
+      lastHighlightTimeout = [setTimeout(handler, isPrevious ? 2400 : 700), handler, element];    
+    }
   }
 
   // Below are only listeners for messages sent from the parent frame.

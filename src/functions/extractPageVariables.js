@@ -2,6 +2,7 @@
 import { styleId } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
+import { deriveUtilitySelectors, parseCss } from './parseCss';
 
 // Inline style tags are also considered on the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;
@@ -93,8 +94,17 @@ const getVarPositions = (sheet, varName, sourceMapConsumer) => {
   return lines.reduce(getLineVarPositions(varName, sourceMapConsumer, sheet), []);
 };
 
+let i = 0;
+const durations = [];
+let rulesWithMap = [], rogueAtRules = [], comments = [], keyframesRules = [], selectorRules = [], testSelectors = new Map();
+
+export function extractionResults() {
+  return {rulesWithMap, rogueAtRules, comments, keyframesRules, selectorRules, testSelectors};
+}
+
 const collectSheetVars = async (vars, sheet) => {
   let rules;
+  i++;
 
   // Sheets from the same domain can be read directly.
   if (isSameDomain(sheet)) {
@@ -102,6 +112,7 @@ const collectSheetVars = async (vars, sheet) => {
   } else {
     try {
       const sheetContent = await (await fetch(sheet.href)).text();
+
       const style = document.createElement('style');
       style.innerText = sheetContent;
       document.head.appendChild(style);
@@ -111,6 +122,26 @@ const collectSheetVars = async (vars, sheet) => {
       return await vars;
     }
   }
+
+  if (rules.length > 0) {
+    const text =
+      sheet.ownerNode?.innerHTML || (await (await fetch(sheet.href)).text());
+
+    const start = performance.now();
+    parseCss(text, {
+      comments,
+      rulesWithMap,
+      rogueAtRules,
+      sheet,
+    });
+    const duration = performance.now() - start;
+    durations.push([i, duration]);
+  }
+
+  // console.log('================' )
+  // console.log(rulesWithMap )
+  // console.log( rogueAtRules )
+  // console.log( comments )
   return [...rules].reduce((sheetVars, rule) => collectRuleVars(sheetVars, rule, sheet), await vars);
 };
 
@@ -174,6 +205,12 @@ export const extractPageVariables = async() => {
   const startTime = performance.now();
   const sheets = [...document.styleSheets].filter(s=>s.ownerNode?.id!==styleId);
   const asObject = await sheets.reduce(collectSheetVars, {});
+
+  console.log('new parse time', durations.reduce((a,[,t]) => a+=t, 0))
+
+  console.time('derive');
+  deriveUtilitySelectors({rulesWithMap, keyframesRules, selectorRules, testSelectors})
+  console.timeEnd('derive');
 
   activeScopes = Object.keys(definedValues).filter(scopeSelector => document.querySelectorAll(scopeSelector).length > 0);
   // We can only know for sure on active scopes whether they only apply to the root element.
