@@ -22,8 +22,9 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
   let commentStartLine = 0;
   let commentStartCol = 0;
 
-  let isInComment = false;
-  let inlineIsInComment = false;
+  let inComment = false;
+  let commentIsInline = false;
+
   let isEscape = false;
 
   let inAtRule = false;
@@ -35,7 +36,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
 
   const parser = {
     '{'() {
-      if (isInComment || inlineIsInComment) {
+      if (inComment) {
         return;
       }
       recordChar = false;
@@ -47,10 +48,9 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
         return;
       }
 
-      currentSelectors.push([[bufferLine, bufferCol],text]);
+      currentSelectors.push([[bufferLine, bufferCol], text]);
 
       selectorRule = {
-        text: currentSelectors.map(([, text]) => text).join(),
         selectors: currentSelectors,
         start: {
           line: lineNumber,
@@ -66,7 +66,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       inStylemap = true;
     },
     '}'() {
-      if (isInComment || inlineIsInComment) {
+      if (inComment) {
         return;
       }
       recordChar = false;
@@ -99,8 +99,8 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       buffer = '';
     },
     '\n'() {
-      recordChar = isInComment;
-      if (inlineIsInComment) {
+      recordChar = inComment && !commentIsInline;
+      if (commentIsInline) {
         comments.push({
           line: commentStartLine,
           col: commentStartCol,
@@ -108,7 +108,8 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
           inline: true,
         });
         commentBody = '';
-        inlineIsInComment = false;
+        inComment = false;
+        commentIsInline = false;
       }
 
       // Parentheses in CSS cannot span multiple lines.
@@ -121,13 +122,9 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       lineIndex = currentIndex;
     },
     '/'() {
-      if (isInComment && prevChar === '*') {
+      if (inComment && !commentIsInline && prevChar === '*') {
         recordChar = false;
-            isInComment = false;
-            isInComment = false;
-            recordChar = false;
-        isInComment = false;
-            recordChar = false;
+        inComment = false;
 
         comments.push({
           line: commentStartLine,
@@ -138,14 +135,14 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
         });
         commentBody = '';
       } else if (
-        !isInComment &&
-        !inlineIsInComment &&
+        !inComment &&
         // quick fix for url()
         parenthesesLevel === 0 &&
         prevChar === '/'
       ) {
         recordChar = false;
-        inlineIsInComment = true;
+        inComment = true;
+        commentIsInline = true;
 
         commentStartLine = lineNumber;
         commentStartCol = currentIndex - lineIndex - 1;
@@ -156,9 +153,9 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       }
     },
     '*'() {
-      if (!isInComment && !inlineIsInComment && prevChar === '/') {
+      if (!inComment && prevChar === '/') {
         recordChar = false;
-        isInComment = true;
+        inComment = true;
         commentStartLine = lineNumber;
         commentStartCol = currentIndex - lineIndex - 1;
 
@@ -167,7 +164,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       }
     },
     '@'() {
-      if (!isInComment && !inlineIsInComment && !inStylemap) {
+      if (!inComment && !inStylemap) {
         inAtRule = true;
         buffer = '';
         // ruleIndex = currentIndex;
@@ -202,12 +199,12 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
     '('() {
       // This helps prevent starting a line comment in case of a url().
       // It probably doesn't work if the rule contains unbalanced parentheses.
-      if (!isInComment && !inlineIsInComment) {
+      if (!inComment) {
         parenthesesLevel += 1;
       }
     },
     ')'() {
-      if (!isInComment && !inlineIsInComment) {
+      if (!inComment) {
         parenthesesLevel -= 1;
       }
     },
@@ -216,7 +213,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
       recordChar = false;
     },
     ','() {
-      if (!isInComment && !inlineIsInComment && !inStylemap && !inAtRule && parenthesesLevel === 0) {
+      if (!inComment && !inStylemap && !inAtRule && parenthesesLevel === 0) {
         const selector = buffer.trim();
         currentSelectors.push([[bufferLine, bufferCol], selector]);
         recordChar = false;
@@ -237,10 +234,13 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
     }
 
     if (recordChar) {
-        if (isInComment || inlineIsInComment) {
+        if (inComment) {
           commentBody += char;
         } else {
-          const isWhiteSpace = /\s/.test(char);
+          // This is actually by far the fastest way to check for whitespace.
+          // Definitely do not use `/\s/.test(char)`, it's exceptionally slow (it turned 150ms into 190ms for the whole parsing).
+          // Maybe it was a knock-on effect as it seems almost not possible.
+          const isWhiteSpace = char.trim() !== '';
           const wasEmpty = buffer === '';
           // if (!inStylemap && !isWhiteSpace && buffer === '') {
           //   ruleIndex = currentIndex;
@@ -317,12 +317,14 @@ export function deriveUtilitySelectors({
 }) {
 
   for (const rule of rulesWithMap) {
+    const fullText = rule.selectors.map(([, text]) => text).join();
+
     const firstAtRule = rule.atRules[0];
     if (firstAtRule && firstAtRule.startsWith('@keyframes')) {
       if (!keyframesRules.hasOwnProperty(firstAtRule)) {
         keyframesRules[firstAtRule] = {};
       }
-      keyframesRules[firstAtRule][rule.text] = rule;
+      keyframesRules[firstAtRule][fullText] = rule;
 
       continue;
     }
@@ -330,7 +332,7 @@ export function deriveUtilitySelectors({
 
     // Get every unique component selector from each (possibly) combined selector.
     // Also create an adapted selector if needed.
-    rule.adaptedSelector = forceableStates(rule.text);
+    rule.adaptedSelector = forceableStates(fullText);
     rule.testSelectors = new Set();
 
     for (const [, sel] of rule.selectors) {
