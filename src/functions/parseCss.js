@@ -240,7 +240,8 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
           // This is actually by far the fastest way to check for whitespace.
           // Definitely do not use `/\s/.test(char)`, it's exceptionally slow (it turned 150ms into 190ms for the whole parsing).
           // Maybe it was a knock-on effect as it seems almost not possible.
-          const isWhiteSpace = char.trim() !== '';
+          // const isWhiteSpace = char === ' ';
+          const isWhiteSpace = char.trim() === '';
           const wasEmpty = buffer === '';
           // if (!inStylemap && !isWhiteSpace && buffer === '') {
           //   ruleIndex = currentIndex;
