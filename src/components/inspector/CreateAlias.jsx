@@ -10,6 +10,7 @@ export function CreateAlias(props) {
     const {value} = props;
     const {dispatch} = useContext(ThemeEditorContext);
     const [open, setOpen] = useState(false);
+    // Use separate state to avoid large lib going in and out of memory as you repeatedly open and close alias component.
     const [wasOpened, setWasOpened] = useState(false);
 
     const colorSuggestion = useMemo(() => {
@@ -17,7 +18,7 @@ export function CreateAlias(props) {
             return null;
         }
         // No valid syntax besides hsl can include the string "deg".
-        // Perhaps it's possible removing "deg" makes certain invalid color strings valid,
+        // In theory, it's possible removing "deg" makes certain invalid color strings valid,
         // but that's not a problem here.
         const parsed = tinycolor(value.replace('deg', ''));
         if (parsed.isValid()) {
