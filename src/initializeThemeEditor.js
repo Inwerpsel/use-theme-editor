@@ -2,11 +2,12 @@ import { renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './functions/getMatchingVars';
 import { addHighlight, removeHighlight } from './functions/highlight';
 import { groupVars } from './functions/groupVars';
-import { extractPageVariables, extractionResults } from './functions/extractPageVariables';
+import { extractPageVariables } from './functions/extractPageVariables';
 import { filterMostSpecific } from './functions/getOnlyMostSpecific';
 import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/getLocalStorageNamespace';
 import {initializeConsumer} from './sourcemap';
 import { getAllDefaultValues } from './functions/getAllDefaultValues';
+import { deriveUtilitySelectors, parseCss } from './functions/parseCss';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -81,6 +82,13 @@ function destroyDoc() {
   });
 }
 
+// WIP, not used in the app yet.
+let rulesWithMap = [], rogueAtRules = [], comments = [], keyframesRules = [], selectorRules = [], testSelectors = new Map();
+
+function extractionResults() {
+  return {rulesWithMap, rogueAtRules, comments, keyframesRules, selectorRules, testSelectors};
+}
+
 export const setupThemeEditor = async (config) => {
   updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   setLocalStorageNamespace(config.localStorageNamespace || '');
@@ -89,6 +97,33 @@ export const setupThemeEditor = async (config) => {
   await dependencyReady;
   const cssVars = await extractPageVariables();
   const defaultValues = getAllDefaultValues(cssVars);
+
+  const sheets = [...document.styleSheets].filter(s=>s.ownerNode?.id!==styleId);
+
+  console.time('new')
+  for (const sheet of sheets) {
+    let text;
+    if (sheet.href) {
+      text = (await (await fetch(sheet.href)).text());
+    } else {
+      text = sheet.ownerNode?.innerHTML;
+      if (!text) {
+        continue;
+      };
+    }
+
+    parseCss(text, {
+      comments,
+      rulesWithMap,
+      rogueAtRules,
+      sheet,
+    });
+  }
+  console.timeEnd('new')
+
+  console.time('derive');
+  deriveUtilitySelectors({rulesWithMap, keyframesRules, selectorRules, testSelectors})
+  console.timeEnd('derive');
 
   if (!isRunningAsFrame) {
     const editorRoot = document.createElement( 'div' );
@@ -154,17 +189,20 @@ export const setupThemeEditor = async (config) => {
     // TODO: Cache (perhaps WeakMap or WeakRef on the DOM element)
     console.time('new');
     const {testSelectors, selectorRules} = extractionResults();
+    let i=0;
     for (const [, rule] of testSelectors) {
+      i++;
       try {
         rule.lastEl = furthest(element, rule.text);
       } catch (e) {
-        console.log(e, rule);
+        console.log(e, rule, i);
       }
     }
 
     const mappedRules = selectorRules.reduce((groups,r) => {
       const matches = [...r.testSelectors].filter(s => s.lastEl).map(s=>s.lastEl);
       if (matches.length > 1) {
+        // Will solve later.
         console.log('rule has multiple matches', r, matches)
       }
 
@@ -210,7 +248,8 @@ export const setupThemeEditor = async (config) => {
     const isPrevious = typeof targetOrIndex === 'number';
     const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
 
-    inspectNew(target);
+    // Laziest feature flag ever.
+    if (window._testNewInspection) inspectNew(target);
 
     if (!isPrevious) {
       inspectedElements.push(target);
@@ -237,6 +276,7 @@ export const setupThemeEditor = async (config) => {
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
     console.timeEnd('old');
+    // console.log('oldgroups', groups);
 
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
