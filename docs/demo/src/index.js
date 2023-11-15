@@ -1,4 +1,4 @@
-import { setupThemeEditor } from "../../src/initializeThemeEditor";
+import { setupThemeEditor } from "../../../src/initializeThemeEditor";
 
 const KEY = 'all-the-themes';
 

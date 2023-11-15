@@ -6,12 +6,12 @@ module.exports = {
     watch: true,
     entry: {
         // bundle: './docs/src/index.js',
-        main: './docs/src/style.scss',
-        halfmoon: './docs/halfmoon/style.scss',
+        main: './docs/demo/src/style.scss',
+        halfmoon: './docs/demo/halfmoon/style.scss',
     },
     output: {
         filename: '[name].js',
-        path: path.resolve(__dirname, 'docs/dist'),
+        path: path.resolve(__dirname, 'docs/demo/dist'),
     },
     resolve: {
         extensions: ['.tsx', '.ts', '.js'],

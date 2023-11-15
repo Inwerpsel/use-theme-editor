@@ -3,7 +3,7 @@
   "version": "3.1.1",
   "description": "Zero configuration CSS variables based theme editor",
   "homepage": "https://github.com/Inwerpsel/use-theme-editor",
-  "main": "docs/dist/bundle.js",
+  "main": "docs/demo/dist/bundle.js",
   "scripts": {
     "start": "vite",
     "build": "vite build",

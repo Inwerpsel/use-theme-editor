@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<!-- saved from url=(0067)https://interactive-examples.mdn.mozilla.net/pages/css/display.html -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>.ͼ1.cm-focused {outline: 1px dotted #212121;}
+.ͼ1 {position: relative !important; box-sizing: border-box; display: flex !important; flex-direction: column;}
+.ͼ1 .cm-scroller {display: flex !important; align-items: flex-start !important; font-family: monospace; line-height: 1.4; height: 100%; overflow-x: auto; position: relative; z-index: 0;}
+.ͼ1 .cm-content[contenteditable=true] {-webkit-user-modify: read-write-plaintext-only;}
+.ͼ1 .cm-content {margin: 0; flex-grow: 2; flex-shrink: 0; display: block; white-space: pre; word-wrap: normal; box-sizing: border-box; padding: 4px 0; outline: none;}
+.ͼ1 .cm-lineWrapping {white-space: pre-wrap; white-space: break-spaces; word-break: break-word; overflow-wrap: anywhere; flex-shrink: 1;}
+.ͼ2 .cm-content {caret-color: black;}
+.ͼ3 .cm-content {caret-color: white;}
+.ͼ1 .cm-line {display: block; padding: 0 2px 0 6px;}
+.ͼ1 .cm-layer > * {position: absolute;}
+.ͼ1 .cm-layer {contain: size style;}
+.ͼ2 .cm-selectionBackground {background: #d9d9d9;}
+.ͼ3 .cm-selectionBackground {background: #222;}
+.ͼ2.cm-focused .cm-selectionBackground {background: #d7d4f0;}
+.ͼ3.cm-focused .cm-selectionBackground {background: #233;}
+.ͼ1 .cm-cursorLayer {pointer-events: none;}
+.ͼ1.cm-focused .cm-cursorLayer {animation: steps(1) cm-blink 1.2s infinite;}
+@keyframes cm-blink {50% {opacity: 0;}}
+@keyframes cm-blink2 {50% {opacity: 0;}}
+.ͼ1 .cm-cursor, .ͼ1 .cm-dropCursor {border-left: 1.2px solid black; margin-left: -0.6px; pointer-events: none;}
+.ͼ1 .cm-cursor {display: none;}
+.ͼ3 .cm-cursor {border-left-color: #444;}
+.ͼ1 .cm-dropCursor {position: absolute;}
+.ͼ1.cm-focused .cm-cursor {display: block;}
+.ͼ2 .cm-activeLine {background-color: #cceeff44;}
+.ͼ3 .cm-activeLine {background-color: #99eeff33;}
+.ͼ2 .cm-specialChar {color: red;}
+.ͼ3 .cm-specialChar {color: #f78;}
+.ͼ1 .cm-gutters {flex-shrink: 0; display: flex; height: 100%; box-sizing: border-box; left: 0; z-index: 200;}
+.ͼ2 .cm-gutters {background-color: #f5f5f5; color: #6c6c6c; border-right: 1px solid #ddd;}
+.ͼ3 .cm-gutters {background-color: #333338; color: #ccc;}
+.ͼ1 .cm-gutter {display: flex !important; flex-direction: column; flex-shrink: 0; box-sizing: border-box; min-height: 100%; overflow: hidden;}
+.ͼ1 .cm-gutterElement {box-sizing: border-box;}
+.ͼ1 .cm-lineNumbers .cm-gutterElement {padding: 0 3px 0 5px; min-width: 20px; text-align: right; white-space: nowrap;}
+.ͼ2 .cm-activeLineGutter {background-color: #e2f2ff;}
+.ͼ3 .cm-activeLineGutter {background-color: #222227;}
+.ͼ1 .cm-panels {box-sizing: border-box; position: sticky; left: 0; right: 0;}
+.ͼ2 .cm-panels {background-color: #f5f5f5; color: black;}
+.ͼ2 .cm-panels-top {border-bottom: 1px solid #ddd;}
+.ͼ2 .cm-panels-bottom {border-top: 1px solid #ddd;}
+.ͼ3 .cm-panels {background-color: #333338; color: white;}
+.ͼ1 .cm-tab {display: inline-block; overflow: hidden; vertical-align: bottom;}
+.ͼ1 .cm-widgetBuffer {vertical-align: text-top; height: 1em; width: 0; display: inline;}
+.ͼ1 .cm-placeholder {color: #888; display: inline-block; vertical-align: top;}
+.ͼ1 .cm-highlightSpace:before {content: attr(data-display); position: absolute; pointer-events: none; color: #888;}
+.ͼ1 .cm-highlightTab {background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="200" height="20"><path stroke="%23888" stroke-width="1" fill="none" d="M1 10H196L190 5M190 15L196 10M197 4L197 16"/></svg>'); background-size: auto 100%; background-position: right 90%; background-repeat: no-repeat;}
+.ͼ1 .cm-trailingSpace {background-color: #ff332255;}
+.ͼ1 .cm-button {vertical-align: middle; color: inherit; font-size: 70%; padding: .2em 1em; border-radius: 1px;}
+.ͼ2 .cm-button:active {background-image: linear-gradient(#b4b4b4, #d0d3d6);}
+.ͼ2 .cm-button {background-image: linear-gradient(#eff1f5, #d9d9df); border: 1px solid #888;}
+.ͼ3 .cm-button:active {background-image: linear-gradient(#111, #333);}
+.ͼ3 .cm-button {background-image: linear-gradient(#393939, #111); border: 1px solid #888;}
+.ͼ1 .cm-textfield {vertical-align: middle; color: inherit; font-size: 70%; border: 1px solid silver; padding: .2em .5em;}
+.ͼ2 .cm-textfield {background-color: white;}
+.ͼ3 .cm-textfield {border: 1px solid #555; background-color: inherit;}
+.ͼ1.cm-focused .cm-matchingBracket {background-color: #328c8252;}
+.ͼ1.cm-focused .cm-nonmatchingBracket {background-color: #bb555544;}
+.ͼ5 {class: ;}
+.ͼ6 {class: ;}
+.ͼ7 {class: ;}
+.ͼ8 {class: ;}
+.ͼ9 {class: ;}
+.ͼa {class: ;}
+.ͼb {class: ;}
+.ͼ4 .cm-line ::selection {background-color: transparent !important;}
+.ͼ4 .cm-line::selection {background-color: transparent !important;}
+.ͼ4 .cm-line {caret-color: transparent !important;}
+</style>
+    
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>CSS Demo: display</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="./codemirror.css" rel="stylesheet">
+    <link rel="stylesheet" href="./editor-css.css">
+    <link rel="stylesheet" href="./display.css">
+  <meta id="ConnectiveDocSignExtentionInstalled" name="ConnectiveDocSignExtentionInstalled" data-extension-version="1.0.6"></head>
+
+  <body class="theme-light">
+    <section class="css-editor-container">
+      <header class="output-header border-rounded-top">
+        <h4 class="output-heading">CSS Demo: display</h4>
+        <button id="reset" class="reset" type="button">Reset</button>
+      </header>
+      <noscript>
+        <div id="warning-no-script" class="warning-container">
+          <div class="warning">
+            Interactive examples cannot be shown because JavaScript is disabled.
+          </div>
+        </div>
+      </noscript>
+      <div id="warning-no-support" class="warning-container hidden">
+        <div class="warning">
+          This feature is not supported by your current browser. Check Browser
+          compatibility for more details.
+        </div>
+      </div>
+      <div id="editor-wrapper" class="editor-wrapper border-rounded-bottom">
+        <section id="example-choice-list" class="example-choice-list large live" data-property="display">
+  <div class="example-choice selected" initial-choice="true">
+    <pre><div class="cm-editor ͼ1 ͼ2 ͼ4"><div aria-live="polite" style="position: fixed; top: -10000px;"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" contenteditable="true" class="cm-content" style="tab-size: 4" role="textbox" aria-multiline="true" data-language="css"><div class="cm-line"><span class="cm-tag">display</span>: <span class="cm-pseudo-class">block</span><span class="ͼ8">;</span></div></div><div class="cm-layer cm-layer-above cm-cursorLayer" aria-hidden="true" style="z-index: 150; animation-duration: 1200ms;"><div class="cm-cursor cm-cursor-primary" style="left: 0px; top: 4px; height: 16px;"></div></div><div class="cm-layer cm-selectionLayer" aria-hidden="true" style="z-index: -2;"></div></div></div></pre>
+    <button type="button" class="copy" aria-hidden="false" aria-label="Copy to clipboard">
+      <span class="visually-hidden">Copy to Clipboard</span>
+    </button>
+  <button type="button" class="example-choice-button"><span class="visually-hidden">Choose example 1</span></button></div>
+
+  <div class="example-choice">
+    <pre><div class="cm-editor ͼ1 ͼ2 ͼ4"><div aria-live="polite" style="position: fixed; top: -10000px;"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" contenteditable="true" class="cm-content" style="tab-size: 4" role="textbox" aria-multiline="true" data-language="css"><div class="cm-line"><span class="cm-tag">display</span>: <span class="cm-pseudo-class">inline-block</span><span class="ͼ8">;</span></div></div><div class="cm-layer cm-layer-above cm-cursorLayer" aria-hidden="true" style="z-index: 150; animation-duration: 1200ms;"><div class="cm-cursor cm-cursor-primary" style="left: 0px; top: 4px; height: 16px;"></div></div><div class="cm-layer cm-selectionLayer" aria-hidden="true" style="z-index: -2;"></div></div></div></pre>
+    <button type="button" class="copy hidden" aria-hidden="true" aria-label="Copy to clipboard">
+      <span class="visually-hidden">Copy to Clipboard</span>
+    </button>
+  <button type="button" class="example-choice-button"><span class="visually-hidden">Choose example 2</span></button></div>
+
+  <div class="example-choice">
+    <pre><div class="cm-editor ͼ1 ͼ2 ͼ4"><div aria-live="polite" style="position: fixed; top: -10000px;"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" contenteditable="true" class="cm-content" style="tab-size: 4" role="textbox" aria-multiline="true" data-language="css"><div class="cm-line"><span class="cm-tag">display</span>: <span class="cm-pseudo-class">none</span><span class="ͼ8">;</span></div></div><div class="cm-layer cm-layer-above cm-cursorLayer" aria-hidden="true" style="z-index: 150; animation-duration: 1200ms;"><div class="cm-cursor cm-cursor-primary" style="left: 0px; top: 4px; height: 16px;"></div></div><div class="cm-layer cm-selectionLayer" aria-hidden="true" style="z-index: -2;"></div></div></div></pre>
+    <button type="button" class="copy hidden" aria-hidden="true" aria-label="Copy to clipboard">
+      <span class="visually-hidden">Copy to Clipboard</span>
+    </button>
+  <button type="button" class="example-choice-button"><span class="visually-hidden">Choose example 3</span></button></div>
+
+  <div class="example-choice">
+    <pre><div class="cm-editor ͼ1 ͼ2 ͼ4"><div aria-live="polite" style="position: fixed; top: -10000px;"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" contenteditable="true" class="cm-content" style="tab-size: 4" role="textbox" aria-multiline="true" data-language="css"><div class="cm-line"><span class="cm-tag">display</span>: <span class="cm-pseudo-class">flex</span><span class="ͼ8">;</span></div></div><div class="cm-layer cm-layer-above cm-cursorLayer" aria-hidden="true" style="z-index: 150; animation-duration: 1200ms;"><div class="cm-cursor cm-cursor-primary" style="left: 0px; top: 4px; height: 16px;"></div></div><div class="cm-layer cm-selectionLayer" aria-hidden="true" style="z-index: -2;"></div></div></div></pre>
+    <button type="button" class="copy hidden" aria-hidden="true" aria-label="Copy to clipboard">
+      <span class="visually-hidden">Copy to Clipboard</span>
+    </button>
+  <button type="button" class="example-choice-button"><span class="visually-hidden">Choose example 4</span></button></div>
+
+  <div class="example-choice">
+    <pre><div class="cm-editor ͼ1 ͼ2 ͼ4"><div aria-live="polite" style="position: fixed; top: -10000px;"></div><div tabindex="-1" class="cm-scroller"><div spellcheck="false" autocorrect="off" autocapitalize="off" translate="no" contenteditable="true" class="cm-content" style="tab-size: 4" role="textbox" aria-multiline="true" data-language="css"><div class="cm-line"><span class="cm-tag">display</span>: <span class="cm-pseudo-class">grid</span><span class="ͼ8">;</span></div></div><div class="cm-layer cm-layer-above cm-cursorLayer" aria-hidden="true" style="z-index: 150; animation-duration: 1200ms;"><div class="cm-cursor cm-cursor-primary" style="left: 0px; top: 4px; height: 16px;"></div></div><div class="cm-layer cm-selectionLayer" aria-hidden="true" style="z-index: -2;"></div></div></div></pre>
+    <button type="button" class="copy hidden" aria-hidden="true" aria-label="Copy to clipboard">
+      <span class="visually-hidden">Copy to Clipboard</span>
+    </button>
+  <button type="button" class="example-choice-button"><span class="visually-hidden">Choose example 5</span></button></div>
+</section>
+
+<div id="output" class="output large">
+  <section id="default-example" class="default-example">
+    <div class="example-container">
+      <div id="example-element" style="display: block;">
+        <div class="child">One</div>
+        <div class="child">Two</div>
+        <div class="child">Three</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+      </div>
+    </section>
+    <div id="user-message" class="user-message" aria-hidden="true">Copied!</div>
+    <script src="./codemirror.js.download"></script>
+    <script src="./editor-css.js.download"></script>
+    
+  
+
+</body></html>

@@ -4,22 +4,22 @@ import react from '@vitejs/plugin-react';
 
 export default defineConfig({
   mode: 'development',
-  root: 'docs',
+  root: 'docs/demo',
   // base: '/use-theme-editor',
   build: {
     target: 'es2015',
     rollupOptions: {
       input: {
-        'bundle': path.resolve('docs/src/index.js'),
+        'bundle': path.resolve('docs/demo/src/index.js'),
       },
       output: {
         entryFileNames: '[name].js',
-        dir: 'docs/dist',
+        dir: 'docs/demo/dist',
         sourcemap: true,
       },
     }
   },
-  publicDir: 'docs',
+  publicDir: 'docs/demo',
   // …
   plugins: [
     // …
