@@ -9,11 +9,13 @@ With this repo you can directly use your content to inspect every part of the de
 This works on literally any HTML page, whether it's from a SSR, SPA, CMS... It parses all CSS on the page and makes it
 browsable.
 
-You can use this repo in various ways:
+This repository is intended to be used in various ways*:
 - Integrate the standalone theme editor page with almost no coding required (exact steps to follow)
 - Import 1 function in your own app
-- Anything in between the previous options
+- Something in between the previous options (integrate various components into an existing app)
 
+\* While it's intended to preserve this broader range of applicability,
+this may be narrowed down to some extent in the future.
 
 https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-95e2-011204e9e8c2
 
@@ -22,7 +24,7 @@ https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-
 
 While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
 make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
-functionality), feel free to open a new issue describing your needs and they'll be prioritized.
+functionality), feel free to open a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) describing your needs and they'll be prioritized.
 
 ## Demo
 
@@ -240,22 +242,6 @@ A few components are not (fully) working at the moment, mostly because they depe
 </summary>
 
 ### IN PROGRESS
-- Improve state management
-  - Move top level state that uses useResumableReducer down
-    - Complex state (open groups) vs many keys (open variable controls) vs reducer (theme editor)?
-      - complex state (without reducer):
-        - pro: less work performed by store, less keys to change detect, stable amount of instances
-        - con: can't replay fine grained, causes more elements to render (same issue as Context), shifts burden to consumer
-      - many keys:
-        - pro: maximally targeted renders, easy to replay / compare with other states
-        - con: need to generate complex key, lists can potentially have thousands of items
-      - reducer:
-        - pro: components can use dispatched actions (history view), replayable unless semantically impossible
-        - con: more coupled state, hard to detect whether 2 states are equivalent, replay requires error handling
-    - Questions on useResumableReducer
-  - Decouple state implementations in movable panels so it can be used standalone
-    - Maybe better with reducer?
-
 - Improve relative layout of deeper parts of the inspector UI
   - Find design principles that work with the complex and interconnected nature of the displayed information.
   - Current principles: at the top level it shows the entire dependency chain up to the variable setting the raw value.
@@ -327,13 +313,7 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Even though this is a bad idea for multiple reasons, I don't expect common frameworks to change it soon.
     - Can be somewhat generalized. Perhaps check type of function arguments in CSS syntax?
 
-### TO FINISH
-- Combine all media query versions of the same property into a single control. This can update the iframe to match the
-  media query, so that you always can see your changes applied (done but for separate controls). Visualize media queries
-  in UI.
-
 ### TODO
-- Write tests
 - Variable actions:
   - Convert a raw value to a variable
     - First search for existing vars with same value
