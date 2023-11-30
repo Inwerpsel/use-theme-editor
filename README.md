@@ -225,10 +225,10 @@ This means that you can just experiment to get a hang of it, and easily undo you
 ### Why can I drag these seemingly too small pieces of UI around?
 While this seems overkill, it's more useful than you'd think.
 There's a lot of different ways in which a page can use CSS.
-Sometimes you never need to touch an option, sometimes you need to toggle it very often.
+Sometimes you never need to touch a given option, sometimes you need to toggle it very often.
 Personal preference can also mean one person constantly uses an option, while the other one rarely or never.
 
-The same goes for combinations between such options. If you often inspect and need to switch the granularity or search filter,
+The same goes for combinations of UI elements. If you often inspect and need to switch the granularity or search filter,
 it's a more pleasant UX if you can position those options right next to the inspector.
 If you don't want this (or it's not relevant on the site), it's nice to be able to recover the screen real estate.
 
@@ -244,12 +244,22 @@ Plenty of things could definitely look and behave better with a bit more CSS.
 There's 2 main reasons for this.
 
 The first is that, for now, it actually loads the styles of the inspected page. While it results in a bit of a mess from time to time,
-it also helps harden the CSS that is used, and can also help understand different kinds of CSS better while developing this app.
-It can often actually look good and consistent with the inspected page.
+it helps harden the CSS that is used, and can also help understand different kinds of CSS better while developing this app.
+It often actually looks good and consistent with the inspected page.
 
 The second reason is the existential crisis arising from working with all kinds of different CSS methodologies.
 You'd think after some time this would show that one way of doing things is clearly better, but that's not the case.
 As a result, it's now mostly developed with easy and robust styles to cut down on complexity until choices can be confidently made.
+
+### Why is there no good overview of the changes I've made?
+A lot of the data extraction and inspection logic is being rewritten at the moment.
+The `CurrentTheme` component (by default in the drawer) used to fulfill the purpose of showing a list of all changes you made,
+but it's not being updated until this refactor is done.
+
+While this is obviously a crucial component in the eventual use case, for development of everything else it's not necessary
+so it's much more efficient to postpone it.
+
+For now you can still get an overview by exporting the current theme as JSON or CSS.
 
 ## Embedded packages*
 
