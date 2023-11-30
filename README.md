@@ -209,6 +209,47 @@ tags you see in [other example HTML pages at the end of the body](https://github
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
+## FAQ
+
+### Where is the documentation?
+A documentation site is planned, but postponed for now as there's too many things that are being developed
+which would result in constant updating of texts and screenshots, delaying the work.
+
+Some information is in readme files in this repository, but it could be better organized.
+
+For the same efficiency reasons, some UI labels and descriptions are left out.
+
+The UI is intended to be maximally intuitive, though. Almost all application state is also included in the history timeline.
+This means that you can just experiment to get a hang of it, and easily undo your experiments.
+
+### Why can I drag these seemingly too small pieces of UI around?
+While this seems overkill, it's more useful than you'd think.
+There's a lot of different ways in which a page can use CSS.
+Sometimes you never need to touch an option, sometimes you need to toggle it very often.
+Personal preference can also mean one person constantly uses an option, while the other one rarely or never.
+
+The same goes for combinations between such options. If you often inspect and need to switch the granularity or search filter,
+it's a more pleasant UX if you can position those options right next to the inspector.
+If you don't want this (or it's not relevant on the site), it's nice to be able to recover the screen real estate.
+
+This is also the reason options are not grouped into something like an options menu, which would make it difficult
+to offer this level of customization.
+
+Lastly, it's implemented efficiently enough to not have to care about how many things are draggable.
+
+### Why does the editor seem largely unstyled?
+It's a bit contradictory for a theme editing application to use this many default browser styles.
+Plenty of things could definitely look and behave better with a bit more CSS.
+
+There's 2 main reasons for this.
+
+The first is that, for now, it actually loads the styles of the inspected page. While it results in a bit of a mess from time to time,
+it also helps harden the CSS that is used, and can also help understand different kinds of CSS better while developing this app.
+It can often actually look good and consistent with the inspected page.
+
+The second reason is the existential crisis arising from working with all kinds of different CSS methodologies.
+You'd think after some time this would show that one way of doing things is clearly better, but that's not the case.
+As a result, it's now mostly developed with easy and robust styles to cut down on complexity until choices can be confidently made.
 
 ## Embedded packages*
 
