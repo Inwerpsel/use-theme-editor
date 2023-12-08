@@ -34,7 +34,7 @@ export function IdeLink(props) {
     var a = document.createElement('a');
     a.href = targetDir;
 
-    dir = 'use-theme-editor/docs/' + a.pathname.replace(/^\//,'').replace(/\/$/, '') + '/';
+    dir = 'use-theme-editor/docs/demo/' + a.pathname.replace(/^\//,'').replace(/\/$/, '') + '/';
   }
 
   // This protocol requires installing a handler on your system.
