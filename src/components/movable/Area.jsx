@@ -1,6 +1,52 @@
-import React, {Children, useCallback, useContext, useRef} from 'react';
+import React, {Children, useCallback, useContext, useEffect, useLayoutEffect, useRef} from 'react';
 import {DispatchedElement} from './DispatchedElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
+import { HistoryNavigateContext, useResumableState } from '../../hooks/useResumableReducer';
+
+function RecordScrollPosition({containerRef, id}) {
+  const [n, setN] = useResumableState(`areaOffset#${id}`, 0);
+
+  useEffect(() => {
+    containerRef.current?.scrollTo(0, n);
+    const listener = event => {
+      setN(
+        event.currentTarget.scrollTop,
+        { skipHistory: true },
+      );
+    };
+    containerRef.current?.addEventListener('scroll', listener);
+    return () => {
+      containerRef.current?.removeEventListener('scroll', listener);
+    }
+  }, []);
+}
+
+function RestoreScrollPosition({containerRef, id}) {
+  const [n, setN] = useResumableState(`areaOffset#${id}`, 0)
+
+  useEffect(() => {
+    containerRef.current?.scrollTo({
+      top: n,
+      left: 0,
+      behavior: "smooth",
+    });
+  }, [n])
+}
+
+export let excludedArea;
+
+export function setExcludedArea(id) {
+  return excludedArea = id;
+}
+
+function TrackScrollOffset(props) {
+  const { historyOffset } = useContext(HistoryNavigateContext);
+
+  if (excludedArea === props.id) {
+    return null;
+  }
+  return historyOffset === 0 ? <RecordScrollPosition {...props}/> : <RestoreScrollPosition {...props}/>;
+}
 
 export function Area({id, children = [], ...other}) {
   const {overArea, setOverArea, setOverElement, timeoutRef, areaRefs} = useContext(AreasContext);
@@ -19,6 +65,7 @@ export function Area({id, children = [], ...other}) {
     {...other} {...{id, ref}}
     className={'area'}
   >
+    <TrackScrollOffset {...{id, containerRef: ref}}/>
     {!!children && Children.map(children, (element, index) => {
       return <DispatchedElement {...{homeAreaId: id, element, index}}/>;
     })}

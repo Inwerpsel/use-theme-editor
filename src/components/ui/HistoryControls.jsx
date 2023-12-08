@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
@@ -6,6 +6,16 @@ import { HistoryBack} from "./HistoryBack";
 import { HistoryForward} from "./HistoryForward";
 import { HistoryVisualization } from "./HistoryVisualization";
 import { use } from '../../state';
+import { DispatchedElementContext } from '../movable/DispatchedElement';
+import { excludedArea, setExcludedArea } from '../movable/Area';
+
+function DisableScrollHistoryInArea() {
+    const {hostAreaId, homeAreaId} = useContext(DispatchedElementContext);
+    const id = hostAreaId || homeAreaId;
+    useEffect(() => {
+      setExcludedArea(id);
+    }, [id])
+}
 
 export function HistoryControls() { 
     const { dispatch, historyOffset } = useContext(HistoryNavigateContext);
@@ -17,6 +27,7 @@ export function HistoryControls() {
 
     return (
       <div>
+        <DisableScrollHistoryInArea/>
         <HistoryBack />
         <HistoryForward />
         <Checkbox controls={[visualize, setVissualize]}>Visualize</Checkbox>
