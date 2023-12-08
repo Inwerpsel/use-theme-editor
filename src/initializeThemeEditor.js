@@ -119,11 +119,11 @@ export const setupThemeEditor = async (config) => {
       sheet,
     });
   }
-  console.timeEnd('new')
+  // console.timeEnd('new')
 
-  console.time('derive');
+  // console.time('derive');
   deriveUtilitySelectors({rulesWithMap, keyframesRules, selectorRules, testSelectors})
-  console.timeEnd('derive');
+  // console.timeEnd('derive');
 
   if (!isRunningAsFrame) {
     const editorRoot = document.createElement( 'div' );
@@ -195,7 +195,7 @@ export const setupThemeEditor = async (config) => {
       try {
         rule.lastEl = furthest(element, rule.text);
       } catch (e) {
-        console.log(e, rule, i);
+        console.log(i, e, rule);
       }
     }
 
@@ -236,12 +236,12 @@ export const setupThemeEditor = async (config) => {
       cur = cur.parentNode;
     }
 
-    console.timeEnd('new');
+    // console.timeEnd('new');
     // console.log('matches', [...testSelectors].filter(([k,v])=>{
     //   return v.lastEl;
     // }));
     // console.log('mapped', mappedRules);
-    console.log('groups', groups);
+    // console.log('groups', groups);
   }
 
   function inspect(targetOrIndex) {
@@ -249,7 +249,9 @@ export const setupThemeEditor = async (config) => {
     const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
 
     // Laziest feature flag ever.
-    if (window._testNewInspection) inspectNew(target);
+    if (window._testNewInspection) {
+      inspectNew(target);
+    }
 
     if (!isPrevious) {
       inspectedElements.push(target);
@@ -271,11 +273,11 @@ export const setupThemeEditor = async (config) => {
     // Additionally, this approach makes it unavoidable that properties are only shown in the element nearest
     // to the root, even if they're also used deeper down. Though you can get used to that and will always find
     // everything.
-    console.time('old');
+    // console.time('old');
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
-    console.timeEnd('old');
+    // console.timeEnd('old');
     // console.log('oldgroups', groups);
 
     const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
@@ -379,7 +381,7 @@ export const setupThemeEditor = async (config) => {
     }
     event.preventDefault();
     inspect(event.target);
-  });
+  }, {capture: true});
 
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
