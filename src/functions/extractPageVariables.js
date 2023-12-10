@@ -2,7 +2,6 @@
 import { styleId } from '../initializeThemeEditor';
 import {collectRuleVars, definedValues} from './collectRuleVars';
 import { allStateSelectorsRegexp, includeDescendants } from './getMatchingVars';
-import { deriveUtilitySelectors, parseCss } from './parseCss';
 
 // Inline style tags are also considered on the same domain.
 export const isSameDomain = ({ href }) => !href || href.indexOf(window.location.origin) === 0;

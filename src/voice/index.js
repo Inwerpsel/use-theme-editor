@@ -1,8 +1,9 @@
 import { useSyncExternalStore } from 'react';
 import { homeMenu } from './menu';
 
+// Third fallback is a quick fix for Opera (and maybe other browsers).
 const SpeechRecognition =
-  window.SpeechRecognition || window.webkitSpeechRecognition;
+  window.SpeechRecognition || window.webkitSpeechRecognition || function () {return {}};
 
 const notifiers = new Set();
 
@@ -13,6 +14,7 @@ function subUnsub(s) {
     notifiers.delete(s);
   };
 }
+
 function notify() {
   for (const n of notifiers.values()) {
     n();

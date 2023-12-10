@@ -240,7 +240,6 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
           // This is actually by far the fastest way to check for whitespace.
           // Definitely do not use `/\s/.test(char)`, it's exceptionally slow (it turned 150ms into 190ms for the whole parsing).
           // Maybe it was a knock-on effect as it seems almost not possible.
-          // const isWhiteSpace = char === ' ';
           const isWhiteSpace = char.trim() === '';
           const wasEmpty = buffer === '';
           // if (!inStylemap && !isWhiteSpace && buffer === '') {
@@ -278,6 +277,8 @@ function forceableStates(selector) {
 const removablePseudoComponents = /([\w\])-])(:(\-[\w-]+|:\-?[\w-]+|before|after|active|focus(-(visible|within))?|visited|hover))+/g;
 
 // Remove all pseudo state and pseudo element components from a selector.
+// This will be used for inspecting and locating elements without the pseudo state requirements.
+//
 // Note that this results in some pseudo elements matching all elements, even when they refer to
 // pseudo elements that can only occur in a subset of HTML elements (many `::-webkit-` prefixed), or under specific conditions (scrollbar).
 // With the current logic, these would all bubble up to the root element (but should be all shown and not compete for the same property).
@@ -285,10 +286,10 @@ const removablePseudoComponents = /([\w\])-])(:(\-[\w-]+|:\-?[\w-]+|before|after
 function getRidOfPseudos(selector) {
   const replaced = selector
     // Remove pseudo state component where possible.
-    // This is necessary to be able to dedupe while locating/testing, but doesn't always work.
+    // This is necessary to be able to dedupe while locating/testing, but doesn't always work (see next step why).
     .replaceAll(removablePseudoComponents, '$1')
     // What remains should be standalone occurences like `.foo :hover` and `.foo>:hover`.
-    // Simply removing this like in the previous step would result in an inaccurate and possibly invalid selector.
+    // Simply removing these like in the previous step would result in an inaccurate or invalid selector.
     .replaceAll(replaceRegex, '*')
     // Attempt to remove excess whitespace to decrease the amount of different selectors.
     .replaceAll(/\s+/g, ' ')
@@ -298,15 +299,17 @@ function getRidOfPseudos(selector) {
     // While it's possible for this to be a standalone component in a selector,
     // and removing would change the matched element to be a parent,
     // that is truly exceptionally rare.
-    .replaceAll(/:not\(\*\)/g, '');
+    .replaceAll(/:not\(\*\)/g, '')
+    .trim();
 
     // 1. Possibly all components were removed.
-    // 2. Pseudo elements are only valid at the end.
+    // 2. Pseudo elements are only valid at the end, finding double colon at the start
+    //    indicates it was standalone, or also all preceding components were removed.
     if (replaced === '' || replaced.startsWith('::')) {
       return '*';
     }
 
-    return replaced.trim();
+    return replaced;
 }
 
 // Name not ideal, it does a bit more but naming is hard.

@@ -54,12 +54,14 @@ function getLatestValues(old: {}): [{}, boolean] {
 // Technically a variable that doesn't change is fine, but still risky.
 // TODO: Write a validator, similar to the rules of hooks.
 export function mem<T>(create: (state: EasyAccessors) => T): T {
-  // TODO: Check how expensive this is, and how it scales with function source size.
-  // Does the browser have this string at hand already? Or is it derived from another representation of the
-  // function? In the latter case it could be costly.
-  // Most anonymous functions are quite short, though. If needed hashing them might make sense.
-  // Then again, there are not that many use cases in any given app, so probably you'll never get more than a 
-  // few tens of these anonymous functions being globally memo'd.
+  // All browsers except Safari implement a change since ES2018 that forces JS engines
+  // to return the function source code verbatim when calling toString(). Prior to this change, browsers would in fact
+  // not keep around the source string and derive the string representation on the fly, which
+  // does involve quite a lot of steps.
+  // However, because this representation cannot accomodate comments and whitespace,
+  // most browsers now implement toString() by keeping the original string in memory.
+  // As a result, using the source string as a key should have very good performance, yay!
+  // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString
   const key = create.toString();
 
   if (cache.has(key)) {
@@ -81,53 +83,6 @@ export function mem<T>(create: (state: EasyAccessors) => T): T {
 
   return result;
 }
-
-
-// const cacheInstance = new Map<(state: {}) => any, [any, {}]>();
-// // Usage: only with function literals, or other way to guarantee a stable instance.
-// // I don't know yet how to handle cleaning up old instances if they can change.
-// // Currently this would result in the cache getting bigger over time.
-
-// // If a function respects the rules of hooks, you can intercept the calls,
-// // and replay them to avoid running the function + check if recalc needs to happen.
-// export function memoInstance<T>(create: (state: EasyAccessors|{}) => T): T {
-//   if (cacheInstance.has(create)) {
-//     const [cached, cachedState] = cacheInstance.get(create);
-//     // This should be guaranteed to run the same hooks as are called during capturing.
-//     const [latestState, hasChanged] = getLatestValues(cachedState);
-
-//     const value = hasChanged ? create(latestState) : cached;
-//     if (hasChanged) {
-//       cacheInstance.set(create, [value, latestState])
-//     }
-//     // console.log( hasChanged ? 'RECALC' : 'CACHED' , create.name, value)
-
-//     return value;
-//   }
-
-//   const [result, state] = runAndCapture(create);
-//   cacheInstance.set(create, [result, state]);
-
-//   // console.log('NEW', create.name, result)
-
-//   return result;
-// }
-
-// // There is no usage in this repo yet, unfortunately.
-// {
-//   // Example.
-//   // This is not actually expensive, but it's easy to test.
-  
-//   function calculateArea({width, height, scales}: typeof get) {
-//     const scale = Number(scales[`${width}x${height}`]);
-//     return width * height * scale;
-//   }
-
-//   function useArea() {
-//     // Look ma, no deps!
-//     return memoInstance(calculateArea);
-//   }
-// }
 
 // Incomplete attempt at a version that can memo based on args.
 // In my use case every memo depends on data that is not retrieved from hooks,

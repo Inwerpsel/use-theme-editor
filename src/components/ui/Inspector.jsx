@@ -45,14 +45,9 @@ export function Inspector(props) {
             <span className="alert">No results</span>
           </li>
         )}
-        {groups.map((group) => {
-          return (
-            <GroupControl
-              key={group.label}
-              {...{ group}}
-            />
-          );
-        })}
+        {groups.map((group) => (
+          <GroupControl key={group.label} {...{ group }} />
+        ))}
       </ul>
     );
 }

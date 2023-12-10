@@ -100,11 +100,15 @@ export const setupThemeEditor = async (config) => {
 
   const sheets = [...document.styleSheets].filter(s=>s.ownerNode?.id!==styleId);
 
-  console.time('new')
+  // console.time('new')
   for (const sheet of sheets) {
     let text;
     if (sheet.href) {
-      text = (await (await fetch(sheet.href)).text());
+      try {
+        text = (await (await fetch(sheet.href)).text());
+      } catch(e) {
+        continue;
+      }
     } else {
       text = sheet.ownerNode?.innerHTML;
       if (!text) {

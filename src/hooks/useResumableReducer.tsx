@@ -118,8 +118,8 @@ function historyReducer(state, action, options) {
       };
     }
     case 'PERFORM_ACTION': {
-      const forwardedReducer = reducers[id];
-      if (!forwardedReducer) {
+      const reducer = reducers[id];
+      if (!reducer) {
         return state;
       }
       if (state.historyOffset > state.historyWarnOnUpdateLimit) {
@@ -142,7 +142,7 @@ function historyReducer(state, action, options) {
 
       const performedAction = action.payload.action;
       const baseState = baseStates.hasOwnProperty(id) ? baseStates[id] : initialStates[id];
-      const newState = forwardedReducer(
+      const newState = reducer(
         baseState,
         // Action can be a function in case of setState.
         typeof performedAction === 'function' ? performedAction(baseState) : performedAction

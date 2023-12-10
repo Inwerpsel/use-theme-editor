@@ -222,6 +222,27 @@ For the same efficiency reasons, some UI labels and descriptions are left out.
 The UI is intended to be maximally intuitive, though. Almost all application state is also included in the history timeline.
 This means that you can just experiment to get a hang of it, and easily undo your experiments.
 
+### Which application state is included in history?
+
+In general everything is included, except when it wouldn't be useful or practical (or even possible in some cases).
+
+Some things that might seem weird to include in a history timeline have to be included,
+because otherwise it wouldn't be possible to restore the UI state.
+
+<details> <summary>Detailed list</summary>
+
+#### Included
+* The inspected element
+* Which elements in the inspector are opened
+* Which variables in the inspector are opened
+* Inspector filters (property type, search, whether to show raw values)
+* Width, height, and scale of the 
+
+#### Not included
+*
+
+</details>
+
 ### Why can I drag these seemingly too small pieces of UI around?
 While this seems overkill, it's more useful than you'd think.
 There's a lot of different ways in which a page can use CSS.
