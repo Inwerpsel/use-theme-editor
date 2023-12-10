@@ -30,6 +30,7 @@ export function ElementLocator({
   const { frameRef, lastInspectTime } = useContext(ThemeEditorContext);
   const [elements, setElements] = useState([]);
   const [currentElement, setCurrentElement] = useState(0);
+  const [interacted, setInteracted] = useState(false);
   const id = useId();
   // Should happen up front for all selectors, so that they're properly grouped from the start.
   const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
@@ -70,7 +71,7 @@ export function ElementLocator({
   }, [initialized, selector, !hideIfOne || lastInspectTime]);
 
   useEffect(() => {
-    if (elements.length > 0) {
+    if (interacted && elements.length > 0) {
       frameRef.current?.contentWindow.postMessage(
         {
           type: 'scroll-in-view', payload: {selector: strippedSelector, index: currentElement},
@@ -147,6 +148,7 @@ export function ElementLocator({
                       ? elements.length - 1
                       : currentElement - 1;
                   setCurrentElement(next);
+                  setInteracted(true);
                 }}
               >
                 ↑
@@ -158,6 +160,7 @@ export function ElementLocator({
                       ? 0
                       : currentElement + 1;
                   setCurrentElement(next);
+                  setInteracted(true);
                 }}
               >
                 ↓
