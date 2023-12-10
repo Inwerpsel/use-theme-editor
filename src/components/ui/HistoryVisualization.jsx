@@ -1,7 +1,17 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
-import { use } from '../../state';
+import { get, use } from '../../state';
+import { DispatchedElementContext } from '../movable/DispatchedElement';
+import { setExcludedArea } from '../movable/Area';
+
+function DisableScrollHistoryInArea() {
+    const {hostAreaId, homeAreaId} = useContext(DispatchedElementContext);
+    const id = hostAreaId || homeAreaId;
+    useEffect(() => {
+      setExcludedArea(id);
+    }, [id])
+}
 
 function getName(action) {
   return !action
@@ -71,7 +81,8 @@ function ActionList(props) {
 }
 
 export function HistoryVisualization() {
-  const [, setVissualizeAlways] = use.visualizeHistoryAlways();
+  const [visualizeAlways, setVisualizeAlways] = use.visualizeHistoryAlways();
+  const [debug, setDebug] = useState(false);
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
@@ -82,25 +93,37 @@ export function HistoryVisualization() {
     dispatch,
   } = useContext(HistoryNavigateContext);
 
+  const showHistory = get.visualizeHistory && (visualizeAlways || historyOffset !== 0);
+
+  if (!showHistory) {
+    return null;
+  }
+
   const currentIndex = historyStack.length - historyOffset;
   let isInFuture = false;
 
   return (
     <div className="history">
-      <Checkbox controls={[showJson, setShowJson]}>
-        Inspect current state
-      </Checkbox>
-      <Checkbox controls={[showPayloads, setShowPayloads]}>
-        Show payloads
-      </Checkbox>
-      <button onClick={() => console.log(currentStates)}>console.log</button>
-      {showJson && (
-        <pre className="monospace-code">
-          {JSON.stringify(currentStates, null, 2)}
-        </pre>
-      )}
+      <DisableScrollHistoryInArea/>
+      <Checkbox controls={[debug, setDebug]} style={{float: 'right'}}>Debug</Checkbox>
 
       <h2>History</h2>
+
+      {debug && <div>
+        <Checkbox controls={[showJson, setShowJson]}>
+          Inspect current state
+        </Checkbox>
+        <Checkbox controls={[showPayloads, setShowPayloads]}>
+          Show payloads
+        </Checkbox>
+        <button onClick={() => console.log(currentStates)}>console.log</button>
+        {showJson && (
+          <pre className="monospace-code">
+            {JSON.stringify(currentStates, null, 2)}
+          </pre>
+        )}
+      </div>}
+
       <ul style={{ display: 'flex', flexDirection: 'column-reverse' }}>
         {historyStack.map(({ states, lastActions }, index) => {
           const isPresent = index === currentIndex;
@@ -144,7 +167,7 @@ export function HistoryVisualization() {
                     isPresent
                       ? () => {
                         // Ensure history doesn't collapse.
-                          setVissualizeAlways(true);
+                          setVisualizeAlways(true);
                           dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
                         }
                       : () => {

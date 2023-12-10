@@ -37,6 +37,7 @@ import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
 import { VoiceCommands } from './ui/VoiceCommands';
 import { SpeakGlobalHooks } from '../voice/menu/state';
+import { HistoryVisualization } from './ui/HistoryVisualization';
 
 export const ThemeEditorContext = createContext({});
 
@@ -265,6 +266,7 @@ export const ThemeEditor = (props) => {
                 <WebpackHomeInput />
               </div>
               <HistoryControls />
+              <HistoryVisualization />
             </Area>
           </div>
           <div

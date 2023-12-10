@@ -1,8 +1,8 @@
 import { getters } from "../functions/getters";
 import { mem } from "../hooks/mem";
+import { signals } from "../functions/signals";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
-import { signals } from "../functions/signals";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -67,6 +67,8 @@ export const use = {
     () => useLocalStorage('window-arrangments', {}),
   webpackHome:
     () => useLocalStorage('webpack-home', ''),
+  visualizeHistory: 
+    () => useLocalStorage('visualizeHistory', false),
   visualizeHistoryAlways: 
     () => useLocalStorage('visualizeHistoryAlways', false),
   svgDarkBg:
@@ -82,7 +84,7 @@ export const use = {
     () => [mem(get => get.area * 2)],
   // areaBroken: 
   //   // Just to demonstrate types are working inside the anonymous function.
-  //   () => [memoAnon(get => get.area * get.fileName)],
+  //   () => [mem(get => get.area * get.fileName)],
   areaNomemo: 
     // What would actually make sense as this is not very expensive.
     () => [get.width * get.height],
