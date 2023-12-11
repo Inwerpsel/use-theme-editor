@@ -149,6 +149,7 @@ export const GroupControl = props => {
             </span>}
           {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
             {groupColors.map(([{name}, value]) => {
+              const isVar = name.startsWith('--');
               return <div
                 draggable
                 onDragStart={e=>e.dataTransfer.setData('value', value)}
@@ -167,10 +168,10 @@ export const GroupControl = props => {
                   backgroundSize: 'cover',
                   marginTop: '7px',
                   marginLeft: '6px',
-                  fontSize: '12px',
+                  fontSize: '14px',
                   textAlign: 'center',
-                  textShadow: 'white 0px 3px'
-                }}>{/^var\(/.test(value) ? 'v' : value === 'transparent' ? '👻' : <Fragment>&nbsp;</Fragment>}</div>
+                  textShadow: isVar ? 'white 0px 3px' : 'white 2px 2px'
+                }}>{/^var\(/.test(value) ? 'v' : value === 'transparent' ? '👻' : ! isVar ? 'r': <Fragment>&nbsp;</Fragment>}</div>
               })}
           </ul>}
         </div>
