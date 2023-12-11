@@ -1,9 +1,37 @@
 import React, { useContext } from 'react';
 import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
-import { HistoryBack} from "./HistoryBack";
-import { HistoryForward} from "./HistoryForward";
 import { use } from '../../state';
+
+function HistoryBack() {
+  const { dispatch, historyStack, historyOffset } = useContext( HistoryNavigateContext);
+  const remainingLength = historyStack.length - historyOffset;
+  const noHistory = remainingLength < 1;
+
+  return <button
+    className={'history-button'}
+    disabled={noHistory}
+    title={noHistory ? 'No history' : remainingLength}
+    onClick={() => dispatch({type: 'HISTORY_BACKWARD'})}
+  >←
+  </button>;
+}
+
+function HistoryForward() {
+  const { dispatch, historyStack, historyOffset } = useContext(
+    HistoryNavigateContext
+  );
+
+  const noFuture = historyOffset === 0;
+
+  return <button
+    className={'history-button'}
+    disabled={noFuture}
+    title={noFuture ? 'No future' : historyOffset}
+    onClick={() => dispatch({type: 'HISTORY_FORWARD'})}
+  >→
+  </button>;
+}
 
 export function HistoryControls() { 
     const { dispatch } = useContext(HistoryNavigateContext);
