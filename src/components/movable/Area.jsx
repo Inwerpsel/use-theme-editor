@@ -7,8 +7,12 @@ function RecordScrollPosition({containerRef, id}) {
   const [n, setN] = useResumableState(`areaOffset#${id}`, 0);
 
   useEffect(() => {
-    // Also restore the position on first render.
-    containerRef.current?.scrollTo(0, n);
+    // // Also restore the position on first render.
+    // containerRef.current?.scrollTo({
+    //   top: n,
+    //   left: 0,
+    //   behavior: "smooth",
+    // });
     const listener = event => {
       setN(
         event.currentTarget.scrollTop,
