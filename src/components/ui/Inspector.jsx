@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 import { filterSelectors, filterSearched } from '../../functions/filterSearched';
 import { get } from '../../state';
 import { GroupControl } from "../inspector/GroupControl";
 import { mustBeColor } from '../inspector/TypedControl';
 
 export function Inspector(props) {
-  const { unfilteredGroups } = props;
+  const { unfilteredGroups, inspectedIndex, currentInspected } = props;
   const {
     propertyFilter,
     search,
@@ -38,8 +38,18 @@ export function Inspector(props) {
     }));
   }, [unfilteredGroups, propertyFilter, search, filteredSelectors]);
 
+  const ref = useRef();
+  useEffect(() => {
+    // A bit shaky but should work at least for now.
+    // After the inspection is rewritten this will probably be easier to deal with.
+    // This should run whenever a new inspection is done.
+    if (inspectedIndex > currentInspected) {
+      ref.current.scrollIntoView({block: 'start'});
+    }
+  }, [inspectedIndex])
+
     return (
-      <ul className={'group-list'}>
+      <ul className={'group-list'} {...{ref}}>
         {groups.length === 0 && (
           <li>
             <span className="alert">No results</span>

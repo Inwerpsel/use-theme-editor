@@ -238,7 +238,7 @@ export const ThemeEditor = (props) => {
           <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
             <Area id="area-left">
               <MoveControls />
-              <Inspector {...{unfilteredGroups}}/>
+              <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
             </Area>
             <ResizableFrame src={window.location.href} />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
