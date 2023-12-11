@@ -306,7 +306,7 @@ export const VariableControl = (props) => {
 
   const [
     showSelectors, setShowSelectors
-  ] = useResumableState(`showSelectors_${key}`, false);
+  ] = useResumableState(`showSelectors_${key}`, cssVar.isRawValue);
 
   const excludedVarName = parentVar?.name;
 
