@@ -28,7 +28,7 @@ function ActionList(props) {
   } = useContext(HistoryNavigateContext);
 
   return (
-    <ul>
+    <ul className='history-actions'>
       {actions.map(([id, action], key) => {
         const isObject = typeof action === 'object';
         const isFromReducer = isObject && 'type' in action;
@@ -124,7 +124,7 @@ export function HistoryVisualization() {
         )}
       </div>}
 
-      <ul style={{ display: 'flex', flexDirection: 'column-reverse' }}>
+      <ul className='connected-list'>
         {historyStack.map(({ states, lastActions }, index) => {
           const isPresent = index === currentIndex;
           // We don't use this in the present so it can be true already.
@@ -141,16 +141,18 @@ export function HistoryVisualization() {
 
           return (
             <li
-              className='historical-actions'
               key={index}
               style={{
                 position: 'relative',
-                border:
+                outline:
                   index === currentIndex
                     ? '2px solid yellow'
-                    : '2px solid black',
+                    : 'none',
               }}
             >
+              <span style={{marginLeft: '-32px'}}>
+                { index }
+              </span>
               <ActionList
                 actions={Object.entries(lastActions)}
                 {...{ showPayloads }}
@@ -205,11 +207,13 @@ export function HistoryVisualization() {
           }}
           key={'latest'}
           style={{
-            border:
-              historyOffset === 0 ? '2px solid yellow' : '2px solid black',
+            outline:
+              historyOffset === 0 ? '2px solid yellow' : 'none',
           }}
         >
-          LATEST
+          <span style={{marginLeft: '-32px'}}>
+            Latest
+          </span>
           <ActionList
             actions={Object.entries(lastActions)}
             {...{ showPayloads }}

@@ -592,19 +592,59 @@ div[id^=font-picker] ul {
   padding-bottom: 12px !important;
 }
 
-.history li {
-  list-style-type: none;
+.connected-list {
+  display: flex;
+  flex-direction: column-reverse;
+  list-style-position: inside;
+}
+.connected-list ::marker {
+  font-size: 38px;
+  line-height: 20px;
+  margin-right: 0;
+}
+.connected-list > li {
+  position: relative;
+  border-radius: 8px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+.connected-list > li > * {
+  margin-left: 12px;
+}
+.connected-list > li:before {
+  content: "";
+  background: black;
+  width: 3px;
+  position: absolute;
+  top: 0px;
+  left: 4px;
+  bottom: 0px;
+}
+.connected-list > li:first-child:after {
+  content: "";
+  background: black;
+  position: absolute;
+  left: 4px;
+  bottom: 0px;
+  height: 3px;
+  right: 0px;
+}
+.connected-list > li:last-child:before {
+  top: 24px;
 }
 
-.historical-actions {
-  display: flex;
-  flex-direction: column;
+.history-actions li {
+  list-style-type: none;
+  border: 1px dashed black;
+  border-radius: 12px;
+  padding: 2px;
 }
-.historical-actions:not(:hover) button {
+.history-actions pre {
+  margin-bottom: 0;
+}
+
+.history li:not(:hover) button {
   visibility: hidden;
-}
-.historical-actions ul {
-  margin: 0;
 }
 
 button {

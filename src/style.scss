@@ -402,21 +402,68 @@ div[id^=font-picker] ul {
   padding-bottom: 12px !important;
 }
 
-.history {
-  li {
-    list-style-type: none;
+.connected-list {
+  display: flex;
+  flex-direction: column-reverse;
+  list-style-position: inside;
+
+  ::marker {
+    font-size: 38px;
+    line-height: 20px;
+    margin-right: 0;
+  }
+
+
+  > li {
+    position: relative;
+    border-radius: 8px;
+    > * {
+      margin-left: 12px;
+    }
+    padding-top: 12px;
+    padding-bottom: 12px;
+  }
+
+  > li:before {
+    content: '';
+    background: black;
+    width: 3px;
+    position: absolute;
+    top: 0px;
+    left: 4px;
+    bottom: 0px;
+  }
+
+  > li:first-child:after {
+    content: '';
+    background: black;
+    position: absolute;
+    left: 4px;
+    bottom: 0px;
+    height: 3px;
+    right: 0px;
+  }
+
+  > li:last-child:before {
+    top: 24px;
   }
 }
 
-.historical-actions {
-  display: flex;
-  flex-direction: column;
-  &:not(:hover) button {
-    visibility: hidden;
+.history-actions {
+  li {
+    list-style-type: none;
+    border: 1px dashed black;
+    border-radius: 12px;
+    padding: 2px;
   }
-  ul {
-      margin: 0;
+
+  pre {
+    margin-bottom: 0;
   }
+}
+
+.history li:not(:hover) button {
+  visibility: hidden;
 }
 
 button {

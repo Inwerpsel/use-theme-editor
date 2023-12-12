@@ -28,7 +28,7 @@ export const use = {
   prefersColorScheme:
     () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
   uiArrangement:
-    () => useResumableLocalStorage('panel-rearrangements', {}),
+    () => useResumableLocalStorage('uiLayout', {}),
   propertyFilter:
     () => useResumableLocalStorage('property-filter', 'all' as 'all' | 'colors'),
   search:

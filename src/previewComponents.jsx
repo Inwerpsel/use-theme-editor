@@ -7,16 +7,14 @@ const size = 18;
 
 export const previewComponents = {
   OPEN_GROUPS: ({ action: groups }) => (
-    <div>
-      <pre className="monospace-code" style={{ float: 'left' }}>
-        {Object.entries(groups).map(([k, v]) => [
-          k,
-          <b style={{ float: 'right', color: 'white', background: 'black' }}>
-            {v ? 'open' : 'close'}
-          </b>,
-        ])}
-      </pre>
-    </div>
+    <pre className="monospace-code" style={{ display: 'inline-block' }}>
+      {Object.entries(groups).map(([k, v]) => [
+        k,
+        <b style={{ float: 'right', color: 'white', background: 'black' }}>
+          {v ? 'open' : 'close'}
+        </b>,
+      ])}
+    </pre>
   ),
 
   'inspected-index': ({ action: index }) => (
