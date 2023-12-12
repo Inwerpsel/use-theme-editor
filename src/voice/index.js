@@ -241,11 +241,11 @@ recognition.onend = function() {
 }
 
 // Todo: move somewhere else.
-document.addEventListener('keyup',  (e) => {
-  if ( e.code == "Space" && document.activeElement.nodeName !== 'INPUT' && document.activeElement.nodeName !== 'BUTTON') {
-    toggleRecognition();
-    e.preventDefault();
-    e.stopPropagation();
-    return false;
-  }
-})
+// document.addEventListener('keyup',  (e) => {
+//   if ( e.code == "Space" && document.activeElement.nodeName !== 'INPUT' && document.activeElement.nodeName !== 'BUTTON') {
+//     toggleRecognition();
+//     e.preventDefault();
+//     e.stopPropagation();
+//     return false;
+//   }
+// })
