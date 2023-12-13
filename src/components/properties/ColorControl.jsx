@@ -68,7 +68,7 @@ const pickerSize = '80px';
 
 export const ColorControl = props => {
   const { onChange, onUnset, value: maybeVar, resolvedValue, cssVar } = props;
-  const value = maybeVar.includes('var(--') ? resolvedValue : maybeVar;
+  const value = maybeVar?.includes('var(--') ? resolvedValue : maybeVar;
   const { nativeColorPicker } = get;
   // const { onChange: _onChange, onUnset, value: _value, cssVar, cssFunc } = props;
 

@@ -235,7 +235,7 @@ export const ThemeEditor = (props) => {
               </div>
             </Area>
           </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1', gap: '16px'}}>
+          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
             <Area id="area-left">
               <MoveControls />
               <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>

@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, isInterestingState } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { DispatchedElementContext } from '../movable/DispatchedElement';
@@ -83,6 +83,7 @@ function ActionList(props) {
 export function HistoryVisualization() {
   const [visualizeAlways, setVisualizeAlways] = use.visualizeHistoryAlways();
   const [debug, setDebug] = useState(false);
+  const [showAll, setShowAll] = useState(true);
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
@@ -105,9 +106,8 @@ export function HistoryVisualization() {
   return (
     <div className="history">
       <DisableScrollHistoryInArea/>
-      <Checkbox controls={[debug, setDebug]} style={{float: 'right'}}>Debug</Checkbox>
-
-      <h2>History</h2>
+      <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
+      <Checkbox controls={[showAll, setShowAll]}>Show all</Checkbox>
 
       {debug && <div>
         <Checkbox controls={[showJson, setShowJson]}>
@@ -138,6 +138,10 @@ export function HistoryVisualization() {
             ([id, action]) =>
               typeof action === 'object' || states[id] !== currentStates[id]
           );
+
+          if (!showAll && index !== 0 && !isInterestingState({lastActions})) {
+            return null;
+          }
 
           return (
             <li

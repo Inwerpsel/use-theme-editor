@@ -68,6 +68,15 @@ function addReducer(id, reducer, initialState, initializer) {
   }
 }
 
+export function isInterestingState({lastActions}) {
+  for (const k of ['THEME_EDITOR', 'uiLayout']) {
+    if (lastActions.hasOwnProperty(k)) {
+      return true;
+    }
+  }
+  return false;
+}
+
 function historyReducer(state, action, options) {
   const { states, historyStack, historyOffset } = state;
   const {
@@ -102,6 +111,46 @@ function historyReducer(state, action, options) {
         ...state,
         historyOffset: newOffset,
         oldStates: historyStack[historyStack.length - historyOffset].states,
+      };
+    }
+    case 'HISTORY_BACKWARD_FAST': {
+      let newOffset = historyOffset;
+      while (newOffset < historyStack.length) {
+        newOffset++;
+        const entry = historyStack[historyStack.length - newOffset];
+        if (isInterestingState(entry)) {
+          break;
+        }
+      }
+
+      const oldStates =
+      historyOffset === 0
+        ? states
+        : historyStack[historyStack.length - historyOffset].states;
+
+      return {
+        ...state,
+        historyOffset: newOffset,
+        oldStates,
+      };
+    }
+    case 'HISTORY_FORWARD_FAST': {
+      let newOffset = historyOffset;
+      if (historyOffset === 0)  {
+        return state;
+      }
+      while (newOffset > 0) {
+        newOffset--;
+        const entry = newOffset === 0 ? state : historyStack[historyStack.length - newOffset];
+        if (isInterestingState(entry)) {
+          break;
+        }
+      }
+
+      return {
+        ...state,
+        historyOffset: newOffset,
+        oldStates: historyStack[historyStack.length - historyOffset],
       };
     }
     case 'CLEAR_HISTORY': {
