@@ -4,6 +4,7 @@ import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { DispatchedElementContext } from '../movable/DispatchedElement';
 import { setExcludedArea } from '../movable/Area';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 function DisableScrollHistoryInArea() {
     const {hostAreaId, homeAreaId} = useContext(DispatchedElementContext);
@@ -83,7 +84,7 @@ function ActionList(props) {
 export function HistoryVisualization() {
   const [visualizeAlways, setVisualizeAlways] = use.visualizeHistoryAlways();
   const [debug, setDebug] = useState(false);
-  const [showAll, setShowAll] = useState(true);
+  const [showAll, setShowAll] = useLocalStorage('showAllHistory', true);
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
@@ -139,13 +140,14 @@ export function HistoryVisualization() {
               typeof action === 'object' || states[id] !== currentStates[id]
           );
 
-          if (!showAll && index !== 0 && !isInterestingState({lastActions})) {
+          if (!isPresent && !showAll && index !== 0 && !isInterestingState({lastActions})) {
             return null;
           }
 
           return (
             <li
               key={index}
+              id={isPresent ? 'history-current-state' : ''}
               style={{
                 position: 'relative',
                 outline:
