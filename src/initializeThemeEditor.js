@@ -131,11 +131,8 @@ export const setupThemeEditor = async (config) => {
 
   if (!isRunningAsFrame) {
     const editorRoot = document.createElement( 'div' );
-    if (localStorage.getItem(getLocalStorageNamespace() + 'responsive-on-load') !== 'false') {
-      renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
-      // Since the original page can be accessed with a refresh, destroy it to save resources.
-      destroyDoc();
-    }
+    renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
+    destroyDoc();
 
     editorRoot.id = 'theme-editor-root';
     document.body.appendChild( editorRoot );

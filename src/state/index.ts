@@ -48,8 +48,6 @@ export const use = {
     () => useLocalStorage('include-default-palette', false),
   fileName:
     () => useResumableLocalStorage('theme-name', 'theme'),
-  responsiveSticky:
-    () => useLocalStorage('responsive-on-load', true),
   annoyingPrefix:
     () => useLocalStorage('annoying-prefix', ''),
   nameReplacements:
