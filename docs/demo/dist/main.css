@@ -595,6 +595,7 @@ div[id^=font-picker] ul {
 .connected-list {
   display: flex;
   flex-direction: column-reverse;
+  list-style-type: disc;
   list-style-position: inside;
 }
 .connected-list ::marker {
