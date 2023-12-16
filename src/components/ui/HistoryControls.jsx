@@ -1,10 +1,17 @@
 import React, { useContext } from 'react';
-import { HistoryNavigateContext } from '../../hooks/useResumableReducer';
+import {
+  HistoryNavigateContext,
+  clearHistory,
+  historyBackFast,
+  historyBackOne,
+  historyForwardFast,
+  historyForwardOne,
+} from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
 
 function HistoryBack() {
-  const { dispatch, historyStack, historyOffset } = useContext( HistoryNavigateContext);
+  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
   const remainingLength = historyStack.length - historyOffset;
   const noHistory = remainingLength < 1;
 
@@ -12,15 +19,13 @@ function HistoryBack() {
     className={'history-button'}
     disabled={noHistory}
     title={noHistory ? 'No history' : remainingLength}
-    onClick={() => dispatch({type: 'HISTORY_BACKWARD'})}
+    onClick={historyBackOne}
   >←
   </button>;
 }
 
 function HistoryForward() {
-  const { dispatch, historyStack, historyOffset } = useContext(
-    HistoryNavigateContext
-  );
+  const { historyOffset } = useContext(HistoryNavigateContext);
 
   const noFuture = historyOffset === 0;
 
@@ -28,13 +33,13 @@ function HistoryForward() {
     className={'history-button'}
     disabled={noFuture}
     title={noFuture ? 'No future' : historyOffset}
-    onClick={() => dispatch({type: 'HISTORY_FORWARD'})}
+    onClick={historyForwardOne}
   >→
   </button>;
 }
 
 function HistoryBackFast() {
-  const { dispatch, historyStack, historyOffset } = useContext( HistoryNavigateContext);
+  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
   const remainingLength = historyStack.length - historyOffset;
   const noHistory = remainingLength < 1;
 
@@ -42,15 +47,13 @@ function HistoryBackFast() {
     className={'history-button'}
     disabled={noHistory}
     title={noHistory ? 'No history' : remainingLength}
-    onClick={() => dispatch({type: 'HISTORY_BACKWARD_FAST'})}
+    onClick={historyBackFast}
   >←!
   </button>;
 }
 
 function HistoryForwardFast() {
-  const { dispatch, historyStack, historyOffset } = useContext(
-    HistoryNavigateContext
-  );
+  const { historyOffset } = useContext(HistoryNavigateContext);
 
   const noFuture = historyOffset === 0;
 
@@ -58,14 +61,12 @@ function HistoryForwardFast() {
     className={'history-button'}
     disabled={noFuture}
     title={noFuture ? 'No future' : historyOffset}
-    onClick={() => dispatch({type: 'HISTORY_FORWARD_FAST'})}
+    onClick={historyForwardFast}
   >!→
   </button>;
 }
 
 export function HistoryControls() { 
-    const { dispatch } = useContext(HistoryNavigateContext);
-
     const [visualize, setVissualize] = use.visualizeHistory();
     const [visualizeAlways, setVissualizeAlways] = use.visualizeHistoryAlways();
 
@@ -80,7 +81,7 @@ export function HistoryControls() {
 
         <button
           onClick={() => {
-            confirm('Clear all history, keeping only current state?') && dispatch({ type: 'CLEAR_HISTORY' });
+            confirm('Clear all history, keeping only current state?') && clearHistory();
           }}
         >
           Clear

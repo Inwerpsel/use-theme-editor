@@ -8,27 +8,12 @@ import React, {
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-const INITIAL_STATE = {
-  lastActions: {
+const initActions = {
     HISTORY: {
       type: 'INIT',
       payload: {},
     },
-  },
-  // Timestamp of last change, used for debouncing.
-  lastSet: 0,
-  // All elements in history, except the most recent states.
-  historyStack: [],
-  // How far back in history are we?
-  historyOffset: 0,
-  // When should user be prompted before erasing future with update?
-  historyWarnOnUpdateLimit: 5,
-  // The most recent states. This one gets updates, older history is
-  // read only (but also delete).
-  states: {},
-  // The previous state, used for change detection only.
-  oldStates: {},
-};
+  };
 
 const initialStates = {};
 const reducers = {};
@@ -42,15 +27,10 @@ function addReducer(id, reducer, initialState, initializer) {
     typeof initializer === 'function'
       ? initializer(initialState)
       : initialState;
-  dispatchers[id] = (action, options = {}) => {
-    historyDispatch(
-      {
-        type: 'PERFORM_ACTION',
-        payload: { id, action },
-      },
-      options
-    );
-  };
+  dispatchers[id] = performAction.bind(null, id);
+  // dispatchers[id] = (action, options = {}) => {
+  //   performAction(id, action, options);
+  // };
   subscribers[id] = (notify) => {
     if (!(notifiers.hasOwnProperty(id))) {
       notifiers[id] = new Set();
@@ -68,7 +48,9 @@ function addReducer(id, reducer, initialState, initializer) {
   }
 }
 
-export function isInterestingState({lastActions}) {
+// Hard coded to keep it simple for now.
+// Not sure where and how to best configure this for a given piece of state.
+export function isInterestingState(lastActions) {
   for (const k of ['THEME_EDITOR', 'uiLayout']) {
     if (lastActions.hasOwnProperty(k)) {
       return true;
@@ -77,185 +59,215 @@ export function isInterestingState({lastActions}) {
   return false;
 }
 
-function historyReducer(state, action, options) {
-  const { states, historyStack, historyOffset } = state;
-  const {
-    payload: { id, amount = 1 } = {},
-  } = action;
+type HistoryOptions = {
+  debounceTime?: number,
+  // 
+  skipHistory?: boolean;
+}
 
-  switch (action.type) {
-    case 'HISTORY_BACKWARD': {
-      const oldIndex = historyStack.length - historyOffset;
-      if (oldIndex < 1) {
-        return state;
-      }
+// All entries in history, from oldest to latest.
+let historyStack = [];
+// Amount of steps back in time.
+let historyOffset = 0;
+// Prompt before destroying future when this many steps back in history.
+let historyWarnOnUpdateLimit = 5;
+// The tail of the history.
+let states = {};
+// The state that was rendered before the last state transition.
+// It's assumed that this state was fully applied in the whole tree.
+// Used for change detection.
+let oldStates = {};
+// The state at the history offset, or the latest state if offset is 0.
+let currentStates = {};
+// The actions that produced the most recent state.
+let lastActions = initActions;
+// The time at which the latest value was set, used for debouncing.
+let lastSet = 0;
 
-      const oldStates =
-        historyOffset === 0
-          ? states
-          : historyStack[oldIndex].states;
+export function historyBack(amount = 1): void {
+  const oldIndex = historyStack.length - historyOffset;
+  if (oldIndex < 1) {
+    return;
+  }
 
-      return {
-        ...state,
-        oldStates,
-        historyOffset: +historyOffset + amount,
-      };
-    }
-    case 'HISTORY_FORWARD': {
-      if (historyOffset === 0) {
-        return state;
-      }
-      const newOffset = Math.max(0, historyOffset - amount);
+  oldStates =
+    historyOffset === 0
+      ? states
+      : historyStack[oldIndex].states;
 
-      return {
-        ...state,
-        historyOffset: newOffset,
-        oldStates: historyStack[historyStack.length - historyOffset].states,
-      };
-    }
-    case 'HISTORY_BACKWARD_FAST': {
-      let newOffset = historyOffset;
-      while (newOffset < historyStack.length) {
-        newOffset++;
-        const entry = historyStack[historyStack.length - newOffset];
-        if (isInterestingState(entry)) {
-          break;
-        }
-      }
+  historyOffset += amount;
 
-      const oldStates =
-      historyOffset === 0
-        ? states
-        : historyStack[historyStack.length - historyOffset].states;
+  checkNotifyAll();
+}
 
-      return {
-        ...state,
-        historyOffset: newOffset,
-        oldStates,
-      };
-    }
-    case 'HISTORY_FORWARD_FAST': {
-      let newOffset = historyOffset;
-      if (historyOffset === 0)  {
-        return state;
-      }
-      while (newOffset > 0) {
-        newOffset--;
-        const entry = newOffset === 0 ? state : historyStack[historyStack.length - newOffset];
-        if (isInterestingState(entry)) {
-          break;
-        }
-      }
+export function historyForward(amount = 1): void {
+  if (historyOffset === 0) {
+    return;
+  }
 
-      return {
-        ...state,
-        historyOffset: newOffset,
-        oldStates: historyStack[historyStack.length - historyOffset],
-      };
-    }
-    case 'CLEAR_HISTORY': {
-      const currentlyInThePast = historyOffset > 0;
-      const baseStates = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;
-      const lastActions = !currentlyInThePast ? state.lastActions : historyStack[historyStack.length - historyOffset].lastActions;
+  const newOffset = Math.max(0, historyOffset - amount);
+  oldStates = historyStack[historyStack.length - historyOffset].states;
+  historyOffset = newOffset;
+  checkNotifyAll();
+}
 
-      return {
-        ...state,
-        historyStack: [],
-        historyOffset: 0,
-        states: baseStates,
-        lastActions,
-      };
-    }
-    case 'PERFORM_ACTION': {
-      const reducer = reducers[id];
-      if (!reducer) {
-        return state;
-      }
-      if (state.historyOffset > state.historyWarnOnUpdateLimit) {
-        if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
-          return state;
-        }
-      }
+export function historyBackOne(): void {
+  historyBack(1);
+}
 
-      // `currentlyInThePast` is false most of the time: one edit on the past clears future.
-      // Most actions happen against the latest state (e.g. changing color wheel).
-      // Hence the current approach of treating the latest state as a separate
-      // object probably has better overall performance characteristics,
-      // compared to just using the last entry of the history as the latest state.
-      // Especially if the changes are fast and history is debounced every time.
-      // Todo: setup performance test scenario to validate this.
-      const currentlyInThePast = historyOffset > 0;
-      const baseIndex = historyStack.length - historyOffset;
-      const historyEntry = !currentlyInThePast ? state : historyStack[baseIndex];
-      const {states: baseStates, lastActions} = historyEntry;
+export function historyForwardOne(): void {
+  historyForward(1);
+}
 
-      const performedAction = action.payload.action;
-      const baseState = baseStates.hasOwnProperty(id) ? baseStates[id] : initialStates[id];
-      const newState = reducer(
-        baseState,
-        // Action can be a function in case of setState.
-        typeof performedAction === 'function' ? performedAction(baseState) : performedAction
-      );
-      if (newState === baseState) {
-        return state;
-      }
-      // const isNowDefaultState = newState === initialStates[id];
-      // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
-      // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
-
-      const now = performance.now();
-      const slowEnough = now - state.lastSet > (options?.debounceTime || 500);
-      const skipHistory = !slowEnough || options?.skipHistory;
-      // Afaik there is no possible benefit to having two consecutive identical states in history.
-      const skippedHistoryNowSameAsPrevious =
-        skipHistory && historyStack[baseIndex - 1]?.states[id] === newState;
-
-      const prevHistory =
-        !currentlyInThePast || skipHistory
-          ? historyStack
-          : historyStack.slice(0, -historyOffset);
-
-      return {
-        ...state,
-        states: {
-          ...baseStates,
-          [id]: newState,
-        },
-        oldStates: baseStates,
-        historyOffset: 0,
-        historyStack: skipHistory
-          ? skippedHistoryNowSameAsPrevious
-            ? historyStack.slice(0, -1)
-            : historyStack
-          : [
-              ...prevHistory,
-              {
-                states: baseStates,
-                lastActions,
-              },
-            ],
-        // If the previous state was removed from the history because it was duplicate,
-        // it should result in a new entry in any subsequent dispatches to the same id.
-        // Otherwise, it would be possible to remove multiple recent entries (with different values)
-        // just by having the same value for any short amount of time.
-        lastSet: skippedHistoryNowSameAsPrevious ? 0 : now,
-        lastActions: !skipHistory
-          ? { [id]: performedAction }
-          : { ...state.lastActions, [id]: performedAction },
-      };
+export function historyBackFast(): void {
+  let newOffset = historyOffset;
+  while (newOffset < historyStack.length) {
+    newOffset++;
+    const entry = historyStack[historyStack.length - newOffset];
+    if (isInterestingState(entry.lastActions)) {
+      break;
     }
   }
 
-  return state;
+  oldStates =
+    historyOffset === 0
+      ? states
+      : historyStack[historyStack.length - historyOffset].states;
+
+  historyOffset = newOffset;
+
+  checkNotifyAll();
 }
 
-let state = INITIAL_STATE;
+export function historyForwardFast(): void {
+  let newOffset = historyOffset;
+  if (historyOffset === 0)  {
+    return;
+  }
+  while (newOffset > 0) {
+    newOffset--;
+    const actions = newOffset === 0 ? lastActions : historyStack[historyStack.length - newOffset].lastActions;
+    if (isInterestingState(actions)) {
+      break;
+    }
+  }
 
-let currentStates = state.states;
+  oldStates = historyStack[historyStack.length - historyOffset];
+  historyOffset = newOffset;
+
+  checkNotifyAll();
+}
+
+export function clearHistory(): void {
+  const currentlyInThePast = historyOffset > 0;
+
+  historyStack = [];
+  historyOffset = 0;
+  lastActions = !currentlyInThePast ? lastActions : historyStack[historyStack.length - historyOffset].lastActions;;
+  states = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;;
+
+  checkNotifyAll();
+}
+
+export function performAction(id, action, options: HistoryOptions): void {
+  const reducer = reducers[id];
+  if (!reducer) {
+    return;
+  }
+  if (historyOffset > historyWarnOnUpdateLimit) {
+    if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
+      return;
+    }
+  }
+
+  // `currentlyInThePast` is false most of the time: one edit on the past clears future.
+  // Most actions happen against the latest state (e.g. changing color wheel).
+  // Hence the current approach of treating the latest state as a separate
+  // object probably has better overall performance characteristics,
+  // compared to just using the last entry of the history as the latest state.
+  // Especially if the changes are fast and history is debounced every time.
+  // Todo: setup performance test scenario to validate this.
+  const currentlyInThePast = historyOffset > 0;
+  const baseIndex = historyStack.length - historyOffset;
+  const prevStates = !currentlyInThePast ? states : historyStack[baseIndex].states;
+  const prevLastActions = !currentlyInThePast ? lastActions : historyStack[baseIndex].lastActions;
+
+  const baseState = prevStates.hasOwnProperty(id) ? prevStates[id] : initialStates[id];
+  const newState = reducer(
+    baseState,
+    // Action can be a function in case of setState.
+    typeof action === 'function' ? action(baseState) : action
+  );
+  if (newState === baseState) {
+    return;
+  }
+  // const isNowDefaultState = newState === initialStates[id];
+  // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
+  // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
+
+  const now = performance.now();
+  const slowEnough = now - lastSet > (options?.debounceTime || 500);
+  const skipHistory = !slowEnough || options?.skipHistory;
+
+  // Afaik there is no possible benefit to having two consecutive identical states in history.
+  function lastStateSuperFluous() {
+    const prev = historyStack[baseIndex - 1];
+    if (prev.states[id] !== newState) {
+      return false;
+    }
+    const keys = Object.keys(prev.lastActions);
+
+    return keys.length === 1 && keys[0] === id;
+  }
+  const skippedHistoryNowSameAsPrevious = skipHistory && lastStateSuperFluous();
+
+  const prevHistory =
+    !currentlyInThePast || skipHistory
+      ? historyStack
+      : historyStack.slice(0, -historyOffset);
+
+  states = {
+    ...prevStates,
+    [id]: newState,
+  };
+  oldStates = prevStates;
+  historyOffset = 0;
+
+  historyStack = skipHistory
+    ? skippedHistoryNowSameAsPrevious
+      ? historyStack.slice(0, -1)
+      : historyStack
+    : [
+        ...prevHistory,
+        {
+          states: prevStates,
+          lastActions: prevLastActions,
+        },
+      ];
+
+  // If the previous state was removed from the history because it was duplicate,
+  // it should result in a new entry in any subsequent dispatches to the same id.
+  // Otherwise, it would be possible to remove multiple recent entries (with different values)
+  // just by having the same value for any short amount of time.
+  lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
+
+  lastActions = !skipHistory
+    ? { [id]: action }
+    : { ...prevLastActions, [id]: action };
+
+  notifyOne(id);
+}
 
 let forceHistoryRender = () => {};
 
 const notifiers = {};
+
+function setCurrentState() {
+  currentStates =
+    historyOffset > 0
+      ? historyStack[historyStack.length - historyOffset].states
+      : states;
+}
 
 // All browser history related code was commented for now.
 // It works, but it's not that user friendly and hard to support.
@@ -267,6 +279,7 @@ const notifiers = {};
 
 // Notify one ID without checking.
 function notifyOne(id) {
+  setCurrentState();
   const keyNotifiers = notifiers[id];
   if (!keyNotifiers) {
     return;
@@ -278,7 +291,7 @@ function notifyOne(id) {
 }
 
 function checkNotifyAll() {
-  const { oldStates } = state;
+  setCurrentState();
   const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(currentStates)]);
 
   for (const id of bothKeys.values()) {
@@ -343,53 +356,6 @@ function checkNotifyAll() {
 //   };
 // }
 
-export const historyDispatch = (action, options = {}) => {
-  const newState = historyReducer(state, action, options);
-  if (newState === state) {
-    return
-  }
-  state = newState;
-  const {states, historyOffset, historyStack } = state;
-
-  currentStates =
-    historyOffset > 0
-      ? historyStack[historyStack.length - historyOffset].states
-      : states;
-
-  // if (USE_BROWSER_HISTORY) {
-  //   switch (action.type) {
-  //     case 'PERFORM_ACTION': {
-  //       if (!options.skipHistory) {
-  //         history.pushState(
-  //           { historyOffset: 0, length: historyStack.length },
-  //           ''
-  //         );
-  //       }
-  //       break;
-  //     }
-  //     case 'HISTORY_FORWARD': {
-  //       if (!action.payload?.fromBrowser) {
-  //         ignorePopstate = true;
-  //         history.forward();
-  //       }
-  //       break;
-  //     }
-  //     case 'HISTORY_BACKWARD': {
-  //       if (!action.payload?.fromBrowser) {
-  //         ignorePopstate = true;
-  //         history.back();
-  //       }
-  //       break;
-  //     }
-  //   }
-  // }
-  if (action.type === 'PERFORM_ACTION') {
-    notifyOne(action.payload.id);
-  } else {
-    checkNotifyAll();
-  }
-}
-
 export const HistoryNavigateContext = createContext({});
 
 // This component acts as a boundary for history.
@@ -398,26 +364,26 @@ export function SharedActionHistory(props) {
   const { previewComponents, children } = props;
   const [,forceRender] = useState();
 
-  const {
-    states,
-    historyStack,
-    historyOffset,
-    lastActions,
-  } = state;
-
   useHotkeys(
     'ctrl+z,cmd+z',
-    () => {
-      historyDispatch({ type: 'HISTORY_BACKWARD' });
-    },
+    historyBackOne,
     hotkeysOptions
   );
 
   useHotkeys(
     'ctrl+shift+z,cmd+shift+z',
-    () => {
-      historyDispatch({ type: 'HISTORY_FORWARD' });
-    },
+    historyForwardOne,
+    hotkeysOptions
+  );
+  useHotkeys(
+    'alt+z',
+    historyBackFast,
+    hotkeysOptions
+  );
+
+  useHotkeys(
+    'alt+shift+z',
+    historyForwardFast,
     hotkeysOptions
   );
 
@@ -426,8 +392,6 @@ export function SharedActionHistory(props) {
       historyStack,
       historyOffset,
       lastActions,
-      dispatch: historyDispatch,
-      states,
       currentStates,
       previewComponents,
     }),
@@ -448,12 +412,17 @@ export function SharedActionHistory(props) {
   );
 }
 
+export type StateAndUpdater<T> = [
+  T,
+  (updater: T | ((state: T) => T), options?: HistoryOptions) => void
+];
+
 export function useResumableReducer<T>(
   reducer,
   initialState: T,
   initializer = (s) => s,
   id: string
-): [T, (action, options) => void] {
+): StateAndUpdater<T> {
   if (!reducers.hasOwnProperty(id)) {
     // First one for an id gets to add the reducer.
     addReducer(id, reducer, initialState, initializer);
@@ -469,10 +438,16 @@ export function useResumableReducer<T>(
 
 const stateReducer = (s, v) => v;
 
-export function useResumableState(id, initial) {
+export function useResumableState<T>(
+  id: string,
+  initial: T | (() => T)
+): StateAndUpdater<T> {
   return useResumableReducer(
     stateReducer,
     null,
+    // This runtime check is not great, but we have to do it to have the same signature and behavior
+    // as React's useState, so that it can be a drop in replacement as much as possible.
+    // TS complains about the function call, but it just doesn't detect the execution context.
     () => (typeof initial === 'function' ? initial() : initial),
     id
   );

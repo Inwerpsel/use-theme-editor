@@ -1,10 +1,10 @@
-import { historyDispatch } from "../../hooks/useResumableReducer";
+import { historyBack, historyForward } from "../../hooks/useResumableReducer";
 
 export const history = {
-    back: () => {
-         historyDispatch({type: 'HISTORY_BACKWARD'});
-    },
-    forward: () => {
-         historyDispatch({type: 'HISTORY_FORWARD'});
-    },
+  back: () => {
+    historyBack();
+  },
+  forward: () => {
+     historyForward();
+  },
 };

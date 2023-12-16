@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react';
-import { HistoryNavigateContext, isInterestingState } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, historyBack, historyForward, isInterestingState, performAction } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { DispatchedElementContext } from '../movable/DispatchedElement';
@@ -92,7 +92,6 @@ export function HistoryVisualization() {
     historyOffset,
     lastActions,
     currentStates,
-    dispatch,
   } = useContext(HistoryNavigateContext);
 
   const showHistory = get.visualizeHistory && (visualizeAlways || historyOffset !== 0);
@@ -131,7 +130,6 @@ export function HistoryVisualization() {
           // We don't use this in the present so it can be true already.
           isInFuture = isInFuture || isPresent;
           const amount = Math.abs(index - currentIndex);
-          const type = isInFuture ? 'HISTORY_FORWARD' : 'HISTORY_BACKWARD';
 
           // Check if simple state would be changed by replaying.
           // Reducer actions are assumed to always be able to change state.
@@ -140,7 +138,7 @@ export function HistoryVisualization() {
               typeof action === 'object' || states[id] !== currentStates[id]
           );
 
-          if (!isPresent && !showAll && index !== 0 && !isInterestingState({lastActions})) {
+          if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
             return null;
           }
 
@@ -176,10 +174,12 @@ export function HistoryVisualization() {
                       ? () => {
                         // Ensure history doesn't collapse.
                           setVisualizeAlways(true);
-                          dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
+                          historyForward(historyOffset);
                         }
                       : () => {
-                          dispatch({ type, payload: { amount } });
+                          isInFuture
+                            ? historyForward(amount)
+                            : historyBack(amount);
                         }
                   }
                 >
@@ -189,13 +189,9 @@ export function HistoryVisualization() {
                   <button
                     style={{width: '50%'}}
                     onClick={(event) => {
-                      Object.entries(lastActions).forEach(([id, action]) =>
-                        dispatch({
-                          type: 'PERFORM_ACTION',
-                          payload: { id, action },
-                          options: {},
-                        })
-                      );
+                      Object.entries(lastActions).forEach(([id, action]) => {
+                        performAction(id, action);
+                      });
                       event.preventDefault();
                       event.stopPropagation();
                     }}
@@ -209,7 +205,7 @@ export function HistoryVisualization() {
         })}
         <li
           onClick={!isInFuture ? null : () => {
-            dispatch({ type: 'HISTORY_FORWARD', payload: { amount: historyOffset } });
+            historyForward(historyOffset);
           }}
           key={'latest'}
           style={{
