@@ -1,6 +1,6 @@
-import { useCallback, useInsertionEffect, useState } from 'react';
+import { useEffect, useInsertionEffect, useState } from 'react';
 import {getLocalStorageNamespace} from '../functions/getLocalStorageNamespace';
-import { useResumableState } from './useResumableReducer';
+import { StateAndUpdater, useResumableState } from './useResumableReducer';
 
 function apply(type, value) {
   switch (type) {
@@ -90,7 +90,7 @@ export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) =
   ];
 };
 
-export function useResumableLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) => void] {
+export function useResumableLocalStorage<T>(key: string, defaultValue: T): StateAndUpdater<T> {
   const scopedKey = getLocalStorageNamespace() + key;
   const type = typeof defaultValue;
   const isObject = type === 'object';
@@ -103,17 +103,24 @@ export function useResumableLocalStorage<T>(key: string, defaultValue: T): [T, (
     return apply(type, stored);
   });
 
-  const update = useCallback((arg: T, options = {}) => {
-    const newValue = typeof arg === 'function' ? arg(value) : arg;
+  useEffect(() => {
+    // This has a few drawbacks but it's an improvement over setting it only in the dispatcher.
+    // It's a simple way to ensure local storage is in sync with the selected history state.
+    // Drawback 1: It doesn't account for states that have no element listening, rare atm.
+    // Drawback 2: It will set local storage to same value for each listening element. The
+    // impact of this should be manageable atm and it's not that slow.
+    //
+    // Ideally the entire history will be preserved in local storage, or at least the restorable
+    // portion of it. So this will change completely, so keeping it simple for now.
+
     localStorage.setItem(
       scopedKey,
-      !isObject ? newValue : JSON.stringify(newValue)
+      !isObject ? value : JSON.stringify(value)
     );
-    setValue(newValue, options);
-  }, []);
+  }, [value]);
 
   return [
     value,
-    update,
+    setValue,
   ];
 }
