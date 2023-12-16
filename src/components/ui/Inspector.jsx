@@ -44,7 +44,10 @@ export function Inspector(props) {
     // After the inspection is rewritten this will probably be easier to deal with.
     // This should run whenever a new inspection is done.
     if (inspectedIndex > currentInspected) {
-      ref.current.scrollIntoView({block: 'start'});
+      const el = ref.current;
+      setTimeout(() => {
+        el.scrollIntoView({block: 'start'});
+      }, 10)
     }
   }, [inspectedIndex])
 
