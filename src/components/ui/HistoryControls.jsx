@@ -66,12 +66,23 @@ function HistoryForwardFast() {
   </button>;
 }
 
+function MiniTimeline() {
+  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
+
+  const percentage = 100 - (100 * historyOffset / historyStack.length);
+
+  return <div style={{width: '100%', height: '2px', background: 'darkgrey'}}>
+    <div style={{width: `${percentage}%`, height: '2px', background: 'yellow'}}></div>
+  </div>
+}
+
 export function HistoryControls() { 
     const [visualize, setVissualize] = use.visualizeHistory();
     const [visualizeAlways, setVissualizeAlways] = use.visualizeHistoryAlways();
 
     return (
       <div>
+        <MiniTimeline />
         <HistoryBackFast />
         <HistoryBack />
         <HistoryForward />
