@@ -1,5 +1,5 @@
-import React, { useContext, useState, useEffect } from 'react';
-import { HistoryNavigateContext, historyBack, historyForward, isInterestingState, performAction } from '../../hooks/useResumableReducer';
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { HistoryNavigateContext, addLock, historyBack, historyForward, isInterestingState, performAction } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { DispatchedElementContext } from '../movable/DispatchedElement';
@@ -22,10 +22,25 @@ function getName(action) {
     : action.type;
 }
 
+function LockState(props) {
+  const { id, historyIndex } = props;
+  const { locks } = useContext(HistoryNavigateContext);
+  const lockedIndex = locks[id] || 0; 
+  const lockedHere = historyIndex === lockedIndex;
+
+  return <button
+    className={lockedHere ? 'locked-here' : ''}
+    style={{outline: lockedHere ? '2px solid black' : 'none', background: lockedHere ? 'white' : 'transparent' }}
+    onClick={() => {lockedHere ? addLock(id, 0) : addLock(id, historyIndex)}}>
+    🔒
+  </button>
+}
+
 function ActionList(props) {
-  const {actions, showPayloads} = props;
+  const {actions, showPayloads, historyIndex} = props;
   const {
       previewComponents,
+      locks,
   } = useContext(HistoryNavigateContext);
 
   return (
@@ -51,8 +66,15 @@ function ActionList(props) {
             ? null
             : previewComponents[id][getName(action)];
 
+        const lockedIndex = locks[id] || 0; 
+        const isLocked = lockedIndex > historyIndex;
+
         return (
-          <li {...{ key }} style={{ clear: 'both' }}>
+          <li {...{ key }} 
+            title={isLocked ? 'Overridden by lock' : ''}
+            style={{ clear: 'both', opacity: isLocked ? .5 : 1}}
+          >
+            <LockState {...{id, historyIndex}} />
             {!Preview && (
               <span>
                 <b>{id}</b>
@@ -95,6 +117,12 @@ export function HistoryVisualization() {
   } = useContext(HistoryNavigateContext);
 
   const showHistory = get.visualizeHistory && (visualizeAlways || historyOffset !== 0);
+
+  let currentRef = useRef();
+
+  useEffect(() => {
+    currentRef.current?.scrollIntoView({block: 'nearest'});
+  }, [historyOffset]);
 
   if (!showHistory) {
     return null;
@@ -146,6 +174,7 @@ export function HistoryVisualization() {
             <li
               key={index}
               id={isPresent ? 'history-current-state' : ''}
+              ref={index === currentIndex ? currentRef : null}
               style={{
                 position: 'relative',
                 outline:
@@ -158,10 +187,12 @@ export function HistoryVisualization() {
                 { index }
               </span>
               <ActionList
+                historyIndex={index}
                 actions={Object.entries(lastActions)}
                 {...{ showPayloads }}
               />
               <div
+                className='history-state-buttons'
                 style={{
                   display: 'flex',
                   justifyContent: 'stretch',
@@ -176,11 +207,9 @@ export function HistoryVisualization() {
                           setVisualizeAlways(true);
                           historyForward(historyOffset);
                         }
-                      : () => {
-                          isInFuture
-                            ? historyForward(amount)
-                            : historyBack(amount);
-                        }
+                      : isInFuture 
+                        ? () => {historyForward(amount)} 
+                        : () => {historyBack(amount)}
                   }
                 >
                   {isPresent ? 'jump to end' : 'jump here'}

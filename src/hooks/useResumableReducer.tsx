@@ -8,18 +8,28 @@ import React, {
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-const initActions = {
-    HISTORY: {
-      type: 'INIT',
-      payload: {},
-    },
-  };
-
 const initialStates = {};
 const reducers = {};
 const dispatchers = {};
 const subscribers = {};
 const getSnapshots = {};
+
+const locks = {} as {[index: string]: number};
+let lockVersion = 0;
+
+export function addLock (id, index) {
+  locks[id] = index;
+  forceHistoryRender();
+  lockVersion++;
+  notifyOne(id);
+}
+
+export function removeLock(id) {
+  delete locks[id];
+  forceHistoryRender();
+  lockVersion++;
+  notifyOne(id);
+}
 
 function addReducer(id, reducer, initialState, initializer) {
   reducers[id] = reducer;
@@ -44,6 +54,13 @@ function addReducer(id, reducer, initialState, initializer) {
     };
   }
   getSnapshots[id] = () => {
+    const lockIndex = locks[id] || 0;
+
+    if (lockIndex > historyStack.length - historyOffset) {
+      const entry = historyStack[lockIndex].states;
+      return entry.hasOwnProperty(id) ? entry[id] : initialStates[id];
+    }
+
     return currentStates.hasOwnProperty(id) ? currentStates[id] : initialStates[id];
   }
 }
@@ -80,7 +97,7 @@ let oldStates = {};
 // The state at the history offset, or the latest state if offset is 0.
 let currentStates = {};
 // The actions that produced the most recent state.
-let lastActions = initActions;
+let lastActions = {};
 // The time at which the latest value was set, used for debouncing.
 let lastSet = 0;
 
@@ -164,7 +181,7 @@ export function clearHistory(): void {
   historyStack = [];
   historyOffset = 0;
   lastActions = !currentlyInThePast ? lastActions : historyStack[historyStack.length - historyOffset].lastActions;;
-  states = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;;
+  states = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;
 
   checkNotifyAll();
 }
@@ -190,9 +207,14 @@ export function performAction(id, action, options: HistoryOptions): void {
   const currentlyInThePast = historyOffset > 0;
   const baseIndex = historyStack.length - historyOffset;
   const prevStates = !currentlyInThePast ? states : historyStack[baseIndex].states;
+  // Lock for now is only applied on older states.
+  const lockIndex = locks[id] || 0;
+  // For now locked states are not applied to more recent states.
+  // This simplifies a lot of things
+  const baseStatesWithLock = !currentlyInThePast ? states : historyStack[Math.max(lockIndex, baseIndex)].states;
   const prevLastActions = !currentlyInThePast ? lastActions : historyStack[baseIndex].lastActions;
 
-  const baseState = prevStates.hasOwnProperty(id) ? prevStates[id] : initialStates[id];
+  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -200,6 +222,14 @@ export function performAction(id, action, options: HistoryOptions): void {
   );
   if (newState === baseState) {
     return;
+  }
+  if (currentlyInThePast) {
+    // Clearly any locks pointing to discarded history entries.
+    for (const [id, index] of Object.entries(locks)) {
+      if (index > baseIndex) {
+        delete locks[id];
+      }
+    }
   }
   // const isNowDefaultState = newState === initialStates[id];
   // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
@@ -217,6 +247,7 @@ export function performAction(id, action, options: HistoryOptions): void {
     }
     const keys = Object.keys(prev.lastActions);
 
+    // This doesn't account for everything yet: multiple actions can be superfluous together, like width and height.
     return keys.length === 1 && keys[0] === id;
   }
   const skippedHistoryNowSameAsPrevious = skipHistory && lastStateSuperFluous();
@@ -300,9 +331,13 @@ function checkNotifyAll() {
       // No need to compare if nobody's listening.
       continue;
     }
-    const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
+    const lockIndex = locks[id] || 0;
+    const shouldLock = lockIndex > historyStack.length - historyOffset
+    const baseStates = shouldLock ? historyStack[lockIndex].states : oldStates;
 
-    const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
+    const inOld = baseStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
+
+    const oldValue = !inOld ? initialStates[id] : baseStates[id] ;
     const newValue = !inNew ? initialStates[id] : currentStates[id];
 
     const changed = oldValue !== newValue; 
@@ -394,8 +429,9 @@ export function SharedActionHistory(props) {
       lastActions,
       currentStates,
       previewComponents,
+      locks,
     }),
-    [historyStack, historyOffset, lastActions, states]
+    [historyStack, historyOffset, lastActions, states, lockVersion]
   );
 
   useLayoutEffect(() => {
