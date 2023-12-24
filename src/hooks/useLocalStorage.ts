@@ -34,7 +34,7 @@ const dispatchers: SetsOfDispatchers = {};
 // Components add their local state dispatchers to a set. The wrapping dispatcher then just iterates this set with any new value.
 // It may seem odd to have both approaches in the same repo, but this also seems a simple approach that so far works just fine.
 // Maybe both approaches have their own merits, or one is clearly better. Honestly I can't tell at the moment.
-export function useLocalStorage<T>(key: string, defaultValue: T): [T, (arg: T) => void] {
+export function useLocalStorage<T>(key: string, defaultValue: T): StateAndUpdater<T> {
   // Todo: Find a more generally applicable way to namespace.
   const scopedKey = getLocalStorageNamespace() + key;
   const type = typeof defaultValue;
