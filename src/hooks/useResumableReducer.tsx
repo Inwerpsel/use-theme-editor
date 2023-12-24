@@ -57,8 +57,8 @@ function addReducer(id, reducer, initialState, initializer) {
     const lockIndex = locks[id] || 0;
 
     if (lockIndex > historyStack.length - historyOffset) {
-      const entry = historyStack[lockIndex].states;
-      return entry.hasOwnProperty(id) ? entry[id] : initialStates[id];
+      // Locks should only be added on entries that have this state
+      return historyStack[lockIndex].states[id];
     }
 
     return currentStates.hasOwnProperty(id) ? currentStates[id] : initialStates[id];
@@ -187,34 +187,18 @@ export function clearHistory(): void {
 }
 
 export function performAction(id, action, options: HistoryOptions): void {
+  historyOffset > 0
+    ? performActionOnPast(id, action, options)
+    : performActionOnLatest(id, action, options);
+}
+
+function performActionOnLatest(id, action, options: HistoryOptions): void {
   const reducer = reducers[id];
   if (!reducer) {
     return;
   }
-  if (historyOffset > historyWarnOnUpdateLimit) {
-    if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
-      return;
-    }
-  }
-
-  // `currentlyInThePast` is false most of the time: one edit on the past clears future.
-  // Most actions happen against the latest state (e.g. changing color wheel).
-  // Hence the current approach of treating the latest state as a separate
-  // object probably has better overall performance characteristics,
-  // compared to just using the last entry of the history as the latest state.
-  // Especially if the changes are fast and history is debounced every time.
-  // Todo: setup performance test scenario to validate this.
-  const currentlyInThePast = historyOffset > 0;
-  const baseIndex = historyStack.length - historyOffset;
-  const prevStates = !currentlyInThePast ? states : historyStack[baseIndex].states;
-  // Lock for now is only applied on older states.
-  const lockIndex = locks[id] || 0;
-  // For now locked states are not applied to more recent states.
-  // This simplifies a lot of things
-  const baseStatesWithLock = !currentlyInThePast ? states : historyStack[Math.max(lockIndex, baseIndex)].states;
-  const prevLastActions = !currentlyInThePast ? lastActions : historyStack[baseIndex].lastActions;
-
-  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
+  const now = performance.now();
+  const baseState = states.hasOwnProperty(id) ? states[id] : initialStates[id];
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -223,25 +207,12 @@ export function performAction(id, action, options: HistoryOptions): void {
   if (newState === baseState) {
     return;
   }
-  if (currentlyInThePast) {
-    // Clearly any locks pointing to discarded history entries.
-    for (const [id, index] of Object.entries(locks)) {
-      if (index > baseIndex) {
-        delete locks[id];
-      }
-    }
-  }
-  // const isNowDefaultState = newState === initialStates[id];
-  // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
-  // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
-
-  const now = performance.now();
   const slowEnough = now - lastSet > (options?.debounceTime || 500);
   const skipHistory = !slowEnough || options?.skipHistory;
 
   // Afaik there is no possible benefit to having two consecutive identical states in history.
   function lastStateSuperFluous() {
-    const prev = historyStack[baseIndex - 1];
+    const prev = historyStack[historyStack.length - 1];
     if (prev.states[id] !== newState) {
       return false;
     }
@@ -252,16 +223,11 @@ export function performAction(id, action, options: HistoryOptions): void {
   }
   const skippedHistoryNowSameAsPrevious = skipHistory && lastStateSuperFluous();
 
-  const prevHistory =
-    !currentlyInThePast || skipHistory
-      ? historyStack
-      : historyStack.slice(0, -historyOffset);
-
+  oldStates = states;
   states = {
-    ...prevStates,
+    ...states,
     [id]: newState,
   };
-  oldStates = prevStates;
   historyOffset = 0;
 
   historyStack = skipHistory
@@ -269,10 +235,10 @@ export function performAction(id, action, options: HistoryOptions): void {
       ? historyStack.slice(0, -1)
       : historyStack
     : [
-        ...prevHistory,
+        ...historyStack,
         {
-          states: prevStates,
-          lastActions: prevLastActions,
+          states: oldStates,
+          lastActions,
         },
       ];
 
@@ -284,7 +250,76 @@ export function performAction(id, action, options: HistoryOptions): void {
 
   lastActions = !skipHistory
     ? { [id]: action }
-    : { ...prevLastActions, [id]: action };
+    : { ...lastActions, [id]: action };
+
+  notifyOne(id);
+}
+
+function performActionOnPast(id, action, options: HistoryOptions): void {
+  const reducer = reducers[id];
+  if (!reducer) {
+    return;
+  }
+  if (historyOffset > historyWarnOnUpdateLimit) {
+    if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
+      return;
+    }
+  }
+
+  const now = performance.now();
+  const baseIndex = historyStack.length - historyOffset;
+  const prevEntry = historyStack[baseIndex];
+  const prevStates = prevEntry.states;
+  // Lock for now is only applied on older states.
+  const lockIndex = locks[id] || 0;
+  // For now locked states are not applied to more recent states.
+  // This simplifies a lot of things
+  const baseStatesWithLock = historyStack[Math.max(lockIndex, baseIndex)].states;
+  const prevLastActions = historyStack[baseIndex].lastActions;
+
+  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
+  const newState = reducer(
+    baseState,
+    // Action can be a function in case of setState.
+    typeof action === 'function' ? action(baseState) : action
+  );
+  if (newState === baseState) {
+    return;
+  }
+  // Clearly any locks pointing to discarded history entries.
+  // Perhaps makes sense to apply the locked states to the new latest state.
+  for (const [id, index] of Object.entries(locks)) {
+    if (index > baseIndex) {
+      delete locks[id];
+    }
+  }
+  // const isNowDefaultState = newState === initialStates[id];
+  // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
+  // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
+
+  const prevHistory = historyStack.slice(0, -historyOffset);
+
+  states = {
+    ...prevStates,
+    [id]: newState,
+  };
+  oldStates = prevStates;
+  historyOffset = 0;
+
+  historyStack = [
+    ...prevHistory,
+    {
+      states: prevStates,
+      lastActions: prevLastActions,
+    },
+  ];
+
+  // If the previous state was removed from the history because it was duplicate,
+  // it should result in a new entry in any subsequent dispatches to the same id.
+  // Otherwise, it would be possible to remove multiple recent entries (with different values)
+  // just by having the same value for any short amount of time.
+  lastSet = now;
+  lastActions = { [id]: action }
 
   notifyOne(id);
 }

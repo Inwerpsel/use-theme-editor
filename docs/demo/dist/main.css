@@ -645,7 +645,7 @@ div[id^=font-picker] ul {
   margin-bottom: 0;
 }
 
-.history li:not(:hover) button {
+.history > ul > li:not(:hover) button:not(.locked-here) {
   visibility: hidden;
 }
 
