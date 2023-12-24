@@ -114,6 +114,7 @@ export function HistoryVisualization() {
     historyOffset,
     lastActions,
     currentStates,
+    locks,
   } = useContext(HistoryNavigateContext);
 
   const showHistory = get.visualizeHistory && (visualizeAlways || historyOffset !== 0);
@@ -167,7 +168,10 @@ export function HistoryVisualization() {
           );
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
-            return null;
+            // Always display an entry if state is locked to its index
+            if (!Object.keys(lastActions).some(id=>id in locks && locks[id] === index)) {
+              return null;
+            }
           }
 
           return (
