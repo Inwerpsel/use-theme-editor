@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { HistoryNavigateContext, addLock, historyBack, historyForward, isInterestingState, performAction } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addLock, historyBack, historyForward, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { DispatchedElementContext } from '../movable/DispatchedElement';
@@ -25,15 +25,24 @@ function getName(action) {
 function LockState(props) {
   const { id, historyIndex } = props;
   const { locks } = useContext(HistoryNavigateContext);
-  const lockedIndex = locks[id] || 0; 
+  const lockedIndex = locks.get(id);
   const lockedHere = historyIndex === lockedIndex;
 
-  return <button
-    className={lockedHere ? 'locked-here' : ''}
-    style={{outline: lockedHere ? '2px solid black' : 'none', background: lockedHere ? 'white' : 'transparent' }}
-    onClick={() => {lockedHere ? addLock(id, 0) : addLock(id, historyIndex)}}>
-    🔒
-  </button>
+  return (
+    <button
+      className={lockedHere ? 'locked-here' : ''}
+      style={{
+        outline: lockedHere ? '2px solid black' : 'none',
+        background: lockedHere ? 'white' : 'transparent',
+      }}
+      onClick={(event) => {
+        lockedHere ? removeLock(id) : addLock(id, historyIndex);
+        event.stopPropagation();
+      }}
+    >
+      🔒
+    </button>
+  );
 }
 
 function ActionList(props) {
@@ -66,13 +75,12 @@ function ActionList(props) {
             ? null
             : previewComponents[id][getName(action)];
 
-        const lockedIndex = locks[id] || 0; 
-        const isLocked = lockedIndex > historyIndex;
+        const isLockedElsewhere = locks.has(id) && locks.get(id) !== historyIndex;
 
         return (
           <li {...{ key }} 
-            title={isLocked ? 'Overridden by lock' : ''}
-            style={{ clear: 'both', opacity: isLocked ? .5 : 1}}
+            title={isLockedElsewhere ? 'Overridden by lock' : ''}
+            style={{ clear: 'both', opacity: isLockedElsewhere ? .5 : 1}}
           >
             <LockState {...{id, historyIndex}} />
             {!Preview && (
@@ -169,7 +177,7 @@ export function HistoryVisualization() {
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
             // Always display an entry if state is locked to its index
-            if (!Object.keys(lastActions).some(id=>id in locks && locks[id] === index)) {
+            if (!Object.keys(lastActions).some(id=>locks.has(id) && locks.get(id) === index)) {
               return null;
             }
           }
@@ -250,6 +258,7 @@ export function HistoryVisualization() {
             Latest
           </span>
           <ActionList
+            historyIndex={historyStack.length}
             actions={Object.entries(lastActions)}
             {...{ showPayloads }}
           />

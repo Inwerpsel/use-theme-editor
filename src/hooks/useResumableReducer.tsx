@@ -14,18 +14,18 @@ const dispatchers = {};
 const subscribers = {};
 const getSnapshots = {};
 
-const locks = {} as {[index: string]: number};
+const locks = new Map<string, number>();
 let lockVersion = 0;
 
-export function addLock (id, index) {
-  locks[id] = index;
+export function addLock (id: string, index: number): void {
+  locks.set(id, index);
   forceHistoryRender();
   lockVersion++;
   notifyOne(id);
 }
 
-export function removeLock(id) {
-  delete locks[id];
+export function removeLock(id: string): void {
+  locks.delete(id);
   forceHistoryRender();
   lockVersion++;
   notifyOne(id);
@@ -54,11 +54,12 @@ function addReducer(id, reducer, initialState, initializer) {
     };
   }
   getSnapshots[id] = () => {
-    const lockIndex = locks[id] || 0;
-
-    if (lockIndex > historyStack.length - historyOffset) {
-      // Locks should only be added on entries that have this state
-      return historyStack[lockIndex].states[id];
+    if (locks.has(id)) {
+      const index = locks.get(id);
+      if (index >= historyStack.length) {
+        return states[id];
+      }
+      return historyStack[index].states[id];
     }
 
     return currentStates.hasOwnProperty(id) ? currentStates[id] : initialStates[id];
@@ -169,7 +170,7 @@ export function historyForwardFast(): void {
     }
   }
 
-  oldStates = historyStack[historyStack.length - historyOffset];
+  oldStates = historyStack[historyStack.length - historyOffset].states;
   historyOffset = newOffset;
 
   checkNotifyAll();
@@ -198,7 +199,17 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
     return;
   }
   const now = performance.now();
-  const baseState = states.hasOwnProperty(id) ? states[id] : initialStates[id];
+
+  const lockIndex = locks.get(id);
+  const hasLock = locks.has(id);
+  const hasLockInPast = hasLock && lockIndex < historyStack.length;
+
+  const baseState = hasLockInPast
+    ? historyStack[lockIndex].states[id]
+    : states.hasOwnProperty(id)
+    ? states[id]
+    : initialStates[id];
+
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -252,6 +263,10 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
     ? { [id]: action }
     : { ...lastActions, [id]: action };
 
+  if (hasLock) {
+    // If there was a lock on this state, update it to the newly created state.
+    addLock(id, historyStack.length);
+  }
   notifyOne(id);
 }
 
@@ -271,10 +286,10 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const prevEntry = historyStack[baseIndex];
   const prevStates = prevEntry.states;
   // Lock for now is only applied on older states.
-  const lockIndex = locks[id] || 0;
+  const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
   // For now locked states are not applied to more recent states.
   // This simplifies a lot of things
-  const baseStatesWithLock = historyStack[Math.max(lockIndex, baseIndex)].states;
+  const baseStatesWithLock = historyStack[lockIndex].states;
   const prevLastActions = historyStack[baseIndex].lastActions;
 
   const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
@@ -286,11 +301,19 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   if (newState === baseState) {
     return;
   }
-  // Clearly any locks pointing to discarded history entries.
-  // Perhaps makes sense to apply the locked states to the new latest state.
-  for (const [id, index] of Object.entries(locks)) {
+  const lockUpdates = {};
+  // The extra actions that are added when future locks are preserved.
+  const futureLockActions = {};
+  for (const [id, index] of locks.entries()) {
     if (index > baseIndex) {
-      delete locks[id];
+      if (index >= historyStack.length) {
+        lockUpdates[id] = states[id];
+        futureLockActions[id] = lastActions[id];
+      } else {
+        lockUpdates[id] = historyStack[index].states[id];
+        futureLockActions[id] = historyStack[index].lastActions[id];
+      }
+      locks.set(id, baseIndex + 1);
     }
   }
   // const isNowDefaultState = newState === initialStates[id];
@@ -301,6 +324,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
 
   states = {
     ...prevStates,
+    ...lockUpdates,
     [id]: newState,
   };
   oldStates = prevStates;
@@ -319,7 +343,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   // Otherwise, it would be possible to remove multiple recent entries (with different values)
   // just by having the same value for any short amount of time.
   lastSet = now;
-  lastActions = { [id]: action }
+  lastActions = { ...futureLockActions, [id]: action };
 
   notifyOne(id);
 }
@@ -366,13 +390,10 @@ function checkNotifyAll() {
       // No need to compare if nobody's listening.
       continue;
     }
-    const lockIndex = locks[id] || 0;
-    const shouldLock = lockIndex > historyStack.length - historyOffset
-    const baseStates = shouldLock ? historyStack[lockIndex].states : oldStates;
 
-    const inOld = baseStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
+    const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
 
-    const oldValue = !inOld ? initialStates[id] : baseStates[id] ;
+    const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
     const newValue = !inNew ? initialStates[id] : currentStates[id];
 
     const changed = oldValue !== newValue; 
