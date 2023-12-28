@@ -2,12 +2,12 @@ import React, { useContext, useState, useEffect, useRef } from 'react';
 import { HistoryNavigateContext, addLock, historyBack, historyForward, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
-import { DispatchedElementContext } from '../movable/DispatchedElement';
+import { MovableElementContext } from '../movable/MovableElement';
 import { setExcludedArea } from '../movable/Area';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 
 function DisableScrollHistoryInArea() {
-    const {hostAreaId, homeAreaId} = useContext(DispatchedElementContext);
+    const {hostAreaId, homeAreaId} = useContext(MovableElementContext);
     const id = hostAreaId || homeAreaId;
     useEffect(() => {
       setExcludedArea(id);

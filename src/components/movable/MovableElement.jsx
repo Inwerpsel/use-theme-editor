@@ -5,7 +5,7 @@ import {AreaSwitcher} from './AreaSwitcher';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import classnames from 'classnames';
 
-export const DispatchedElementContext = createContext({});
+export const MovableElementContext = createContext({});
 
 // Current best attempt at generating a stable ID.
 //
@@ -29,12 +29,12 @@ function getId(element, index) {
 }
 
 export function useCompactSetting() {
-  const {elementId} = useContext(DispatchedElementContext);
+  const {elementId} = useContext(MovableElementContext);
 
   return useLocalStorage(`compact::${elementId}`, true);
 }
 
-export function DispatchedElement({homeAreaId, element, index}) {
+export function MovableElement({homeAreaId, element, index}) {
   const {
     origLocationsRef,
     panelMap,
@@ -97,7 +97,7 @@ export function DispatchedElement({homeAreaId, element, index}) {
         order: order || null,
       }}
       title={!dragEnabled ? null : elementId}
-      className={classnames('dispatched-element', { 'is-dragged': isDragged })}
+      className={classnames('movable-element', { 'is-dragged': isDragged })}
       onDragStart={() => {
         if (dragEnabled || forceDrag) {
           setDraggedElement(elementId);
@@ -145,11 +145,11 @@ export function DispatchedElement({homeAreaId, element, index}) {
         </span>
       )}
 
-      <DispatchedElementContext.Provider
+      <MovableElementContext.Provider
         value={context}
       >
         {element}
-      </DispatchedElementContext.Provider>
+      </MovableElementContext.Provider>
 
       {showMovers && <AreaSwitcher {...{elementId, homeAreaId, hostAreaId}}/>}
 

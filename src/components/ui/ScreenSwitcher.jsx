@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react';
-import { useCompactSetting } from '../movable/DispatchedElement';
+import { useCompactSetting } from '../movable/MovableElement';
 import { CompactModeButton } from '../movable/CompactModeButton';
 import { SelectControl } from '../controls/SelectControl';
 import { RadioControl } from '../controls/RadioControl';

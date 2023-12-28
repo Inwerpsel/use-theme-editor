@@ -115,7 +115,7 @@ The `MovablePanels` component lives just below this top level. As a result, chan
 be reflected in every part of the tree without needing to re-render the app component.
 
 So React doesn't need to start at the root of your tree to update the UI. But it also is able to avoid rendering
-all area elements, except ones that move to another location. Every element's wrapping `DispatchedElement` does
+all area elements, except ones that move to another location. Every element's wrapping `MovableElement` does
 trigger a render of each element, but React is able to instantly bailout on them with no performance cost. It's 
 literally the same object (referentially), with the same props it's getting from the app component (if any).
 

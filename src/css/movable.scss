@@ -60,7 +60,7 @@ $area-speed: .2s;
 #area-bottom, #area-bottom-reverse {
   flex-grow: 1;
 
-  > .dispatched-element {
+  > .movable-element {
     background: grey;
   }
 }
@@ -198,7 +198,7 @@ $area-speed: .2s;
   }
 }
 
-.dispatched-element {
+.movable-element {
   min-width: 0;
   min-height: 0;
   transition: min-width,min-height .2s ease;
@@ -208,14 +208,14 @@ $area-speed: .2s;
 .is-dragging {
   #area-left, #area-right {
     min-width: 140px;
-    .dispatched-element:not(.is-dragged) {
+    .movable-element:not(.is-dragged) {
       min-height: 20px;
     }
   }
   #area-top, #area-bottom {
     transition: min-height;
     transition-delay: .1s;
-    .dispatched-element:not(.is-dragged) {
+    .movable-element:not(.is-dragged) {
       min-width: 20px;
     }
   }
@@ -273,7 +273,7 @@ $area-speed: .2s;
   overflow: visible !important;
 }
 
-.dispatched-element-collapse {
+.movable-element-collapse {
   position: absolute;
 
   padding-top: 2px;

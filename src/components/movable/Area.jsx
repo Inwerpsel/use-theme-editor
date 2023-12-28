@@ -1,5 +1,5 @@
 import React, {Children, useCallback, useContext, useEffect, useLayoutEffect, useRef} from 'react';
-import {DispatchedElement} from './DispatchedElement';
+import {MovableElement} from './MovableElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import { HistoryNavigateContext, useResumableState } from '../../hooks/useResumableReducer';
 
@@ -72,7 +72,7 @@ export function Area({id, children = [], ...other}) {
   >
     <TrackScrollOffset {...{id, containerRef: ref}}/>
     {!!children && Children.map(children, (element, index) => {
-      return <DispatchedElement {...{homeAreaId: id, element, index}}/>;
+      return <MovableElement {...{homeAreaId: id, element, index}}/>;
     })}
     <div
       className={'area-dropzone' + (isDragHovered ? ' drag-hovered' : '')}

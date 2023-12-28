@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { use } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
-import { useCompactSetting } from "../movable/DispatchedElement";
+import { useCompactSetting } from "../movable/MovableElement";
 import { DragHandle } from "../movable/DragHandle";
 import { CompactModeButton } from "../movable/CompactModeButton";
 

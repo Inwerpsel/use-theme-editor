@@ -5,7 +5,7 @@ export function CompactModeButton(props) {
 
   return (
     <button
-      className="dispatched-element-collapse"
+      className="movable-element-collapse"
       onClick={() => {
         setIsCompact(!isCompact);
       }}
