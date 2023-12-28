@@ -68,8 +68,8 @@ function addReducer(id, reducer, initialState, initializer) {
       return historyStack[index].states[id];
     }
 
-    return currentStates.hasOwnProperty(id)
-      ? currentStates[id]
+    return pointedStates.hasOwnProperty(id)
+      ? pointedStates[id]
       : initialStates.get(id);
   });
 }
@@ -110,7 +110,7 @@ let states = {};
 // Used for change detection.
 let oldStates = {};
 // The state at the history offset, or the latest state if offset is 0.
-let currentStates = {};
+let pointedStates = {};
 // The actions that produced the most recent state.
 let lastActions = {};
 // The time at which the latest value was set, used for debouncing.
@@ -371,7 +371,7 @@ let forceHistoryRender = () => {};
 const notifiers = {};
 
 function setCurrentState() {
-  currentStates =
+  pointedStates =
     historyOffset > 0
       ? historyStack[historyStack.length - historyOffset].states
       : states;
@@ -400,7 +400,7 @@ function notifyOne(id) {
 
 function checkNotifyAll() {
   setCurrentState();
-  const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(currentStates)]);
+  const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(pointedStates)]);
 
   for (const id of bothKeys.values()) {
     const keyNotifiers = notifiers[id];
@@ -409,10 +409,10 @@ function checkNotifyAll() {
       continue;
     }
 
-    const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
+    const inOld = oldStates.hasOwnProperty(id), inNew = pointedStates.hasOwnProperty(id);
 
     const oldValue = !inOld ? initialStates.get(id) : oldStates[id] ;
-    const newValue = !inNew ? initialStates.get(id) : currentStates[id];
+    const newValue = !inNew ? initialStates.get(id) : pointedStates[id];
 
     const changed = oldValue !== newValue; 
 
@@ -501,7 +501,7 @@ export function SharedActionHistory(props) {
       historyStack,
       historyOffset,
       lastActions,
-      currentStates,
+      pointedStates,
       previewComponents,
       locks,
     }),

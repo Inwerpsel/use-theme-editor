@@ -121,7 +121,7 @@ export function HistoryVisualization() {
     historyStack,
     historyOffset,
     lastActions,
-    currentStates,
+    pointedStates,
     locks,
   } = useContext(HistoryNavigateContext);
 
@@ -153,10 +153,10 @@ export function HistoryVisualization() {
         <Checkbox controls={[showPayloads, setShowPayloads]}>
           Show payloads
         </Checkbox>
-        <button onClick={() => console.log(currentStates)}>console.log</button>
+        <button onClick={() => console.log(pointedStates)}>console.log</button>
         {showJson && (
           <pre className="monospace-code">
-            {JSON.stringify(currentStates, null, 2)}
+            {JSON.stringify(pointedStates, null, 2)}
           </pre>
         )}
       </div>}
@@ -172,7 +172,7 @@ export function HistoryVisualization() {
           // Reducer actions are assumed to always be able to change state.
           const canReplay = Object.entries(lastActions).some(
             ([id, action]) =>
-              typeof action === 'object' || states[id] !== currentStates[id]
+              typeof action === 'object' || states[id] !== pointedStates[id]
           );
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
