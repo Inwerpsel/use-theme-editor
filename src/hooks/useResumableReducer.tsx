@@ -16,6 +16,7 @@ const dispatchers = new Map<string, (action: any, options: HistoryOptions) => vo
 type voidFn = () => void;
 const subscribers = new Map<string, (notify: voidFn) => voidFn>();
 const getSnapshots = new Map<string, () => any>();
+const notifiers = new Map<string, Set<voidFn>>();
 
 const locks = new Map<string, number>();
 let lockVersion = 0;
@@ -34,12 +35,13 @@ export function removeLock(id: string): void {
   notifyOne(id);
 }
 
-function addReducer(id, reducer, initialState, initializer) {
+function addReducer(id, reducer, rawInitialState, initializer) {
   reducers.set(id, reducer);
-  initialStates.set(
-    id,
-    typeof initializer === 'function' ? initializer(initialState) : initialState
-  );
+  const initialState =
+    typeof initializer === 'function'
+      ? initializer(rawInitialState)
+      : rawInitialState;
+  initialStates.set( id, initialState);
   dispatchers.set(
     id,
     performAction.bind(null, id),
@@ -48,14 +50,16 @@ function addReducer(id, reducer, initialState, initializer) {
   //   performAction(id, action, options);
   // };
   subscribers.set(id, (notify) => {
-    if (!notifiers.hasOwnProperty(id)) {
-      notifiers[id] = new Set();
+    let set = notifiers.get(id);
+    if (set === undefined) {
+      set = new Set();
+      notifiers.set(id, set);
     }
-    notifiers[id].add(notify);
+    set.add(notify);
     return () => {
-      notifiers[id].delete(notify);
-      if (notifiers[id].size === 0) {
-        delete notifiers[id];
+      set.delete(notify);
+      if (set.size === 0) {
+        notifiers.delete(id);
       }
     };
   });
@@ -65,12 +69,15 @@ function addReducer(id, reducer, initialState, initializer) {
       if (index >= historyStack.length) {
         return states[id];
       }
+      if (!historyStack[index].states.hasOwnProperty(id)) {
+        return initialState;
+      }
       return historyStack[index].states[id];
     }
 
     return pointedStates.hasOwnProperty(id)
       ? pointedStates[id]
-      : initialStates.get(id);
+      : initialState;
   });
 }
 
@@ -253,6 +260,8 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
     ...states,
     [id]: newState,
   };
+  if (newState === initialStates.get(id)) delete states[id];
+
   historyOffset = 0;
 
   historyStack = skipHistory
@@ -351,6 +360,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
     ...lockUpdates,
     [id]: newState,
   };
+  if (newState === initialStates.get(id)) delete states[id];
   oldStates = prevStates;
   historyOffset = 0;
 
@@ -367,8 +377,6 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
 }
 
 let forceHistoryRender = () => {};
-
-const notifiers = {};
 
 function setCurrentState() {
   pointedStates =
@@ -388,7 +396,7 @@ function setCurrentState() {
 // Notify one ID without checking.
 function notifyOne(id) {
   setCurrentState();
-  const keyNotifiers = notifiers[id];
+  const keyNotifiers = notifiers.get(id);
   if (!keyNotifiers) {
     return;
   }
@@ -403,7 +411,7 @@ function checkNotifyAll() {
   const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(pointedStates)]);
 
   for (const id of bothKeys.values()) {
-    const keyNotifiers = notifiers[id];
+    const keyNotifiers = notifiers.get(id);
     if (!keyNotifiers) {
       // No need to compare if nobody's listening.
       continue;
