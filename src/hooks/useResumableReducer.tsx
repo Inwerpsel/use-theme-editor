@@ -8,8 +8,10 @@ import React, {
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-const initialStates = {};
-const reducers = {};
+type Reducer<T> = (previous: T, action) => T
+
+const initialStates = new Map<string, any>();
+const reducers = new Map<string, Reducer<any>>();
 const dispatchers = {};
 const subscribers = {};
 const getSnapshots = {};
@@ -77,9 +79,15 @@ export function isInterestingState(lastActions) {
   return false;
 }
 
+// The current options are only applied when acting on the latest state,
+// not when doing an action on top of a past state.
 type HistoryOptions = {
+  // The minimum time between actions to create a new state in history.
+  // If not provided it uses a default value for all actions.
+  // Actions that happen more quickly will prevent the previous value from
+  // being recorded as a separate history entry.
   debounceTime?: number,
-  // 
+  // If provided, always displace the previous value instead of recording it.
   skipHistory?: boolean;
 }
 
@@ -259,9 +267,11 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   // just by having the same value for any short amount of time.
   lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
 
-  lastActions = !skipHistory
-    ? { [id]: action }
-    : { ...lastActions, [id]: action };
+  if (skipHistory) {
+    lastActions[id] = action;
+  } else {
+    lastActions = { [id]: action };
+  }
 
   if (hasLock) {
     // If there was a lock on this state, update it to the newly created state.
@@ -285,12 +295,8 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const baseIndex = historyStack.length - historyOffset;
   const prevEntry = historyStack[baseIndex];
   const prevStates = prevEntry.states;
-  // Lock for now is only applied on older states.
   const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
-  // For now locked states are not applied to more recent states.
-  // This simplifies a lot of things
   const baseStatesWithLock = historyStack[lockIndex].states;
-  const prevLastActions = historyStack[baseIndex].lastActions;
 
   const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
   const newState = reducer(
@@ -304,8 +310,10 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const lockUpdates = {};
   // The extra actions that are added when future locks are preserved.
   const futureLockActions = {};
+  let hasFutureLocks = false;
   for (const [id, index] of locks.entries()) {
     if (index > baseIndex) {
+      hasFutureLocks = true;
       if (index >= historyStack.length) {
         lockUpdates[id] = states[id];
         futureLockActions[id] = lastActions[id];
@@ -320,8 +328,18 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
   // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
-  const prevHistory = historyStack.slice(0, -historyOffset);
-
+  const prevHistory = historyOffset === 1 ? historyStack : historyStack.slice(0, -historyOffset + 1);
+  if (hasFutureLocks) {
+    prevHistory.push({
+      states: {...prevStates, ...lockUpdates},
+      lastActions: futureLockActions,
+    })
+  }
+  if (locks.has(id)) {
+    // If there was a lock on this state, update it to the newly created state.
+    addLock(id, historyStack.length);
+  }
+ 
   states = {
     ...prevStates,
     ...lockUpdates,
@@ -330,20 +348,14 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   oldStates = prevStates;
   historyOffset = 0;
 
-  historyStack = [
-    ...prevHistory,
-    {
-      states: prevStates,
-      lastActions: prevLastActions,
-    },
-  ];
+  historyStack = prevHistory;
 
   // If the previous state was removed from the history because it was duplicate,
   // it should result in a new entry in any subsequent dispatches to the same id.
   // Otherwise, it would be possible to remove multiple recent entries (with different values)
   // just by having the same value for any short amount of time.
   lastSet = now;
-  lastActions = { ...futureLockActions, [id]: action };
+  lastActions = { [id]: action };
 
   notifyOne(id);
 }
@@ -515,7 +527,7 @@ export function useResumableReducer<T>(
   initializer = (s) => s,
   id: string
 ): StateAndUpdater<T> {
-  if (!reducers.hasOwnProperty(id)) {
+  if (!reducers.has(id)) {
     // First one for an id gets to add the reducer.
     addReducer(id, reducer, initialState, initializer);
   }
