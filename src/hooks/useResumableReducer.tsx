@@ -12,9 +12,10 @@ type Reducer<T> = (previous: T, action) => T
 
 const initialStates = new Map<string, any>();
 const reducers = new Map<string, Reducer<any>>();
-const dispatchers = {};
-const subscribers = {};
-const getSnapshots = {};
+const dispatchers = new Map<string, (action: any, options: HistoryOptions) => void>;
+type voidFn = () => void;
+const subscribers = new Map<string, (notify: voidFn) => voidFn>();
+const getSnapshots = new Map<string, () => any>();
 
 const locks = new Map<string, number>();
 let lockVersion = 0;
@@ -34,17 +35,20 @@ export function removeLock(id: string): void {
 }
 
 function addReducer(id, reducer, initialState, initializer) {
-  reducers[id] = reducer;
-  initialStates[id] =
-    typeof initializer === 'function'
-      ? initializer(initialState)
-      : initialState;
-  dispatchers[id] = performAction.bind(null, id);
+  reducers.set(id, reducer);
+  initialStates.set(
+    id,
+    typeof initializer === 'function' ? initializer(initialState) : initialState
+  );
+  dispatchers.set(
+    id,
+    performAction.bind(null, id),
+  )
   // dispatchers[id] = (action, options = {}) => {
   //   performAction(id, action, options);
   // };
-  subscribers[id] = (notify) => {
-    if (!(notifiers.hasOwnProperty(id))) {
+  subscribers.set(id, (notify) => {
+    if (!notifiers.hasOwnProperty(id)) {
       notifiers[id] = new Set();
     }
     notifiers[id].add(notify);
@@ -54,8 +58,8 @@ function addReducer(id, reducer, initialState, initializer) {
         delete notifiers[id];
       }
     };
-  }
-  getSnapshots[id] = () => {
+  });
+  getSnapshots.set(id, () => {
     if (locks.has(id)) {
       const index = locks.get(id);
       if (index >= historyStack.length) {
@@ -64,8 +68,10 @@ function addReducer(id, reducer, initialState, initializer) {
       return historyStack[index].states[id];
     }
 
-    return currentStates.hasOwnProperty(id) ? currentStates[id] : initialStates[id];
-  }
+    return currentStates.hasOwnProperty(id)
+      ? currentStates[id]
+      : initialStates.get(id);
+  });
 }
 
 // Hard coded to keep it simple for now.
@@ -202,7 +208,7 @@ export function performAction(id, action, options: HistoryOptions): void {
 }
 
 function performActionOnLatest(id, action, options: HistoryOptions): void {
-  const reducer = reducers[id];
+  const reducer = reducers.get(id);
   if (!reducer) {
     return;
   }
@@ -216,7 +222,7 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
     ? historyStack[lockIndex].states[id]
     : states.hasOwnProperty(id)
     ? states[id]
-    : initialStates[id];
+    : initialStates.get(id);
 
   const newState = reducer(
     baseState,
@@ -281,7 +287,7 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 }
 
 function performActionOnPast(id, action, options: HistoryOptions): void {
-  const reducer = reducers[id];
+  const reducer = reducers.get(id);
   if (!reducer) {
     return;
   }
@@ -298,7 +304,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
   const baseStatesWithLock = historyStack[lockIndex].states;
 
-  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates[id];
+  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates.get(id);
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -405,8 +411,8 @@ function checkNotifyAll() {
 
     const inOld = oldStates.hasOwnProperty(id), inNew = currentStates.hasOwnProperty(id);
 
-    const oldValue = !inOld ? initialStates[id] : oldStates[id] ;
-    const newValue = !inNew ? initialStates[id] : currentStates[id];
+    const oldValue = !inOld ? initialStates.get(id) : oldStates[id] ;
+    const newValue = !inNew ? initialStates.get(id) : currentStates[id];
 
     const changed = oldValue !== newValue; 
 
@@ -533,11 +539,11 @@ export function useResumableReducer<T>(
   }
 
   const currentState = useSyncExternalStore(
-    subscribers[id],
-    getSnapshots[id],
+    subscribers.get(id),
+    getSnapshots.get(id),
   );
 
-  return [currentState as T, dispatchers[id]];
+  return [currentState as T, dispatchers.get(id)];
 }
 
 const stateReducer = (s, v) => v;
