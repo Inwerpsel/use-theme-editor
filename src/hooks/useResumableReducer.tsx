@@ -10,17 +10,26 @@ import { useHotkeys } from 'react-hotkeys-hook';
 
 type Reducer<T> = (previous: T, action) => T
 
+// The initial state when a new key was added.
 const initialStates = new Map<string, any>();
+// The reducer for a key.
 const reducers = new Map<string, Reducer<any>>();
+// The function with which the key can be updated.
 const dispatchers = new Map<string, (action: any, options: HistoryOptions) => void>;
+// A function with no args and no return value.
 type voidFn = () => void;
+// Function for each key that subscribes to updates, and returns function that unsubscribes.
 const subscribers = new Map<string, (notify: voidFn) => voidFn>();
+// The function that is passed to React to obtain a snapshot of the state for a key, taking history into account.
 const getSnapshots = new Map<string, () => any>();
+// The set of notify functions to trigger subscribed React elements to render, for each key.
 const notifiers = new Map<string, Set<voidFn>>();
-
+// The history index to which some keys are locked.
 const locks = new Map<string, number>();
+// Incremented each time the lock map changes.
 let lockVersion = 0;
 
+// Lock state for a key to an index in the history array, then trigger render.
 export function addLock (id: string, index: number): void {
   locks.set(id, index);
   forceHistoryRender();
@@ -28,6 +37,7 @@ export function addLock (id: string, index: number): void {
   notifyOne(id);
 }
 
+// Removing the lock on a key, then trigger render.
 export function removeLock(id: string): void {
   locks.delete(id);
   forceHistoryRender();
@@ -35,6 +45,7 @@ export function removeLock(id: string): void {
   notifyOne(id);
 }
 
+// Set up initial state and all handlers for a new key.
 function addReducer(id, reducer, rawInitialState, initializer) {
   reducers.set(id, reducer);
   const initialState =
@@ -69,10 +80,11 @@ function addReducer(id, reducer, rawInitialState, initializer) {
       if (index >= historyStack.length) {
         return states[id];
       }
-      if (!historyStack[index].states.hasOwnProperty(id)) {
+      const entryStates = historyStack[index].states;
+      if (entryStates.hasOwnProperty(id)) {
         return initialState;
       }
-      return historyStack[index].states[id];
+      return entryStates[id];
     }
 
     return pointedStates.hasOwnProperty(id)
@@ -81,8 +93,8 @@ function addReducer(id, reducer, rawInitialState, initializer) {
   });
 }
 
-// Hard coded to keep it simple for now.
-// Not sure where and how to best configure this for a given piece of state.
+// This function is used to determine which states should be visited when using fast navigation.
+// Hard coded to keep it simple for now, it could be user configurable.
 export function isInterestingState(lastActions) {
   for (const k of ['THEME_EDITOR', 'uiLayout']) {
     if (lastActions.hasOwnProperty(k)) {
@@ -117,7 +129,7 @@ let states = {};
 // Used for change detection.
 let oldStates = {};
 // The state at the history offset, or the latest state if offset is 0.
-let pointedStates = {};
+let pointedStates = states;
 // The actions that produced the most recent state.
 let lastActions = {};
 // The time at which the latest value was set, used for debouncing.
@@ -214,6 +226,8 @@ export function performAction(id, action, options: HistoryOptions): void {
     : performActionOnLatest(id, action, options);
 }
 
+// This path is the only one that can execute frequently, as actions on top
+// of an older state will result in the next action being on the latest state.
 function performActionOnLatest(id, action, options: HistoryOptions): void {
   const reducer = reducers.get(id);
   if (!reducer) {
