@@ -7,12 +7,12 @@ function RecordScrollPosition({containerRef, id}) {
   const [n, setN] = useResumableState(`areaOffset#${id}`, 0);
 
   useEffect(() => {
-    // // Also restore the position on first render.
-    // containerRef.current?.scrollTo({
-    //   top: n,
-    //   left: 0,
-    //   behavior: "smooth",
-    // });
+    // Also restore the position on first render.
+    containerRef.current?.scrollTo({
+      top: n,
+      left: 0,
+      behavior: "smooth",
+    });
     const listener = event => {
       setN(
         Math.floor(event.currentTarget.scrollTop),
@@ -27,15 +27,20 @@ function RecordScrollPosition({containerRef, id}) {
 }
 
 function RestoreScrollPosition({containerRef, id}) {
-  const [n] = useResumableState(`areaOffset#${id}`, 0)
+  const [n] = useResumableState(`areaOffset#${id}`, 0);
 
   useEffect(() => {
-    containerRef.current?.scrollTo({
-      top: n,
-      left: 0,
-      behavior: "smooth",
-    });
-  }, [n])
+    const t = setTimeout(() => {
+      containerRef.current?.scrollTo({
+        top: n,
+        left: 0,
+        behavior: 'smooth',
+      });
+    }, 100);
+    return () => {
+      clearTimeout(t);
+    };
+  }, [n]);
 }
 
 export let excludedArea;

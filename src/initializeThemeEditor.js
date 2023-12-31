@@ -44,7 +44,7 @@ function toPropertyString(properties) {
 // To guarantee a consistent index, rules are not deleted, but emptied instead.
 function updateRule(selector, properties) {
   // Leading space is included in first property. Trailing here to ensure right empty behavior of 1 space.
-  const cssText = `${selector} {${toPropertyString(properties, ruleIndexes[selector])} }`;
+  const cssText = `${selector} {${toPropertyString(properties)} }`;
 
   if (!(selector in ruleIndexes)) {
     // New rule
@@ -52,14 +52,16 @@ function updateRule(selector, properties) {
     return;
   }
 
-  if (scopesStyleElement.sheet.cssRules[ruleIndexes[selector]].cssText === cssText) {
+  const ruleIndex = ruleIndexes[selector];
+
+  if (scopesStyleElement.sheet.cssRules[ruleIndex].cssText === cssText) {
     // Nothing to update.
     return;
   }
   // Add new rule.
-  scopesStyleElement.sheet.insertRule(cssText, ruleIndexes[selector]);
+  scopesStyleElement.sheet.insertRule(cssText, ruleIndex);
   // Remove previous, thereby restoring precarious order.
-  scopesStyleElement.sheet.deleteRule(ruleIndexes[selector] + 1)
+  scopesStyleElement.sheet.deleteRule(ruleIndex + 1);
 }
 
 // Throw away previous style elements and reconstruct new ones with the right values.
@@ -200,11 +202,11 @@ export const setupThemeEditor = async (config) => {
       }
     }
 
-    const mappedRules = selectorRules.reduce((groups,r) => {
-      const matches = [...r.testSelectors].filter(s => s.lastEl).map(s=>s.lastEl);
+    const mappedRules = selectorRules.reduce((groups, rule) => {
+      const matches = [...rule.testSelectors].filter(s => s.lastEl).map(s=>s.lastEl);
       if (matches.length > 1) {
         // Will solve later.
-        console.log('rule has multiple matches', r, matches)
+        console.log('rule has multiple matches', rule, matches)
       }
 
       if (matches.length === 1) {
@@ -214,7 +216,7 @@ export const setupThemeEditor = async (config) => {
           group = [];
           groups.set(el, group)
         }
-        group.push(r);
+        group.push(rule);
       }
 
       return groups;
@@ -258,10 +260,13 @@ export const setupThemeEditor = async (config) => {
       inspectedElements.push(target);
       ++inspectedIndex
     } else {
-      target.scrollIntoView({
-        block: 'center',
-        inline: 'end',
-        behavior: 'smooth'});
+      setTimeout(() => {
+        target.scrollIntoView({
+          block: 'center',
+          inline: 'end',
+          behavior: 'smooth',
+        });
+      }, 120);
     }
     // This algorithm was created in a case with certain assumptions that made it more than fast enough.
     // - Not more than 4 or 5 custom props per selector on average.
