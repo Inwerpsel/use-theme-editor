@@ -54,7 +54,7 @@ function ActionList(props) {
 
   return (
     <ul className='history-actions'>
-      {actions.map(([id, action], key) => {
+      {[...actions].map(([id, action], key) => {
         const isObject = typeof action === 'object';
         const isFromReducer = isObject && 'type' in action;
         const value = isFromReducer
@@ -156,7 +156,7 @@ export function HistoryVisualization() {
         <button onClick={() => console.log(pointedStates)}>console.log</button>
         {showJson && (
           <pre className="monospace-code">
-            {JSON.stringify(pointedStates, null, 2)}
+            {JSON.stringify(Object.fromEntries(pointedStates), null, 2)}
           </pre>
         )}
       </div>}
@@ -170,14 +170,14 @@ export function HistoryVisualization() {
 
           // Check if simple state would be changed by replaying.
           // Reducer actions are assumed to always be able to change state.
-          const canReplay = Object.entries(lastActions).some(
+          const canReplay = [...lastActions.entries()].some(
             ([id, action]) =>
-              typeof action === 'object' || states[id] !== pointedStates[id]
+              typeof action === 'object' || states.get(id) !== pointedStates.get(id)
           );
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
             // Always display an entry if state is locked to its index
-            if (!Object.keys(lastActions).some(id=>locks.has(id) && locks.get(id) === index)) {
+            if (![...lastActions.keys()].some(id=>locks.has(id) && locks.get(id) === index)) {
               return null;
             }
           }
@@ -200,7 +200,7 @@ export function HistoryVisualization() {
               </span>
               <ActionList
                 historyIndex={index}
-                actions={Object.entries(lastActions)}
+                actions={lastActions.entries()}
                 {...{ showPayloads }}
               />
               <div
@@ -259,7 +259,7 @@ export function HistoryVisualization() {
           </span>
           <ActionList
             historyIndex={historyStack.length}
-            actions={Object.entries(lastActions)}
+            actions={lastActions.entries()}
             {...{ showPayloads }}
           />
         </li>

@@ -78,17 +78,17 @@ function addReducer(id, reducer, rawInitialState, initializer) {
     if (locks.has(id)) {
       const index = locks.get(id);
       if (index >= historyStack.length) {
-        return states[id];
+        return states.has(id) ? states.get(id) : initialState;
       }
       const entryStates = historyStack[index].states;
-      if (entryStates.hasOwnProperty(id)) {
+      if (!entryStates.has(id)) {
         return initialState;
       }
-      return entryStates[id];
+      return entryStates.get(id);
     }
 
-    return pointedStates.hasOwnProperty(id)
-      ? pointedStates[id]
+    return pointedStates.has(id)
+      ? pointedStates.get(id)
       : initialState;
   });
 }
@@ -97,7 +97,7 @@ function addReducer(id, reducer, rawInitialState, initializer) {
 // Hard coded to keep it simple for now, it could be user configurable.
 export function isInterestingState(lastActions) {
   for (const k of ['THEME_EDITOR', 'uiLayout']) {
-    if (lastActions.hasOwnProperty(k)) {
+    if (lastActions.has(k)) {
       return true;
     }
   }
@@ -116,22 +116,29 @@ type HistoryOptions = {
   skipHistory?: boolean;
 }
 
+// type StateAction = {};
+
+type HistoryEntry = {
+  states: Map<string, any>,
+  lastActions: Map<string, any>,
+};
+
 // All entries in history, from oldest to latest.
-let historyStack = [];
+let historyStack = [] as HistoryEntry[];
 // Amount of steps back in time.
 let historyOffset = 0;
 // Prompt before destroying future when this many steps back in history.
 let historyWarnOnUpdateLimit = 5;
 // The tail of the history.
-let states = {};
+let states = new Map<string, any>();
 // The state that was rendered before the last state transition.
 // It's assumed that this state was fully applied in the whole tree.
 // Used for change detection.
-let oldStates = {};
+let oldStates = states;
 // The state at the history offset, or the latest state if offset is 0.
 let pointedStates = states;
 // The actions that produced the most recent state.
-let lastActions = {};
+let lastActions = new Map<string, any>();
 // The time at which the latest value was set, used for debouncing.
 let lastSet = 0;
 
@@ -240,9 +247,9 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   const hasLockInPast = hasLock && lockIndex < historyStack.length;
 
   const baseState = hasLockInPast
-    ? historyStack[lockIndex].states[id]
-    : states.hasOwnProperty(id)
-    ? states[id]
+    ? historyStack[lockIndex].states.get(id)
+    : states.has(id)
+    ? states.get(id)
     : initialStates.get(id);
 
   const newState = reducer(
@@ -253,13 +260,14 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   if (newState === baseState) {
     return;
   }
+  // Determine whether debouncing should kick in.
   const slowEnough = now - lastSet > (options?.debounceTime || 500);
   const skipHistory = !slowEnough || options?.skipHistory;
 
   // Afaik there is no possible benefit to having two consecutive identical states in history.
   function lastStateSuperFluous() {
     const prev = historyStack[historyStack.length - 1];
-    if (prev.states[id] !== newState) {
+    if (prev.states.get(id) !== newState) {
       return false;
     }
     const keys = Object.keys(prev.lastActions);
@@ -270,11 +278,12 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   const skippedHistoryNowSameAsPrevious = skipHistory && lastStateSuperFluous();
 
   oldStates = states;
-  states = {
-    ...states,
-    [id]: newState,
-  };
-  if (newState === initialStates.get(id)) delete states[id];
+  states = new Map(states);
+  if (newState === initialStates.get(id)) {
+    states.delete(id);
+  } else {
+    states.set(id, newState);
+  }
 
   historyOffset = 0;
 
@@ -296,11 +305,10 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   // just by having the same value for any short amount of time.
   lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
 
-  if (skipHistory) {
-    lastActions[id] = action;
-  } else {
-    lastActions = { [id]: action };
+  if (!skipHistory) {
+    lastActions = new Map();
   }
+  lastActions.set(id, action);
 
   if (hasLock) {
     // If there was a lock on this state, update it to the newly created state.
@@ -327,7 +335,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
   const baseStatesWithLock = historyStack[lockIndex].states;
 
-  const baseState = baseStatesWithLock.hasOwnProperty(id) ? baseStatesWithLock[id] : initialStates.get(id);
+  const baseState = baseStatesWithLock.has(id) ? baseStatesWithLock.get(id) : initialStates.get(id);
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -336,19 +344,19 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   if (newState === baseState) {
     return;
   }
-  const lockUpdates = {};
+  const lockUpdates = new Map();
   // The extra actions that are added when future locks are preserved.
-  const futureLockActions = {};
+  const futureLockActions = new Map();
   let hasFutureLocks = false;
   for (const [id, index] of locks.entries()) {
     if (index > baseIndex) {
       hasFutureLocks = true;
       if (index >= historyStack.length) {
-        lockUpdates[id] = states[id];
-        futureLockActions[id] = lastActions[id];
+        lockUpdates.set(id,states.get(id));
+        futureLockActions.set(id,  lastActions.get(id));
       } else {
-        lockUpdates[id] = historyStack[index].states[id];
-        futureLockActions[id] = historyStack[index].lastActions[id];
+        lockUpdates.set(id, historyStack[index].states.get(id));
+        futureLockActions.set(id, historyStack[index].lastActions.get(id));
       }
       locks.set(id, baseIndex + 1);
     }
@@ -359,8 +367,9 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
 
   const prevHistory = historyOffset === 1 ? historyStack : historyStack.slice(0, -historyOffset + 1);
   if (hasFutureLocks) {
+    const entry = new Map<string, any>([...prevStates, ...lockUpdates]);
     prevHistory.push({
-      states: {...prevStates, ...lockUpdates},
+      states: entry,
       lastActions: futureLockActions,
     })
   }
@@ -369,12 +378,13 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
     addLock(id, historyStack.length);
   }
  
-  states = {
-    ...prevStates,
-    ...lockUpdates,
-    [id]: newState,
-  };
-  if (newState === initialStates.get(id)) delete states[id];
+  states = new Map([...prevStates, ...lockUpdates]);
+  if (newState === initialStates.get(id)) {
+    states.delete(id);
+  } else {
+    states.set(id, newState);
+  }
+
   oldStates = prevStates;
   historyOffset = 0;
 
@@ -385,7 +395,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   // Otherwise, it would be possible to remove multiple recent entries (with different values)
   // just by having the same value for any short amount of time.
   lastSet = now;
-  lastActions = { [id]: action };
+  lastActions = new Map([[id, action]]);
 
   notifyOne(id);
 }
@@ -422,28 +432,34 @@ function notifyOne(id) {
 
 function checkNotifyAll() {
   setCurrentState();
-  const bothKeys = new Set([...Object.keys(oldStates), ...Object.keys(pointedStates)]);
 
-  for (const id of bothKeys.values()) {
+  for (const [id, value] of pointedStates.entries()) {
     const keyNotifiers = notifiers.get(id);
     if (!keyNotifiers) {
       // No need to compare if nobody's listening.
       continue;
     }
 
-    const inOld = oldStates.hasOwnProperty(id), inNew = pointedStates.hasOwnProperty(id);
-
-    const oldValue = !inOld ? initialStates.get(id) : oldStates[id] ;
-    const newValue = !inNew ? initialStates.get(id) : pointedStates[id];
-
-    const changed = oldValue !== newValue; 
-
-    if (changed) {
+    if (!oldStates.has(id) || oldStates.get(id) !== value) {
       for (const n of keyNotifiers.values()) {
         n();
       }
     }
   }
+
+  for (const id of oldStates.keys()) {
+    const keyNotifiers = notifiers.get(id);
+    if (!keyNotifiers) {
+      // No need to compare if nobody's listening.
+      continue;
+    }
+    if (!pointedStates.has(id)) {
+      for (const n of keyNotifiers.values()) {
+        n();
+      }
+    }
+  }
+
   // This is a temporary fix.
   forceHistoryRender();
 }
