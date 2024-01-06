@@ -85,9 +85,9 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  // if (vars.length === 0 && !group.inlineStyles && !group.elSrc && !group.elHtml) { 
-  //   return null;
-  // }
+  if (vars.length === 0 && !group.inlineStyles && !group.elSrc && !group.elHtml) { 
+    return null;
+  }
 
   const previewSize = '20px';
 
