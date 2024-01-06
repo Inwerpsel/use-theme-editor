@@ -519,7 +519,7 @@ export const VariableControl = (props) => {
 
             {!usages[0].isFake && (
               <ToggleButton controls={[showSelectors, setShowSelectors]}>
-                Selectors ({uniqueSelectors})
+                Rules ({uniqueSelectors})
               </ToggleButton>
             )}
 
