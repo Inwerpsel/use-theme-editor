@@ -37,7 +37,7 @@ export function useCompactSetting() {
 export function MovableElement({homeAreaId, element, index}) {
   const {
     origLocationsRef,
-    panelMap,
+    uiState,
     showMovers,
     movePanelTo,
     overElement, setOverElement,
@@ -58,7 +58,7 @@ export function MovableElement({homeAreaId, element, index}) {
     origLocationsRef.current[elementId] = homeAreaId;
   }
 
-  const [hostAreaId, order] = panelMap[elementId] || [];
+  const [hostAreaId, order] = uiState.map[elementId] || [];
   // There are 3 cases where we want to render in its default place.
   // 1) Element wasn't moved.
   // 2) Element was moved to its home area.

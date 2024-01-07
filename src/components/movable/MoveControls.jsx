@@ -8,7 +8,7 @@ import {AreasContext} from './MovablePanels';
 
 export function MoveControls() {
   const {
-    panelMap, setPanelMap,
+    uiState, setUiState,
     resetPanels,
     dragEnabled, setDragEnabled,
     showMovers, setShowMovers,
@@ -18,8 +18,8 @@ export function MoveControls() {
 
   const [inputName, setInputName] = useResumableLocalStorage('panel-arrangements-name', '');
   const isIdenticalToExisting = useMemo(() => {
-    return JSON.stringify(panelMap) === windowArrangments[inputName];
-  }, [windowArrangments, panelMap, inputName]);
+    return JSON.stringify(uiState) === windowArrangments[inputName];
+  }, [windowArrangments, uiState, inputName]);
 
   return (
     <div>
@@ -27,7 +27,7 @@ export function MoveControls() {
       <Checkbox controls={[dragEnabled, setDragEnabled]}>
         Drag elements
       </Checkbox>
-      {Object.keys(panelMap).length > 0 && (
+      {Object.keys(uiState.map).length > 0 && (
         <button onClick={() => confirm('Reset to default?') && resetPanels()}>
           reset
         </button>
@@ -51,7 +51,7 @@ export function MoveControls() {
             }
             setWindowArrangments({
               ...windowArrangments,
-              [inputName]: JSON.stringify(panelMap),
+              [inputName]: JSON.stringify(uiState),
             });
           }}
         >
@@ -73,7 +73,7 @@ export function MoveControls() {
             if (name === '') {
               return;
             }
-            setPanelMap(JSON.parse(windowArrangments[name]));
+            setUiState(JSON.parse(windowArrangments[name]));
           }}
         />
       </div>

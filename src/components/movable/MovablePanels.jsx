@@ -1,6 +1,7 @@
 import React, {createContext, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import { useInsertionEffect } from 'react';
 import {useLocalStorage, useResumableLocalStorage} from '../../hooks/useLocalStorage';
+// import { MovableElement } from './MovableElement';
 
 export const AreasContext = createContext({});
 
@@ -11,24 +12,24 @@ const byHostAndOrder = ([, [hostIdA, orderA]], [, [hostIdB, orderB]]) => {
   return hostIdA > hostIdB ? 1 : -1;
 };
 
-const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
+const updateElementLocation = (map, id, targetAreaId, targetElementId) => {
   if (!targetElementId) {
-    const otherOrders = Object.values(panelMap)
+    const otherOrders = Object.values(map)
       .filter(([area]) => area === targetAreaId)
       .map(([, order]) => order);
     const lastAreaOrder = Math.max(...otherOrders);
     // Add behind last element in the area.
     return {
-      ...panelMap,
+      ...map,
       [id]: [targetAreaId, lastAreaOrder + 1]
     };
   }
 
   const panelOrders = {};
 
-  return Object.entries(panelMap).sort(byHostAndOrder).reduce(
+  return Object.entries(map).sort(byHostAndOrder).reduce(
     (
-      panelMap,
+      map,
       [otherElementId, [otherAreaId]],
     ) => {
       if (!panelOrders[otherAreaId]) {
@@ -37,16 +38,16 @@ const updateElementLocation = (panelMap, id, targetAreaId, targetElementId) => {
 
       if (targetElementId === otherElementId && targetAreaId === otherAreaId) {
         panelOrders[otherAreaId]++;
-        panelMap[id] = [targetAreaId, panelOrders[otherAreaId]];
+        map[id] = [targetAreaId, panelOrders[otherAreaId]];
       }
 
       if (otherElementId !== id) {
         panelOrders[otherAreaId]++;
         const newOtherOrder = panelOrders[otherAreaId];
-        panelMap[otherElementId] = [otherAreaId, newOtherOrder];
+        map[otherElementId] = [otherAreaId, newOtherOrder];
       }
 
-      return panelMap;
+      return map;
     },
     {},
   );
@@ -65,14 +66,17 @@ export const defaultHooks = {
   }
 };
 
-export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
+export function MovablePanels({stateHook, children, hooks = defaultHooks, customElements}) {
   const areaRefs = useRef({});
   const origLocationsRef = useRef({});
 
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
-  const [panelMap, setPanelMap] = stateHook();
+  const [_uiState, setUiState] = stateHook();
+  // Ensure older format is interpreted correctly.
+  const uiState = 'map' in _uiState ? _uiState : { map: _uiState };
+  const map = uiState.map;
 
   const [showMovers, setShowMovers] = hooks.showMovers();
   const [drawerOpen, setDrawerOpen] = hooks.drawerOpen();
@@ -84,7 +88,7 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
 
       // Create initial area order if the area wasn't used before.
       if (
-        !Object.values(panelMap).some(
+        !Object.values(map).some(
           ([otherAreaId]) =>
             otherAreaId === areaId &&
             // Quick fix to make it ignore outdated element ids.
@@ -93,23 +97,23 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
       ) {
         let i = 0;
         Object.entries(origLocationsRef.current).forEach(([element, area]) => {
-          if (area === areaId && !(element in panelMap)) {
-            panelMap[element] = [area, i];
+          if (area === areaId && !(element in map)) {
+            map[element] = [area, i];
             i += 1;
           }
         });
       }
 
-      const newPanelMap = updateElementLocation(
-        panelMap,
+      const newMap = updateElementLocation(
+        map,
         id,
         areaId,
         overElementId
       );
 
-      setPanelMap(newPanelMap);
+      setUiState({...uiState, map: newMap});
     },
-    [panelMap]
+    [map]
   );
 
   // A 3 pass render is needed. Should not involve overhead.
@@ -193,10 +197,10 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
     }
 
     // console.timeEnd('Rectify order');
-  }, [JSON.stringify(panelMap), elementsRendered, drawerOpen]);
+  }, [JSON.stringify(uiState.map), elementsRendered, drawerOpen]);
 
   const resetPanels = () => {
-    setPanelMap({});
+    setUiState({...uiState, map: {}});
   };
 
   const timeoutRef = useRef({element: null, area: null});
@@ -212,7 +216,7 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
   return <AreasContext.Provider value={{
       areaRefs,
       origLocationsRef,
-      panelMap, setPanelMap,
+      uiState, setUiState,
       movePanelTo,
       resetPanels,
       showMovers, setShowMovers,
@@ -230,6 +234,15 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks}) {
     </div>
   </AreasContext.Provider>;
 }
+
+// function CustomElements({elements: customElements}) {
+//   const [createdElements]
+//   for (const El of customElements) {
+
+//     const reactEl = <El id
+//     return <MovableElement homeAreaId={'noexiste'} />
+//   }
+// }
 
 // Wait for some time before actually considering the drag leave event as
 // having happened. Not sure why I did this really.
