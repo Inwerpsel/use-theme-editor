@@ -16,55 +16,55 @@ import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 // to not have a rule of where to put things.
 export const use = {
   isSimpleSizes:
-    () => useResumableLocalStorage('responsive-simple-sizes', true),
+    () => useResumableLocalStorage('isSimpleSizes', true),
   screenOptions:
     () => [get.isSimpleSizes ? simpleScreenOptions : allScreenOptions],
   width:
-    () => useResumableLocalStorage('responsive-width', 360),
+    () => useResumableLocalStorage('width', 360),
   height:
-    () => useResumableLocalStorage('responsive-height', 640),
+    () => useResumableLocalStorage('height', 640),
   scales:
-    () => useResumableLocalStorage('responsive-scales', {} as {[index: string]: string}),
+    () => useResumableLocalStorage('scales', {} as {[index: string]: string}),
   prefersColorScheme:
     () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
-  uiArrangement:
+  uiLayout:
     () => useResumableLocalStorage('uiLayout', {}),
   propertyFilter:
-    () => useResumableLocalStorage('property-filter', 'all' as 'all' | 'colors'),
+    () => useResumableLocalStorage('propertyFilter', 'all' as 'all' | 'colors'),
   search:
-    () => useResumableLocalStorage('property-search', ''),
+    () => useResumableLocalStorage('search', ''),
   filteredSelectors:
     () => [[]],
-    // () => useResumableLocalStorage('class-filter', ['.btn-rounded', '.btn-lg'] as string[]),
+    // () => useResumableLocalStorage('filteredSelectors', ['.btn-rounded', '.btn-lg'] as string[]),
   showRawValues:
-    () => useResumableLocalStorage('displayRawValues', false),
+    () => useResumableLocalStorage('showRawValues', false),
   excludedRawValues:
     () => useResumableLocalStorage('excludedRawValues', ['initial', 'none'] as string[]),
   frameClickBehavior:
-    () => useLocalStorage('theme-editor-frame-click-behavior', 'any' as 'any' | 'alt'),
+    () => useLocalStorage('frameClickBehavior', 'any' as 'any' | 'alt'),
   nativeColorPicker:
-    () => useLocalStorage('native-color-picker', true),
+    () => useLocalStorage('nativeColorPicker', true),
   includeDefaultPalette:
-    () => useLocalStorage('include-default-palette', false),
+    () => useLocalStorage('includeDefaultPalette', false),
   fileName:
-    () => useResumableLocalStorage('theme-name', 'theme'),
+    () => useResumableLocalStorage('fileName', 'theme'),
   annoyingPrefix:
-    () => useLocalStorage('annoying-prefix', ''),
+    () => useLocalStorage('annoyingPrefix', ''),
   nameReplacements:
     () => useLocalStorage(
-      'name-replacements',
+      'nameReplacements',
       [] as { id: string, from: string, to: string, order: number, active: boolean }[]
     ),
   showCssProperties:
-    () => useLocalStorage('show-css-properties', false),
+    () => useLocalStorage('showCssProperties', true),
   linkCssProperties:
-    () => useLocalStorage('link-css-properties', true),
+    () => useLocalStorage('linkCssProperties', false),
   showSourceLinks:
-    () => useLocalStorage('show-source-links', false),
+    () => useLocalStorage('showSourceLinks', false),
   windowArrangments:
-    () => useLocalStorage('window-arrangments', {}),
+    () => useLocalStorage('windowArrangments', {}),
   webpackHome:
-    () => useLocalStorage('webpack-home', ''),
+    () => useLocalStorage('webpackHome', ''),
   visualizeHistory: 
     () => useLocalStorage('visualizeHistory', false),
   visualizeHistoryAlways: 

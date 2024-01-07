@@ -99,7 +99,7 @@ export function SmallFullHeightFrame(props) {
         className="responsive-frame-container"
         style={{
           transform: `scale(${scale})`,
-          width: `${wrapperMargin + parseInt(width)}px`,
+          width: `${wrapperMargin + width}px`,
           overflow: 'visible',
           //   padding: '0',
           //   boxSizing: 'border-box',
@@ -110,7 +110,7 @@ export function SmallFullHeightFrame(props) {
           ref={scrollFrameRef}
           {...{
             src,
-            width: parseInt(width),
+            width,
             height: windowHeight,
           }}
         />

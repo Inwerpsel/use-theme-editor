@@ -336,6 +336,7 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Replace with other variable
     - Typed control (different per type, will do after figuring out how to handle property types)
     - Unset button
+    - Media query
   - Element locator:
     - Selector being located
     - Scroll in view button
@@ -347,8 +348,6 @@ A few components are not (fully) working at the moment, mostly because they depe
   - Togglable elements:
     - CSS properties (+ indicator if current var is not the full value)
     - Source code link (if available, filename (formatted) + line)
-  - Upcoming elements:
-    - Media query
 
 - Support "locally" scoped custom properties
   - Problem: Selector specificity when adding a rule after the existing rules
@@ -414,11 +413,6 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Doesn't work well on large pages
     - e.g. Halfmoon
   - Could modify the CSS to work differently with the same result
-- Drop tokens onto page like Figma tokens plugin
-  - Can reuse inspect function and auto apply the innermost fitting the token type.
-  - If multiple options possible
-    - Show dialog on nearest side of iframe (or configurable)
-    - Hover an option previews it
 - Visualize overridden scope values, so that you can see what happens when removed from a scope.
   - However, it shouldn't result in a devtools like experience, where over half of what's shown is overridden rules.
 - Allow mapping hotkeys to any reducer action

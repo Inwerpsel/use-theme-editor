@@ -192,7 +192,7 @@ export const ThemeEditor = (props) => {
       {/* <SpeakGlobalHooks hooks={use} /> */}
       <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
       <div className="theme-editor">
-        <MovablePanels stateHook={use.uiArrangement}>
+        <MovablePanels stateHook={use.uiLayout}>
           <div
             style={{
               display: 'flex',
