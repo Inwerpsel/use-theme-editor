@@ -23,7 +23,7 @@ export const ROOT_SCOPE = ':root';
 
 type Handler = (state: typeof DEFAULT_STATE, action: { [index: string]: any }) => typeof DEFAULT_STATE;
 
-export const ACTIONS = {
+export const ACTIONS: {[index: string]: Handler} = {
   set: (state, { name, value, scope = ROOT_SCOPE }) => {
     const {
       scopes,
@@ -234,7 +234,7 @@ export const ACTIONS = {
   },
 };
 
-const reducer = reducerOf(ACTIONS);
+const reducer = reducerOf<typeof DEFAULT_STATE>(ACTIONS);
 
 function loadFromStorage(s) {
   return {
