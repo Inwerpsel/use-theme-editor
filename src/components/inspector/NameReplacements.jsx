@@ -33,12 +33,12 @@ export function NameReplacements() {
 
     const [newFrom, setNewFrom] = useState('');
     const [newTo, setNewTo] = useState('');
-    const [isCompact, setIsCompact] = useCompactSetting();
+    const [isCompact] = useCompactSetting();
 
     return (
       <div>
         <DragHandle/>
-        <CompactModeButton {...{isCompact, setIsCompact}}/>
+        <CompactModeButton />
         <h4>
             Replace strings in names
         </h4>

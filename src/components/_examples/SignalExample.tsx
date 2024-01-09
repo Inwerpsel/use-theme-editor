@@ -1,6 +1,8 @@
 import React, { Fragment, useState } from "react";
-import { $ } from "../../state";
+import { $, get, use } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
+import { CompactModeButton } from "../movable/CompactModeButton";
+import { useCompactSetting } from "../movable/MovableElement";
 
 function TimeAtRender() {
     return <time>{Date.now()}</time>
@@ -63,8 +65,19 @@ function ShowProp({prop, area}) {
 }
 
 export function SignalExample() {
-    const [on, setOn] = useState(true)
+    const [on, setOn] = useState(true);
+
+    const [compact] = useCompactSetting();
+
+    if (compact) {
+        return <div>
+            <CompactModeButton />
+            <h2>Signal example</h2>
+        </div>
+    }
+
     return <div>
+        <CompactModeButton />
         <h2>Signal example</h2>
         <p>
             The current area is {$.width} * {$.height} = {$.area}. * 2 = {$.areaDoubled}
@@ -77,11 +90,44 @@ export function SignalExample() {
         <p>
             <Checkbox controls={[on, setOn]}>memo</Checkbox>
             <br/>
-            { !on ? 'Avoided calling signal' : $.area}
+            { !on ? 'Avoided creating signal' : $.area}
         </p>
         <h3>Inject into unaware components</h3>
         <p>
             <ShowProp prop={$.propertyFilter} area={$.area} />
         </p>
+        <h3>Simple benchmark</h3>
+        <ManyHookCalls/>
     </div>
+}
+
+
+function ManyHookCalls() {
+    const [show, setShow] = useState(true);
+    const [n, setN] = useState(10);
+
+    return (
+      <Fragment>
+        {show && <DoMany {...{n}} keys={['areaDoubled']} />}
+        <Checkbox controls={[show, setShow]}>MANY</Checkbox>
+        <input
+          disabled={show}
+          type="number"
+          value={n}
+          onChange={(e) => setN(parseInt(e.target.value))}
+        />
+      </Fragment>
+    );
+}
+type UseKey = keyof typeof use;
+
+function DoMany({n, keys}: {n: number, keys: UseKey[]}) {
+
+    const ar = [];
+    for (let i = 0; i < n; i++) {
+        for (const k of keys) {
+            ar.push(get[k]);
+        }
+    }
+    return null;
 }

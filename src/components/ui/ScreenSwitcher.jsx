@@ -13,7 +13,7 @@ export function ScreenSwitcher() {
 
   const { screenOptions } = get;
 
-  const [isCompact, setIsCompact] = useCompactSetting();
+  const [isCompact] = useCompactSetting();
 
   const comp = isCompact ? (
     <SelectControl
@@ -50,7 +50,7 @@ export function ScreenSwitcher() {
 
   return (
     <div>
-      <CompactModeButton {...{ isCompact, setIsCompact }} />
+      <CompactModeButton />
       {comp}
     </div>
   );

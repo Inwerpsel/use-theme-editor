@@ -1,7 +1,8 @@
 import React from 'react';
+import { useCompactSetting } from './MovableElement';
 
-export function CompactModeButton(props) {
-  const { isCompact, setIsCompact } = props;
+export function CompactModeButton() {
+  const [isCompact, setIsCompact] = useCompactSetting();
 
   return (
     <button
