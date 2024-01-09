@@ -221,7 +221,20 @@ export const ThemeEditor = (props) => {
                 flexGrow: 1,
               }}
             >
+              <HistoryControls />
               <FrameScaleSlider/>
+            </Area>
+          </div>
+          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
+            <Area id="area-left">
+              <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
+            </Area>
+            <ResizableFrame src={window.location.href} />
+            {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
+            
+            <Area id="area-right">
+              <HistoryVisualization />
+              <ThemeUploadPanel/>
               <div className={'theme-editor-menu'}>
                 <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
                   Import/export
@@ -233,24 +246,12 @@ export const ThemeEditor = (props) => {
                   Server
                 </ToggleButton>
               </div>
-            </Area>
-          </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
-            <Area id="area-left">
-              <MoveControls />
-              <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
-            </Area>
-            <ResizableFrame src={window.location.href} />
-            {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
-            
-            <Area id="area-right">
               <Fragment>
                 {serverThemesDisplayed && <ServerThemesList/>}
               </Fragment>
               <Fragment>{sheetsDisablerDisplayed && <StylesheetDisabler />}</Fragment>
               <Fragment>{importDisplayed && <ImportExportTools />}</Fragment>
 
-              <ThemeUploadPanel/>
               <InformationVisibilitySettings />
               <ColorSettings />
               <div>
@@ -265,8 +266,6 @@ export const ThemeEditor = (props) => {
                 >Auto open first group on inspect</Checkbox>
                 <WebpackHomeInput />
               </div>
-              <HistoryControls />
-              <HistoryVisualization />
             </Area>
           </div>
           <div
@@ -286,6 +285,7 @@ export const ThemeEditor = (props) => {
               }}
             ></Area>
             <Drawer>
+              <MoveControls />
               <CustomVariableInput/>
               <FrameSizeSettings />
               <ThemeEditorExtraOptions />
