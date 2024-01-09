@@ -25,7 +25,7 @@ export function CurrentTheme() {
   const [showActive, setShowActive] = useState(true);
   const [hideNotFound, setHideNotFound] = useState(true);
 
-  const [isOpen, setIsOpen] = useLocalStorage('current-theme-open', true);
+  const [isOpen, setIsOpen] = useLocalStorage('current-theme-open', false);
   const UNFOUND = 'UNFOUND';
 
   // Also filters.
