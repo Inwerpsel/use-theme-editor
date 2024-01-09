@@ -1,6 +1,6 @@
-import { useEffect, useInsertionEffect, useState } from 'react';
+import { useInsertionEffect, useState } from 'react';
 import {getLocalStorageNamespace} from '../functions/getLocalStorageNamespace';
-import { StateAndUpdater, useResumableState } from './useResumableReducer';
+import { StateAndUpdater, useResumableState, useSingleEffect } from './useResumableReducer';
 
 function apply(type, value) {
   switch (type) {
@@ -90,6 +90,13 @@ export function useLocalStorage<T>(key: string, defaultValue: T): StateAndUpdate
   ];
 };
 
+function store(isObject: boolean, id, value: any) {
+  localStorage.setItem(
+    id,
+    !isObject ? value : JSON.stringify(value)
+  )
+}
+
 export function useResumableLocalStorage<T>(key: string, defaultValue: T): StateAndUpdater<T> {
   const scopedKey = getLocalStorageNamespace() + key;
   const type = typeof defaultValue;
@@ -103,21 +110,7 @@ export function useResumableLocalStorage<T>(key: string, defaultValue: T): State
     return apply(type, stored);
   });
 
-  useEffect(() => {
-    // This has a few drawbacks but it's an improvement over setting it only in the dispatcher.
-    // It's a simple way to ensure local storage is in sync with the selected history state.
-    // Drawback 1: It doesn't account for states that have no element listening, rare atm.
-    // Drawback 2: It will set local storage to same value for each listening element. The
-    // impact of this should be manageable atm and it's not that slow.
-    //
-    // Ideally the entire history will be preserved in local storage, or at least the restorable
-    // portion of it. So this will change completely, so keeping it simple for now.
-
-    localStorage.setItem(
-      scopedKey,
-      !isObject ? value : JSON.stringify(value)
-    );
-  }, [value]);
+  useSingleEffect(key, store.bind(null, isObject));
 
   return [
     value,

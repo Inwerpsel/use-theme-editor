@@ -29,6 +29,44 @@ const locks = new Map<string, number>();
 // Incremented each time the lock map changes.
 let lockVersion = 0;
 
+// Each piece of state can have a single effect, which is simply added to the notifiers for that id, once.
+const effectsDone = new Set<string>();
+
+function readSync(id: string): any {
+  let sourceState;
+  if (locks.has(id)) {
+    const index = locks.get(id);
+    sourceState = index >= historyStack.length ? states : historyStack[index].states;
+  } else {
+    sourceState = pointedStates;
+  }
+
+  return sourceState.has(id) ? sourceState.get(id) : initialStates.get(id);
+}
+
+// Add a single perpetual effect for a key.
+// It can respond to changes regardless of whether any React element is listening
+// to changes.
+// For now, only one effect per key is supported, but perhaps that's enough.
+// It simply uses the same mechanism as what is used to notify React of changes.
+export function useSingleEffect(id: string, f: (id: string, value: any) => void) {
+  if (effectsDone.has(id)) {
+    // Only 1 effect is allowed to register per key.
+    return;
+  }
+  let set = notifiers.get(id);
+  if (set === undefined) {
+    set = new Set();
+    notifiers.set(id, set);
+  }
+  set.add(() => {
+    f(id, readSync(id))
+  });
+  // The effect should remain in this set indefinitely so that history navigation
+  // can be properly applied without relying on any component being on the screen.
+  effectsDone.add(id);
+}
+
 // Lock state for a key to an index in the history array, then trigger render.
 export function addLock (id: string, index: number): void {
   locks.set(id, index);
@@ -75,20 +113,15 @@ function addReducer(id, reducer, rawInitialState, initializer) {
     };
   });
   getSnapshots.set(id, () => {
+    let sourceStates;
     if (locks.has(id)) {
       const index = locks.get(id);
-      if (index >= historyStack.length) {
-        return states.has(id) ? states.get(id) : initialState;
-      }
-      const entryStates = historyStack[index].states;
-      if (!entryStates.has(id)) {
-        return initialState;
-      }
-      return entryStates.get(id);
+      sourceStates = index >= historyStack.length ? states : historyStack[index].states;
+    } else {
+      sourceStates = pointedStates;
     }
-
-    return pointedStates.has(id)
-      ? pointedStates.get(id)
+    return sourceStates.has(id)
+      ? sourceStates.get(id)
       : initialState;
   });
 }
@@ -436,7 +469,6 @@ function checkNotifyAll() {
   for (const [id, value] of pointedStates.entries()) {
     const keyNotifiers = notifiers.get(id);
     if (!keyNotifiers) {
-      // No need to compare if nobody's listening.
       continue;
     }
 
@@ -450,7 +482,6 @@ function checkNotifyAll() {
   for (const id of oldStates.keys()) {
     const keyNotifiers = notifiers.get(id);
     if (!keyNotifiers) {
-      // No need to compare if nobody's listening.
       continue;
     }
     if (!pointedStates.has(id)) {
