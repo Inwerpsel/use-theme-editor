@@ -5,5 +5,13 @@ import { TextControl } from "../controls/TextControl";
 export function WebpackHomeInput() {
     const [webpackHome, setWebpackHome] = use.webpackHome();
 
-    return <TextControl value={webpackHome} onChange={v => setWebpackHome(v)} label='Webpack home'/>;
+    return (
+      <TextControl
+        value={webpackHome}
+        onChange={(v) => setWebpackHome(v)}
+        label="Webpack home"
+        placeholder="webpack home path"
+        title="Enter the root folder on your system for this page to open source links in VSCode"
+      />
+    );
 }
