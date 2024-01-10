@@ -474,6 +474,7 @@ button {
 }
 
 .svg-inspect-wrapper {
+  overflow: hidden !important;
   align-self: flex-start;
 
   > svg {
