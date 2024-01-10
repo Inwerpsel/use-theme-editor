@@ -43,8 +43,6 @@ export const ThemeEditorContext = createContext({});
 
 export const prevGroups = [];
 
-let prevOpengroups = null;
-
 export const ThemeEditor = (props) => {
   const {
     config,
@@ -60,9 +58,7 @@ export const ThemeEditor = (props) => {
 
   const [currentInspected, setCurrentInspected] = useResumableState('inspected-index', -1);
   const unfilteredGroups = prevGroups[currentInspected] || _unfilteredGroups;
-  const [_openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
-  const openGroups = prevOpengroups !== null ? prevOpengroups : _openGroups;
-  prevOpengroups = null;
+  const [openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
   
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
@@ -78,7 +74,6 @@ export const ThemeEditor = (props) => {
   const [
     {
       scopes,
-      // changeRequiresReset,
     },
     dispatch,
   ] = useThemeEditor({allVars, defaultValues});
@@ -112,17 +107,14 @@ export const ThemeEditor = (props) => {
 
 
   useLayoutEffect(() => {
-    if (currentInspected !== -1 && currentInspected !== inspectedIndex) {
-      // window.requestAnimationFrame(() => {
-        frameRef.current?.contentWindow.postMessage(
-          {
-            type: 'inspect-previous',
-            payload: { index: currentInspected },
-          },
-          window.location.origin
-        );    
-      // });
-      prevOpengroups = openGroups;
+    if (currentInspected !== -1 && currentInspected <= inspectedIndex) {
+      frameRef.current?.contentWindow.postMessage(
+        {
+          type: 'inspect-previous',
+          payload: { index: currentInspected },
+        },
+        window.location.origin
+      );    
     }
   }, [currentInspected]);
 
@@ -167,7 +159,6 @@ export const ThemeEditor = (props) => {
       window.location.origin,
       );
   }, [scopes]);
-
 
   return (
     <ThemeEditorContext.Provider

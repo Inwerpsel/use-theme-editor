@@ -521,8 +521,32 @@ export const setupThemeEditor = async (config) => {
           window.location.href
         );
         break;
-      case 'inspect-previous': 
-        inspect(index);
+      case 'inspect-previous': {
+        const element = inspectedElements[index];
+        setTimeout(() => {
+          element.scrollIntoView({
+            block: 'nearest',
+            inline: 'end',
+            behavior: 'smooth',
+          });
+        }, 120);
+        if (lastHighlightTimeout) {
+          const [timeout, handler, timeoutElement] = lastHighlightTimeout;
+  
+          if (timeoutElement === element) {
+            return;
+          }
+          window.clearTimeout(timeout);
+          handler();
+        }
+        addHighlight(element);
+        const handler = () => {
+          removeHighlight(element);
+          lastHighlightTimeout = null;
+        };
+  
+        lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];    
+       }
     }
   };
   window.addEventListener('message', messageListener, false);
