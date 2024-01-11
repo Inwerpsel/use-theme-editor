@@ -175,6 +175,26 @@ let lastActions = new Map<string, any>();
 // The time at which the latest value was set, used for debouncing.
 let lastSet = 0;
 
+export function restoreHistoryFromDb() {
+  // This only restores the history timeline (past and future).
+  // The current state is still received from local storage, because that's synchronous.
+  // We need to store the initial state as a starting point to replay stored actions.
+
+  // 1. Read DB
+
+  // 2. Then, update history stack and notify history components.
+  // Should not result in any state changes, though it can mean history offset changes as a result.
+}
+
+function storeAction() {
+  // If action is an actual action object, we need to store the action itself.
+  // If action is a function, we need to store the result state, as we can't rerun the function.
+  // Could be a problem for large objects like the moved elements state (prob better make those reducer).
+
+  // Some actions need additional data to store: inspected element would need a path in the document,
+  // then they can be restored as long as the document doesn't change.
+}
+
 export function historyBack(amount = 1): void {
   const oldIndex = historyStack.length - historyOffset;
   if (oldIndex < 1) {
@@ -300,7 +320,7 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   // Afaik there is no possible benefit to having two consecutive identical states in history.
   function lastStateSuperFluous() {
     const prev = historyStack[historyStack.length - 1];
-    if (prev.states.get(id) !== newState) {
+    if (prev?.states.get(id) !== newState) {
       return false;
     }
     const keys = Object.keys(prev.lastActions);
