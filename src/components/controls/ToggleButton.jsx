@@ -3,6 +3,7 @@ import { controlsAreEqual } from './Checkbox';
 
 export const ToggleButton = memo(function ToggleButton({
   controls: [enabled, setEnabled],
+  dispatchArgs = [],
   children,
   ...other
 }) {
@@ -10,7 +11,7 @@ export const ToggleButton = memo(function ToggleButton({
     <button
       {...other}
       title={!enabled ? 'Show' : 'Hide'}
-      onClick={() => setEnabled(!enabled)}
+      onClick={() => setEnabled(!enabled, ...dispatchArgs)}
       style={{ border: enabled ? '4px solid black' : '1px solid black' }}
     >
       {children}
