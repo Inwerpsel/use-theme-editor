@@ -247,27 +247,24 @@ export const setupThemeEditor = async (config) => {
     // console.log('groups', groups);
   }
 
-  function inspect(targetOrIndex) {
-    const isPrevious = typeof targetOrIndex === 'number';
-    const target = isPrevious ? inspectedElements[targetOrIndex] : targetOrIndex;
+  const groupElementsCache = new WeakMap();
+
+  let lastInspected;
+
+  function inspect(target) {
 
     // Laziest feature flag ever.
     if (window._testNewInspection) {
       inspectNew(target);
     }
 
-    if (!isPrevious) {
-      inspectedElements.push(target);
-      ++inspectedIndex
-    } else {
-      setTimeout(() => {
-        target.scrollIntoView({
-          block: 'center',
-          inline: 'end',
-          behavior: 'smooth',
-        });
-      }, 120);
+    if (target === lastInspected) {
+      return;
     }
+    lastInspected = target;
+
+    inspectedElements.push(target);
+    ++inspectedIndex;
     // This algorithm was created in a case with certain assumptions that made it more than fast enough.
     // - Not more than 4 or 5 custom props per selector on average.
     // - Not a lot of selectors per HTML element.
@@ -283,10 +280,9 @@ export const setupThemeEditor = async (config) => {
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
+    groupElementsCache.set(target, groups.map(({element}) => ({element})));
     // console.timeEnd('old');
     // console.log('oldgroups', groups);
-
-    const currentInspectedIndex = isPrevious ? targetOrIndex : inspectedIndex;
 
     // It's not possible to send a message that includes a reference to a DOM element. 
     // Instead, every time we update the groups, we store the last groups. This
@@ -299,7 +295,7 @@ export const setupThemeEditor = async (config) => {
         type: 'render-vars',
         payload: {
           groups: withElementIndexes,
-          index: currentInspectedIndex,
+          index: inspectedIndex,
         },
       },
       window.location.href
@@ -323,7 +319,7 @@ export const setupThemeEditor = async (config) => {
         lastHighlightTimeout = null;
       };
 
-      lastHighlightTimeout = [setTimeout(handler, isPrevious ? 2400 : 700), handler, element];    
+      lastHighlightTimeout = [setTimeout(handler, 700), handler, element];    
     }
   }
 
@@ -530,6 +526,7 @@ export const setupThemeEditor = async (config) => {
             behavior: 'smooth',
           });
         }, 120);
+
         if (lastHighlightTimeout) {
           const [timeout, handler, timeoutElement] = lastHighlightTimeout;
   
@@ -539,6 +536,9 @@ export const setupThemeEditor = async (config) => {
           window.clearTimeout(timeout);
           handler();
         }
+        
+        lastInspected = element;
+        lastGroups = groupElementsCache.get(element);
         addHighlight(element);
         const handler = () => {
           removeHighlight(element);
