@@ -36,7 +36,7 @@ function readSync(id: string): any {
   let sourceState;
   if (locks.has(id)) {
     const index = locks.get(id);
-    sourceState = index >= historyStack.length ? states : historyStack[index].states;
+    sourceState = index >= past.length ? states : past[index].states;
   } else {
     sourceState = pointedStates;
   }
@@ -116,7 +116,7 @@ function addReducer(id, reducer, rawInitialState, initializer) {
     let sourceStates;
     if (locks.has(id)) {
       const index = locks.get(id);
-      sourceStates = index >= historyStack.length ? states : historyStack[index].states;
+      sourceStates = index >= past.length ? states : past[index].states;
     } else {
       sourceStates = pointedStates;
     }
@@ -157,7 +157,7 @@ type HistoryEntry = {
 };
 
 // All entries in history, from oldest to latest.
-let historyStack = [] as HistoryEntry[];
+let past: HistoryEntry[] = [];
 // Amount of steps back in time.
 let historyOffset = 0;
 // Prompt before destroying future when this many steps back in history.
@@ -196,7 +196,7 @@ function storeAction() {
 }
 
 export function historyBack(amount = 1): void {
-  const oldIndex = historyStack.length - historyOffset;
+  const oldIndex = past.length - historyOffset;
   if (oldIndex < 1) {
     return;
   }
@@ -204,7 +204,7 @@ export function historyBack(amount = 1): void {
   oldStates =
     historyOffset === 0
       ? states
-      : historyStack[oldIndex].states;
+      : past[oldIndex].states;
 
   historyOffset += amount;
 
@@ -217,7 +217,7 @@ export function historyForward(amount = 1): void {
   }
 
   const newOffset = Math.max(0, historyOffset - amount);
-  oldStates = historyStack[historyStack.length - historyOffset].states;
+  oldStates = past[past.length - historyOffset].states;
   historyOffset = newOffset;
   checkNotifyAll();
 }
@@ -232,9 +232,9 @@ export function historyForwardOne(): void {
 
 export function historyBackFast(): void {
   let newOffset = historyOffset;
-  while (newOffset < historyStack.length) {
+  while (newOffset < past.length) {
     newOffset++;
-    const entry = historyStack[historyStack.length - newOffset];
+    const entry = past[past.length - newOffset];
     if (isInterestingState(entry.lastActions)) {
       break;
     }
@@ -243,7 +243,7 @@ export function historyBackFast(): void {
   oldStates =
     historyOffset === 0
       ? states
-      : historyStack[historyStack.length - historyOffset].states;
+      : past[past.length - historyOffset].states;
 
   historyOffset = newOffset;
 
@@ -257,13 +257,13 @@ export function historyForwardFast(): void {
   }
   while (newOffset > 0) {
     newOffset--;
-    const actions = newOffset === 0 ? lastActions : historyStack[historyStack.length - newOffset].lastActions;
+    const actions = newOffset === 0 ? lastActions : past[past.length - newOffset].lastActions;
     if (isInterestingState(actions)) {
       break;
     }
   }
 
-  oldStates = historyStack[historyStack.length - historyOffset].states;
+  oldStates = past[past.length - historyOffset].states;
   historyOffset = newOffset;
 
   checkNotifyAll();
@@ -272,10 +272,10 @@ export function historyForwardFast(): void {
 export function clearHistory(): void {
   const currentlyInThePast = historyOffset > 0;
 
-  historyStack = [];
+  past = [];
   historyOffset = 0;
-  lastActions = !currentlyInThePast ? lastActions : historyStack[historyStack.length - historyOffset].lastActions;;
-  states = !currentlyInThePast ? states : historyStack[historyStack.length - historyOffset].states;
+  lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
+  states = !currentlyInThePast ? states : past[past.length - historyOffset].states;
 
   checkNotifyAll();
 }
@@ -297,10 +297,10 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 
   const lockIndex = locks.get(id);
   const hasLock = locks.has(id);
-  const hasLockInPast = hasLock && lockIndex < historyStack.length;
+  const hasLockInPast = hasLock && lockIndex < past.length;
 
   const baseState = hasLockInPast
-    ? historyStack[lockIndex].states.get(id)
+    ? past[lockIndex].states.get(id)
     : states.has(id)
     ? states.get(id)
     : initialStates.get(id);
@@ -319,7 +319,7 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 
   // Afaik there is no possible benefit to having two consecutive identical states in history.
   function lastStateSuperFluous() {
-    const prev = historyStack[historyStack.length - 1];
+    const prev = past[past.length - 1];
     if (prev?.states.get(id) !== newState) {
       return false;
     }
@@ -340,12 +340,12 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 
   historyOffset = 0;
 
-  historyStack = skipHistory
+  past = skipHistory
     ? skippedHistoryNowSameAsPrevious
-      ? historyStack.slice(0, -1)
-      : historyStack
+      ? past.slice(0, -1)
+      : past
     : [
-        ...historyStack,
+        ...past,
         {
           states: oldStates,
           lastActions,
@@ -365,7 +365,7 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 
   if (hasLock) {
     // If there was a lock on this state, update it to the newly created state.
-    addLock(id, historyStack.length);
+    addLock(id, past.length);
   }
   notifyOne(id);
 }
@@ -382,11 +382,11 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   }
 
   const now = performance.now();
-  const baseIndex = historyStack.length - historyOffset;
-  const prevEntry = historyStack[baseIndex];
+  const baseIndex = past.length - historyOffset;
+  const prevEntry = past[baseIndex];
   const prevStates = prevEntry.states;
   const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
-  const baseStatesWithLock = historyStack[lockIndex].states;
+  const baseStatesWithLock = past[lockIndex].states;
 
   const baseState = baseStatesWithLock.has(id) ? baseStatesWithLock.get(id) : initialStates.get(id);
   const newState = reducer(
@@ -404,21 +404,21 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   for (const [id, index] of locks.entries()) {
     if (index > baseIndex) {
       hasFutureLocks = true;
-      if (index >= historyStack.length) {
-        lockUpdates.set(id,states.get(id));
-        futureLockActions.set(id,  lastActions.get(id));
+      if (index >= past.length) {
+        lockUpdates.set(id, states.get(id));
+        futureLockActions.set(id, lastActions.get(id));
       } else {
-        lockUpdates.set(id, historyStack[index].states.get(id));
-        futureLockActions.set(id, historyStack[index].lastActions.get(id));
+        lockUpdates.set(id, past[index].states.get(id));
+        futureLockActions.set(id, past[index].lastActions.get(id));
       }
       locks.set(id, baseIndex + 1);
     }
   }
   // const isNowDefaultState = newState === initialStates[id];
-  // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in historyStack[baseIndex - 1].states);
+  // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in past[baseIndex - 1].states);
   // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
-  const prevHistory = historyOffset === 1 ? historyStack : historyStack.slice(0, -historyOffset + 1);
+  const prevHistory = historyOffset === 1 ? past : past.slice(0, -historyOffset + 1);
   if (hasFutureLocks) {
     const entry = new Map<string, any>([...prevStates, ...lockUpdates]);
     prevHistory.push({
@@ -428,7 +428,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   }
   if (locks.has(id)) {
     // If there was a lock on this state, update it to the newly created state.
-    addLock(id, historyStack.length);
+    addLock(id, prevHistory.length);
   }
  
   states = new Map([...prevStates, ...lockUpdates]);
@@ -441,7 +441,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   oldStates = prevStates;
   historyOffset = 0;
 
-  historyStack = prevHistory;
+  past = prevHistory;
 
   // If the previous state was removed from the history because it was duplicate,
   // it should result in a new entry in any subsequent dispatches to the same id.
@@ -458,7 +458,7 @@ let forceHistoryRender = () => {};
 function setCurrentState() {
   pointedStates =
     historyOffset > 0
-      ? historyStack[historyStack.length - historyOffset].states
+      ? past[past.length - historyOffset].states
       : states;
 }
 
@@ -538,7 +538,7 @@ function checkNotifyAll() {
 //     }
 //     const { historyOffset } = state;
 //     const diff =
-//       state.historyStack.length - historyOffset - (historyState?.length || 0);
+//       past.length - historyOffset - (historyState?.length || 0);
 //     if (diff === 0) {
 //       return;
 //     }
@@ -587,14 +587,14 @@ export function SharedActionHistory(props) {
 
   const historyNavigationData = useMemo(
     () => ({
-      historyStack,
+      past,
       historyOffset,
       lastActions,
       pointedStates,
       previewComponents,
       locks,
     }),
-    [historyStack, historyOffset, lastActions, states, lockVersion]
+    [past, historyOffset, lastActions, states, lockVersion]
   );
 
   useLayoutEffect(() => {

@@ -118,7 +118,7 @@ export function HistoryVisualization() {
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
-    historyStack,
+    past,
     historyOffset,
     lastActions,
     pointedStates,
@@ -137,7 +137,7 @@ export function HistoryVisualization() {
     return null;
   }
 
-  const currentIndex = historyStack.length - historyOffset;
+  const currentIndex = past.length - historyOffset;
   let isInFuture = false;
 
   return (
@@ -162,7 +162,7 @@ export function HistoryVisualization() {
       </div>}
 
       <ul className='connected-list'>
-        {historyStack.map(({ states, lastActions }, index) => {
+        {past.map(({ states, lastActions }, index) => {
           const isPresent = index === currentIndex;
           // We don't use this in the present so it can be true already.
           isInFuture = isInFuture || isPresent;
@@ -258,7 +258,7 @@ export function HistoryVisualization() {
             Latest
           </span>
           <ActionList
-            historyIndex={historyStack.length}
+            historyIndex={past.length}
             actions={lastActions.entries()}
             {...{ showPayloads }}
           />

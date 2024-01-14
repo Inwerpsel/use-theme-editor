@@ -11,8 +11,8 @@ import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
 
 function HistoryBack() {
-  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
-  const remainingLength = historyStack.length - historyOffset;
+  const { past, historyOffset } = useContext(HistoryNavigateContext);
+  const remainingLength = past.length - historyOffset;
   const noHistory = remainingLength < 1;
 
   return <button
@@ -39,8 +39,8 @@ function HistoryForward() {
 }
 
 function HistoryBackFast() {
-  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
-  const remainingLength = historyStack.length - historyOffset;
+  const { past, historyOffset } = useContext(HistoryNavigateContext);
+  const remainingLength = past.length - historyOffset;
   const noHistory = remainingLength < 1;
 
   return <button
@@ -67,9 +67,9 @@ function HistoryForwardFast() {
 }
 
 function MiniTimeline() {
-  const { historyStack, historyOffset } = useContext(HistoryNavigateContext);
+  const { past, historyOffset } = useContext(HistoryNavigateContext);
 
-  const percentage = 100 - (100 * historyOffset / historyStack.length);
+  const percentage = 100 - (100 * historyOffset / past.length);
 
   return <div style={{width: '100%', height: '2px', background: 'darkgrey'}}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'yellow'}}></div>
