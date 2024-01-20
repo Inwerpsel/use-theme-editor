@@ -69,7 +69,7 @@ function HistoryForwardFast() {
 function MiniTimeline() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
 
-  const percentage = 100 - (100 * historyOffset / past.length);
+  const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
   return <div style={{width: '100%', height: '2px', background: 'darkgrey'}}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'yellow'}}></div>
