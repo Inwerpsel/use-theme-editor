@@ -22,6 +22,16 @@ function getName(action) {
     : action.type;
 }
 
+// Is the current and next state a single action of the same type?
+// This would allow a more compact display for multiple values going into the same place.
+// First determine whether a particular action is being rendered in such a sequence.
+// Then, pass this as a boolean into the preview components so they can render in a compact state.
+// The challenge is some data in the payload needs to be taken into account.
+// Particularly, themeEditor.set should only make it compact if next entry has same scope.
+function nextHistoryEntryHasSameAction() {
+
+}
+
 function LockState(props) {
   const { id, historyIndex } = props;
   const { locks } = useContext(HistoryNavigateContext);
@@ -65,7 +75,7 @@ function ActionList(props) {
 
         const name = !isFromReducer ? '' : '::' + getName(action);
         const isPayloadLess = value === '{}';
-        const isShortString = !isFromReducer && (typeof value === 'boolean' || typeof value === 'number' || value.length < 40);
+        const isShortString = !isFromReducer && (typeof value === 'boolean' || typeof value === 'number' || value?.length < 40);
 
         const previews = previewComponents[id];
         const Preview =
@@ -130,7 +140,7 @@ export function HistoryVisualization() {
   let currentRef = useRef();
 
   useEffect(() => {
-    currentRef.current?.scrollIntoView({block: 'nearest'});
+    currentRef.current?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
   }, [historyOffset]);
 
   if (!showHistory) {
@@ -230,9 +240,9 @@ export function HistoryVisualization() {
                   <button
                     style={{width: '50%'}}
                     onClick={(event) => {
-                      Object.entries(lastActions).forEach(([id, action]) => {
+                      for (const [id, action] of lastActions.entries()) {
                         performAction(id, action);
-                      });
+                      }
                       event.preventDefault();
                       event.stopPropagation();
                     }}

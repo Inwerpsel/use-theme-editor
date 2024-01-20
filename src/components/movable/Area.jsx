@@ -8,7 +8,7 @@ function RecordScrollPosition({containerRef, id}) {
 
   useEffect(() => {
     // Also restore the position on first render.
-    containerRef.current?.scrollTo({
+    n > 0 && containerRef.current?.scrollTo({
       top: n,
       left: 0,
       behavior: "smooth",

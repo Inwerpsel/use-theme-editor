@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { COLOR_VALUE_REGEX, GRADIENT_REGEX } from './components/properties/ColorControl';
 import {prevGroups} from './components/ThemeEditor';
 import { SelectControl } from './components/controls/SelectControl';
@@ -18,17 +18,17 @@ export const previewComponents = {
   ),
 
   'inspected-index': ({ action: index }) => (
-    <div>
+    <Fragment>
       Inspect
-      <pre className="monospace-code">{prevGroups[index][0]?.label}</pre>
-    </div>
+      <pre className="monospace-code">{prevGroups.length <= index ? '' : prevGroups[index][0]?.label}</pre>
+    </Fragment>
   ),
 
   THEME_EDITOR: {
     set: ({ payload: { scope, name, value, alternatives } }) => {
       
       return (
-        <div>
+        <Fragment>
           {scope && <pre className="monospace-code">{scope}</pre>}
           <br />
           <b draggable onDragStart={e=>e.dataTransfer.setData('value', `var(${name})`)}>{name}</b> =
@@ -69,20 +69,20 @@ export const previewComponents = {
               />
             </div>
           )}
-        </div>
+        </Fragment>
       );
     },
 
     unset: ({ payload: { scope, name } }) => (
-      <div>
+      <Fragment>
         {scope && <pre className="monospace-code">{scope}</pre>}
         <br />
         <b>{name}</b> = default
-      </div>
+      </Fragment>
     ),
 
     createAlias: ({ payload: { name, value, generatedName } }) => (
-      <div
+      <span
         draggable
         onDragStart={e=>e.dataTransfer.setData('value', `var(${generatedName})`)}
       >
@@ -107,7 +107,7 @@ export const previewComponents = {
           ></span>
         )}
         <b>{generatedName} = {value}</b>
-      </div>
+      </span>
     ),
   },
 };
