@@ -1,6 +1,6 @@
 import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
 import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
-import {useLocalStorage} from '../hooks/useLocalStorage';
+import {useLocalStorage, useResumableLocalStorage} from '../hooks/useLocalStorage';
 import {useServerThemes} from '../hooks/useServerThemes';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
@@ -56,9 +56,9 @@ export const ThemeEditor = (props) => {
 
   const { fileName } = get;
 
-  const [currentInspected, setCurrentInspected] = useResumableState('inspected-index', -1);
+  const [currentInspected, setCurrentInspected] = useResumableLocalStorage('inspected-index', -1);
   const unfilteredGroups = currentInspected === -1 ? [] : prevGroups[currentInspected] || _unfilteredGroups;
-  const [openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
+  const [openGroups, setOpenGroups] = useResumableLocalStorage('OPEN_GROUPS', {});
   
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
@@ -116,7 +116,7 @@ export const ThemeEditor = (props) => {
         window.location.origin
       );    
     }
-  }, [currentInspected]);
+  }, [currentInspected, prevGroups.length === 0]);
 
   useLayoutEffect(() => {
     if ( isNewInspection ) {
