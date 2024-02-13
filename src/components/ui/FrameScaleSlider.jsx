@@ -26,18 +26,28 @@ export function FrameScaleSlider() {
   return (
     <div className={'frame-scale-slider'} style={{ minWidth: '200px' }}>
       <input
+        style={{margin: 0, marginTop: '-4px'}}
         type="range"
-        list="scale-points" 
+        list="scale-points"
         value={normalized}
         max={1.4}
         {...config}
         onChange={updateScales}
       />
-      <input type="number" max={3} value={scale} {...config} onChange={e=>setScales({ ...scales, [`${width}x${height}`]: e.target.value})} />
+      <input
+        style={{verticalAlign: 'top'}}
+        type="number"
+        max={3}
+        value={scale}
+        {...config}
+        onChange={(e) =>
+          setScales({ ...scales, [`${width}x${height}`]: e.target.value })
+        }
+      />
       <datalist id="scale-points">
-        <option value="1"/>
-        <option value="1.2"/>
-        <option value="1.4"/>
+        <option value="1" />
+        <option value="1.2" />
+        <option value="1.4" />
       </datalist>
     </div>
   );
