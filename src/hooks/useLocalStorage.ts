@@ -90,11 +90,12 @@ export function useLocalStorage<T>(key: string, defaultValue: T): StateAndUpdate
   ];
 };
 
-function store(isObject: boolean, id, value: any) {
-  localStorage.setItem(
-    id,
-    !isObject ? value : JSON.stringify(value)
-  )
+function store(key: string, value: any) {
+  localStorage.setItem(key, value);
+}
+
+function storeObject(key: string, value: {}) {
+  localStorage.setItem(key, JSON.stringify(value));
 }
 
 export function useResumableLocalStorage<T>(key: string, defaultValue: T): StateAndUpdater<T> {
@@ -110,7 +111,7 @@ export function useResumableLocalStorage<T>(key: string, defaultValue: T): State
     return apply(type, stored);
   });
 
-  useSingleEffect(key, store.bind(null, isObject));
+  useSingleEffect(key, isObject ? storeObject : store);
 
   return [
     value,
