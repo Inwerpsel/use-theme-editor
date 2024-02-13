@@ -7,13 +7,17 @@ import React, {
 } from 'react';
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 
 type Reducer<T> = (previous: T, action) => T
 
 // The initial state when a new key was added.
 const initialStates = new Map<string, any>();
 // The reducer for a key.
-const reducers = new Map<string, Reducer<any>>();
+export const reducers = new Map<string, Reducer<any>>();
+// Queue of actions dispatched before reducer was added.
+// Will be replayed right after the reducer gets added.
+export const reducerQueue = new Map<string, [number, any][]>();
 // The function with which the key can be updated.
 const dispatchers = new Map<string, (action: any, options: HistoryOptions) => void>;
 // A function with no args and no return value.
@@ -25,7 +29,11 @@ const getSnapshots = new Map<string, () => any>();
 // The set of notify functions to trigger subscribed React elements to render, for each key.
 const notifiers = new Map<string, Set<voidFn>>();
 // The history index to which some keys are locked.
-const locks = new Map<string, number>();
+const lockData = JSON.parse(localStorage.getItem('locks') || '[]')
+let locks = new Map<string, number>();
+export function restoreLocks(){
+  locks = new Map<string, number>(lockData);
+}
 // Incremented each time the lock map changes.
 let lockVersion = 0;
 
@@ -67,20 +75,69 @@ export function useSingleEffect(id: string, f: (id: string, value: any) => void)
   effectsDone.add(id);
 }
 
+function storeLocks() {
+  localStorage.setItem('locks', JSON.stringify([...locks.entries()]))
+}
+
 // Lock state for a key to an index in the history array, then trigger render.
 export function addLock (id: string, index: number): void {
   locks.set(id, index);
-  forceHistoryRender();
   lockVersion++;
+  forceHistoryRender();
   notifyOne(id);
+  storeLocks();
 }
 
 // Removing the lock on a key, then trigger render.
 export function removeLock(id: string): void {
   locks.delete(id);
-  forceHistoryRender();
   lockVersion++;
+  forceHistoryRender();
   notifyOne(id);
+  storeLocks();
+}
+
+function processActionQueue(key: string): void {
+  const reducer = reducers.get(key);
+  if (reducerQueue.has(key)) {
+    // Replay actions
+
+    // To avoid issues while replaying, locks should detect whether
+    // any history entries are "skipped over" when using an older locked value.
+    // These can immediately be cleaned up (perhaps moved to sort of branch),
+    // to avoid losing state. When this works as described, we can just process the
+    // queue against the previous state here.
+
+    let currentState = initialStates.get(key), lastIndex = 0;
+
+    let hadLatest = false;
+    for (const [index, action] of reducerQueue.get(key).values()) {
+      hadLatest = index >= past.length;
+      const entry = index < past.length ? past[index] : {states, lastActions};
+      currentState = reducer(currentState, action);
+      entry.states.set(key, currentState);
+      entry.lastActions.set(key, action);
+    }
+    // Populate other states with the most recent value.
+    // I don't like this but it's needed based on how history now works.
+    // Todo: investigate how much memory is involved with putting the same
+    // value into a large (~1000) amount of maps.
+    let lastValue = undefined;
+    for (let i = 0; i < past.length; i++) {
+      if (past[i].states.has(key)) {
+        lastValue = past[i].states.get(key);
+        continue;
+      }
+      if (lastValue !== undefined) {
+        past[i].states.set(key, lastValue);
+      }
+    }
+    if (!hadLatest && lastValue !== initialStates.get(key)) {
+      states.set(key, lastValue);
+    }
+
+    reducerQueue.delete(key);
+  }
 }
 
 // Set up initial state and all handlers for a new key.
@@ -91,6 +148,10 @@ function addReducer(id, reducer, rawInitialState, initializer) {
       ? initializer(rawInitialState)
       : rawInitialState;
   initialStates.set( id, initialState);
+  if (reducerQueue.has(id)) {
+    console.log('running queue for', id);
+    processActionQueue(id);
+  }
   dispatchers.set(
     id,
     performAction.bind(null, id),
@@ -126,10 +187,13 @@ function addReducer(id, reducer, rawInitialState, initializer) {
   });
 }
 
+export const interestingKeys = ['THEME_EDITOR', 'uiLayout', 'inspected-index'];
+
 // This function is used to determine which states should be visited when using fast navigation.
 // Hard coded to keep it simple for now, it could be user configurable.
 export function isInterestingState(lastActions) {
-  for (const k of ['THEME_EDITOR', 'uiLayout']) {
+  for (const k of interestingKeys) {
+    if (locks.has(k)) continue;
     if (lastActions.has(k)) {
       return true;
     }
@@ -146,7 +210,8 @@ type HistoryOptions = {
   // being recorded as a separate history entry.
   debounceTime?: number,
   // If provided, always displace the previous value instead of recording it.
-  skipHistory?: boolean;
+  skipHistory?: boolean,
+  noNotify?: boolean,
 }
 
 // type StateAction = {};
@@ -175,6 +240,11 @@ let lastActions = new Map<string, any>();
 // The time at which the latest value was set, used for debouncing.
 let lastSet = 0;
 
+export function setStates(newStates) {
+  states = newStates;
+  setCurrentState();
+}
+
 export function restoreHistoryFromDb() {
   // This only restores the history timeline (past and future).
   // The current state is still received from local storage, because that's synchronous.
@@ -184,15 +254,6 @@ export function restoreHistoryFromDb() {
 
   // 2. Then, update history stack and notify history components.
   // Should not result in any state changes, though it can mean history offset changes as a result.
-}
-
-function storeAction() {
-  // If action is an actual action object, we need to store the action itself.
-  // If action is a function, we need to store the result state, as we can't rerun the function.
-  // Could be a problem for large objects like the moved elements state (prob better make those reducer).
-
-  // Some actions need additional data to store: inspected element would need a path in the document,
-  // then they can be restored as long as the document doesn't change.
 }
 
 export function historyBack(amount = 1): void {
@@ -206,7 +267,8 @@ export function historyBack(amount = 1): void {
       ? states
       : past[oldIndex].states;
 
-  historyOffset += amount;
+  // It's possible the amount is more than what's left.
+  historyOffset = Math.min(past.length, historyOffset + amount);
 
   checkNotifyAll();
 }
@@ -272,26 +334,61 @@ export function historyForwardFast(): void {
 export function clearHistory(): void {
   const currentlyInThePast = historyOffset > 0;
 
+  for (const [id, index] of locks.entries()) {
+      locks.set(id, 0);
+      // Only locks on older state
+      if (index !== historyOffset) {
+        const value = index >= past.length ? states.get(id) : past[index].states.get(id);
+        pointedStates.set(id, value);
+      }
+  }
+  // lockVersion++;
+
+
   past = [];
   historyOffset = 0;
   lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
-  states = !currentlyInThePast ? states : past[past.length - historyOffset].states;
+  states = pointedStates;
 
-  checkNotifyAll();
+  deleteStoredHistory();
+  setCurrentState();
+  forceHistoryRender();
 }
 
-export function performAction(id, action, options: HistoryOptions): void {
-  historyOffset > 0
+export function createEmptyEntry(): HistoryEntry {
+  const entry = {states, lastActions};
+  past.push(entry);
+  states = new Map(states);
+  lastActions = new Map();
+  return entry;
+}
+
+export function addUnprocessedAction(key, action): void {
+  lastActions.set(key, action);
+}
+
+export function performAction(id, action, options?: HistoryOptions): void {
+  const changed = historyOffset > 0
     ? performActionOnPast(id, action, options)
     : performActionOnLatest(id, action, options);
+  if (!changed) return;
+
+  // Quick and dirty fix, should be safe for now.
+  if (typeof action.type === 'function') {
+    action.type = action.type.name;
+  }
+  
+  storeActions(lastActions, past.length, oldStates, initialStates);
+  notifyOne(id);
 }
 
 // This path is the only one that can execute frequently, as actions on top
 // of an older state will result in the next action being on the latest state.
-function performActionOnLatest(id, action, options: HistoryOptions): void {
+export function performActionOnLatest(id, action, options: HistoryOptions = {}): boolean {
   const reducer = reducers.get(id);
   if (!reducer) {
-    return;
+    console.log('no reducer for', id);
+    return false;
   }
   const now = performance.now();
 
@@ -311,19 +408,24 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
     typeof action === 'function' ? action(baseState) : action
   );
   if (newState === baseState) {
-    return;
+    console.log('no change for', id);
+    return false;
   }
+  const becameInitialValue = newState === initialStates.get(id);
   // Determine whether debouncing should kick in.
-  const slowEnough = now - lastSet > (options?.debounceTime || 500);
+  const slowEnough = now - lastSet >= ('debounceTime' in options ? options.debounceTime : 500);
   const skipHistory = !slowEnough || options?.skipHistory;
 
   // Afaik there is no possible benefit to having two consecutive identical states in history.
   function lastStateSuperFluous() {
     const prev = past[past.length - 1];
-    if (prev?.states.get(id) !== newState) {
+    if (!prev) {
       return false;
     }
-    const keys = Object.keys(prev.lastActions);
+    if (prev.states.get(id) !== (becameInitialValue ? undefined : newState)) {
+      return false;
+    }
+    const keys = [...prev.lastActions.keys()];
 
     // This doesn't account for everything yet: multiple actions can be superfluous together, like width and height.
     return keys.length === 1 && keys[0] === id;
@@ -331,8 +433,11 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   const skippedHistoryNowSameAsPrevious = skipHistory && lastStateSuperFluous();
 
   oldStates = states;
-  states = new Map(states);
-  if (newState === initialStates.get(id)) {
+
+  if (!skipHistory) {
+    states = new Map(states);
+  }
+  if (becameInitialValue) {
     states.delete(id);
   } else {
     states.set(id, newState);
@@ -340,17 +445,18 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
 
   historyOffset = 0;
 
-  past = skipHistory
-    ? skippedHistoryNowSameAsPrevious
-      ? past.slice(0, -1)
-      : past
-    : [
-        ...past,
-        {
-          states: oldStates,
-          lastActions,
-        },
-      ];
+  if (skipHistory) {
+    if (skippedHistoryNowSameAsPrevious) {
+      past.splice(past.length - 1);
+    }
+    lastActions = new Map(lastActions);
+  } else {
+    past.push({
+      states: oldStates,
+      lastActions,
+    });
+    lastActions = new Map();
+  }
 
   // If the previous state was removed from the history because it was duplicate,
   // it should result in a new entry in any subsequent dispatches to the same id.
@@ -358,26 +464,23 @@ function performActionOnLatest(id, action, options: HistoryOptions): void {
   // just by having the same value for any short amount of time.
   lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
 
-  if (!skipHistory) {
-    lastActions = new Map();
-  }
   lastActions.set(id, action);
 
   if (hasLock) {
     // If there was a lock on this state, update it to the newly created state.
     addLock(id, past.length);
   }
-  notifyOne(id);
+  return true;
 }
 
-function performActionOnPast(id, action, options: HistoryOptions): void {
+function performActionOnPast(id, action, options?: HistoryOptions): boolean {
   const reducer = reducers.get(id);
   if (!reducer) {
-    return;
+    return false;
   }
   if (historyOffset > historyWarnOnUpdateLimit) {
     if (!window.confirm('You are about to erase the future, this is your last chance to reconsider.')) {
-      return;
+      return false;
     }
   }
 
@@ -386,7 +489,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   const prevEntry = past[baseIndex];
   const prevStates = prevEntry.states;
   const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
-  const baseStatesWithLock = past[lockIndex].states;
+  const baseStatesWithLock = past[lockIndex]?.states || states;
 
   const baseState = baseStatesWithLock.has(id) ? baseStatesWithLock.get(id) : initialStates.get(id);
   const newState = reducer(
@@ -395,7 +498,7 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
     typeof action === 'function' ? action(baseState) : action
   );
   if (newState === baseState) {
-    return;
+    return false;
   }
   const lockUpdates = new Map();
   // The extra actions that are added when future locks are preserved.
@@ -450,16 +553,26 @@ function performActionOnPast(id, action, options: HistoryOptions): void {
   lastSet = now;
   lastActions = new Map([[id, action]]);
 
-  notifyOne(id);
+  return true;
 }
 
-let forceHistoryRender = () => {};
+export let forceHistoryRender = () => {};
 
 function setCurrentState() {
   pointedStates =
     historyOffset > 0
       ? past[past.length - historyOffset].states
       : states;
+}
+
+function storeOffset() {
+  localStorage.setItem('historyOffset', historyOffset.toString());
+}
+
+export function restoreOffset() {
+  historyOffset = Math.max(0, Math.min(past.length - 1, parseInt(localStorage.getItem('historyOffset')|| '0')));
+  // for now assumes that actions were restored without change propagation
+  checkNotifyAll();
 }
 
 // All browser history related code was commented for now.
@@ -473,18 +586,19 @@ function setCurrentState() {
 // Notify one ID without checking.
 function notifyOne(id) {
   setCurrentState();
+  storeOffset();
   const keyNotifiers = notifiers.get(id);
-  if (!keyNotifiers) {
-    return;
-  }
-  for (const n of keyNotifiers.values()) {
-    n();
+  if (keyNotifiers) {
+    for (const n of keyNotifiers.values()) {
+      n();
+    }
   }
   forceHistoryRender();
 }
 
 function checkNotifyAll() {
   setCurrentState();
+  storeOffset();
 
   for (const [id, value] of pointedStates.entries()) {
     const keyNotifiers = notifiers.get(id);
@@ -593,6 +707,7 @@ export function SharedActionHistory(props) {
       pointedStates,
       previewComponents,
       locks,
+      states,
     }),
     [past, historyOffset, lastActions, states, lockVersion]
   );

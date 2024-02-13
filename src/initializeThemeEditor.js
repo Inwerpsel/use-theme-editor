@@ -1,4 +1,4 @@
-import { renderSelectedVars } from './renderSelectedVars';
+import { INSPECTIONS, getPrevinspections, renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './functions/getMatchingVars';
 import { addHighlight, removeHighlight } from './functions/highlight';
 import { groupVars } from './functions/groupVars';
@@ -8,6 +8,8 @@ import {getLocalStorageNamespace, setLocalStorageNamespace} from './functions/ge
 import {initializeConsumer} from './sourcemap';
 import { getAllDefaultValues } from './functions/getAllDefaultValues';
 import { deriveUtilitySelectors, parseCss } from './functions/parseCss';
+import { toNode, toPath } from './functions/nodePath';
+import { restoreHistory } from './_unstable/historyStore';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -149,8 +151,14 @@ export const setupThemeEditor = async (config) => {
           cssVars,
           config,
           defaultValues,
-          payload.index
+          payload.index,
+          payload.inspectionPath,
         );
+        return;
+      }
+      if (event.data?.type === 'relocate-done') {
+        restoreHistory();
+        renderSelectedVars(editorRoot, null, lastGroups, cssVars, config, defaultValues, event.data.payload.index, 'ignore')
       }
     }, false);
   }
@@ -250,9 +258,12 @@ export const setupThemeEditor = async (config) => {
   const groupElementsCache = new WeakMap();
 
   let lastInspected;
+  let lastInspectTime = 0;
 
   function inspect(target) {
+    ++inspectedIndex;
 
+    lastInspectTime = performance.now();
     // Laziest feature flag ever.
     if (window._testNewInspection) {
       inspectNew(target);
@@ -264,7 +275,6 @@ export const setupThemeEditor = async (config) => {
     lastInspected = target;
 
     inspectedElements.push(target);
-    ++inspectedIndex;
     // This algorithm was created in a case with certain assumptions that made it more than fast enough.
     // - Not more than 4 or 5 custom props per selector on average.
     // - Not a lot of selectors per HTML element.
@@ -290,12 +300,15 @@ export const setupThemeEditor = async (config) => {
     lastGroups = groups;
     const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
 
+    const inspectionPath = toPath(target);
+
     window.parent.postMessage(
       {
         type: 'render-vars',
         payload: {
           groups: withElementIndexes,
           index: inspectedIndex,
+          inspectionPath,
         },
       },
       window.location.href
@@ -303,6 +316,12 @@ export const setupThemeEditor = async (config) => {
 
     if (groups.length > 0) {
       const {element} = groups[0];
+      element.scrollIntoView({
+        block: 'nearest',
+        inline: 'end',
+        behavior: 'smooth',
+      });
+
       addHighlight(element);
       if (lastHighlightTimeout) {
         const [timeout, handler, timeoutElement] = lastHighlightTimeout;
@@ -327,6 +346,60 @@ export const setupThemeEditor = async (config) => {
   if (!isRunningAsFrame) {
     return;
   }
+
+  const prev = getPrevinspections();
+  let i = 0;
+  for (const path of prev) {
+    i++;
+    let target;
+    try {
+      target = toNode(path);
+    } catch (e) {
+      console.log(e, path);
+      // localStorage.removeItem(INSPECTIONS);
+      break;
+    }
+    inspectedElements.push(target);
+    lastInspected = target;
+    ++inspectedIndex;
+    if (!target) {
+      console.log(inspectedIndex, path);
+      continue;
+    }
+    const matchedVars = getMatchingVars({ cssVars, target });
+    const rawGroups = groupVars(matchedVars, target, cssVars);
+    const groups = filterMostSpecific(rawGroups, target);
+    groupElementsCache.set(target, groups.map(({element}) => ({element})));
+    // console.timeEnd('old');
+    // console.log('oldgroups', groups);
+
+    // It's not possible to send a message that includes a reference to a DOM element. 
+    // Instead, every time we update the groups, we store the last groups. This
+    // way we still know which element to access when a message gets back from the parent window.
+    lastGroups = groups;
+    const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
+
+    window.parent.postMessage(
+      {
+        type: 'render-vars',
+        payload: {
+          groups: withElementIndexes,
+          index: inspectedIndex,
+        },
+      },
+      window.location.href
+    );
+  }
+  lastInspected?.scrollIntoView({block: 'center'});
+  window.parent.postMessage(
+    {
+      type: 'relocate-done',
+      payload: {
+        index: inspectedIndex,
+      },
+    },
+    window.location.href
+  );
 
   const preventDefault = e=>e.preventDefault();
 
@@ -395,10 +468,41 @@ export const setupThemeEditor = async (config) => {
     toggleStylesheets(disabledSheets);
   }
 
+  function restoreInspection(index) {
+    const element = inspectedElements[index];
+    setTimeout(() => {
+      element.scrollIntoView({
+        block: 'center',
+        inline: 'end',
+        behavior: 'smooth',
+      });
+    }, 120);
+
+    if (lastHighlightTimeout) {
+      const [timeout, handler, timeoutElement] = lastHighlightTimeout;
+
+      if (timeoutElement === element) {
+        return;
+      }
+      window.clearTimeout(timeout);
+      handler();
+    }
+    
+    lastInspected = element;
+    lastGroups = groupElementsCache.get(element);
+    addHighlight(element);
+    const handler = () => {
+      removeHighlight(element);
+      lastHighlightTimeout = null;
+    };
+
+    lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];    
+  }
+
   const messageListener = event => {
     const {type, payload} = event.data;
     const {index, selector, scopes, resetAll} = payload || {};
-    const group = lastGroups[index];
+    const group = !lastGroups ? null : lastGroups[index];
 
     switch (type) {
     case 'highlight-element-start':
@@ -518,34 +622,11 @@ export const setupThemeEditor = async (config) => {
         );
         break;
       case 'inspect-previous': {
-        const element = inspectedElements[index];
-        setTimeout(() => {
-          element.scrollIntoView({
-            block: 'nearest',
-            inline: 'end',
-            behavior: 'smooth',
-          });
-        }, 120);
+        // Because of some shaky effect code, it now immediately sends this after inspection.
+        // Quick hack to ignore those.
+        if (performance.now() - lastInspectTime < 500) return;
 
-        if (lastHighlightTimeout) {
-          const [timeout, handler, timeoutElement] = lastHighlightTimeout;
-  
-          if (timeoutElement === element) {
-            return;
-          }
-          window.clearTimeout(timeout);
-          handler();
-        }
-        
-        lastInspected = element;
-        lastGroups = groupElementsCache.get(element);
-        addHighlight(element);
-        const handler = () => {
-          removeHighlight(element);
-          lastHighlightTimeout = null;
-        };
-  
-        lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];    
+        restoreInspection(index);
        }
     }
   };
