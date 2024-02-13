@@ -347,7 +347,7 @@ export const VariableControl = (props) => {
     });
   }, [scopes, excludedVarName, isOpen]);
 
-  const [showReferences, setShowReferences] = useState(false);
+  const [showReferences, setShowReferences] = useResumableState(`showRefs_${key}`, false);
   const [openVariablePicker, setOpenVariablePicker] = useState(false);
 
   const cssFunc = cssVar.cssFunc;
