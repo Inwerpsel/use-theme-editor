@@ -14,8 +14,10 @@ function RecordScrollPosition({containerRef, id}) {
       behavior: "smooth",
     });
     const listener = event => {
+      const raw = event.currentTarget.scrollTop;
+      const value = raw < 10 ? 0 : Math.floor(raw);
       setN(
-        Math.floor(event.currentTarget.scrollTop),
+        value,
         { skipHistory: true },
       );
     };
