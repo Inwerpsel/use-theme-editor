@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { HistoryNavigateContext, addLock, historyBack, historyForward, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addLock, historyBack, historyForward, interestingKeys, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
@@ -140,7 +140,7 @@ export function HistoryVisualization() {
   let currentRef = useRef();
 
   useEffect(() => {
-    currentRef.current?.scrollIntoView({block: 'nearest', behavior: 'smooth'});
+    currentRef.current?.scrollIntoView({block: 'nearest'});
   }, [historyOffset]);
 
   if (!showHistory) {
@@ -187,7 +187,9 @@ export function HistoryVisualization() {
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
             // Always display an entry if state is locked to its index
-            if (![...lastActions.keys()].some(id=>locks.has(id) && locks.get(id) === index)) {
+            const keys = [...lastActions.keys()];
+            const anyLockedHere = keys.some(id=>locks.has(id) && locks.get(id) === index);
+            if (!anyLockedHere && !keys.some(k=>interestingKeys.includes(k))) {
               return null;
             }
           }
