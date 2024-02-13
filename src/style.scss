@@ -1,3 +1,6 @@
+$accent-color: var(--theme-editor--acent-color, #007cba);
+$subtle-grey: rgb(179, 162, 162);
+
 html,
 body {
   scroll-behavior: auto !important;
@@ -5,7 +8,7 @@ body {
 
 .theme-editor {
   _-- {
-    background-color: grey;
+    background-color: rgb(201, 190, 190);
   }
   position: fixed;
   top: 0;
@@ -80,7 +83,7 @@ body {
 }
 
 .components-range-control__track {
-  color: var(--theme-editor--range--color, #007cba) !important;
+  color: $accent-color;
 }
 
 .simulating-touch-device body {
@@ -121,8 +124,7 @@ body {
 }
 
 .responsive-frame-container::-webkit-resizer {
-  color: green;
-  background-color: green;
+  background-color: $subtle-grey;
 }
 
 .responsive-screen-options {
@@ -174,7 +176,7 @@ body {
     }
   }
   padding: 0;
-  overflow-y: scroll;
+  // overflow-y: scroll;
   margin-bottom: 0;
 
   li {
@@ -410,8 +412,6 @@ div[id^=font-picker] ul {
 .connected-list {
   display: flex;
   flex-direction: column-reverse;
-  list-style-type: disc;
-  list-style-position: inside;
 
   ::marker {
     font-size: 38px;
@@ -421,6 +421,8 @@ div[id^=font-picker] ul {
 
 
   > li {
+    list-style: disc !important;
+    list-style-position: inside !important;
     position: relative;
     border-radius: 8px;
     > * {
@@ -486,3 +488,21 @@ button {
     max-width: 100%;
   }
 }
+
+.history-open-groups {
+  label {
+    width: 100%;
+  }
+  label span {
+    display: inline-block;
+    text-align: center;
+    padding: 8px;
+    width: 95%;
+    border: 1px solid grey;
+  }
+
+  input[type=checkbox] {
+    display: none;
+  }
+}
+
