@@ -3,18 +3,18 @@ import { get } from "../state";
 
 const cache = new Map<string, [any, {}]>();
 
-const magicObject = {_deps: {}};
+const captureState = {_deps: {}};
 // This relies on all hook calls happening in a way that can be intercepted.
 // Will enforce later with types.
 export function createMagicObject(use): void {
   
   for (const k in use) {
-    Object.defineProperty(magicObject, k, {
+    Object.defineProperty(captureState, k, {
       get() {
         // Open question: how to reasonably link this to an application's collection of hooks?
         // Currently, I'm just importing this collection directly to keep things simple.
         const v = get[k];
-        magicObject._deps[k] = v;
+        captureState._deps[k] = v;
         return v;
       },
     });
@@ -22,11 +22,11 @@ export function createMagicObject(use): void {
 }
 
 function runAndCapture(create) {
-  const origDeps = magicObject._deps;
-  magicObject._deps = {};
-  const result = create(magicObject);
-  const newDeps = magicObject._deps;
-  magicObject._deps = origDeps;
+  const origDeps = captureState._deps;
+  captureState._deps = {};
+  const result = create(captureState);
+  const newDeps = captureState._deps;
+  captureState._deps = origDeps;
 
   return [result, newDeps];
 }
