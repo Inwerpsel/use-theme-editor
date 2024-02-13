@@ -1,21 +1,39 @@
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import { COLOR_VALUE_REGEX, GRADIENT_REGEX } from './components/properties/ColorControl';
 import {prevGroups} from './components/ThemeEditor';
 import { SelectControl } from './components/controls/SelectControl';
+import { Checkbox } from './components/controls/Checkbox';
+import { ElementLocator } from './components/ui/ElementLocator';
 
 const size = 18;
 
+function FindOther({label}) {
+  const [first, ...classes] = label.split('.').map(s=>s.trim());
+  // const [name, id] = k.split('#').map(s=>s.trim());
+  const [open, setOpen] = useState(false);
+
+  return <Fragment>
+    <Checkbox controls={[open, setOpen]}><div>{!open ? label : <span>close</span>}</div></Checkbox>
+      {open && <Fragment>
+        <ElementLocator selector={first} initialized showLabel />
+        {classes.map(className => <ElementLocator selector={`.${className}`} initialized showLabel/>)}
+      </Fragment>}
+  </Fragment>
+}
+
 export const previewComponents = {
-  OPEN_GROUPS: ({ action: groups }) => (
-    <pre className="monospace-code" style={{ display: 'inline-block' }}>
-      {Object.entries(groups).map(([k, v]) => [
-        k,
-        <b style={{ float: 'right', color: 'white', background: 'black' }}>
-          {v ? 'open' : 'close'}
-        </b>,
-      ])}
-    </pre>
-  ),
+  OPEN_GROUPS: ({ action: groups }) => {
+    const items = Object.keys(groups);
+    if (items.length === 0) return 'No open groups';
+    return <div className='history-open-groups'>
+      {items.map(label => <Fragment>
+        <pre className="monospace-code" style={{ fontSize: '10px', display: 'inline-block' }}>
+          <FindOther {...{ label }} />
+        </pre>
+      </Fragment>
+      )}
+    </div>;
+  },
 
   'inspected-index': ({ action: index }) => (
     <Fragment>
