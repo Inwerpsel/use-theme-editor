@@ -12,7 +12,7 @@ import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 type Reducer<T> = (previous: T, action) => T
 
 // The initial state when a new key was added.
-const initialStates = new Map<string, any>();
+export const initialStates = new Map<string, any>();
 // The reducer for a key.
 export const reducers = new Map<string, Reducer<any>>();
 // Queue of actions dispatched before reducer was added.
@@ -368,7 +368,8 @@ export function addUnprocessedAction(key, action): void {
 }
 
 export function performAction(id, action, options?: HistoryOptions): void {
-  const changed = historyOffset > 0
+  const wasPast = historyOffset > 0;
+  const changed = wasPast
     ? performActionOnPast(id, action, options)
     : performActionOnLatest(id, action, options);
   if (!changed) return;
@@ -378,7 +379,7 @@ export function performAction(id, action, options?: HistoryOptions): void {
     action.type = action.type.name;
   }
   
-  storeActions(lastActions, past.length, oldStates, initialStates);
+  storeActions(lastActions, wasPast, past.length, oldStates);
   notifyOne(id);
 }
 
@@ -527,7 +528,8 @@ function performActionOnPast(id, action, options?: HistoryOptions): boolean {
     prevHistory.push({
       states: entry,
       lastActions: futureLockActions,
-    })
+    });
+    storeActions(futureLockActions, 1, baseIndex + 1);
   }
   if (locks.has(id)) {
     // If there was a lock on this state, update it to the newly created state.

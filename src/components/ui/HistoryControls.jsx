@@ -155,17 +155,19 @@ function LocksList({close}) {
   );
 }
 
+function scrollHistory(event) {
+  const delta = Math.round(event.deltaY / 100);
+  delta > 0 ? historyBack(delta) : historyForward(-delta);
+  event.preventDefault();
+  event.stopPropagation();
+}
+
 export function HistoryControls() { 
     const [visualize, setVissualize] = use.visualizeHistory();
     const [visualizeAlways, setVissualizeAlways] = use.visualizeHistoryAlways();
 
     return (
-      <div onWheelCapture={event => {
-        const delta = Math.round(event.deltaY / 100);
-        delta > 0 ? historyBack(delta) : historyForward(-delta);
-        event.preventDefault();
-        event.stopPropagation();
-      }}>
+      <div onWheelCapture={scrollHistory}>
         <MiniTimeline />
         <LockStatus />
         <HistoryBackFast />

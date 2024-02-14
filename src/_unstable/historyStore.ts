@@ -1,4 +1,4 @@
-import { addUnprocessedAction, createEmptyEntry, forceHistoryRender, performAction, performActionOnLatest, reducerQueue, reducers, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
+import { addUnprocessedAction, createEmptyEntry, forceHistoryRender, initialStates, performActionOnLatest, reducerQueue, reducers, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
 import { INSPECTIONS } from "../renderSelectedVars";
 
 let db;
@@ -70,7 +70,7 @@ export function restoreHistory() {
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
 //   so that it can be applied when replaying.
-export function storeActions(actions, offset, prevStates, initialStates): void {
+export function storeActions(actions, clearFuture, index, prevStates = null): void {
     if (needsSnapshot) {
         const snap = JSON.stringify([...initialStates.entries(), ...prevStates.entries()]);
         console.log('snap', snap);
@@ -81,11 +81,11 @@ export function storeActions(actions, offset, prevStates, initialStates): void {
     const transaction = db.transaction([ACTIONS], 'readwrite');
     const store = transaction.objectStore(ACTIONS);
 
-    if (offset > 0) {
-        const range = IDBKeyRange.lowerBound(i + offset);
+    if (clearFuture) {
+        const range = IDBKeyRange.lowerBound(index);
         store.delete(range);
     }
-    store.put([...actions.entries()], i + offset);
+    store.put([...actions.entries()], index);
 }
 
 export function deleteStoredHistory() {
