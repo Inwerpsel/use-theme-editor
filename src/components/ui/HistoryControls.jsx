@@ -162,7 +162,6 @@ export function HistoryControls() {
     return (
       <div onWheelCapture={event => {
         const delta = Math.round(event.deltaY / 100);
-        console.log(delta)
         delta > 0 ? historyBack(delta) : historyForward(-delta);
         event.preventDefault();
         event.stopPropagation();
