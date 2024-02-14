@@ -63,12 +63,12 @@ export const ThemeEditor = (props) => {
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
 
-  // Don't move to settings yet, hiding and showing of panels probably needs a different solution.
+  // Don't move out along with similar global state, hiding and showing of panels probably needs a different solution.
   const [importDisplayed, setImportDisplayed] = useState(false);
   const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
 
-  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
+  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', false);
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   const [
