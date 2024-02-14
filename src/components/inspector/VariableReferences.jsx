@@ -3,6 +3,7 @@ import { get } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
 import { ElementLocator } from "../ui/ElementLocator";
 import { formatTitle } from "./VariableControl";
+import { dragValue } from "../../functions/dragValue";
 
 export function VariableReferences(props) {
   const { references } = props;
@@ -27,7 +28,7 @@ export function VariableReferences(props) {
           <li key={cssVar.name} style={{borderBottom: '1px solid gray'}}>
             <div
               draggable
-              onDragStart={e=>e.dataTransfer.setData('value', `var(${cssVar.name})`)}
+              onDragStart={dragValue(() => `var(${cssVar.name})`)}
             >
               {formatTitle(cssVar.name, annoyingPrefix, nameReplacements)}
             </div>

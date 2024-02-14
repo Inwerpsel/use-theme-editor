@@ -17,6 +17,7 @@ import { useResumableState } from '../../hooks/useResumableReducer';
 import { get } from '../../state';
 import { MediaQueries } from './MediaQueries';
 import { ToggleButton } from '../controls/ToggleButton';
+import { dragValue } from '../../functions/dragValue';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -94,7 +95,7 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
       <Fragment>
         <span
           draggable
-          onDragStart={e=>e.dataTransfer.setData('value', value)}
+          onDragStart={dragValue(value)}
           key={1}
           onClick={onClick}
           title={title}
@@ -403,7 +404,7 @@ export const VariableControl = (props) => {
       <div style={{ paddingTop: '6px' }} onClick={() => isOpen && toggleOpen()}>
         <h5
           draggable
-          onDragStart={e=>e.dataTransfer.setData('value', `var(${name})`)}
+          onDragStart={dragValue(() => `var(${name})`)}
           style={{
             display: 'inline-block',
             fontSize: '16px',

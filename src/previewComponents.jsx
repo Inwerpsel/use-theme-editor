@@ -4,6 +4,7 @@ import {prevGroups} from './components/ThemeEditor';
 import { SelectControl } from './components/controls/SelectControl';
 import { Checkbox } from './components/controls/Checkbox';
 import { ElementLocator } from './components/ui/ElementLocator';
+import { dragValue } from './functions/dragValue';
 
 const size = 18;
 
@@ -49,8 +50,8 @@ export const previewComponents = {
         <Fragment>
           {scope && <pre className="monospace-code">{scope}</pre>}
           <br />
-          <b draggable onDragStart={e=>e.dataTransfer.setData('value', `var(${name})`)}>{name}</b> =
-          <span draggable onDragStart={e=>e.dataTransfer.setData('value', value)}>
+          <b draggable onDragStart={dragValue(`var(${name})`)}>{name}</b> =
+          <span draggable onDragStart={dragValue(value)}>
             {(COLOR_VALUE_REGEX.test(value) ||
               GRADIENT_REGEX.test(value) ||
               /var\(/.test(value)) && (
@@ -102,7 +103,7 @@ export const previewComponents = {
     createAlias: ({ payload: { name, value, generatedName } }) => (
       <span
         draggable
-        onDragStart={e=>e.dataTransfer.setData('value', `var(${generatedName})`)}
+        onDragStart={dragValue(`var(${generatedName})`)}
       >
         Alias
         <br />

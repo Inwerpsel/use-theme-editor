@@ -9,6 +9,7 @@ import { mustBeColor } from './TypedControl';
 import { definedValues, scopesByProperty } from '../../functions/collectRuleVars';
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { get, use } from '../../state';
+import { dragValue } from '../../functions/dragValue';
 
 export const GroupControl = props => {
   const {
@@ -159,7 +160,7 @@ export const GroupControl = props => {
                 return (
                   <div
                     draggable
-                    onDragStart={e=>e.dataTransfer.setData('value', value)}
+                    onDragStart={dragValue(value)}
                     key={name}
                     title={`${name}: ${value}`}
                     style={{

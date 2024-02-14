@@ -5,6 +5,7 @@ import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
 import { PREVIEW_SIZE } from "../properties/ColorControl";
 import { ThemeEditorContext } from "../ThemeEditor";
+import { dragValue } from "../../functions/dragValue";
 
 const rootSelectors = [':root', ':where(html)', 'html']
 
@@ -74,7 +75,7 @@ export function FilterableVariableList(props) {
                   )}
                   <span
                     draggable
-                    onDragStart={e=>e.dataTransfer.setData('value', varValue)}
+                    onDragStart={dragValue(varValue)}
                     key={name}
                     title={optionValue}
                     style={{
