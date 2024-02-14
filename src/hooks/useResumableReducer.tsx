@@ -245,17 +245,6 @@ export function setStates(newStates) {
   setCurrentState();
 }
 
-export function restoreHistoryFromDb() {
-  // This only restores the history timeline (past and future).
-  // The current state is still received from local storage, because that's synchronous.
-  // We need to store the initial state as a starting point to replay stored actions.
-
-  // 1. Read DB
-
-  // 2. Then, update history stack and notify history components.
-  // Should not result in any state changes, though it can mean history offset changes as a result.
-}
-
 export function historyBack(amount = 1): void {
   const oldIndex = past.length - historyOffset;
   if (oldIndex < 1) {
@@ -325,8 +314,19 @@ export function historyForwardFast(): void {
     }
   }
 
-  oldStates = past[past.length - historyOffset].states;
+  oldStates = pointedStates;
   historyOffset = newOffset;
+
+  checkNotifyAll();
+}
+
+export function historyGo(offset): void {
+  if (offset === historyOffset || offset > past.length || offset < 0) {
+    console.log('illegal offset', offset);
+    return;
+  }
+  historyOffset = offset;
+  oldStates = pointedStates;
 
   checkNotifyAll();
 }

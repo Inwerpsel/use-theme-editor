@@ -153,8 +153,8 @@ export function HistoryVisualization() {
   return (
     <div className="history">
       <DisableScrollHistoryInArea/>
-      <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
       <Checkbox controls={[showAll, setShowAll]}>Show all</Checkbox>
+      <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
 
       {debug && <div>
         <Checkbox controls={[showJson, setShowJson]}>
