@@ -11,14 +11,13 @@ function RecordScrollPosition({containerRef, id}) {
     n > 0 && containerRef.current?.scrollTo({
       top: n,
       left: 0,
-      behavior: "smooth",
     });
     const listener = event => {
       const raw = event.currentTarget.scrollTop;
       const value = raw < 10 ? 0 : Math.floor(raw);
       setN(
         value,
-        { skipHistory: true },
+        { skipHistory: true, appendOnly: true },
       );
     };
     containerRef.current?.addEventListener('scroll', listener);
@@ -32,16 +31,11 @@ function RestoreScrollPosition({containerRef, id}) {
   const [n] = useResumableState(`areaOffset#${id}`, 0);
 
   useEffect(() => {
-    const t = setTimeout(() => {
-      containerRef.current?.scrollTo({
-        top: n,
-        left: 0,
-        behavior: 'smooth',
-      });
-    }, 100);
-    return () => {
-      clearTimeout(t);
-    };
+    containerRef.current?.scrollTo({
+      top: n,
+      left: 0,
+      behavior: 'smooth',
+    });
   }, [n]);
 }
 

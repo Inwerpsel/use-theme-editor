@@ -211,7 +211,8 @@ type HistoryOptions = {
   debounceTime?: number,
   // If provided, always displace the previous value instead of recording it.
   skipHistory?: boolean,
-  noNotify?: boolean,
+  // Action should only ever be played against the most recent state, canceled otherwise.
+  appendOnly?: boolean,
 }
 
 // type StateAction = {};
@@ -369,6 +370,13 @@ export function addUnprocessedAction(key, action): void {
 
 export function performAction(id, action, options?: HistoryOptions): void {
   const wasPast = historyOffset > 0;
+
+  // Reliably prevent certain actions from changing history.
+  if (wasPast && options?.appendOnly) {
+    console.log('too late', action, options)
+    return;
+  }
+
   const changed = wasPast
     ? performActionOnPast(id, action, options)
     : performActionOnLatest(id, action, options);
