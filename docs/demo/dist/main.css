@@ -375,6 +375,9 @@ div[id^=font-picker] ul {
 #area-top .area-dropzone, #area-bottom .area-dropzone, #area-top-reverse .area-dropzone, #area-bottom-reverse .area-dropzone {
   transition: width, height 0.2s ease-in;
 }
+#area-top label, #area-bottom label, #area-top-reverse label, #area-bottom-reverse label {
+  display: inline-block;
+}
 
 #area-bottom, #area-bottom-reverse {
   flex-grow: 1;

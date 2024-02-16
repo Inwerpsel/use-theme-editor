@@ -55,10 +55,15 @@ $area-speed: .2s;
 }
 
 #area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
+  z-index: 10001;
+
   .area-dropzone {
     transition: width, height $area-speed ease-in;
   }
-  z-index: 10001;
+
+  label {
+    display: inline-block;
+  }
 }
 
 #area-bottom, #area-bottom-reverse {
