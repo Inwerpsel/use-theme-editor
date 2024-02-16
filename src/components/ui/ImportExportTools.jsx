@@ -1,5 +1,5 @@
 import {exportCss, exportJson} from '../../functions/export';
-import {ensureValidCssVariables, readFromUploadedFile} from '../../functions/readFromUploadedFile';
+import {readFromUploadedFile} from '../../functions/readFromUploadedFile';
 import React, {useContext, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
@@ -60,8 +60,8 @@ export function ImportExportTools() {
       onChange={value => {
         try {
           const dropped = JSON.parse(value);
-          const ensured = ensureValidCssVariables(dropped);
-          const newTheme = !shouldMerge ? ensured : {...theme, ...ensured};
+          // const ensured = ensureValidCssVariables(dropped);
+          const newTheme = !shouldMerge ? dropped : {...theme, ...dropped};
           dispatch({type: ACTIONS.loadTheme, payload: {theme: newTheme}});
         } catch (e) {
           console.log(e)
