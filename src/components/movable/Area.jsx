@@ -12,7 +12,9 @@ function RecordScrollPosition({containerRef, id}) {
       top: n,
       left: 0,
     });
+    const start = performance.now();
     const listener = event => {
+      if (performance.now() - start < 500) return;
       const raw = event.currentTarget.scrollTop;
       const value = raw < 10 ? 0 : Math.floor(raw);
       setN(
