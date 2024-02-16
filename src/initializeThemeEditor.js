@@ -473,7 +473,7 @@ export const setupThemeEditor = async (config) => {
       element.scrollIntoView({
         block: 'center',
         inline: 'end',
-        behavior: 'smooth',
+        // behavior: 'smooth',
       });
     }, 120);
 
@@ -516,7 +516,7 @@ export const setupThemeEditor = async (config) => {
       const element = selector ? locatedElements[selector][index] : group.element;
 
       element.scrollIntoView({
-        behavior: 'smooth',
+        // behavior: 'smooth',
         block: 'center',
         inline: 'end',
       });
@@ -572,7 +572,7 @@ export const setupThemeEditor = async (config) => {
         if (toInspect) {
           inspect(toInspect);
           toInspect.scrollIntoView({
-            behavior: 'smooth',
+            // behavior: 'smooth',
             block: 'center',
             inline: 'end',
           });
