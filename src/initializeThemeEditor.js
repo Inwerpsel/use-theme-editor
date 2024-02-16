@@ -261,9 +261,6 @@ export const setupThemeEditor = async (config) => {
   let lastInspectTime = 0;
 
   function inspect(target) {
-    ++inspectedIndex;
-
-    lastInspectTime = performance.now();
     // Laziest feature flag ever.
     if (window._testNewInspection) {
       inspectNew(target);
@@ -272,6 +269,8 @@ export const setupThemeEditor = async (config) => {
     if (target === lastInspected) {
       return;
     }
+    lastInspectTime = performance.now();
+    ++inspectedIndex;
     lastInspected = target;
 
     inspectedElements.push(target);
