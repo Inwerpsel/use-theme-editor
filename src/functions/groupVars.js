@@ -3,11 +3,25 @@ import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 import { HIGHLIGHT_CLASS } from './highlight';
 
-export const toLabel = ({id, tagName, classList}) => {
+export const toLabel = (element) => {
+  const {id, tagName, classList} = element;
   const idPart = !id ? '' : `#${ id }`;
-  const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`\n.${c}`).join('');
+  const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`.${c}`).join('').replaceAll(/([^\w-.])/g, '\\$1');
 
-  return tagName.toLowerCase() + idPart + classPart;
+  const selector = tagName.toLowerCase() + idPart + classPart;
+  const others = [...document.querySelectorAll(selector)];
+  let suffix;
+  if (others.length === 1) {
+    suffix = '';
+  } else {
+    for (let i = 1; i <= others.length; i++) {
+
+    }
+    const index = others.indexOf(element) + 1;
+    suffix = ` (${index}/${others.length})`;
+  }
+
+  return `${selector.replaceAll('.', '\n.')}${suffix}`;
 };
 
 export const sortForUI = (

@@ -9,7 +9,7 @@ import { dragValue } from './functions/dragValue';
 const size = 18;
 
 function FindOther({label}) {
-  const [first, ...classes] = label.split('.').map(s=>s.trim());
+  const [first, ...classes] = label.replace(/\s*\(\d\/\d\)$/, '').split('.').map(s=>s.trim());
   // const [name, id] = k.split('#').map(s=>s.trim());
   const [open, setOpen] = useState(false);
 
