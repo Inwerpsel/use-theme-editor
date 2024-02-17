@@ -134,6 +134,8 @@ export const setupThemeEditor = async (config) => {
   // console.timeEnd('derive');
 
   if (!isRunningAsFrame) {
+    // Quick fix because both frames are sending the same message.
+    let didRestoreHistory = false;
     const editorRoot = document.createElement( 'div' );
     renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
     destroyDoc();
@@ -156,8 +158,9 @@ export const setupThemeEditor = async (config) => {
         );
         return;
       }
-      if (event.data?.type === 'relocate-done') {
+      if (event.data?.type === 'relocate-done' && !didRestoreHistory) {
         restoreHistory();
+        didRestoreHistory = true;
         renderSelectedVars(editorRoot, null, lastGroups, cssVars, config, defaultValues, event.data.payload.index, 'ignore')
       }
     }, false);
