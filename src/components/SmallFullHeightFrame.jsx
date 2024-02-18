@@ -45,9 +45,6 @@ export function SmallFullHeightFrame(props) {
           setScrollPosition(payload.scrollPosition);
           setOwnPosition(null);
         }
-        if (type === 'window-height') {
-          setWindowHeight(payload);
-        }
       };
       window.addEventListener('message', listener);
       frameRef.current?.contentWindow.postMessage(
@@ -59,8 +56,22 @@ export function SmallFullHeightFrame(props) {
       return () => {
         window.removeEventListener('message', listener);
       };
-    }, 900);
+    }, 1000);
   }, []);
+
+  useEffect( () => {
+    setWindowHeight(frameRef.current.contentWindow.document.body.scrollHeight);
+
+    const timeout = setTimeout(() => {
+      setWindowHeight(frameRef.current.contentWindow.document.body.scrollHeight);
+      // Give some time for possible animations that affect the height.
+      // It seems a lot but for the Bootstrap masonry demo it's barely enough.
+    }, 500);
+    
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [width, height]);
 
   const top =
     Math.max(
@@ -111,7 +122,7 @@ export function SmallFullHeightFrame(props) {
           {...{
             src,
             width,
-            height: windowHeight,
+            height: Math.max(height, windowHeight),
           }}
         />
       </div>

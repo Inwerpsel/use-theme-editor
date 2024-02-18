@@ -609,19 +609,6 @@ export const setupThemeEditor = async (config) => {
             scrollDebounceTimeout = setTimeout(notifyParent, 40);
           }
         }, {passive: true})
-        window.parent.postMessage(
-          {
-            type: 'window-height',
-            payload: Math.max(
-              document.body.scrollHeight,
-              document.body.offsetHeight,
-              document.documentElement.clientHeight,
-              document.documentElement.scrollHeight,
-              document.documentElement.offsetHeight
-            ),
-          },
-          window.location.href
-        );
         break;
       case 'inspect-previous': {
         // Because of some shaky effect code, it now immediately sends this after inspection.
