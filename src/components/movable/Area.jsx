@@ -36,7 +36,7 @@ function RestoreScrollPosition({containerRef, id}) {
     containerRef.current?.scrollTo({
       top: n,
       left: 0,
-      behavior: 'smooth',
+      // behavior: 'smooth',
     });
   }, [n]);
 }

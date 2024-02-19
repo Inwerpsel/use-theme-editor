@@ -519,7 +519,7 @@ export const setupThemeEditor = async (config) => {
       const element = selector ? locatedElements[selector][index] : group.element;
 
       element.scrollIntoView({
-        // behavior: 'smooth',
+        behavior: 'smooth',
         block: 'center',
         inline: 'end',
       });

@@ -342,7 +342,6 @@ div[id^=font-picker] ul {
 }
 
 #area-left, #area-right {
-  max-width: 400px;
   scrollbar-gutter: stable;
   overflow-y: auto;
   overflow-x: visible;
@@ -350,12 +349,17 @@ div[id^=font-picker] ul {
   flex-shrink: 0;
   align-items: stretch;
 }
+#area-left > *, #area-right > * {
+  width: 400px;
+}
 @media screen and (min-height: 350px) {
   #area-left, #area-right {
     max-height: calc(100vh - var(--top-area--height, 60px) - var(--bottom-area--height, 60px));
   }
 }
 #area-left .area-dropzone, #area-right .area-dropzone {
+  width: 0;
+  height: 0;
   transition: width, height 0.2s ease-in;
 }
 #area-left .area-switcher, #area-right .area-switcher {
