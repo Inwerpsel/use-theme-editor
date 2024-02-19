@@ -178,7 +178,7 @@ function LocksList({close}) {
 
 function scrollHistory(event) {
   const delta = Math.round(event.deltaY / 100);
-  delta > 0 ? historyBack(delta) : historyForward(-delta);
+  delta > 0 ? historyBack(delta, true) : historyForward(-delta, true);
 }
 
 export function HistoryControls() { 

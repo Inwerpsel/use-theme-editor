@@ -246,32 +246,49 @@ export function setStates(newStates) {
   setCurrentState();
 }
 
-export function historyBack(amount = 1): void {
+export function historyBack(amount = 1, skipLocked = false): void {
   const oldIndex = past.length - historyOffset;
   if (oldIndex < 1) {
     return;
   }
 
-  oldStates =
-    historyOffset === 0
-      ? states
-      : past[oldIndex].states;
-
+  oldStates = pointedStates;
   // It's possible the amount is more than what's left.
-  historyOffset = Math.min(past.length, historyOffset + amount);
+  let offset = Math.min(past.length, historyOffset + amount);
+
+  if (skipLocked) {
+    while (offset < past.length && isFullyLocked(past[past.length - offset])) {
+       offset++;
+    }
+  }
+  historyOffset = offset;
 
   checkNotifyAll();
 }
 
-export function historyForward(amount = 1): void {
+export function historyForward(amount = 1, skipLocked = false): void {
   if (historyOffset === 0) {
     return;
   }
+  oldStates = pointedStates;
 
-  const newOffset = Math.max(0, historyOffset - amount);
-  oldStates = past[past.length - historyOffset].states;
-  historyOffset = newOffset;
+  let offset = Math.max(0, historyOffset - amount);
+
+  if (skipLocked) {
+    while (offset > 0 && isFullyLocked(past[past.length - offset])) {
+       offset--;
+    }
+  }
+
+  historyOffset = offset;
   checkNotifyAll();
+}
+
+function isFullyLocked(entry: HistoryEntry) {
+  for (const key of entry.lastActions.keys()) {
+    if (!locks.has(key)) return false;
+  }
+  return true;
 }
 
 export function historyBackOne(): void {
@@ -323,7 +340,6 @@ export function historyForwardFast(): void {
 
 export function historyGo(offset): void {
   if (offset === historyOffset || offset > past.length || offset < 0) {
-    console.log('illegal offset', offset);
     return;
   }
   historyOffset = offset;
