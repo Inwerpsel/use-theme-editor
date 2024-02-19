@@ -9,16 +9,23 @@ export const toLabel = (element) => {
   const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`.${c}`).join('').replaceAll(/([^\w-.])/g, '\\$1');
 
   const selector = tagName.toLowerCase() + idPart + classPart;
-  const others = [...document.querySelectorAll(selector)];
   let suffix;
-  if (others.length === 1) {
-    suffix = '';
-  } else {
-    for (let i = 1; i <= others.length; i++) {
+  try {
+    const others = [...document.querySelectorAll(selector)];
+    if (others.length === 1) {
+      suffix = '';
+    } else {
+      for (let i = 1; i <= others.length; i++) {
 
+      }
+      const index = others.indexOf(element) + 1;
+      suffix = ` (${index}/${others.length})`;
     }
-    const index = others.indexOf(element) + 1;
-    suffix = ` (${index}/${others.length})`;
+  } catch (error) {
+    // The above selector should work, however there's cases where the classlist contains things that are not
+    // accepted as a valid selector.
+    // The example that made me run into this was using "1_3" in the classList.
+    console.log(error);
   }
 
   return `${selector.replaceAll('.', '\n.')}${suffix}`;
