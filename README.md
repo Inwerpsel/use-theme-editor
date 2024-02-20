@@ -1,13 +1,14 @@
-# `use-theme-editor`: Your app is your design system, your pages are your designs
+# `use-theme-editor`: Zero config design system for any CSS
 
-Are you tired of slow design iterations, keeping designs up to date, and oversimplified mockups that miss 99% of your app's complexity?
+Are you tired of slow design iterations, keeping design content up to date, and oversimplified mockups that miss 99% of your app's complexity?
 Do you have a waterfall process just so that you can update a few colors?
-Do you need to have your designers spend literal months setting up and maintaining a separate design system that duplicates information already encoded in the source code?
+Do you need to have your designers spend literal months setting up and maintaining a separate design system that duplicates information already encoded in your source code?
 
 With this repo you can directly use your content to inspect every part of the design and create new design variations.
 
-This works on literally any HTML page, whether it's from a SSR, SPA, CMS... It parses all CSS on the page and makes it
-browsable.
+It works on literally any HTML page, whether it's from a SPA, CMS, SSR app, static file,... It parses all CSS on the page and makes it browsable.
+
+It also allows to edit the value of any CSS custom property in the inspector (edits to other CSS coming soon).
 
 This repository is intended to be used in various ways*:
 - Integrate the standalone theme editor page with almost no coding required (exact steps to follow)
@@ -19,12 +20,6 @@ this may be narrowed down to some extent in the future.
 
 https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-95e2-011204e9e8c2
 
-
-## Status
-
-While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
-make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
-functionality), feel free to open a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) describing your needs and they'll be prioritized.
 
 ## Demo
 
@@ -209,6 +204,12 @@ tags you see in [other example HTML pages at the end of the body](https://github
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
+## Status
+
+While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
+make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
+functionality), feel free to open a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) describing your needs and they'll be prioritized.
+
 ## FAQ
 
 ### Where is the documentation?
@@ -282,9 +283,10 @@ so it's much more efficient to postpone it.
 
 For now you can still get an overview by exporting the current theme as JSON or CSS.
 
-## Embedded packages*
+## Included packages*
 
 \* Not fully set up as separate packages yet, but code should work as such.
+These components should work with any React application.
 
 ### [Draggable elements](https://github.com/Inwerpsel/use-theme-editor/tree/main/src/components/movable)
 I have no good name for it yet (in code called MovablePanels). It makes drag and drop rearrangement in React very easy.
@@ -299,14 +301,19 @@ with history by replacing the function, and adding a string key.
 * Some (rough) components for timeline navigation and visualization.
 * Register a custom component per action to visualize in the timeline.
 * Debounces everything by default (you'd never want history without it).
+* Store all history across page loads using IndexedDb.
 
 ## Known issues
-A few components are not (fully) working at the moment, mostly because they depend on other changes, but also some small bugs.
+A few components are not (fully) working at the moment, mostly because they depend on future changes, but also some small bugs.
 
-- Current theme view not working (needs adaptation to selector scoped properties)
-- Not all references in other variables are listed
-- Import/export exports wrong data format.
+You should take the following into account when trying the demo.
+
+- Current theme view not working properly (needs adaptation to selector scoped properties).
+It can still be used for a general overview but is missing variable values and can't be filtered properly.
 - Add alias for raw values not working.
+- History needs to be cleared manually before it gets too big (how big depends on exact content, but should be fine below 100 entries, for well optimized sites).
+- All inspections are re-executed in one task, immediately when history is applied when loading the page,
+causing a potentially long delay and increasing memory usage.
 
 <details>
 <summary>
@@ -413,6 +420,7 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Doesn't work well on large pages
     - e.g. Halfmoon
   - Could modify the CSS to work differently with the same result
+  - Keep track of how browsers handle custom property updates, perhaps this gets optimized as it's quite common to set these on the root element.
 - Visualize overridden scope values, so that you can see what happens when removed from a scope.
   - However, it shouldn't result in a devtools like experience, where over half of what's shown is overridden rules.
 - Allow mapping hotkeys to any reducer action
@@ -433,17 +441,6 @@ A few components are not (fully) working at the moment, mostly because they depe
     - Save any "chopped" off futures?
     - Options determining which scenario (e.g. save when > 3 edits, discard when < 2)
   - Keep alternate futures and merge them like branches
-- Restore history from local storage
-  - Store initial state + actions, then replay
-    - more space efficient
-    - minimal writes (though how to incrementally update local storage efficiently?)
-    - history can rely on object equality like newly constructed
-  - Some components can't reliably be resumed
-    - Inspected HTML can be (slightly to completely) different
-    - Could be solved partially using path of element in tree
-- Some history states are inconsequential / uninteresting
-  - E.g. open an editor UI window and close it with no changes
-  - hard to detect if this is the case
 
 ## Future theme structure
 
