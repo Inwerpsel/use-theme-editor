@@ -7,6 +7,7 @@ export function WebpackHomeInput() {
 
     return (
       <TextControl
+        style={{ width: '100%' }}
         value={webpackHome}
         onChange={(v) => setWebpackHome(v)}
         label="Webpack home"
