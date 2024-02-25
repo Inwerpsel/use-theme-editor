@@ -40,8 +40,6 @@ $area-speed: .2s;
   }
 
   .area-dropzone {
-    width: 0;
-    height: 0;
     transition: width, height $area-speed ease-in;
   }
 
@@ -115,8 +113,10 @@ $area-speed: .2s;
   width: 0;
   height: 0;
   align-self: flex-end;
+  visibility: hidden;
 
   .is-dragging & {
+    visibility: visible;
     flex-shrink: 1 !important;
     flex-grow: 1 !important;
     transition-timing-function: ease-out;
