@@ -27,8 +27,8 @@ export const previewComponents = {
     const items = Object.keys(groups);
     if (items.length === 0) return 'No open groups';
     return <div className='history-open-groups'>
-      {items.map(label => <Fragment>
-        <pre className="monospace-code" style={{ fontSize: '10px', display: 'inline-block' }}>
+      {items.reverse().map(label => <Fragment>
+        <pre key={label} className="monospace-code" style={{ fontSize: '10px', display: 'inline-block' }}>
           <FindOther {...{ label }} />
         </pre>
       </Fragment>
