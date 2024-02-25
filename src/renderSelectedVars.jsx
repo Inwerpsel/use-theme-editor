@@ -7,9 +7,15 @@ import { previewComponents } from './previewComponents';
 let root, lastInspectedIndex = -1;
 
 export const INSPECTIONS = 'history-inspections';
-const previnspections = JSON.parse(localStorage.getItem(INSPECTIONS) || '[]');
+
+let previnspections = getPrevinspections();
+
 export function getPrevinspections() {
-  return previnspections;
+  return JSON.parse(localStorage.getItem(INSPECTIONS) || '[]');
+}
+
+export function resetInspections() {
+  previnspections = [];
 }
 
 export const renderSelectedVars = (

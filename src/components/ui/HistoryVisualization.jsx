@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react';
-import { HistoryNavigateContext, addLock, historyBack, historyForward, interestingKeys, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addLock, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
@@ -121,6 +121,22 @@ function ActionList(props) {
   );
 }
 
+function CurrentActions() {
+  const {
+    past,
+    historyOffset,
+    lastActions,
+  } = useContext(HistoryNavigateContext);
+  const index = past.length - historyOffset;
+  const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
+  
+  return (
+    <div style={{height: '170px', overflow: 'hidden auto'}}>
+      <ActionList historyIndex={index} actions={actions.entries()} />
+    </div>
+  ); 
+}
+
 export function HistoryVisualization() {
   const [visualizeAlways, setVisualizeAlways] = use.visualizeHistoryAlways();
   const [debug, setDebug] = useState(false);
@@ -144,7 +160,7 @@ export function HistoryVisualization() {
   }, [historyOffset]);
 
   if (!showHistory) {
-    return null;
+    return <CurrentActions />;
   }
 
   const currentIndex = past.length - historyOffset;
@@ -164,6 +180,7 @@ export function HistoryVisualization() {
           Show payloads
         </Checkbox>
         <button onClick={() => console.log(pointedStates)}>console.log</button>
+        <button onClick={exportHistory}>export</button>
         {showJson && (
           <pre className="monospace-code">
             {JSON.stringify(Object.fromEntries(pointedStates), null, 2)}

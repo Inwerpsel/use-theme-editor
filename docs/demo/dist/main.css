@@ -358,8 +358,6 @@ div[id^=font-picker] ul {
   }
 }
 #area-left .area-dropzone, #area-right .area-dropzone {
-  width: 0;
-  height: 0;
   transition: width, height 0.2s ease-in;
 }
 #area-left .area-switcher, #area-right .area-switcher {
@@ -423,8 +421,10 @@ div[id^=font-picker] ul {
   width: 0;
   height: 0;
   align-self: flex-end;
+  visibility: hidden;
 }
 .is-dragging .area-dropzone {
+  visibility: visible;
   flex-shrink: 1 !important;
   flex-grow: 1 !important;
   transition-timing-function: ease-out;
@@ -685,6 +685,10 @@ button {
 }
 .history-open-groups input[type=checkbox] {
   display: none;
+}
+
+.history-actions > li > * {
+  vertical-align: top;
 }
 
 /*# sourceMappingURL=main.css.map*/
