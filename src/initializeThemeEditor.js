@@ -93,13 +93,77 @@ function extractionResults() {
   return {rulesWithMap, rogueAtRules, comments, keyframesRules, selectorRules, testSelectors};
 }
 
+let cssVars;
+let inspectedIndex = -1;
+let lastInspected;
+let lastInspectTime = 0;
+let inspectedElements = [];
+let lastGroups = [];
+
+const groupElementsCache = new WeakMap();
+
+function restoreInspections() {
+  inspectedIndex = -1;
+  inspectedElements = [];
+
+  const prev = getPrevinspections();
+  let i = 0;
+  for (const path of prev) {
+    i++;
+    let target;
+    try {
+      target = toNode(path);
+    } catch (e) {
+      console.log(e, path);
+      // localStorage.removeItem(INSPECTIONS);
+      break;
+    }
+    inspectedElements.push(target);
+    lastInspected = target;
+    ++inspectedIndex;
+    if (!target) {
+      console.log(inspectedIndex, path);
+      continue;
+    }
+    const matchedVars = getMatchingVars({ cssVars, target });
+    const rawGroups = groupVars(matchedVars, target, cssVars);
+    const groups = filterMostSpecific(rawGroups, target);
+    groupElementsCache.set(target, groups.map(({element}) => ({element})));
+
+    lastGroups = groups;
+    const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
+
+    window.parent.postMessage(
+      {
+        type: 'render-vars',
+        payload: {
+          groups: withElementIndexes,
+          index: inspectedIndex,
+        },
+      },
+      window.location.href
+    );
+  }
+
+  lastInspected?.scrollIntoView({block: 'center'});
+  window.parent.postMessage(
+    {
+      type: 'relocate-done',
+      payload: {
+        index: inspectedIndex,
+      },
+    },
+    window.location.href
+  );
+}
+
 export const setupThemeEditor = async (config) => {
   updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   setLocalStorageNamespace(config.localStorageNamespace || '');
 
 
   await dependencyReady;
-  const cssVars = await extractPageVariables();
+  cssVars = await extractPageVariables();
   const defaultValues = getAllDefaultValues(cssVars);
 
   const sheets = [...document.styleSheets].filter(s=>s.ownerNode?.id!==styleId);
@@ -167,9 +231,6 @@ export const setupThemeEditor = async (config) => {
   }
 
   let requireAlt = !isRunningAsFrame || localStorage.getItem(getLocalStorageNamespace() + 'theme-editor-frame-click-behavior') === 'alt';
-  let inspectedIndex = -1;
-  let inspectedElements = [];
-  let lastGroups = [];
 
   const locatedElements = {};
 
@@ -258,11 +319,6 @@ export const setupThemeEditor = async (config) => {
     // console.log('groups', groups);
   }
 
-  const groupElementsCache = new WeakMap();
-
-  let lastInspected;
-  let lastInspectTime = 0;
-
   function inspect(target) {
     // Laziest feature flag ever.
     if (window._testNewInspection) {
@@ -349,59 +405,7 @@ export const setupThemeEditor = async (config) => {
     return;
   }
 
-  const prev = getPrevinspections();
-  let i = 0;
-  for (const path of prev) {
-    i++;
-    let target;
-    try {
-      target = toNode(path);
-    } catch (e) {
-      console.log(e, path);
-      // localStorage.removeItem(INSPECTIONS);
-      break;
-    }
-    inspectedElements.push(target);
-    lastInspected = target;
-    ++inspectedIndex;
-    if (!target) {
-      console.log(inspectedIndex, path);
-      continue;
-    }
-    const matchedVars = getMatchingVars({ cssVars, target });
-    const rawGroups = groupVars(matchedVars, target, cssVars);
-    const groups = filterMostSpecific(rawGroups, target);
-    groupElementsCache.set(target, groups.map(({element}) => ({element})));
-    // console.timeEnd('old');
-    // console.log('oldgroups', groups);
-
-    // It's not possible to send a message that includes a reference to a DOM element. 
-    // Instead, every time we update the groups, we store the last groups. This
-    // way we still know which element to access when a message gets back from the parent window.
-    lastGroups = groups;
-    const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
-
-    window.parent.postMessage(
-      {
-        type: 'render-vars',
-        payload: {
-          groups: withElementIndexes,
-          index: inspectedIndex,
-        },
-      },
-      window.location.href
-    );
-  }
-  lastInspected?.scrollIntoView({block: 'center'});
-  window.parent.postMessage(
-    {
-      type: 'relocate-done',
-      payload: {
-        index: inspectedIndex,
-      },
-    },
-    window.location.href
-  );
+  restoreInspections();
 
   const preventDefault = e=>e.preventDefault();
 
@@ -616,7 +620,11 @@ export const setupThemeEditor = async (config) => {
         if (performance.now() - lastInspectTime < 500) return;
 
         restoreInspection(index);
-       }
+        break;
+      };
+      case 'reload-inspections': {
+        restoreInspections();
+      }
     }
   };
   window.addEventListener('message', messageListener, false);

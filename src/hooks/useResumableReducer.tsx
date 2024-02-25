@@ -8,11 +8,13 @@ import React, {
 import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
+import { saveAsJsonFile } from '../functions/export';
+import { INSPECTIONS, getPrevinspections, previnspections, resetInspections } from '../renderSelectedVars';
 
 type Reducer<T> = (previous: T, action) => T
 
 // The initial state when a new key was added.
-export const initialStates = new Map<string, any>();
+export let initialStates = new Map<string, any>();
 // The reducer for a key.
 export const reducers = new Map<string, Reducer<any>>();
 // Queue of actions dispatched before reducer was added.
@@ -138,6 +140,68 @@ function processActionQueue(key: string): void {
 
     reducerQueue.delete(key);
   }
+}
+
+export function exportHistory() {
+  const timeline = [
+    ...past.map(({ lastActions }) => [...lastActions.entries()]),
+    [...lastActions.entries()],
+  ];
+  saveAsJsonFile(
+    { 
+      offset: historyOffset,
+      locks: [...locks.entries()],
+      initialStates: [...initialStates.entries()] ,
+      finalStates: [...states.entries()],
+      inspections: getPrevinspections(),
+      timeline,
+    },
+    'theme-editor-history'
+  );
+}
+
+export function importHistory({timeline, initialStates: _initialStates, finalStates, locks: newLocks, offset = 0, inspections}, frames: HTMLIFrameElement[]) {
+  oldStates = pointedStates;
+  let i = 0;
+  initialStates = new Map(_initialStates);
+  past = [];
+  historyOffset = 0;
+  locks = new Map();
+  resetInspections();
+  
+  for (const actions of timeline) { 
+    createEmptyEntry();
+    for (const [key, action] of actions) {
+        if (!reducers.has(key)) {
+            console.log('Create queue item');
+            if (!reducerQueue.has(key)) reducerQueue.set(key, []);
+            reducerQueue.get(key).push([i + 1, action]);
+            addUnprocessedAction(key, action);
+        } else {
+            performActionOnLatest(key, action, { debounceTime: Infinity });
+        }
+    }
+    i++;
+  }
+
+  // Sanity check.
+  for (const [key, value] of finalStates) {
+    if (states.get(key) !== value) {
+      console.log('Unequal value', value, states.get(key));
+    }
+  }
+
+  locks = new Map(newLocks);
+  historyOffset = offset;
+
+  localStorage.setItem(INSPECTIONS, JSON.stringify(inspections));
+
+  for (const frame of frames) {
+    frame?.contentWindow.postMessage({type: 'reload-inspections'} , window.location.origin)
+  }
+
+  setCurrentState();
+  checkNotifyAll();
 }
 
 // Set up initial state and all handlers for a new key.

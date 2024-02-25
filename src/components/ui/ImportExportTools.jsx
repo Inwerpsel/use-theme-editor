@@ -1,4 +1,4 @@
-import {exportCss, exportJson} from '../../functions/export';
+import {exportCss, exportThemeJson} from '../../functions/export';
 import {readFromUploadedFile} from '../../functions/readFromUploadedFile';
 import React, {useContext, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
@@ -6,11 +6,14 @@ import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import { TextControl } from '../controls/TextControl';
 import { use } from '../../state';
+import { importHistory } from '../../hooks/useResumableReducer';
 
 export function ImportExportTools() {
   const {
     dispatch,
     scopes,
+    frameRef,
+    scrollFrameRef,
   } = useContext(ThemeEditorContext);
   const theme = scopes[ROOT_SCOPE] || {};
   const [fileName, setFileName,] = use.fileName();
@@ -29,7 +32,7 @@ export function ImportExportTools() {
       <Checkbox controls={[shouldMerge, setShouldMerge]}>Merge into current theme</Checkbox>
     </div>
     <div>
-      <button disabled={themeEmpty} onClick={() => exportJson(fileName)}>
+      <button disabled={themeEmpty} onClick={() => exportThemeJson(fileName)}>
         Export JSON
       </button>
       <button disabled={themeEmpty} onClick={() => exportCss(fileName)}>
@@ -48,6 +51,34 @@ export function ImportExportTools() {
           accept={'.json'}
           onChange={event => {
             readFromUploadedFile(dispatch, event, shouldMerge, theme, setFileName);
+          }}
+          style={{cursor: 'copy'}}
+        />
+      </label>
+    </div>
+    <div>
+      <label
+        style={{
+          background: 'rgba(255,255,255,.3)',
+          cursor: 'copy',
+        }}
+      > Import history JSON
+        <input
+          type="file"
+          accept={'.json'}
+          onChange={event => {
+            const reader = new FileReader();
+            const name = event.target.files[0]?.name;
+          
+            reader.onload = event => {
+              try {
+                const data = JSON.parse(event.target.result);
+                importHistory(data, [frameRef.current, scrollFrameRef.current]);
+              } catch (e) {
+                console.log('failed uploading', e, data);
+              }
+            };
+            reader.readAsText(event.target.files[0]);
           }}
           style={{cursor: 'copy'}}
         />

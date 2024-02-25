@@ -1,8 +1,12 @@
 import { LOCAL_STORAGE_KEY } from '../initializeThemeEditor';
 
-export const exportJson = (fileName) => {
+export const exportThemeJson = (fileName) => {
   const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-  const json = JSON.stringify(JSON.parse(raw), null, 2);
+  saveAsJsonFile(JSON.parse(raw), fileName)
+};
+
+export function saveAsJsonFile(data, fileName) {
+  const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], {type: 'application/json'});
   const url  = URL.createObjectURL(blob);
 
@@ -11,7 +15,7 @@ export const exportJson = (fileName) => {
   a.href        = url;
   a.textContent = 'Download backup.json';
   a.click();
-};
+}
 
 const formatVars = vars => {
   const lines = Object.keys(vars).map(k => `  ${ k }: ${ vars[k] };`);
