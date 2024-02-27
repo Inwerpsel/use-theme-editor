@@ -14,17 +14,25 @@ export function FrameScaleSlider() {
   const [scales, setScales] = use.scales();
   const { width, height } = get;
 
-  const scale = scales[`${width}x${height}`] || 1;
+  const scale = parseFloat(scales[`${width}x${height}`] || 1);
   const normalized = scale <= 1 ? scale : (1 + (scale - 1) / overOneScale)
+
+  const key = `${width}x${height}`;
 
   const updateScales = (e) => {
     const raw = e.target.value;
     const n = raw <= 1 ? raw : (1 + (raw-1) * overOneScale).toFixed(2).replace(/0+$/, '').replace(/\.$/, '');
-    setScales({ ...scales, [`${width}x${height}`]: n});
+    setScales({ ...scales, [key]: n});
   };
 
+  function scrollScale(event) {
+    const delta = Math.round(event.deltaY / 100);
+    const newScale = Math.max(0.2, scale + delta * config.step);
+    setScales({ ...scales, [key]: newScale.toFixed(2)});
+  }
+
   return (
-    <div className={'frame-scale-slider'} style={{ minWidth: '200px' }}>
+    <div onWheelCapture={scrollScale} className={'frame-scale-slider'} style={{ minWidth: '200px' }}>
       <input
         style={{margin: 0, marginTop: '-4px'}}
         type="range"
@@ -41,7 +49,7 @@ export function FrameScaleSlider() {
         value={scale}
         {...config}
         onChange={(e) =>
-          setScales({ ...scales, [`${width}x${height}`]: e.target.value })
+          setScales({ ...scales, [key]: e.target.value })
         }
       />
       <datalist id="scale-points">
