@@ -18,6 +18,7 @@ body {
   background-color: var(--theme-editor--background-color, rgb(201, 190, 190));
 }
 .theme-editor button, .theme-editor input {
+  background: revert;
   margin-right: 2px;
   border: 1px solid black;
   padding: 4px 7px;
@@ -33,6 +34,9 @@ body {
 .theme-editor h5 {
   font-size: 16px !important;
   margin-top: 0 !important;
+}
+.theme-editor :focus {
+  outline: 3px solid rgb(40, 155, 255) !important;
 }
 
 .theme-length-controls {
@@ -187,8 +191,8 @@ body {
 }
 
 .theme-editor-highlight {
-  outline: 7px solid #efef05 !important;
-  outline-offset: 8px !important;
+  outline: 4px solid rgb(105, 82, 236) !important;
+  outline-offset: -2px !important;
 }
 
 .shadow-picker {
@@ -339,6 +343,9 @@ div[id^=font-picker] ul {
   border: 1px solid rgb(179, 162, 162);
   border-radius: 2px;
   flex-shrink: 0;
+}
+.area > :hover {
+  border-color: black;
 }
 
 #area-left, #area-right {

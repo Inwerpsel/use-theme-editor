@@ -19,6 +19,9 @@ $subtle-grey: rgb(179, 162, 162);
     border-radius: 2px;
     flex-shrink: 0;
   }
+  > :hover {
+    border-color: black;
+  }
 }
 
 $area-speed: .2s;

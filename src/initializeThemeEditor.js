@@ -502,7 +502,7 @@ export const setupThemeEditor = async (config) => {
       lastHighlightTimeout = null;
     };
 
-    lastHighlightTimeout = [setTimeout(handler, 2000), handler, element];    
+    lastHighlightTimeout = [setTimeout(handler, 600), handler, element];    
   }
 
   const messageListener = event => {

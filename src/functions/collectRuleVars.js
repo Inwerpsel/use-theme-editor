@@ -1,5 +1,6 @@
 import {balancedVar} from './balancedVar';
 import { statelessSelector } from './extractPageVariables';
+import { HIGHLIGHT_CLASS } from './highlight';
 import { resolveOriginalShorthand } from './resolveOriginalShorthand';
 
 export const definedValues = { 
@@ -18,6 +19,10 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
     // Keep track of visited shorthands so they're only added once.
     const visitedShorthands = [];
     const selector = rule.selectorText;
+    if (selector === `.${HIGHLIGHT_CLASS}`) {
+      // return early
+      return collected;
+    }
 
     for (let property of rule.style) {
       const isCustomDeclaration = property.startsWith('--');

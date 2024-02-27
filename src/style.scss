@@ -6,6 +6,7 @@ body {
   scroll-behavior: auto !important;
 }
 
+$focus-outline: 3px solid rgb(40, 155, 255);
 .theme-editor {
   _-- {
     background-color: rgb(201, 190, 190);
@@ -20,6 +21,7 @@ body {
   text-align: start;
 
   button, input {
+    background: revert;
     margin-right: 2px;
     border: 1px solid black;
     padding: 4px 7px;
@@ -39,6 +41,10 @@ body {
   h5 {
       font-size: 16px !important;
       margin-top: 0 !important;
+  }
+
+  :focus {
+    outline: $focus-outline !important;
   }
 }
 
@@ -213,17 +219,9 @@ body {
 }
 
 .theme-editor-highlight {
-  outline: 7px solid #efef05 !important;
-  outline-offset: 8px !important;
+  outline: 4px solid rgb(105, 82, 236) !important;
+  outline-offset: -2px !important;
 }
-
-//
-//.theme-editor-highlight _-- {
-//  outline-style: solid;
-//  outline-color: #ffff00;
-//  outline-width: 2px;
-//  outline-offset: 2px;
-//}
 
 .shadow-picker {
   width: 100% !important;
