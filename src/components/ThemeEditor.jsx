@@ -249,8 +249,8 @@ export const ThemeEditor = (props) => {
                 <Checkbox
                   // id={'full-page-preview'}
                   controls={[fullPagePreview, setFullPagePreview]}
-                  title='This does not work properly for pages that have different styles based on screen height.'
-                >Scroll preview</Checkbox>
+                  title='WARNING!!! 1) Affects performance on large pages 2) If scrollable section is below body, it cannot be fully shown (e.g. Halfmoon) 3) Does not work properly for pages that have different styles based on screen height.'
+                >Full height preview</Checkbox>
                 <Checkbox
                   // id={'open-first-on-inspect'}
                   controls={[openFirstOnInspect, setOpenFirstOnInspect]}
