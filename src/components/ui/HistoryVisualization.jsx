@@ -5,6 +5,7 @@ import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
 import { setExcludedArea } from '../movable/Area';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { scrollHistory } from './HistoryControls';
 
 function DisableScrollHistoryInArea() {
     const {hostAreaId, homeAreaId} = useContext(MovableElementContext);
@@ -131,7 +132,7 @@ function CurrentActions() {
   const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
   
   return (
-    <div style={{height: '170px', overflow: 'hidden auto'}}>
+    <div onWheelCapture={scrollHistory} style={{minHeight: '170px', overflow: 'hidden visible'}}>
       <ActionList historyIndex={index} actions={actions.entries()} />
     </div>
   ); 
