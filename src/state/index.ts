@@ -20,9 +20,9 @@ export const use = {
   screenOptions:
     () => [get.isSimpleSizes ? simpleScreenOptions : allScreenOptions],
   width:
-    () => useResumableLocalStorage('width', 360),
+    () => useResumableLocalStorage('width', 1024),
   height:
-    () => useResumableLocalStorage('height', 640),
+    () => useResumableLocalStorage('height', 768),
   scales:
     () => useResumableLocalStorage('scales', {} as {[index: string]: string}),
   prefersColorScheme:
