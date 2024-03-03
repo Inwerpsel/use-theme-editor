@@ -60,11 +60,9 @@ export function restoreHistory() {
         console.timeEnd('Restore history');
 
         needsSnapshot = i === 0;
-        restoreOffset();
         restoreLocks();
-        forceHistoryRender();
+        restoreOffset();
     };
-
 }
 
 // problem:

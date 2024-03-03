@@ -56,9 +56,9 @@ export const ThemeEditor = (props) => {
 
   const { fileName } = get;
 
-  const [currentInspected, setCurrentInspected] = useResumableLocalStorage('inspected-index', -1);
+  const [currentInspected, setCurrentInspected] = useResumableState('inspected-index', -1);
   const unfilteredGroups = currentInspected === -1 ? [] : prevGroups[currentInspected] || _unfilteredGroups;
-  const [openGroups, setOpenGroups] = useResumableLocalStorage('OPEN_GROUPS', {});
+  const [openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
   
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);

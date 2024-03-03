@@ -132,7 +132,7 @@ function CurrentActions() {
   const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
   
   return (
-    <div onWheelCapture={scrollHistory} style={{minHeight: '170px', overflow: 'hidden visible'}}>
+    <div onWheelCapture={scrollHistory} style={{minWidth: '170px', minHeight: '170px', overflow: 'hidden visible'}}>
       <ActionList historyIndex={index} actions={actions.entries()} />
     </div>
   ); 

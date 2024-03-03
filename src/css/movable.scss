@@ -10,7 +10,6 @@ $subtle-grey: rgb(179, 162, 162);
   z-index: 10000;
   display: flex;
   gap: 8px;
-  background: transparent;
   align-items: flex-start;
 
   > * {
@@ -28,7 +27,7 @@ $area-speed: .2s;
 
 #area-left, #area-right {
   // Todo: Best way to make widths user configurable.
-  > * {
+  > .movable-element > * {
     width: 400px;
   }
   scrollbar-gutter: stable;
@@ -60,6 +59,9 @@ $area-speed: .2s;
 }
 
 #area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
+  > * {
+    background-color: rgb(201, 190, 190);
+  }
   z-index: 10001;
 
   .area-dropzone {

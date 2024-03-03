@@ -46,7 +46,7 @@ export function Inspector(props) {
     if (inspectedIndex > currentInspected) {
       const el = ref.current;
       setTimeout(() => {
-        el.scrollIntoView({block: 'start'});
+        el?.scrollIntoView({block: 'start'});
       }, 10)
     }
   }, [inspectedIndex])

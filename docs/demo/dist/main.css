@@ -335,7 +335,6 @@ div[id^=font-picker] ul {
   z-index: 10000;
   display: flex;
   gap: 8px;
-  background: transparent;
   align-items: flex-start;
 }
 .area > * {
@@ -356,7 +355,7 @@ div[id^=font-picker] ul {
   flex-shrink: 0;
   align-items: stretch;
 }
-#area-left > *, #area-right > * {
+#area-left > .movable-element > *, #area-right > .movable-element > * {
   width: 400px;
 }
 @media screen and (min-height: 350px) {
@@ -380,6 +379,9 @@ div[id^=font-picker] ul {
 
 #area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
   z-index: 10001;
+}
+#area-top > *, #area-bottom > *, #area-top-reverse > *, #area-bottom-reverse > * {
+  background-color: rgb(201, 190, 190);
 }
 #area-top .area-dropzone, #area-bottom .area-dropzone, #area-top-reverse .area-dropzone, #area-bottom-reverse .area-dropzone {
   transition: width, height 0.2s ease-in;
