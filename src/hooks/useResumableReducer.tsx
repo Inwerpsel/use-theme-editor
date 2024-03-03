@@ -16,7 +16,7 @@ type Reducer<T> = (previous: T, action) => T
 // The initial state when a new key was added.
 export let initialStates = new Map<string, any>();
 // The reducer for a key.
-export const reducers = new Map<string, Reducer<any>>();
+export let reducers = new Map<string, Reducer<any>>();
 // Queue of actions dispatched before reducer was added.
 // Will be replayed right after the reducer gets added.
 export const reducerQueue = new Map<string, [number, any][]>();
@@ -247,7 +247,7 @@ function addReducer(id, reducer, rawInitialState, initializer) {
     }
     return sourceStates.has(id)
       ? sourceStates.get(id)
-      : initialState;
+      : initialStates.get(id);
   });
 }
 
@@ -305,8 +305,16 @@ let lastActions = new Map<string, any>();
 // The time at which the latest value was set, used for debouncing.
 let lastSet = 0;
 
-export function setStates(newStates) {
+export function setStates(newStates: Map<string, any>) {
+  oldStates = states;
+  for (const entry of newStates.entries()) {
+    initialStates.set(...entry);
+  }
   states = newStates;
+  // reducers = new Map();
+  // for (const [k,v] of newStates.entries()) {
+
+  // }
   setCurrentState();
 }
 
@@ -425,10 +433,9 @@ export function clearHistory(): void {
   }
   // lockVersion++;
 
-
+  lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
   past = [];
   historyOffset = 0;
-  lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
   states = pointedStates;
 
   deleteStoredHistory();
@@ -660,7 +667,8 @@ function storeOffset() {
 }
 
 export function restoreOffset() {
-  historyOffset = Math.max(0, Math.min(past.length - 1, parseInt(localStorage.getItem('historyOffset')|| '0')));
+  historyOffset = Math.max(0, Math.min(past.length, parseInt(localStorage.getItem('historyOffset')|| '0')));
+  oldStates = new Map();
   // for now assumes that actions were restored without change propagation
   checkNotifyAll();
 }
