@@ -168,6 +168,7 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
   historyOffset = 0;
   locks = new Map();
   resetInspections();
+  deleteStoredHistory();
   
   for (const actions of timeline) { 
     createEmptyEntry();
@@ -181,6 +182,7 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
             performActionOnLatest(key, action, { debounceTime: Infinity });
         }
     }
+    storeActions(actions, false, i, _initialStates);
     i++;
   }
 
@@ -474,7 +476,7 @@ export function performAction(id, action, options?: HistoryOptions): void {
     action.type = action.type.name;
   }
   
-  storeActions(lastActions, wasPast, past.length, oldStates);
+  storeActions([...lastActions.entries()], wasPast, past.length, oldStates);
   notifyOne(id);
 }
 
@@ -624,7 +626,7 @@ function performActionOnPast(id, action, options?: HistoryOptions): boolean {
       states: entry,
       lastActions: futureLockActions,
     });
-    storeActions(futureLockActions, 1, baseIndex + 1);
+    storeActions([...futureLockActions.entries()], 1, baseIndex + 1);
   }
   if (locks.has(id)) {
     // If there was a lock on this state, update it to the newly created state.

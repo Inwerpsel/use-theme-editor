@@ -68,7 +68,7 @@ export function restoreHistory() {
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
 //   so that it can be applied when replaying.
-export function storeActions(actions, clearFuture, index, prevStates = null): void {
+export function storeActions(actions: [string, any][], clearFuture, index, prevStates = null): void {
     if (needsSnapshot) {
         const snap = JSON.stringify([...initialStates.entries(), ...prevStates.entries()]);
         console.log('snap', snap);
@@ -83,7 +83,7 @@ export function storeActions(actions, clearFuture, index, prevStates = null): vo
         const range = IDBKeyRange.lowerBound(index);
         store.delete(range);
     }
-    store.put([...actions.entries()], index);
+    store.put(actions, index);
 }
 
 export function deleteStoredHistory() {
@@ -95,6 +95,7 @@ export function deleteStoredHistory() {
     store.clear();
     localStorage.removeItem(snapshotKey);
     localStorage.removeItem(INSPECTIONS);
+    needsSnapshot = true;
 
     console.log('Start store delte transaction in ', performance.now( ) - start) 
 }
