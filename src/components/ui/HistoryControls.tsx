@@ -96,7 +96,7 @@ function MiniTimeline() {
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
   return <div style={{width: '100%', height: '6px', padding:'2px',  background: 'darkgrey'}} onClick={scrollToPoint.bind(null, past.length)}>
-    <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .2s ease'}}></div>
+    <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .3s ease-out'}}></div>
     <Dots amount={past.length + 1} />
   </div>
 }
