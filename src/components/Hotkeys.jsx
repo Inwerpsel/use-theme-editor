@@ -38,15 +38,15 @@ export function Hotkeys(props) {
     [frameClickBehavior]
   );
   useEffect(() => {
-    if (!frameRef?.current) {
-      return;
-    }
     const message = {
       type: 'theme-edit-alt-click',
       payload: { frameClickBehavior },
     };
-    frameRef.current.contentWindow.postMessage(message, window.location.origin);
-  }, [frameClickBehavior, frameRef.current]);
+    setTimeout(() => {
+      frameRef.current.contentWindow.postMessage(message, window.location.origin);
+      // With current setup, it might take some time before the listener is added in the frame.
+    }, 1000);
+  }, [frameClickBehavior]);
 
   return null;
 }
