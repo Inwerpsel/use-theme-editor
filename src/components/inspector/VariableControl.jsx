@@ -76,7 +76,7 @@ export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
   </Fragment>;
 };
 
-const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isOpen) => {
+export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen}) => {
   const size = PREVIEW_SIZE;
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(value);
@@ -97,7 +97,6 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
           draggable
           onDragStart={dragValue(value)}
           key={1}
-          onClick={onClick}
           title={title}
           style={{
             width: size,
@@ -126,8 +125,9 @@ const previewValue = (value, cssVar, onClick, isDefault, referencedVariable, isO
   }
 
   return <span
+    draggable
+    onDragStart={dragValue(value)}
     key={ 1 }
-    onClick={ onClick }
     title={ title }
     style={ {
       // width: size,
@@ -349,7 +349,7 @@ export const VariableControl = (props) => {
   }, [scopes, excludedVarName, isOpen]);
 
   const [showReferences, setShowReferences] = useResumableState(`showRefs_${key}`, false);
-  const [openVariablePicker, setOpenVariablePicker] = useState(false);
+  const [openVariablePicker, setOpenVariablePicker] = useResumableState(`showPicker_${key}`, false);
 
   const cssFunc = cssVar.cssFunc;
 
@@ -417,7 +417,7 @@ export const VariableControl = (props) => {
         >
           {formatTitle(name, annoyingPrefix, nameReplacements)}
         </h5>
-        {previewValue(value, cssVar, toggleOpen, isDefault, referencedVariable, isOpen)}
+        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen}} />
         <div>
           {media && <MediaQueries {...{media}} />}
           {!!showCssProperties && <Fragment>
