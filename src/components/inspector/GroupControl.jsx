@@ -159,10 +159,21 @@ export const GroupControl = props => {
                 const isVar = name.startsWith('--');
                 return (
                   <div
+                    onDragOver={event=>event.preventDefault()}
+                    onDrop={event=> {
+                      let value = event.dataTransfer.getData('value');
+                      if (value === '') {
+                        value = event.dataTransfer.getData('text/plain').trim();
+                      }
+                      if (value === '') {
+                        return;
+                      }
+                      dispatch({type: ACTIONS.set, payload: {name, value}})
+                    }}
                     draggable
                     onDragStart={dragValue(value)}
                     key={name}
-                    title={`${name}: ${value}`}
+                    title={name === value ? name : `${name}: ${value}`}
                     style={{
                       display: 'inline-block',
                       width: previewSize,
