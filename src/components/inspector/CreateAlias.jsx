@@ -6,6 +6,9 @@ import { ThemeEditorContext } from "../ThemeEditor";
 import { ACTIONS } from "../../hooks/useThemeEditor";
 import tinycolor from 'tinycolor2';
 
+// The library currently used has some color names with accents, like "screamin'".
+const invalidNameChars = /[^\w\-]/;
+
 export function CreateAlias(props) {
     const {value} = props;
     const {dispatch} = useContext(ThemeEditorContext);
@@ -23,11 +26,11 @@ export function CreateAlias(props) {
         const parsed = tinycolor(value.replace('deg', ''));
         if (parsed.isValid()) {
           const alphaSuffix = parsed.getAlpha() === 1 ? '' : ` ${parsed.getAlpha().toString().replace('.', '')}`;
-          return nameThatColor(parsed.toHexString()).colorName.toLowerCase() + alphaSuffix;
+          return nameThatColor(parsed.toHexString()).colorName.toLowerCase().replace(invalidNameChars, '') + alphaSuffix;
         }
         if (COLOR_VALUE_REGEX.test(value)) {
           console.log('valid color not parsed by tinycolor (should not happen)');
-          return nameThatColor(value).colorName.toLowerCase();
+          return nameThatColor(value).colorName.toLowerCase().replace(invalidNameChars, '');
         }
         return '';
     } , [wasOpened])
