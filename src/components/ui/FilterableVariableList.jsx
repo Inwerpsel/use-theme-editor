@@ -1,4 +1,4 @@
-import React, { useContext, useState, useMemo, Fragment } from "react";
+import React, { useContext, useState, useMemo, Fragment, useRef, useEffect } from "react";
 import { definedValues } from "../../functions/collectRuleVars";
 import { ROOT_SCOPE } from "../../hooks/useThemeEditor";
 import { Checkbox } from "../controls/Checkbox";
@@ -16,6 +16,10 @@ export function FilterableVariableList(props) {
     const [filter, setFilter] = useState('');
     const [filterValue, setFilterValue] = useState('');
     const [includeRoot, setIncludeRoot] = useState(true);
+    const currentRef = useRef();
+
+    useEffect(() => currentRef.current?.scrollIntoView({block: 'nearest'}), [value])
+    useEffect(() => currentRef.current?.scrollIntoView({block: 'center'}), [])
 
     const filtered = useMemo(() => {
         const fromDefinedValues = Object.entries(definedValues)
@@ -95,7 +99,7 @@ export function FilterableVariableList(props) {
               );
 
               return (
-                <li key={name}>
+                <li key={name} ref={isCurrent ? currentRef : null}>
                   <button
                     onClick={() => {
                       !isCurrent && onChange(varValue);
