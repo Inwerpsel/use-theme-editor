@@ -52,6 +52,18 @@ $area-speed: .2s;
 
   align-items: stretch;
 }
+
+#area-left-inner {
+  // margin-right: auto;
+  flex-direction: column;
+}
+
+// .is-dragging #area-left-inner {
+//   .area-dropzone {
+//     min-width: 180px;
+//   }
+// }
+
 #drawer .area-switcher {
   right: 0;
   top: 0;
@@ -170,7 +182,7 @@ $area-speed: .2s;
     }
   }
 
-  #area-left, #area-right {
+  #area-left, #area-right, #area-left-inner {
     .area-dropzone {
       &:only-child {
         width: 60px;

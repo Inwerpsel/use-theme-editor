@@ -20,8 +20,6 @@ export function ImportExportTools() {
 
   const [shouldMerge, setShouldMerge] = useState(false);
 
-  const themeEmpty = Object.keys(theme).length === 0;
-
   return <div
     style={{
       background: 'white',
@@ -32,10 +30,10 @@ export function ImportExportTools() {
       <Checkbox controls={[shouldMerge, setShouldMerge]}>Merge into current theme</Checkbox>
     </div>
     <div>
-      <button disabled={themeEmpty} onClick={() => exportThemeJson(fileName)}>
+      <button onClick={() => exportThemeJson(fileName)}>
         Export JSON
       </button>
-      <button disabled={themeEmpty} onClick={() => exportCss(fileName)}>
+      <button onClick={() => exportCss(fileName)}>
         Export CSS
       </button>
     </div>

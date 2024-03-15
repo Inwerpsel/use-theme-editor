@@ -190,9 +190,15 @@ body {
   max-width: 100%;
 }
 
+@keyframes pulse {
+  70% {
+    outline-offset: 4px;
+  }
+}
 .theme-editor-highlight {
   outline: 4px solid rgb(105, 82, 236) !important;
-  outline-offset: -2px !important;
+  outline-offset: -2px;
+  animation: pulse 0.2s;
 }
 
 .shadow-picker {
@@ -371,6 +377,10 @@ div[id^=font-picker] ul {
   right: 0;
 }
 
+#area-left-inner {
+  flex-direction: column;
+}
+
 #drawer .area-switcher {
   right: 0;
   top: 0;
@@ -465,10 +475,10 @@ div[id^=font-picker] ul {
   border-right: 4px solid yellow;
   min-width: 120px;
 }
-.is-dragging #area-left .area-dropzone:only-child, .is-dragging #area-right .area-dropzone:only-child {
+.is-dragging #area-left .area-dropzone:only-child, .is-dragging #area-right .area-dropzone:only-child, .is-dragging #area-left-inner .area-dropzone:only-child {
   width: 60px;
 }
-.is-dragging #area-left .drag-hovered, .is-dragging #area-right .drag-hovered {
+.is-dragging #area-left .drag-hovered, .is-dragging #area-right .drag-hovered, .is-dragging #area-left-inner .drag-hovered {
   border-top: 4px solid yellow !important;
 }
 .is-dragging #drawer .drag-hovered {
@@ -698,6 +708,10 @@ button {
 
 .history-actions > li > * {
   vertical-align: top;
+}
+
+.flex-column {
+  flex-direction: column !important;
 }
 
 /*# sourceMappingURL=main.css.map*/

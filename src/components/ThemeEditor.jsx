@@ -38,6 +38,8 @@ import { SignalExample } from './_examples/SignalExample';
 import { VoiceCommands } from './ui/VoiceCommands';
 import { SpeakGlobalHooks } from '../voice/menu/state';
 import { HistoryVisualization } from './ui/HistoryVisualization';
+import { Palette } from './ui/Palette';
+import { HistoryLastAlternate } from './ui/HistoryLastAlternate';
 
 export const ThemeEditorContext = createContext({});
 
@@ -203,6 +205,7 @@ export const ThemeEditor = (props) => {
                 <PropertySearch/>
               </div>
               <ScreenSwitcher />
+              <Palette />
             </Area>
             <Area
               id="area-top-reverse"
@@ -212,6 +215,7 @@ export const ThemeEditor = (props) => {
                 flexGrow: 1,
               }}
             >
+              <HistoryLastAlternate />
               <HistoryControls />
               <FrameScaleSlider/>
             </Area>
@@ -220,6 +224,7 @@ export const ThemeEditor = (props) => {
             <Area id="area-left">
               <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
             </Area>
+            <Area id="area-left-inner" />
             <ResizableFrame src={window.location.href} />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
             
