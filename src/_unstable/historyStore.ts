@@ -52,7 +52,7 @@ export function restoreHistory() {
                     reducerQueue.get(key).push([i + 1, action]);
                     addUnprocessedAction(key, action);
                 } else {
-                    performActionOnLatest(key, action, { debounceTime: Infinity });
+                    performActionOnLatest(key, action, { force: true, debounceTime: Infinity });
                 }
             }
             i++;
@@ -69,6 +69,10 @@ export function restoreHistory() {
 // - If an action was done against a locked state, we need to keep track of this base index
 //   so that it can be applied when replaying.
 export function storeActions(actions: [string, any][], clearFuture, index, prevStates = null): void {
+    const undefKey = actions.find(([k,v]) => v === undefined);
+    if (undefKey) {
+        alert(`Tried store undefined for ${undefKey[1]}`);
+    }
     if (needsSnapshot) {
         const snap = JSON.stringify([...initialStates.entries(), ...prevStates.entries()]);
         console.log('snap', snap);
