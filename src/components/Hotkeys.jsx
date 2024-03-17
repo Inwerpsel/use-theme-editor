@@ -42,6 +42,7 @@ export function Hotkeys(props) {
       type: 'theme-edit-alt-click',
       payload: { frameClickBehavior },
     };
+    frameRef.current.contentWindow.postMessage(message, window.location.origin);
     setTimeout(() => {
       frameRef.current.contentWindow.postMessage(message, window.location.origin);
       // With current setup, it might take some time before the listener is added in the frame.
