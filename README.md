@@ -303,17 +303,19 @@ with history by replacing the function, and adding a string key.
 * Debounces everything by default (you'd never want history without it).
 * Store all history across page loads using IndexedDb.
 
-## Known issues
+## Known current issues and limitations
 A few components are not (fully) working at the moment, mostly because they depend on future changes, but also some small bugs.
 
 You should take the following into account when trying the demo.
 
 - Current theme view not working properly (needs adaptation to selector scoped properties).
 It can still be used for a general overview but is missing variable values and can't be filtered properly.
-- Add alias for raw values not working.
-- History needs to be cleared manually before it gets too big (how big depends on exact content, but should be fine below 100 entries, for well optimized sites).
+- Add alias for raw values not working (which you'd probably expect it to do, but currently it only substitues the value inside of `var()` statements).
+- History needs to be cleared manually before it gets too big (how big depends on exact content, but should be fine below 200 entries, for reasonably optimized sites).
 - All inspections are re-executed in one task, immediately when history is applied when loading the page,
 causing a potentially long delay and increasing memory usage.
+- When you create a history stash (by using undo and then continuing from an older state), if there are locks on the stashed entries,
+the locked state will be included in both the new timeline and still in the stash. This is not ideal as it's confusing and might lead to bugs.
 
 <details>
 <summary>
