@@ -488,6 +488,7 @@ export function replayAlternate(): void {
       if (!didFirst) {
         performAction(key, action, {force: true});
         didFirst = true;
+        firstOfEntry = false;
         continue;
       }
       pointedStates = states;
