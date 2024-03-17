@@ -19,7 +19,12 @@ export function HistoryLastAlternate() {
 
     const stringied = useMemo(() => JSON.stringify(lastAlternate.map(a=>[...a.entries()]), null, 2), [lastAlternate])
 
-    return <div className="flex-column">
+    return <div
+      className="flex-column" 
+      style={{
+        background: `rgba(26, 217, 210, ${Math.min(lastAlternate.length / 20, 1)})`,
+      }}
+      >
         <button
           title={'Apply/create stash:\n' + stringied}
           onClick={replayAlternate}
