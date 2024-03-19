@@ -204,7 +204,27 @@ tags you see in [other example HTML pages at the end of the body](https://github
 * Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
 
-## Status
+## Roadmap
+
+Among the issues on this repo, the following are the current areas of focus.
+
+* **History UI**:
+The UI around history was expanded a lot recently, and there's still some
+nuances to figure out, as well as some possible new capabilities.
+* **Refactor how inspector frame is loaded**:
+Currently, it still requires a script to be added to the page after saving it. This script also runs some duplicate logic with the main document.
+It was also written without the realization that many (if not all) interactions
+with the iframe can be done synchronously (i.e. without `postMessage`).
+Addressing this is expected to significantly improve memory usage.
+* **Clean up CSS parsing and evaluation of inspection**:
+Currently, the algorithm used for most of the inspection still dates to the 
+initial implementation of this repo, and the assumptions have changed enough so
+that it currently doesn't perform as well as it could (this is an understatement).
+The new parsing algorithm is mostly ready, and can be put in place after (or while)
+the inspector frame code is improved. This will allow for any CSS to be changed,
+not only the contents of custom properties.
+
+## Status and stability
 
 While in general most functionality is quite stable, various parts are being worked on at the moment. If you'd like to
 make use of this repo in any form, but can't find everything you need to set it up (be it documentation or
