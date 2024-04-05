@@ -27,27 +27,6 @@ https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-
 If you're the owner of some of this content and would like to have it removed / updated,
 please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-editor/issues/new) on this repo.
 
-### Openprops ([source](https://open-props.style/))
-
-<details>
-  <summary>Info/instructions</summary>
-
-  #### What works well?
-  - Most complete palette of custom properties
-  - Great design
-  - Mostly short and readable selectors (I just love `small.green-badge` and `circle#sun`)
-  - Modern CSS
-  - A few pretty advanced use cases (gradients with noisefilters, > 4 border radii blobs, )
-  #### What doesn't work well?
-  - Special heading style applies also to editor headings. Looks a bit broken but also cute so I didn't intervene yet.
-  - Over-usage of `:where()` (e.g. `:where(html)`), currently leading to a few bugs in the inspector (e.g. selector locator doesn't properly handle this)
-  - Almost no semantic tokens (e.g. button-color), so adding aliases doesn't really make sense here. It also
-  makes drag and dropping values pretty much useless: you'd get something like `--orange: var(--purple)`.
-  - Some inline styles (e.g. border radius) not properly handled
-</details>
-
-[🖌 Home page](https://inwerpsel.github.io/use-theme-editor/demo/openprops/home/)
-
 ### Halfmoon ([source](https://github.com/halfmoonui/halfmoon))
 
 <details>
@@ -124,6 +103,27 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 [🖌 starter-template](https://inwerpsel.github.io/use-theme-editor/demo/bs/starter-template)
 [🖌 sticky-footer](https://inwerpsel.github.io/use-theme-editor/demo/bs/sticky-footer)
 [🖌 sticky-footer-navbar](https://inwerpsel.github.io/use-theme-editor/demo/bs/sticky-footer-navbar)
+
+### Openprops ([source](https://open-props.style/))
+
+<details>
+  <summary>Info/instructions</summary>
+
+  #### What works well?
+  - Most complete palette of custom properties
+  - Great design
+  - Mostly short and readable selectors (I just love `small.green-badge` and `circle#sun`)
+  - Modern CSS
+  - A few pretty advanced use cases (gradients with noisefilters, > 4 border radii blobs, )
+  #### What doesn't work well?
+  - Special heading style applies also to editor headings. Looks a bit broken but also cute so I didn't intervene yet.
+  - Over-usage of `:where()` (e.g. `:where(html)`), currently leading to a few bugs in the inspector (e.g. selector locator doesn't properly handle this)
+  - Almost no semantic tokens (e.g. button-color), so adding aliases doesn't really make sense here. It also
+  makes drag and dropping values pretty much useless: you'd get something like `--orange: var(--purple)`.
+  - Some inline styles (e.g. border radius) not properly handled
+</details>
+
+[🖌 Home page](https://inwerpsel.github.io/use-theme-editor/demo/openprops/home/)
 
 ### Mozilla developers
 
@@ -250,17 +250,19 @@ In general everything is included, except when it wouldn't be useful or practica
 Some things that might seem weird to include in a history timeline have to be included,
 because otherwise it wouldn't be possible to restore the UI state.
 
-<details> <summary>Detailed list</summary>
+<details> <summary>What is not included in the timeline?</summary>
 
-#### Included
-* The inspected element
-* Which elements in the inspector are opened
-* Which variables in the inspector are opened
-* Inspector filters (property type, search, whether to show raw values)
-* Width, height, and scale of the 
 
-#### Not included
-*
+* Options related to history behavior and visualization
+* The palette (it offers a stable place to put things)
+* Options that change how names are displayed
+* Options that change which information is displayed (source links, properties)
+* Compact mode of dragable elements if present
+* Visibility of element locators on non-root custom property scopes
+* The currently focused element index of element locators
+* Sporadic local state that is not needed when replaying (like when adding an alias it doesn't need the dialog)
+
+Everything else is tracked, but can be opted out individually by keeping it locked.
 
 </details>
 
@@ -462,7 +464,6 @@ the locked state will be included in both the new timeline and still in the stas
     - Optional prompt?
     - Save any "chopped" off futures?
     - Options determining which scenario (e.g. save when > 3 edits, discard when < 2)
-  - Keep alternate futures and merge them like branches
 
 ## Future theme structure
 
