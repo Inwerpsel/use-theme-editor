@@ -1,1 +1,8 @@
 @import "halfmoon/css/halfmoon-variables.css";
+
+@media (max-width: 768px) {
+    .sidebar, .sidebar-overlay {
+        // Quick fix sidebar toggle, doesn't work because it's missing JS.
+        display: none !important;
+    }
+}

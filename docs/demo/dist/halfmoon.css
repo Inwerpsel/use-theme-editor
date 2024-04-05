@@ -14544,6 +14544,10 @@ body:not(.dark-mode) .invisible-lm {
 /*!**************************************************************************************************************************************************************************************************************************!*\
   !*** css ./node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[0].use[1]!./node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[0].use[2]!./node_modules/sass-loader/dist/cjs.js!./docs/demo/halfmoon/style.scss ***!
   \**************************************************************************************************************************************************************************************************************************/
-
+@media (max-width: 768px) {
+  .sidebar, .sidebar-overlay {
+    display: none !important;
+  }
+}
 
 /*# sourceMappingURL=halfmoon.css.map*/
