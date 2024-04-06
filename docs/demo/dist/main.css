@@ -714,4 +714,14 @@ button {
   flex-direction: column !important;
 }
 
+.tutorial-content {
+  z-index: 1000000;
+}
+.movable-element:has(.tutorial-content) {
+  border-color: indigo;
+}
+#drawer .tutorial-content {
+  bottom: 100%;
+}
+
 /*# sourceMappingURL=main.css.map*/

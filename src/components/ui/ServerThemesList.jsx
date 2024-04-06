@@ -1,7 +1,8 @@
 import {useLocalStorage} from '../../hooks/useLocalStorage';
-import React, {useContext, useEffect, useRef} from 'react';
+import React, {Fragment, useContext, useEffect, useRef} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {ServerThemesListItem} from './ServerThemesListItem';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 export const ServerThemesList = () => {
   const activeThemeRef = useRef();
@@ -33,7 +34,7 @@ export const ServerThemesList = () => {
     return <div style={{height: serverThemesHeight}}>Loading server themes...</div>;
   }
 
-  return <ul
+  return <Fragment><ul
     className={'server-theme-list'}
     onMouseUp={event => {
       setServerThemesHeight(event.target.closest('ul').style.height);
@@ -43,5 +44,5 @@ export const ServerThemesList = () => {
     {Object.entries(serverThemes).map(([name, serverTheme]) =>
       <ServerThemesListItem key={name} {...{name, serverTheme, activeThemeRef}}/>
     )}
-  </ul>;
+  </ul><Tutorial el={ServerThemesList}>Here are all your saved themes.</Tutorial></Fragment>;
 };

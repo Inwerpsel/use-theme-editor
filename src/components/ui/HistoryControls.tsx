@@ -14,6 +14,7 @@ import {
 } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 function HistoryBack() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
@@ -90,7 +91,7 @@ function Dots({amount}) {
   </div>
 }
 
-function MiniTimeline() {
+export function MiniTimeline() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
 
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
@@ -98,10 +99,11 @@ function MiniTimeline() {
   return <div style={{width: '100%', height: '6px', padding:'2px',  background: 'darkgrey'}} onClick={scrollToPoint.bind(null, past.length)}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .3s ease-out'}}></div>
     <Dots amount={past.length + 1} />
+    <Tutorial el={MiniTimeline}>Here's a compact version of the history timeline.</Tutorial>
   </div>
 }
 
-function LockStatus() {
+export function LockStatus() {
   const { locks } = useContext(HistoryNavigateContext);
 
   const [open, setOpen] = useState(false);
@@ -123,6 +125,9 @@ function LockStatus() {
         🔒{amount}
       </button>{' '}
       {open && <LocksList close={() => setOpen(false)}/>}
+      <Tutorial el={LockStatus}>
+        This button shows how many locks are applied and allows you to toggle each.
+      </Tutorial>
     </Fragment>
   );
 }
@@ -203,6 +208,7 @@ export function HistoryControls() {
         >
           Clear
         </button>
+        <Tutorial el={HistoryControls}>These are your regular history buttons, and a few more...</Tutorial>
       </div>
     );
 }

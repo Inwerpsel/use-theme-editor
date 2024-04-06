@@ -10,6 +10,7 @@ import { getAllDefaultValues } from './functions/getAllDefaultValues';
 import { deriveUtilitySelectors, parseCss } from './functions/parseCss';
 import { toNode, toPath } from './functions/nodePath';
 import { restoreHistory } from './_unstable/historyStore';
+import { makeCourses } from './_unstable/courses';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -108,6 +109,8 @@ function restoreInspections() {
 
   const prev = getPrevinspections();
   let i = 0;
+
+  // 🐢🐢🐢
   for (const path of prev) {
     i++;
     let target;
@@ -163,6 +166,7 @@ export const setupThemeEditor = async (config) => {
 
 
   await dependencyReady;
+  // 🐢
   cssVars = await extractPageVariables();
   const defaultValues = getAllDefaultValues(cssVars);
 
@@ -345,6 +349,7 @@ export const setupThemeEditor = async (config) => {
     // to the root, even if they're also used deeper down. Though you can get used to that and will always find
     // everything.
     // console.time('old');
+    // 🐢
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);
@@ -360,6 +365,7 @@ export const setupThemeEditor = async (config) => {
 
     const inspectionPath = toPath(target);
 
+    // 🐢
     window.parent.postMessage(
       {
         type: 'render-vars',
@@ -402,6 +408,7 @@ export const setupThemeEditor = async (config) => {
 
   // Below are only listeners for messages sent from the parent frame.
   if (!isRunningAsFrame) {
+    makeCourses();
     return;
   }
 
@@ -416,7 +423,8 @@ export const setupThemeEditor = async (config) => {
     // I didn't come across any valid custom prop value starting with "http".
     // URLs are always enclosed in "url()" in custom props.
     if (!value || value.startsWith('http') ) return
-    const target = event.target
+    const target = event.target;
+    // 🐢
     const matchedVars = getMatchingVars({ cssVars, target });
     const rawGroups = groupVars(matchedVars, target, cssVars);
     const groups = filterMostSpecific(rawGroups, target);

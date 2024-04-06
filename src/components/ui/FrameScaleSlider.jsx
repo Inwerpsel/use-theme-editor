@@ -1,5 +1,6 @@
 import React from 'react';
 import { get, use } from '../../state';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 // Display values > 1 closer to each other.
 const overOneScale = 5;
@@ -57,6 +58,7 @@ export function FrameScaleSlider() {
         <option value="1.2" />
         <option value="1.4" />
       </datalist>
+      <Tutorial el={FrameScaleSlider}>Zoom in and out here. You can also scroll above the element.</Tutorial>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import React from 'react';
 import { use } from '../../state';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 const id = 'responsive-size-controls';
 
@@ -13,5 +14,6 @@ export function FrameSizeSettings() {
     /> x <input
       type="number" onChange={ event => setHeight(parseInt(event.target.value)) } value={ height }
     /></span>
+    <Tutorial el={FrameSizeSettings}>Here you can manually input width and height.</Tutorial>
   </div>;
 }

@@ -4,6 +4,7 @@ import { CompactModeButton } from '../movable/CompactModeButton';
 import { SelectControl } from '../controls/SelectControl';
 import { RadioControl } from '../controls/RadioControl';
 import { get, use } from '../../state';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 export function ScreenSwitcher() {
   const [width, setWidth] = use.width();
@@ -52,6 +53,11 @@ export function ScreenSwitcher() {
     <div>
       <CompactModeButton />
       {comp}
+      <Tutorial el={ScreenSwitcher}>
+        Use one of these preset screen dimensions.
+
+        This can display as a dropdown or radio buttons. You can choose either a simple or a complete set of options.
+        </Tutorial>
     </div>
   );
 }

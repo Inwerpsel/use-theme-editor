@@ -1,8 +1,9 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { Fragment, useEffect, useMemo, useRef } from 'react';
 import { filterSelectors, filterSearched } from '../../functions/filterSearched';
 import { get } from '../../state';
 import { GroupControl } from "../inspector/GroupControl";
 import { mustBeColor } from '../inspector/TypedControl';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 export function Inspector(props) {
   const { unfilteredGroups, inspectedIndex, currentInspected } = props;
@@ -51,7 +52,8 @@ export function Inspector(props) {
     }
   }, [inspectedIndex])
 
-    return (
+    return <Fragment>
+      <Tutorial el={Inspector}>This is the inspected element and all its parents.</Tutorial>
       <ul className={'group-list'} {...{ref}}>
         {groups.length === 0 && (
           <li>
@@ -62,5 +64,5 @@ export function Inspector(props) {
           <GroupControl key={group.label} {...{ group }} />
         ))}
       </ul>
-    );
+    </Fragment>;
 }

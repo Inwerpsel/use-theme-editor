@@ -40,6 +40,7 @@ import { SpeakGlobalHooks } from '../voice/menu/state';
 import { HistoryVisualization } from './ui/HistoryVisualization';
 import { Palette } from './ui/Palette';
 import { HistoryLastAlternate } from './ui/HistoryLastAlternate';
+import { StartTutorial } from '../_unstable/Tutorial';
 
 export const ThemeEditorContext = createContext({});
 
@@ -222,6 +223,7 @@ export const ThemeEditor = (props) => {
           </div>
           <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
             <Area id="area-left">
+              <StartTutorial />
               <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
             </Area>
             <Area id="area-left-inner" />

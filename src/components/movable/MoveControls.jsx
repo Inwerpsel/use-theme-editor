@@ -5,6 +5,7 @@ import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
 import { TextControl } from '../controls/TextControl';
 import {AreasContext} from './MovablePanels';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 export function MoveControls() {
   const {
@@ -23,6 +24,7 @@ export function MoveControls() {
 
   return (
     <div>
+      <Tutorial el={MoveControls}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
       <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
       <Checkbox controls={[dragEnabled, setDragEnabled]}>
         Drag elements

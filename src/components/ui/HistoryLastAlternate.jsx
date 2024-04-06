@@ -1,5 +1,6 @@
 import { Fragment, useContext, useMemo } from "react";
 import { HistoryNavigateContext, clearAlternate, replayAlternate } from "../../hooks/useResumableReducer";
+import { Tutorial } from "../../_unstable/Tutorial";
 
 export function HistoryLastAlternate() {
     const { lastAlternate, historyOffset, past, lastAlternateIndex } =
@@ -33,6 +34,11 @@ export function HistoryLastAlternate() {
           {content}
         </button>
         {lastAlternate.length > 0 && <Clear />}
+        <Tutorial el={HistoryLastAlternate}>
+          If you travel back and discard future, it's still kept here.
+
+          This allows you to splice in a new edit earlier into your history and just re-apply everything after it.
+        </Tutorial>
     </div>
 }
 

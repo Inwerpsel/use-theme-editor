@@ -9,6 +9,7 @@ import { VariableReferences } from "../inspector/VariableReferences";
 import { dragValue } from "../../functions/dragValue";
 import { useCompactSetting } from "../movable/MovableElement";
 import { CompactModeButton } from "../movable/CompactModeButton";
+import { Tutorial } from "../../_unstable/Tutorial";
 
 function PaletteEntry(props) {
   const {value, isHtml} = props;
@@ -313,6 +314,7 @@ export function Palette() {
         <br/>
         {values.length === 0 && <span>Empty<br/></span>}
         {compact ? <MiniPalette {...{values, setValues}}/> : <MaxiPalette  {...{values, setValues}}/>}
+        <Tutorial el={Palette}>You can drop values here and drag them onto the page and UI elements.</Tutorial>
       </div>
     );
 }

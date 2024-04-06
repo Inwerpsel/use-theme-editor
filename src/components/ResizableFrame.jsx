@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { use, get } from '../state';
 import {ThemeEditorContext} from './ThemeEditor';
+import { Tutorial } from '../_unstable/Tutorial';
 
 const wrapperMargin = 28;
 
@@ -45,6 +46,7 @@ export const ResizableFrame = props => {
         boxSizing: 'border-box',
       } }
     >
+      <Tutorial el={ResizableFrame}>Select an element here to see all its styles.</Tutorial>
       <iframe
         className='responsive-frame'
         ref={frameRef}

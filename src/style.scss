@@ -518,3 +518,27 @@ button {
 .flex-column {
   flex-direction: column !important;
 }
+
+.tutorial-content {
+  z-index: 1000000;
+
+  .movable-element:has(&) {
+    border-color: indigo;
+  }
+
+  #drawer & {
+    bottom: 100%;
+  }
+  
+  // #area-left &, #area-left-inner & {
+  //   left: 100%;
+  // }
+
+  // #area-right & {
+  //   right: 100%;
+  // }
+
+  // #drawer &, #area-left &, #area-left-inner &, #area-right & {
+  //   bottom: 100%;
+  // }
+}

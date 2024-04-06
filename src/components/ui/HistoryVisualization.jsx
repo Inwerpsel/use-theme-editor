@@ -6,6 +6,7 @@ import { MovableElementContext } from '../movable/MovableElement';
 import { setExcludedArea } from '../movable/Area';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { scrollHistory } from './HistoryControls';
+import { Tutorial } from '../../_unstable/Tutorial';
 
 function DisableScrollHistoryInArea() {
     const {hostAreaId, homeAreaId} = useContext(MovableElementContext);
@@ -134,6 +135,8 @@ function CurrentActions() {
   return (
     <div onWheelCapture={scrollHistory} style={{minWidth: '170px', minHeight: '240px', overflow: 'hidden visible'}}>
       <ActionList historyIndex={index} actions={actions.entries()} />
+      {/* Quick fix for el not always shown... */}
+      <Tutorial el={HistoryVisualization}>Since history visualization is disabled, this only shows current history entry.</Tutorial>
     </div>
   ); 
 }
@@ -169,6 +172,9 @@ export function HistoryVisualization() {
 
   return (
     <div className="history">
+      <Tutorial el={HistoryVisualization}>
+        See all steps you took here.
+      </Tutorial>
       <DisableScrollHistoryInArea/>
       <Checkbox controls={[showAll, setShowAll]}>Show all</Checkbox>
       <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
