@@ -303,3 +303,5 @@ export function HistoryVisualization() {
     </div>
   );
 }
+
+HistoryVisualization.fName = 'HistoryVisualization';

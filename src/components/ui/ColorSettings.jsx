@@ -15,3 +15,5 @@ export function ColorSettings() {
       </div>
     );
 }
+
+ColorSettings.fName = 'ColorSettings';

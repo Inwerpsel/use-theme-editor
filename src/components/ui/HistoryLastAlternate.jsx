@@ -57,3 +57,5 @@ function Clear() {
 //   - this in turn allows for a way to deal with locks when they're on the thing that's about to be stashed
 //   - either the lock is removed and the old value is used again (probably unwanted a lot of the time but it's an easy option)
 //   - or the lock history can be removed, in which case the locked value has to move all the way to the initial state
+
+HistoryLastAlternate.fName = 'HistoryLastAlternate';

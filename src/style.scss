@@ -519,20 +519,49 @@ button {
   flex-direction: column !important;
 }
 
+@keyframes blink {
+  0% {
+    box-shadow: 0 0 0 0 rgba(124, 50, 177, 0.708)
+  }
+  70% {
+      box-shadow: 0 0 0 10px rgba(76, 0, 130, 0.406);
+  }
+  100% {
+      box-shadow: 0 0 0 0 rgba(76, 0, 130, 0.721);
+  }
+
+}
+
+// I tried using `:has(> &)` nested in the `.tutorial-content` selector below,
+// however it seemed to get compiled incorrectly, losing the initial `>`,
+// That makes it match elements with non-direct descendants too.
+// Could also be due to some SCSS language quirk.
+:has(> .tutorial-content) {
+  animation: .7s linear 0s infinite blink;
+}
+
+.area:has(.tutorial-content) {
+  overflow: visible !important;
+}
+
 .tutorial-content {
   z-index: 1000000;
+  min-width: 320px;
 
-  .movable-element:has(&) {
-    border-color: indigo;
+  :has(&) {
+    // A bit aggressive, but this is a simple way to display the tutorial message outside the normal area boundaries,
+    // without messing with how scrolling works.
+    // Have to make sure the tutorial always uses elements that are high in the area.
+    overflow: visible !important;
   }
 
   #drawer & {
     bottom: 100%;
   }
   
-  // #area-left &, #area-left-inner & {
-  //   left: 100%;
-  // }
+  #area-left &, #area-left-inner & {
+    left: 100%;
+  }
 
   // #area-right & {
   //   right: 100%;
@@ -541,4 +570,30 @@ button {
   // #drawer &, #area-left &, #area-left-inner &, #area-right & {
   //   bottom: 100%;
   // }
+}
+
+li[data-done] {
+  margin-top: 16px;
+  list-style-type: none;
+}
+
+li[data-done=false]:before {
+  vertical-align: bottom;
+}
+
+li[data-done]:before {
+  content: "...";
+  color: grey;
+  min-width: 36px;
+  margin-right: 4px;
+  font-size: 24px;
+  font-weight: 900;
+}
+
+li[data-done=true]:before {
+  content: "✓";
+  color: green;
+}
+button:disabled {
+  filter: opacity(.5);
 }

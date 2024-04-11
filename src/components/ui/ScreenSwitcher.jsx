@@ -53,7 +53,9 @@ export function ScreenSwitcher() {
     <div>
       <CompactModeButton />
       {comp}
-      <Tutorial el={ScreenSwitcher}>
+      <Tutorial el={ScreenSwitcher} tasks={[
+        get => ['Switch to a phone view', get.width < 400],
+      ]}>
         Use one of these preset screen dimensions.
 
         This can display as a dropdown or radio buttons. You can choose either a simple or a complete set of options.
@@ -61,3 +63,5 @@ export function ScreenSwitcher() {
     </div>
   );
 }
+
+ScreenSwitcher.fName = 'ScreenSwitcher';

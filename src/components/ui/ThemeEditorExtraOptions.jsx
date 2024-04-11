@@ -16,3 +16,5 @@ export function ThemeEditorExtraOptions() {
     </button>
   </div>;
 }
+
+ThemeEditorExtraOptions.fName = 'ThemeEditorExtraOptions';

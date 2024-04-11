@@ -131,3 +131,5 @@ function DoMany({n, keys}: {n: number, keys: UseKey[]}) {
     }
     return null;
 }
+
+SignalExample.fName = 'SignalExample';

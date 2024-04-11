@@ -2,9 +2,18 @@ import { useContext, useEffect, useRef, useSyncExternalStore } from "react";
 import { courses } from "./courses";
 import { MovableElementContext } from "../components/movable/MovableElement";
 import { AreasContext } from "../components/movable/MovablePanels";
+import { EasyAccessors } from "../functions/getters";
+import { get } from "../state";
+import * as React from "react";
 
 let activeCourse;
+
+function forceTutorialState() {
+    // idk
+}
+
 function startTutorial() {
+    forceTutorialState();
     activeCourse = 'basics';
     notifyAll();
 }
@@ -40,19 +49,15 @@ function nextStep(event) {
     }
     if (!activeCourse) {
         alert('Congratulations, you finished the tutorial!');
-        return;
     }
 
     notifyAll();
     // Ensure we don't trigger anything else when changing step.
     event.stopPropagation();
     event.preventDefault();
-    openDrawerIfNeeded();
+    activeCourse && openDrawerIfNeeded();
 }
 
-function NextButton() {
-    return <button onClick={nextStep}>Next</button>
-}
 function prevStep(event) {
     if (activeStepIndex === 0) {
         const names = [...Object.keys(courses)];
@@ -62,10 +67,7 @@ function prevStep(event) {
     } else {
         activeStepIndex--;
     }
-    if (!activeCourse) {
-        alert('Congrats, you finished all courses');
-        return;
-    }
+
     notifyAll();
 
     // Ensure we don't trigger anything else when changing step.
@@ -105,7 +107,28 @@ function useActiveTutorialElement() {
 let lastEl = null;
 let openDrawer;
 
-export function Tutorial({ el, children }) {
+type Task = (get: EasyAccessors) => [label: string, isDone: boolean];
+
+function CheckTask({label, done}: {label: string, done: boolean}) {
+
+    return <li data-done={done}>
+        {label}
+    </li>
+}
+
+function checkTasks(tasks: Task[]): [boolean, [string, boolean][]] {
+    const data = [] as [string, boolean][];
+    let doneAll = true;
+    for (const fn of tasks) {
+        const [label, done] = fn(get);
+        data.push([label, done]);
+        if (doneAll) doneAll = done;
+    }
+    return [doneAll, data];
+}
+
+export function Tutorial({ el, children, tasks = [] }: {el: any, children: any, tasks: Task[]}) {
+    const [doneAll, checkedTasks] = checkTasks(tasks);
     const {setDrawerOpen} = useContext(AreasContext);
     openDrawer = setDrawerOpen;
 
@@ -121,30 +144,36 @@ export function Tutorial({ el, children }) {
     }
 
     return (
-        <div
+      <div
         ref={ref}
         className="tutorial-content"
         style={{
-            border: '4px solid purple',
-            background: 'white',
-            borderRadius: '7px',
-            padding: '4px',
-            position: 'absolute',
-            // top: '100%',
+          border: '4px solid purple',
+          background: 'white',
+          borderRadius: '7px',
+          padding: '4px',
+          position: 'absolute',
+          // top: '100%',
         }}
-        >
-        {children}
-        <PrevButton />
-        <NextButton />
+      >
         <span
-            style={{
+          style={{
             float: 'right',
             fontStyle: 'italic',
             border: '1px solid gray',
-            }}
+          }}
         >
-            {activeCourse} {activeStepIndex + 1}/{courses[activeCourse].steps.length}
+          {activeCourse} {activeStepIndex + 1}/
+          {courses[activeCourse].steps.length}
         </span>
-        </div>
+        {children}
+        <ul>
+            {checkedTasks.map(([label, done]) => <CheckTask {...{label, done}} />)}
+        </ul>
+        <PrevButton />
+        <button disabled={!doneAll} onClick={nextStep}>Next</button>
+      </div>
     );
 }
+
+StartTutorial.fName = 'StartTutorial';

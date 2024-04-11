@@ -58,7 +58,16 @@ export function FrameScaleSlider() {
         <option value="1.2" />
         <option value="1.4" />
       </datalist>
-      <Tutorial el={FrameScaleSlider}>Zoom in and out here. You can also scroll above the element.</Tutorial>
+      <Tutorial tasks={[
+        get => [
+          'Increase the zoom level to 2 or more.',
+          scale >= 2,
+        ],
+      ]} el={FrameScaleSlider}>
+        Zoom in and out here. You can also scroll above the element.
+      </Tutorial>
     </div>
   );
 }
+
+FrameScaleSlider.fName = 'FrameScaleSlider';

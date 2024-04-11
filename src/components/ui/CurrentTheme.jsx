@@ -167,3 +167,5 @@ export function CurrentTheme() {
     </div>
   );
 }
+
+CurrentTheme.fName = 'CurrentTheme';

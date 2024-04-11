@@ -14,6 +14,8 @@ export function FrameSizeSettings() {
     /> x <input
       type="number" onChange={ event => setHeight(parseInt(event.target.value)) } value={ height }
     /></span>
-    <Tutorial el={FrameSizeSettings}>Here you can manually input width and height.</Tutorial>
+    <Tutorial el={FrameSizeSettings}>Enter precise screen dimensions here if necessary.</Tutorial>
   </div>;
 }
+
+FrameSizeSettings.fName = 'FrameSizeSettings';

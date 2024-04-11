@@ -37,3 +37,5 @@ export function ThemeUploadPanel() {
     </button>
   </div>;
 }
+
+ThemeUploadPanel.fName = 'ThemeUploadPanel';

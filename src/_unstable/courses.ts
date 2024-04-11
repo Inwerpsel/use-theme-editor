@@ -20,6 +20,7 @@ export function makeCourses() {
             name: 'basics',
             steps: [
                 ResizableFrame,
+                Inspector,
                 ScreenSwitcher,
                 FrameSizeSettings,
                 FrameScaleSlider,
@@ -31,7 +32,8 @@ export function makeCourses() {
                 HistoryControls,
                 MiniTimeline,
                 HistoryVisualization,
-                HistoryLastAlternate,
+                // Keep next one out because it's more confusing than helpful
+                // HistoryLastAlternate,
                 LockStatus,
             ],
         },
@@ -41,19 +43,24 @@ export function makeCourses() {
                 MoveControls,
             ],
         },
-        inspection: { 
-            name: 'inspection', 
+        // inspection: { 
+        //     name: 'inspection', 
+        //     steps: [
+        //         ThemeEditorExtraOptions,
+        //     ],
+        // },
+        changes: {
+            name: 'changes',
             steps: [
-                ThemeEditorExtraOptions,
-                Inspector,
+                Palette,
             ],
         },
-        changes: { name: 'changes', steps: [
-            Palette,
-        ] },
-        themes: { name: 'themes', steps: [
-            ServerThemesList,
-        ] },
+        themes: {
+            name: 'themes',
+            steps: [
+                ServerThemesList,
+            ],
+        },
     };
 }
 

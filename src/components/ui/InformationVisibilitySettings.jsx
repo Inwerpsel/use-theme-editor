@@ -21,3 +21,5 @@ export function InformationVisibilitySettings() {
       </div>
     );
 }
+
+InformationVisibilitySettings.fName = 'InformationVisibilitySettings';

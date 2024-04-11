@@ -157,3 +157,5 @@ export function NameReplacements() {
       </div>
     );
 }
+
+NameReplacements.fName = 'NameReplacements';

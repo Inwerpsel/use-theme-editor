@@ -62,7 +62,7 @@ export const defaultHooks = {
     return useResumableLocalStorage('drawer-open', false);
   },
   dragEnabled() {
-    return useLocalStorage('drag-on', true);
+    return useLocalStorage('drag-on', false);
   }
 };
 

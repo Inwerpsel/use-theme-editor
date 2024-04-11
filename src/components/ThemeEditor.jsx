@@ -59,7 +59,7 @@ export const ThemeEditor = (props) => {
 
   const { fileName } = get;
 
-  const [currentInspected, setCurrentInspected] = useResumableState('inspected-index', -1);
+  const [currentInspected, setCurrentInspected] = use.inspectedIndex();
   const unfilteredGroups = currentInspected === -1 ? [] : prevGroups[currentInspected] || _unfilteredGroups;
   const [openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
   
@@ -198,7 +198,7 @@ export const ThemeEditor = (props) => {
               id="area-top"
               style={{ justifyContent: 'flex-start', flexGrow: 1 }}
             >
-              <div style={{
+              <div id="Filters" style={{
                   display: 'flex',
                   alignItems: 'flex-start',
                 }}>
@@ -233,7 +233,7 @@ export const ThemeEditor = (props) => {
             <Area id="area-right">
               <HistoryVisualization />
               <ThemeUploadPanel/>
-              <div className={'theme-editor-menu'}>
+              <div id='ExtraPanelsMenu' className={'theme-editor-menu'}>
                 <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
                   Import/export
                 </ToggleButton>
@@ -244,15 +244,15 @@ export const ThemeEditor = (props) => {
                   Server
                 </ToggleButton>
               </div>
-              <Fragment>
+              <Fragment id='ThemesList'>
                 {serverThemesDisplayed && <ServerThemesList/>}
               </Fragment>
-              <Fragment>{sheetsDisablerDisplayed && <StylesheetDisabler />}</Fragment>
-              <Fragment>{importDisplayed && <ImportExportTools />}</Fragment>
+              <Fragment id='StylesheetDisabler'>{sheetsDisablerDisplayed && <StylesheetDisabler />}</Fragment>
+              <Fragment id='ImportExportTools'>{importDisplayed && <ImportExportTools />}</Fragment>
 
               <InformationVisibilitySettings />
               <ColorSettings />
-              <div>
+              <div id='InspectionSettings'>
                 <Checkbox
                   // id={'full-page-preview'}
                   controls={[fullPagePreview, setFullPagePreview]}

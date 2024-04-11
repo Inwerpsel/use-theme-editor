@@ -7,7 +7,7 @@ import { ToggleButton } from "../controls/ToggleButton";
 import { VariableUsages } from "../inspector/VariableUsages";
 import { VariableReferences } from "../inspector/VariableReferences";
 import { dragValue } from "../../functions/dragValue";
-import { useCompactSetting } from "../movable/MovableElement";
+import { MovableElementContext, useCompactSetting } from "../movable/MovableElement";
 import { CompactModeButton } from "../movable/CompactModeButton";
 import { Tutorial } from "../../_unstable/Tutorial";
 
@@ -314,7 +314,13 @@ export function Palette() {
         <br/>
         {values.length === 0 && <span>Empty<br/></span>}
         {compact ? <MiniPalette {...{values, setValues}}/> : <MaxiPalette  {...{values, setValues}}/>}
-        <Tutorial el={Palette}>You can drop values here and drag them onto the page and UI elements.</Tutorial>
+        <Tutorial el={Palette} tasks={[
+          () => [`Add 2 items to the palette (${Math.min(2, values.length)}/2)`, values.length > 1],
+        ]}>
+          You can drop values here and drag them onto the page and UI elements.
+          </Tutorial>
       </div>
     );
 }
+
+Palette.fName = 'Palette';

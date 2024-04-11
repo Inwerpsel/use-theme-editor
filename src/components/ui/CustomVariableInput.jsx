@@ -56,3 +56,5 @@ export const CustomVariableInput = () => {
     </div>}
   </div>;
 };
+
+CustomVariableInput.fName = 'CustomVariableInput';

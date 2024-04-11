@@ -17,3 +17,5 @@ export function RemoveAnnoyingPrefix() {
       }}
     />;
 }
+
+RemoveAnnoyingPrefix.fName = 'RemoveAnnoyingPrefix';

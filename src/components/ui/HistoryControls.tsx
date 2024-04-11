@@ -212,3 +212,5 @@ export function HistoryControls() {
       </div>
     );
 }
+
+HistoryControls.fName = 'HistoryControls';

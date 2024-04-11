@@ -21,7 +21,7 @@ function getId(element, index) {
   // Assume string means a default DOM node.
   if (typeof element.type === 'string') {
     // Use ID or first class.
-    return element.props.id || element.props.className?.split(' ')[0] || index;
+    return element.props.className?.split(' ')[0] || index;
   }
 
   // Default to the element's type, which is assumed to be unique.
@@ -50,7 +50,9 @@ export function MovableElement({homeAreaId, element, index}) {
   } = useContext(AreasContext);
 
   const elementId = useMemo(
-    () => `${homeAreaId}~~${getId(element, index)}`,
+    () => {
+      return element.type?.fName || element.props.id || `${homeAreaId}~~${getId(element, index)}`;
+    },
     []
   );
 
@@ -132,13 +134,16 @@ export function MovableElement({homeAreaId, element, index}) {
       {draggedElement && draggedElement !== elementId && (
         <span
           style={{
-            color: 'yellowgreen',
+            color: 'lime',
+            background: 'rgb(0 0 0 / 56%)',
             position: 'absolute',
-            top: '-12px',
+            top: '0',
             fontSize: '12px',
             right: '0',
             zIndex: 1001,
             fontWeight: 'bold !important',
+            textAlign: 'right',
+            width: 'auto',
           }}
         >
           {elementId}

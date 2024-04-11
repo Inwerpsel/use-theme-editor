@@ -30,6 +30,10 @@ export const ResizableFrame = props => {
         }
         const newHeight = parseInt(event.currentTarget.style.height.replace('px', '')) - wrapperMargin;
         const newWidth = parseInt(event.currentTarget.style.width.replace('px', '')) - wrapperMargin;
+        if (isNaN(newHeight) || isNaN(newWidth)) {
+          // Quick fix to prevent tutorial buttons from triggering this shitty old code in some cases.
+          return;
+        }
         setHeight(newHeight);
         setWidth(newWidth);
       }}
@@ -46,7 +50,17 @@ export const ResizableFrame = props => {
         boxSizing: 'border-box',
       } }
     >
-      <Tutorial el={ResizableFrame}>Select an element here to see all its styles.</Tutorial>
+      <Tutorial 
+        el={ResizableFrame}
+        tasks={[
+          get => [
+            'Click any element on the page',
+            get.inspectedIndex !== -1,
+          ],
+        ]}
+      >
+        Select an element here to see all its styles.
+      </Tutorial>
       <iframe
         className='responsive-frame'
         ref={frameRef}

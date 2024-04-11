@@ -6,6 +6,7 @@ import { SelectControl } from '../controls/SelectControl';
 import { TextControl } from '../controls/TextControl';
 import {AreasContext} from './MovablePanels';
 import { Tutorial } from '../../_unstable/Tutorial';
+import { MovableElementContext } from './MovableElement';
 
 export function MoveControls() {
   const {
@@ -13,6 +14,7 @@ export function MoveControls() {
     resetPanels,
     dragEnabled, setDragEnabled,
     showMovers, setShowMovers,
+    drawerOpen,
   } = useContext(AreasContext);
 
   const [windowArrangments, setWindowArrangments] = use.windowArrangments();
@@ -24,7 +26,11 @@ export function MoveControls() {
 
   return (
     <div>
-      <Tutorial el={MoveControls}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
+      <Tutorial el={MoveControls} tasks={[
+        () => ['Enable dragging elements', dragEnabled],
+        () => ['Drag this element into the right area', useContext(MovableElementContext).hostAreaId === 'area-right'],
+        () => ['Close the drawer', !drawerOpen],
+      ]}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
       <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
       <Checkbox controls={[dragEnabled, setDragEnabled]}>
         Drag elements
@@ -82,3 +88,5 @@ export function MoveControls() {
     </div>
   );
 }
+
+MoveControls.fName = 'MoveControls';

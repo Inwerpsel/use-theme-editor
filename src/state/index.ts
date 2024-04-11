@@ -3,6 +3,7 @@ import { mem } from "../hooks/mem";
 import { signals } from "../functions/signals";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
+import { useResumableState } from "../hooks/useResumableReducer";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -16,6 +17,7 @@ import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 // to not have a rule of where to put things.
 export const use = {
   isSimpleSizes:
+    // Resumable to make restoring UI state and exact scroll positions easier.
     () => useResumableLocalStorage('isSimpleSizes', true),
   screenOptions:
     () => [get.isSimpleSizes ? simpleScreenOptions : allScreenOptions],
@@ -68,9 +70,11 @@ export const use = {
   visualizeHistory: 
     () => useLocalStorage('visualizeHistory', false),
   visualizeHistoryAlways: 
-    () => useLocalStorage('visualizeHistoryAlways', false),
+    () => useLocalStorage('visualizeHistoryAlways', true),
   svgDarkBg:
     () => useLocalStorage('svgDarkBg', false),
+  inspectedIndex:
+    () => useResumableState('inspected-index', -1),
 
   // 
   // State below this is only used in a demo element.

@@ -53,7 +53,22 @@ export function Inspector(props) {
   }, [inspectedIndex])
 
     return <Fragment>
-      <Tutorial el={Inspector}>This is the inspected element and all its parents.</Tutorial>
+      <Tutorial el={Inspector}>
+        <p>
+          The appearance of each element is determined by rules. These rules can be attached to the element itself, or to one of its parents.
+        </p>
+        <p>
+          They are grouped in a box per element. You can hover the title of the box to highlight the corresponding element on the page.
+        </p>
+        <p>
+          You can think of it as a tree view, except:
+          <ul style={{paddingLeft: '48px'}}>
+            <li>It's upside down, so that the most useful information is easy to find</li>
+            <li>Doesn't include the whole tree, only the section leading to the inspected element.</li>
+            <li>Everything related to the element is here, so it's always obvious what applies to what</li>
+          </ul>
+        </p>
+      </Tutorial>
       <ul className={'group-list'} {...{ref}}>
         {groups.length === 0 && (
           <li>
@@ -66,3 +81,5 @@ export function Inspector(props) {
       </ul>
     </Fragment>;
 }
+
+Inspector.fName = 'Inspector';
