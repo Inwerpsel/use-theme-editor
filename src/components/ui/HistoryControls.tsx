@@ -1,4 +1,4 @@
-import React, { Fragment, MouseEvent, useContext, useEffect, useRef, useState } from 'react';
+import React, { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import {
   HistoryNavigateContext,
   addLock,
@@ -9,7 +9,6 @@ import {
   historyForward,
   historyForwardFast,
   historyForwardOne,
-  historyGo,
   removeLock,
 } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
@@ -72,14 +71,6 @@ function HistoryForwardFast() {
   </button>;
 }
 
-function scrollToPoint(length, event: MouseEvent) {
-  const target = event.currentTarget;
-  const rect = target.getBoundingClientRect();
-  const ratio = Math.abs((event.clientX - rect.left) / rect.width);
-  const newIndex = Math.round(length * ratio);
-  historyGo(length - newIndex);
-}
-
 function Dots({amount}) {
   const dots = [];
   for (let i = 0; i < amount; i++) {
@@ -96,7 +87,7 @@ export function MiniTimeline() {
 
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
-  return <div style={{width: '100%', height: '6px', padding:'2px',  background: 'darkgrey'}} onClick={scrollToPoint.bind(null, past.length)}>
+  return <div style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey'}}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .3s ease-out'}}></div>
     <Dots amount={past.length + 1} />
     <Tutorial el={MiniTimeline}>Here's a compact version of the history timeline.</Tutorial>
