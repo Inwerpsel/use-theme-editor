@@ -304,8 +304,8 @@ $area-speed: .2s;
 
   padding-top: 2px;
 
-  width: 24px;
-  height: 24px;
+  min-width: 24px !important;
+  min-height: 24px !important;
 
   top: 0;
   right: 0;

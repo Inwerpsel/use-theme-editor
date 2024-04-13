@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { get, use } from '../state';
 import { flipDebugMode } from './RenderInfo';

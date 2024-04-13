@@ -311,7 +311,6 @@ export function Palette() {
         }}
       >
         <CompactModeButton />
-        <br/>
         {values.length === 0 && <span>Empty<br/></span>}
         {compact ? <MiniPalette {...{values, setValues}}/> : <MaxiPalette  {...{values, setValues}}/>}
         <Tutorial el={Palette} tasks={[

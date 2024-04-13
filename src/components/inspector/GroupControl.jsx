@@ -95,7 +95,7 @@ export const GroupControl = props => {
     return null;
   }
 
-  const previewSize = '20px';
+  const previewSize = '28px';
 
   const isOpen = !!openGroups[group.label];
 
@@ -144,7 +144,6 @@ export const GroupControl = props => {
               - "{search}"
               <button
                 style={{
-                  fontSize: '7px',
                   padding: '3px 3px 1px',
                   position: 'relative',
                   bottom: '4px',
@@ -185,8 +184,9 @@ export const GroupControl = props => {
                       backgroundColor: `${value}`,
                       backgroundRepeat: `no-repeat`,
                       backgroundSize: 'cover',
-                      marginTop: '7px',
+                      marginTop: '3px',
                       marginLeft: '6px',
+                      paddingTop: '3.5px',
                       fontSize: '14px',
                       textAlign: 'center',
                       textShadow: isVar ? 'white 0px 3px' : 'white 2px 2px'

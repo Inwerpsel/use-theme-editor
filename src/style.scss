@@ -1,5 +1,6 @@
 $accent-color: var(--theme-editor--acent-color, #007cba);
 $subtle-grey: rgb(179, 162, 162);
+$min-button-height: 44px;
 
 html,
 body {
@@ -28,6 +29,12 @@ $focus-outline: 3px solid rgb(40, 155, 255);
     border-radius: 6px;
     font-size: 16px;
   }
+
+  button, input:not([type=checkbox], [type=radio]), select, label:has(>[type=checkbox]) {
+    min-width: $min-button-height;
+    min-height: $min-button-height;
+  }
+
   h4 {
     _-- {
       white-space: break-spaces;
@@ -236,6 +243,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
 }
 
 .var-group {
+  min-height: $min-button-height + 5px;
   background: white !important;
   border: 1px solid black !important;
   margin-bottom: 3px !important;
@@ -594,6 +602,7 @@ li[data-done=true]:before {
   content: "✓";
   color: green;
 }
+
 button:disabled {
   filter: opacity(.5);
 }

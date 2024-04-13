@@ -156,7 +156,6 @@ export const ColorControl = props => {
           style={ {
             fontSize: '12px',
             float: 'right',
-            width: PREVIEW_SIZE,
             opacity: value === 'transparent' ? 1 : .4,
           }}
         >
