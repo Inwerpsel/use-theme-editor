@@ -3,41 +3,61 @@ import {MovableElement} from './MovableElement';
 import {AreasContext, DRAG_LEAVE_TIMEOUT} from './MovablePanels';
 import { HistoryNavigateContext, useResumableState } from '../../hooks/useResumableReducer';
 
+function listen(element, event, listener) {
+  element.addEventListener(event, listener);
+  return () => {
+    element.removeEventListener(event, listener);
+  }
+}
+
 function RecordScrollPosition({containerRef, id}) {
-  const [n, setN] = useResumableState(`areaOffset#${id}`, 0);
+  const { past: {length} } = useContext(HistoryNavigateContext);
+  const [stored, setN] = useResumableState(`areaOffset#${id}`, [0, length]);
+  const [n, storedLength] = stored.length ? stored : [stored, 0];
 
   useEffect(() => {
-    // Also restore the position on first render.
-    n > 0 && containerRef.current?.scrollTo({
-      top: n,
-      left: 0,
-    });
+    if (storedLength === length) {
+      // Also restore the position on first render.
+      containerRef.current.scrollTo({
+        top: n,
+        left: 0,
+      });
+    }
+  }, []);
+
+  useEffect(() => {
     const start = performance.now();
     const listener = event => {
       if (performance.now() - start < 500) return;
       const raw = event.currentTarget.scrollTop;
       const value = raw < 10 ? 0 : Math.floor(raw);
       setN(
-        value,
+        [value, length],
         { skipHistory: true, appendOnly: true },
       );
     };
-    containerRef.current?.addEventListener('scroll', listener);
-    return () => {
-      containerRef.current?.removeEventListener('scroll', listener);
-    }
+    return listen(containerRef.current, 'scroll', listener);
   }, []);
 }
 
 function RestoreScrollPosition({containerRef, id}) {
-  const [n] = useResumableState(`areaOffset#${id}`, 0);
+  const [[n]] = useResumableState(`areaOffset#${id}`, [0]);
 
   useEffect(() => {
     containerRef.current?.scrollTo({
       top: n,
       left: 0,
-      // behavior: 'smooth',
     });
+    const timeout = setTimeout(() => {
+      // Scroll a second time to account for slow UI.
+      containerRef.current?.scrollTo({
+        top: n,
+        left: 0,
+      });
+    }, 500);
+    return () => {
+      clearTimeout(timeout);
+    }
   }, [n]);
 }
 
