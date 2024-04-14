@@ -7,6 +7,7 @@ import { TextControl } from '../controls/TextControl';
 import {AreasContext} from './MovablePanels';
 import { Tutorial } from '../../_unstable/Tutorial';
 import { MovableElementContext } from './MovableElement';
+import { DragHandle } from './DragHandle';
 
 export function MoveControls() {
   const {
@@ -26,6 +27,7 @@ export function MoveControls() {
 
   return (
     <div>
+      <DragHandle/>
       <Tutorial el={MoveControls} tasks={[
         () => ['Enable dragging elements', dragEnabled],
         () => ['Drag this element into the right area', useContext(MovableElementContext).hostAreaId === 'area-right'],
