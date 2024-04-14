@@ -17,6 +17,8 @@ function removeStateSelectors(selector) {
   .trim()
 }
 
+let lastInspectedSelector, lastInspectedIndex;
+
 export function ElementLocator({
   selector,
   initialized,
@@ -27,13 +29,14 @@ export function ElementLocator({
   property = null,
   label,
 }) {
+  const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
+  const didLastInspectHere = strippedSelector === lastInspectedSelector;
   const { frameRef, lastInspectTime } = useContext(ThemeEditorContext);
   const [elements, setElements] = useState([]);
-  const [currentElement, setCurrentElement] = useState(0);
+  const [currentElement, setCurrentElement] = useState(didLastInspectHere ? lastInspectedIndex : 0);
   const [interacted, setInteracted] = useState(false);
   const id = useId();
   // Should happen up front for all selectors, so that they're properly grouped from the start.
-  const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
 
   useEffect(() => {
     if (!initialized) {
@@ -51,7 +54,7 @@ export function ElementLocator({
             }
           }
 
-          setCurrentElement(currentInspected);
+          currentElement === 0 && setCurrentElement(currentInspected);
           setElements(elements);
         }
       }
@@ -105,7 +108,7 @@ export function ElementLocator({
   const element = elements[currentElement];
 
   return (
-    <div>
+    <div style={{outline: didLastInspectHere ? '4px solid rgb(26, 217, 210)' : 'none'}}>
       {showLabel && (
         <div className="monospace-code">
           {(label || selector).trim()}
@@ -172,6 +175,8 @@ export function ElementLocator({
           {!!element && !element.isCurrentlyInspected && (
             <button
               onClick={() => {
+                lastInspectedSelector = strippedSelector;
+                lastInspectedIndex = currentElement;
                 frameRef.current?.contentWindow.postMessage(
                   {
                     type: 'inspect-located',
