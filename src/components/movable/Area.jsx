@@ -41,7 +41,8 @@ function RecordScrollPosition({containerRef, id}) {
 }
 
 function RestoreScrollPosition({containerRef, id}) {
-  const [[n]] = useResumableState(`areaOffset#${id}`, [0]);
+  const [stored] = useResumableState(`areaOffset#${id}`, [0]);
+  const [n] = stored.length ? stored : [stored];
 
   useEffect(() => {
     containerRef.current?.scrollTo({
