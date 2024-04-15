@@ -20,7 +20,6 @@ export function FilterableVariableList(props) {
     const currentRef = useRef();
 
     useEffect(() => currentRef.current?.scrollIntoView({block: 'nearest'}), [value])
-    useEffect(() => currentRef.current?.scrollIntoView({block: 'center'}), [])
 
     const filtered = useMemo(() => {
         const fromDefinedValues = Object.entries(definedValues)
@@ -47,21 +46,11 @@ export function FilterableVariableList(props) {
 
     const [doFull, setDoFull] = useState(false);
 
-    useEffect(() => {
-      if (doFull) return;
-      // Populate rest of list with some delay.
-      // Avoids needless work and resulting stutter when going through history fast.
-      const timeout = setTimeout(() => {
-        setDoFull(true);
-      }, 500)
-      return () => {
-        clearTimeout(timeout);
-      };
-    }, [value, filtered]);
-
     const activeIndex = doFull ? null : filtered.findIndex(([name]) => `var(${name})` === value);
     const min = doFull ? null : activeIndex - initialWindowSize;
     const max = doFull ? null : activeIndex + initialWindowSize;
+
+    const timeAtRender = performance.now();
 
     return (
       <div onClick={(e) => e.stopPropagation()} style={{}}>
@@ -83,6 +72,11 @@ export function FilterableVariableList(props) {
             maxHeight: '50vh',
             background: 'white',
             overflowY: 'scroll',
+          }}
+          onScroll={() => {
+            if (performance.now() - timeAtRender > 200) {
+              setDoFull(true)
+            }
           }}
         >
           {filtered.map(([name, optionValue], index) => {
