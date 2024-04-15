@@ -8,6 +8,7 @@ import { ThemeEditorContext } from "../ThemeEditor";
 import { dragValue } from "../../functions/dragValue";
 
 const rootSelectors = [':root', ':where(html)', 'html']
+const initialWindowSize = 20;
 
 export function FilterableVariableList(props) {
     const {scopes} = useContext(ThemeEditorContext);
@@ -44,6 +45,24 @@ export function FilterableVariableList(props) {
         );
     }, [filter, filterValue, theme, includeRoot]);
 
+    const [doFull, setDoFull] = useState(false);
+
+    useEffect(() => {
+      if (doFull) return;
+      // Populate rest of list with some delay.
+      // Avoids needless work and resulting stutter when going through history fast.
+      const timeout = setTimeout(() => {
+        setDoFull(true);
+      }, 500)
+      return () => {
+        clearTimeout(timeout);
+      };
+    }, [value, filtered]);
+
+    const activeIndex = doFull ? null : filtered.findIndex(([name]) => `var(${name})` === value);
+    const min = doFull ? null : activeIndex - initialWindowSize;
+    const max = doFull ? null : activeIndex + initialWindowSize;
+
     return (
       <div onClick={(e) => e.stopPropagation()} style={{}}>
         <Checkbox controls={[includeRoot, setIncludeRoot]}>Global values</Checkbox>
@@ -66,7 +85,10 @@ export function FilterableVariableList(props) {
             overflowY: 'scroll',
           }}
         >
-          {filtered.map(([name, optionValue]) => {
+          {filtered.map(([name, optionValue], index) => {
+              if (!doFull && (index < min || index > max)) {
+                return;
+              }
               const varValue = `var(${name})`;
               const isCurrent = varValue === value;
 
