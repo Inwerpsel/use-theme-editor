@@ -153,7 +153,7 @@ export const GroupControl = props => {
                 onClick={() => { setSearch('') }}
               >X</button>
               </span>}
-            {groupColors.length > 0 && <ul style={{listStyleType: 'none', display: 'inline-flex', margin: 0}}>
+            {groupColors.length > 0 && <div style={{display: 'contents', margin: 0}}>
               {groupColors.map(([{name}, value]) => {
                 const isVar = name.startsWith('--');
                 return (
@@ -193,7 +193,7 @@ export const GroupControl = props => {
                     }}>{/^var\(/.test(value) ? 'v' : value === 'transparent' ? '👻' : ! isVar ? 'r': <Fragment>&nbsp;</Fragment>}</div>
                 );
                 })}
-            </ul>}
+            </div>}
           </div>
 
           {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
