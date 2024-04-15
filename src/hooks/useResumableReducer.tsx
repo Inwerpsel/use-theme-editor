@@ -634,12 +634,12 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
   return true;
 }
 
-function performActionOnPast(id, action, options?: HistoryOptions): boolean {
+function performActionOnPast(id, action, options: HistoryOptions = {}): boolean {
   const reducer = reducers.get(id);
   if (!reducer) {
     return false;
   }
-  if (lastAlternate.length > historyWarnOnUpdateLimit && !options?.force) {
+  if (lastAlternate.length > historyWarnOnUpdateLimit && !options.force) {
     if (!window.confirm(`You're about to lose ${lastAlternate.length} stashed changes, proceed?`)) {
       return false;
     }
