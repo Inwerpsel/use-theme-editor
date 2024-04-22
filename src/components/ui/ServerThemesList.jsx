@@ -1,16 +1,16 @@
 import {useLocalStorage} from '../../hooks/useLocalStorage';
 import React, {Fragment, useContext, useEffect, useRef} from 'react';
-import {ThemeEditorContext} from '../ThemeEditor';
 import {ServerThemesListItem} from './ServerThemesListItem';
 import { Tutorial } from '../../_unstable/Tutorial';
+import { use } from '../../state';
 
 export const ServerThemesList = () => {
   const activeThemeRef = useRef();
 
-  const {
-    serverThemes,
+  const [serverThemes ,{
     serverThemesLoading,
-  } = useContext(ThemeEditorContext);
+    deleteTheme,
+  }] = use.serverThemes();
 
   const [
     serverThemesHeight,
@@ -42,7 +42,7 @@ export const ServerThemesList = () => {
     style={{resize: 'vertical', height: serverThemesHeight}}
   >
     {Object.entries(serverThemes).map(([name, serverTheme]) =>
-      <ServerThemesListItem key={name} {...{name, serverTheme, activeThemeRef}}/>
+      <ServerThemesListItem key={name} {...{name, serverTheme, activeThemeRef, deleteTheme}}/>
     )}
   </ul><Tutorial el={ServerThemesList}>Here are all your saved themes.</Tutorial></Fragment>;
 };

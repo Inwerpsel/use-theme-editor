@@ -9,9 +9,8 @@ import { use } from '../../state';
 import { importHistory } from '../../hooks/useResumableReducer';
 
 export function ImportExportTools() {
+  const [{scopes}, dispatch] = use.themeEditor();
   const {
-    dispatch,
-    scopes,
     frameRef,
     scrollFrameRef,
   } = useContext(ThemeEditorContext);
@@ -73,7 +72,7 @@ export function ImportExportTools() {
                 const data = JSON.parse(event.target.result);
                 importHistory(data, [frameRef.current, scrollFrameRef.current]);
               } catch (e) {
-                console.log('failed uploading', e, data);
+                console.log('failed uploading', e);
               }
             };
             reader.readAsText(event.target.files[0]);

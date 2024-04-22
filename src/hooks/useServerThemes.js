@@ -1,17 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useGlobalState, useUniqueEffect } from './useGlobalState';
 
-export const useServerThemes = (config) => {
+let config = {};
+
+export function setServerConfig(newConfig) {
+  config = newConfig;
+}
+
+export const useServerThemes = () => {
   const {
     fetchThemes,
     uploadTheme,
     deleteTheme,
   } = config;
 
-  const [serverThemes, setServerThemes] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [dirty, setDirty] = useState(false);
+  const [serverThemes, setServerThemes] = useGlobalState('serverThemes', []);
+  const [loading, setLoading] = useGlobalState('serverThemesLoading', true);
+  // We only use this boolean to always trigger logic when it changes.
+  // Probably should use another name for it.
+  const [dirty, setDirty] = useGlobalState('serverThemesDirty', false);
 
-  useEffect(() => {
+  useUniqueEffect('serverThemesDirty', () => {
     const doApiCall = async () => {
       const themes = await fetchThemes();
       setServerThemes({
@@ -23,9 +31,9 @@ export const useServerThemes = (config) => {
       setLoading(false);
     };
     doApiCall();
-  }, [dirty]);
+  });
 
-  return {
+  return [serverThemes, {
     serverThemes,
     serverThemesLoading: loading,
     uploadTheme: async (name, scopes) => {
@@ -38,6 +46,6 @@ export const useServerThemes = (config) => {
       await deleteTheme(name);
       setDirty(!dirty);
     }
-  };
+  }];
 };
 

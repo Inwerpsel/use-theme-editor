@@ -17,6 +17,7 @@ export const GroupControl = props => {
   } = props;
 
   const { propertyFilter } = get;
+  const [{scopes}, dispatch] = use.themeEditor();
 
   const [search, setSearch] = use.search();
   const [darkSvg, setDarkSvg] = use.svgDarkBg();
@@ -37,9 +38,7 @@ export const GroupControl = props => {
 
   const {
     frameRef,
-    dispatch,
     defaultValues,
-    scopes,
     openGroups,
     setOpenGroups,
   } = useContext(ThemeEditorContext);

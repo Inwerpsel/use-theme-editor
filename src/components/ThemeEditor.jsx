@@ -1,7 +1,5 @@
-import React, {createContext, Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState} from 'react';
-import {ACTIONS, useThemeEditor} from '../hooks/useThemeEditor';
-import {useLocalStorage, useResumableLocalStorage} from '../hooks/useLocalStorage';
-import {useServerThemes} from '../hooks/useServerThemes';
+import React, {createContext, Fragment, useLayoutEffect, useRef, useState} from 'react';
+import {useLocalStorage} from '../hooks/useLocalStorage';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
 import {CustomVariableInput} from './ui/CustomVariableInput';
@@ -23,24 +21,24 @@ import {Drawer} from './movable/Drawer';
 import {CurrentTheme} from './ui/CurrentTheme';
 import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
-import { updateScopedVars } from '../initializeThemeEditor';
 import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
-import { useInsertionEffect } from 'react';
 import { SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
-import { get, use } from '../state';
+import { use } from '../state';
 import { Hotkeys } from './Hotkeys';
 import { ColorSettings } from './ui/ColorSettings';
 import { InformationVisibilitySettings } from './ui/InformationVisibilitySettings';
 import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
-import { VoiceCommands } from './ui/VoiceCommands';
-import { SpeakGlobalHooks } from '../voice/menu/state';
+// import { VoiceCommands } from './ui/VoiceCommands';
+// import { SpeakGlobalHooks } from '../voice/menu/state';
 import { HistoryVisualization } from './ui/HistoryVisualization';
 import { Palette } from './ui/Palette';
 import { HistoryLastAlternate } from './ui/HistoryLastAlternate';
 import { StartTutorial } from '../_unstable/Tutorial';
+import { ApplyStyles } from './effects/ApplyStyles';
+import { AcceptDroppedOptions } from './effects/AcceptDroppedOptions';
 
 export const ThemeEditorContext = createContext({});
 
@@ -48,7 +46,6 @@ export const prevGroups = [];
 
 export const ThemeEditor = (props) => {
   const {
-    config,
     groups: _unfilteredGroups,
     allVars,
     defaultValues,
@@ -56,8 +53,6 @@ export const ThemeEditor = (props) => {
     inspectedIndex,
     isNewInspection,
   } = props;
-
-  const { fileName } = get;
 
   const [currentInspected, setCurrentInspected] = use.inspectedIndex();
   const unfilteredGroups = currentInspected === -1 ? [] : prevGroups[currentInspected] || _unfilteredGroups;
@@ -73,41 +68,6 @@ export const ThemeEditor = (props) => {
 
   const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', false);
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
-
-  const [
-    {
-      scopes,
-    },
-    dispatch,
-  ] = useThemeEditor({allVars, defaultValues});
-
-  useEffect(() => {
-    window.addEventListener('message', (event) => {
-      if (event.data.type === 'dropped-options') {
-        const {options, value} = event.data.payload;
-        console.log(options, value)
-        const [firstOption, ...otherOptions] = options;
-        dispatch({
-          type: ACTIONS.set,
-          payload: { name: firstOption.varName, scope: firstOption.scope, value, alternatives: otherOptions },
-        });
-      }
-    }, false);
-    // No cleanup needed, component doesn't dismount.
-  }, []);
-
-  const {
-    serverThemes,
-    serverThemesLoading,
-    uploadTheme,
-    deleteTheme,
-  } = useServerThemes(config.serverThemes);
-
-  const existsOnServer = serverThemes && fileName in serverThemes;
-  const modifiedServerVersion = useMemo(() => {
-    return existsOnServer && JSON.stringify(scopes) !== JSON.stringify(serverThemes[fileName].scopes);
-  }, [serverThemes[fileName]?.scopes, scopes]);
-
 
   useLayoutEffect(() => {
     if (currentInspected !== -1 && currentInspected <= inspectedIndex) {
@@ -141,50 +101,22 @@ export const ThemeEditor = (props) => {
     }
   }, [unfilteredGroups, openFirstOnInspect, currentInspected, inspectedIndex, isNewInspection]);
 
-  useInsertionEffect(() => {
-    updateScopedVars(scopes, true);
-  }, [scopes]);
-
-  useEffect(() => {
-    frameRef.current.contentWindow.postMessage(
-      {
-        type: 'set-scopes-styles',
-        payload: { scopes, resetAll: true },
-      },
-      window.location.origin,
-      );
-    
-    scrollFrameRef.current?.contentWindow.postMessage(
-      {
-        type: 'set-scopes-styles',
-        payload: { scopes, resetAll: true },
-      },
-      window.location.origin,
-      );
-  }, [scopes]);
-
   return (
     <ThemeEditorContext.Provider
       value={{
         allVars,
-        dispatch,
         defaultValues,
         frameRef,
         scrollFrameRef,
-        serverThemes,
-        serverThemesLoading,
-        uploadTheme,
-        deleteTheme,
-        existsOnServer,
-        modifiedServerVersion,
         setSheetDisablerDisplayed,
-        scopes,
         lastInspectTime,
         openGroups, setOpenGroups,
       }}
     >
+      <ApplyStyles />
+      <AcceptDroppedOptions />
       {/* <SpeakGlobalHooks hooks={use} /> */}
-      <Hotkeys {...{modifiedServerVersion, scopes, uploadTheme, frameRef}}/>
+      <Hotkeys {...{frameRef}}/>
       <div className="theme-editor">
         <MovablePanels stateHook={use.uiLayout}>
           <div

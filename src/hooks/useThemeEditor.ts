@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
 import {reducerOf} from '../functions/reducerOf';
-import { useResumableReducer } from './useResumableReducer';
+import { useDispatcher, useResumableReducer } from './useResumableReducer';
 import { definedValues } from '../functions/collectRuleVars';
 
 // const PROP_REGEX = /\w+(-\w+)*$/;
@@ -243,26 +243,17 @@ function loadFromStorage(s) {
   }
 }
 
-export const useThemeEditor = ({ initialState = DEFAULT_STATE}) => {
-  const [{ scopes  }, dispatch] =
-    useResumableReducer(
-      reducer,
-      initialState,
-      loadFromStorage,
-      'THEME_EDITOR'
-    );
-
-  useEffect(() => {
-    const sorted = sortObject(scopes);
-    const themeJson = JSON.stringify(sorted);
-    localStorage.setItem(LOCAL_STORAGE_KEY, themeJson);
-  }, [scopes]);
-
-  return [
-    {
-      scopes,
-      // changeRequiresReset,
-    },
-    dispatch,
-  ];
+export function useThemeEditor() {
+  return useResumableReducer(
+    reducer,
+    DEFAULT_STATE,
+    loadFromStorage,
+    'THEME_EDITOR'
+  );
 };
+
+// A function that returns the themeEditor dispatcher only, without listening.
+// Doing this locally, but would be nice to have a catch all way with proper types.
+export function editTheme() {
+    return useDispatcher('THEME_EDITOR');
+}

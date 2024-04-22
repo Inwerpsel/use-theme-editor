@@ -4,6 +4,8 @@ import { signals } from "../functions/signals";
 import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStorage";
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { useResumableState } from "../hooks/useResumableReducer";
+import { useServerThemes } from "../hooks/useServerThemes";
+import { useThemeEditor } from "../hooks/useThemeEditor";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -75,6 +77,23 @@ export const use = {
     () => useLocalStorage('svgDarkBg', false),
   inspectedIndex:
     () => useResumableState('inspected-index', -1),
+  serverThemes:
+    () => useServerThemes(),
+  existsOnServer:
+    () => [get.fileName in get.serverThemes],
+  localThemeJson: 
+    // I preserved the old code even though using JSON.stringify here doesn't make much sense.
+    () => [mem(get => JSON.stringify(get.themeEditor.scopes))],
+  remoteThemeJson: 
+    () => [mem(get => JSON.stringify(get.serverThemes[get.fileName]?.scopes))],
+  modifiedServerVersion:
+    () => [mem(get => {
+      const isSame = get.localThemeJson !== get.remoteThemeJson;
+      return get.existsOnServer && isSame;
+    })],
+  themeEditor:
+    () => useThemeEditor(),
+  
 
   // 
   // State below this is only used in a demo element.

@@ -14,7 +14,7 @@ import { ScrollInViewButton } from './ScrollInViewButton';
 import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
 import { useResumableState } from '../../hooks/useResumableReducer';
-import { get } from '../../state';
+import { get, use } from '../../state';
 import { MediaQueries } from './MediaQueries';
 import { ToggleButton } from '../controls/ToggleButton';
 import { dragValue } from '../../functions/dragValue';
@@ -169,11 +169,16 @@ export const VariableControl = (props) => {
     currentScope = ROOT_SCOPE,
   } = props;
 
-  const { width, annoyingPrefix, nameReplacements, showCssProperties, linkCssProperties } = get;
+  const {
+    width,
+    annoyingPrefix,
+    nameReplacements,
+    showCssProperties,
+    linkCssProperties,
+  } = get;
+  const [{scopes}, dispatch] = use.themeEditor();
 
   const {
-    scopes,
-    dispatch,
     defaultValues,
     allVars,
   } = useContext(ThemeEditorContext);

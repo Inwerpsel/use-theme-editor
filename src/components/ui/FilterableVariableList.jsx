@@ -1,17 +1,17 @@
-import React, { useContext, useState, useMemo, Fragment, useRef, useEffect } from "react";
+import React, { useState, useMemo, Fragment, useRef, useEffect } from "react";
 import { definedValues } from "../../functions/collectRuleVars";
 import { ROOT_SCOPE } from "../../hooks/useThemeEditor";
 import { Checkbox } from "../controls/Checkbox";
 import { TextControl } from "../controls/TextControl";
 import { PREVIEW_SIZE } from "../properties/ColorControl";
-import { ThemeEditorContext } from "../ThemeEditor";
 import { dragValue } from "../../functions/dragValue";
+import { get } from "../../state";
 
 const rootSelectors = [':root', ':where(html)', 'html']
 const initialWindowSize = 20;
 
 export function FilterableVariableList(props) {
-    const {scopes} = useContext(ThemeEditorContext);
+    const {themeEditor: {scopes}} = get;
     const theme = scopes[ROOT_SCOPE] || {};
     const {value, onChange, elementScopes = []} = props;
     const [filter, setFilter] = useState('');

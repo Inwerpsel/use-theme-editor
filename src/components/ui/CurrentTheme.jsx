@@ -1,7 +1,7 @@
 import React, {useContext, useMemo, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import {VariableControl} from '../inspector/VariableControl';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, editTheme} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import {ElementLocator} from './ElementLocator';
 import {ToggleButton} from '../controls/ToggleButton';
@@ -13,9 +13,8 @@ import { definedValues } from '../../functions/collectRuleVars';
 
 export function CurrentTheme() {
   const { propertyFilter, search } = get;
+  const dispatch = editTheme();
   const {
-    scopes,
-    dispatch,
     allVars,
     defaultValues,
   } = useContext(ThemeEditorContext);
@@ -33,7 +32,6 @@ export function CurrentTheme() {
     if (!isOpen) {
       return {};
     }
-
 
     return Object.keys(defaultValues).reduce((grouped, k) => {
       const cssVar = allVars.find(allVar => allVar.name === k);
@@ -67,7 +65,7 @@ export function CurrentTheme() {
 
       return grouped;
     }, {});
-  }, [scopes, isOpen, propertyFilter, search]);
+  }, [isOpen, propertyFilter, search]);
 
   return (
     <div>

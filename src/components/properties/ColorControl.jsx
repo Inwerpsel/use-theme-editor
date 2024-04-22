@@ -1,5 +1,5 @@
 import {SketchPicker as ColorPicker} from 'react-color';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, editTheme} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useState} from 'react';
 import tinycolor from 'tinycolor2';
 import {ThemeEditorContext} from '../ThemeEditor';
@@ -91,9 +91,7 @@ export const ColorControl = props => {
 
   const [hideColorPicker, setHideColorPicker] = useResumableState(`color-picker~~${cssVar.name}`, true);
 
-  const {
-    dispatch,
-  } = useContext(ThemeEditorContext);
+  const dispatch = editTheme();
 
   const throttle = useThrottler({ms: 50 });
   const opacity = tinycolor(value).getAlpha();

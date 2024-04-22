@@ -11,6 +11,7 @@ import { deriveUtilitySelectors, parseCss } from './functions/parseCss';
 import { toNode, toPath } from './functions/nodePath';
 import { restoreHistory } from './_unstable/historyStore';
 import { makeCourses } from './_unstable/courses';
+import { setServerConfig } from './hooks/useServerThemes';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -161,6 +162,7 @@ function restoreInspections() {
 }
 
 export const setupThemeEditor = async (config) => {
+  setServerConfig(config.serverThemes);
   updateScopedVars(JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'));
   setLocalStorageNamespace(config.localStorageNamespace || '');
 
@@ -205,7 +207,7 @@ export const setupThemeEditor = async (config) => {
     // Quick fix because both frames are sending the same message.
     let didRestoreHistory = false;
     const editorRoot = document.createElement( 'div' );
-    renderSelectedVars(editorRoot, null, [], cssVars, config, defaultValues, -1);
+    renderSelectedVars(editorRoot, null, [], cssVars, defaultValues, -1);
     destroyDoc();
 
     editorRoot.id = 'theme-editor-root';
@@ -219,7 +221,6 @@ export const setupThemeEditor = async (config) => {
           null,
           payload.groups,
           cssVars,
-          config,
           defaultValues,
           payload.index,
           payload.inspectionPath,
@@ -229,7 +230,7 @@ export const setupThemeEditor = async (config) => {
       if (event.data?.type === 'relocate-done' && !didRestoreHistory) {
         restoreHistory();
         didRestoreHistory = true;
-        renderSelectedVars(editorRoot, null, lastGroups, cssVars, config, defaultValues, event.data.payload.index, 'ignore')
+        renderSelectedVars(editorRoot, null, lastGroups, cssVars, defaultValues, event.data.payload.index, 'ignore')
       }
     }, false);
   }

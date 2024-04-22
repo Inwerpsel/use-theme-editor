@@ -75,7 +75,7 @@ export function storeActions(actions: [string, any][], clearFuture, index, prevS
     }
     if (needsSnapshot) {
         const snap = JSON.stringify([...initialStates.entries(), ...prevStates.entries()]);
-        console.log('snap', snap);
+        // console.log('snap', snap);
         localStorage.setItem(snapshotKey, snap);
         needsSnapshot = false;
         snapshot = snap;
@@ -90,7 +90,7 @@ export function storeActions(actions: [string, any][], clearFuture, index, prevS
     store.put(actions, index);
 }
 
-export function deleteStoredHistory() {
+export function deleteStoredHistory(createSnap = false) {
     const start = performance.now()
     const transaction = db.transaction([ACTIONS], 'readwrite');
     transaction.oncomplete = e => { console.log('Deleted store in', performance.now( ) - start) }
@@ -100,6 +100,7 @@ export function deleteStoredHistory() {
     localStorage.removeItem(snapshotKey);
     localStorage.removeItem(INSPECTIONS);
     needsSnapshot = true;
+    createSnap && storeActions([], false, 0);
 
     console.log('Start store delte transaction in ', performance.now( ) - start) 
 }

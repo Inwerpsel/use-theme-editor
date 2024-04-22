@@ -10,6 +10,7 @@ import { dragValue } from "../../functions/dragValue";
 import { MovableElementContext, useCompactSetting } from "../movable/MovableElement";
 import { CompactModeButton } from "../movable/CompactModeButton";
 import { Tutorial } from "../../_unstable/Tutorial";
+import { get } from "../../state";
 
 function PaletteEntry(props) {
   const {value, isHtml} = props;
@@ -66,10 +67,10 @@ function Variable(props) {
   // instead.
 
   const {value, varName} = props;
+  const {themeEditor: {scopes}} = get;
 
   const {
     allVars,
-    scopes,
   } = useContext(ThemeEditorContext);
 
   const [showUsages, setShowUsages] = useState(false);

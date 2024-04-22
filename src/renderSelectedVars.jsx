@@ -23,7 +23,6 @@ export const renderSelectedVars = (
   lastTarget,
   groups,
   allVars,
-  config,
   defaultValues,
   inspectedIndex,
   inspectionPath,
@@ -46,7 +45,7 @@ export const renderSelectedVars = (
   const el = (
     <SharedActionHistory {...{previewComponents}}>
       <ThemeEditor
-        {...{ config, groups, lastTarget, allVars, defaultValues, inspectedIndex, isNewInspection }}
+        {...{ groups, lastTarget, allVars, defaultValues, inspectedIndex, isNewInspection }}
         lastInspectTime={performance.now()}
       />
     </SharedActionHistory>

@@ -1,10 +1,9 @@
-import React, { useContext } from 'react';
-import { ACTIONS } from '../../hooks/useThemeEditor';
-import { ThemeEditorContext } from '../ThemeEditor';
+import React from 'react';
+import { ACTIONS, editTheme } from '../../hooks/useThemeEditor';
 import { VariableControl } from './VariableControl';
 
 export function ElementInlineStyles(props) {
-  const { dispatch } = useContext(ThemeEditorContext);
+  const dispatch = editTheme();
   const { group, elementScopes } = props;
 
   if (!group.inlineStyles) {

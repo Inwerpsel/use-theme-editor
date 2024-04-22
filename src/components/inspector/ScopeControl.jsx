@@ -1,16 +1,15 @@
-import React, { useContext, useMemo, useState } from "react";
+import React from "react";
 import { scopesByProperty } from "../../functions/collectRuleVars";
 import { rootScopes } from "../../functions/extractPageVariables";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { ACTIONS } from "../../hooks/useThemeEditor";
+import { ACTIONS, editTheme } from "../../hooks/useThemeEditor";
 import { Checkbox } from "../controls/Checkbox";
-import { ThemeEditorContext } from "../ThemeEditor";
 import { ElementLocator } from "../ui/ElementLocator";
 import { VariableControl } from "./VariableControl";
 
 export function ScopeControl(props) {
     const { scopes, vars, element } = props;
-    const { dispatch } = useContext(ThemeEditorContext);
+    const dispatch = editTheme();
     // Remove locator for now as it makes the UI jump too much.
     const [showLocator, setShowLocator] = useLocalStorage('show-scope-locators', false);
     // const showLocator = true;

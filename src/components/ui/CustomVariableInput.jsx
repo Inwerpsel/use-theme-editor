@@ -1,13 +1,14 @@
-import React, {useContext, useState} from 'react';
-import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
-import {ThemeEditorContext} from '../ThemeEditor';
+import React, {useState} from 'react';
+import {ACTIONS, ROOT_SCOPE, editTheme} from '../../hooks/useThemeEditor';
 import {Checkbox} from '../controls/Checkbox';
 import {ToggleButton} from '../controls/ToggleButton';
 import { TextControl } from '../controls/TextControl';
+import { get } from '../../state';
 
 export const CustomVariableInput = () => {
+  const {themeEditor: {scopes}} = get;
+  const dispatch = editTheme();
   const [displayed, setDisplayed] = useState(false);
-  const {dispatch, scopes} = useContext(ThemeEditorContext);
   const theme = scopes[ROOT_SCOPE] || {};
   const [overwriteExisting, setOverwriteExisting] = useState(false);
   const [name, setName] = useState('');

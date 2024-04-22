@@ -457,7 +457,7 @@ export function clearHistory(): void {
   historyOffset = 0;
   states = pointedStates;
 
-  deleteStoredHistory();
+  deleteStoredHistory(true);
   setCurrentState();
   forceHistoryRender();
 }
@@ -916,6 +916,14 @@ export function useResumableReducer<T>(
   );
 
   return [currentState as T, dispatchers.get(id)];
+}
+
+export function useDispatcher(id: string) {
+  const dispatcher = dispatchers.get(id);
+  if (!dispatcher) {
+    throw new Error(`Attempted to use dispatcher for ${id}, but it doesn't exist yet.`)
+  }
+  return dispatcher;
 }
 
 const stateReducer = (s, v) => v;

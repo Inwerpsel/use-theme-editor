@@ -1,9 +1,8 @@
-import React, { Fragment, useContext, useMemo, useState } from "react"
+import React, { Fragment, useMemo, useState } from "react"
 import { TextControl } from "../controls/TextControl";
 import { COLOR_VALUE_REGEX } from "../properties/ColorControl";
 import nameThatColor from '@yatiac/name-that-color';
-import { ThemeEditorContext } from "../ThemeEditor";
-import { ACTIONS } from "../../hooks/useThemeEditor";
+import { ACTIONS, editTheme } from "../../hooks/useThemeEditor";
 import tinycolor from 'tinycolor2';
 
 // The library currently used has some color names with accents, like "screamin'".
@@ -11,7 +10,7 @@ const invalidNameChars = /[^\w\-]/;
 
 export function CreateAlias(props) {
     const {value} = props;
-    const {dispatch} = useContext(ThemeEditorContext);
+    const dispatch = editTheme();
     const [open, setOpen] = useState(false);
     // Use separate state to avoid large lib going in and out of memory as you repeatedly open and close alias component.
     const [wasOpened, setWasOpened] = useState(false);

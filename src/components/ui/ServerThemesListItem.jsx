@@ -1,24 +1,20 @@
 import {diffSummary} from '../../functions/diffThemes';
-import {ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
-import React, {useContext} from 'react';
-import {ThemeEditorContext} from '../ThemeEditor';
-import { use } from '../../state';
+import {ACTIONS, ROOT_SCOPE, editTheme} from '../../hooks/useThemeEditor';
+import React from 'react';
+import { get, use } from '../../state';
 
 export const ServerThemesListItem = props => {
   const {
     name,
     serverTheme,
     activeThemeRef,
+    deleteTheme,
   } = props;
+  const {modifiedServerVersion} = get;
 
   const [fileName, setFileName] = use.fileName();
 
-  const {
-    scopes,
-    dispatch,
-    modifiedServerVersion,
-    deleteTheme,
-  } = useContext(ThemeEditorContext);
+  const dispatch = editTheme();
   // const currentTheme = scopes[ROOT_SCOPE];
   const isCurrent = fileName === name;
 
@@ -28,7 +24,7 @@ export const ServerThemesListItem = props => {
     // title={diffSummary(serverTheme, currentTheme)}
     className={'server-theme ' + ( isCurrent ? 'server-theme-current' : '')}
   >
-    {name} {modifiedServerVersion && isCurrent && '(*)'}
+    {name} {isCurrent && modifiedServerVersion && '(*)'}
 
     {name !== 'default' && <button
       style={{float: 'right'}}

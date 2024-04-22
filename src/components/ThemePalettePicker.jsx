@@ -12,10 +12,9 @@ export function ThemePalettePicker(props) {
     allowGradients,
   } = props;
 
-  const { includeDefaultPalette } = get;
+  const { includeDefaultPalette, themeEditor: {scopes} } = get;
 
   const {
-    scopes,
     defaultValues,
   } = useContext(ThemeEditorContext);
 
