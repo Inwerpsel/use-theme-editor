@@ -1,11 +1,15 @@
 export function varMatchesTerm(cssVar, term) {
-  if (term === '') {
+  try {
+    if (term === '') {
+      return true;
+    }
+    if (cssVar.name.replace(/-+/g, ' ').match(term)) {
+      return true;
+    }
+    return cssVar.usages.some(usage => usage.property.match(term));
+  } catch (e) {
     return true;
   }
-  if (cssVar.name.replace(/-+/g, ' ').match(term)) {
-    return true;
-  }
-  return cssVar.usages.some(usage => usage.property.match(term));
 }
 
 export const filterSearched = (groups, term) => {
