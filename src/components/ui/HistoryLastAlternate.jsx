@@ -18,7 +18,7 @@ export function HistoryLastAlternate() {
     ? <Fragment>Stash</Fragment> 
     : <Fragment>{lastAlternate.length} steps stashed <br/>{position} steps since</Fragment>;
 
-    const stringied = useMemo(() => JSON.stringify(lastAlternate.map(a=>[...a.entries()]), null, 2), [lastAlternate])
+    const stringied = useMemo(() => JSON.stringify(lastAlternate.map(a=>[...a.entries()].map(([k]) => k)), null, 2), [lastAlternate])
 
     return <div
       className="flex-column" 
