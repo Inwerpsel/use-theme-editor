@@ -457,7 +457,7 @@ export function clearHistory(): void {
   historyOffset = 0;
   states = pointedStates;
 
-  deleteStoredHistory(true);
+  deleteStoredHistory(true, pointedStates);
   setCurrentState();
   forceHistoryRender();
 }
