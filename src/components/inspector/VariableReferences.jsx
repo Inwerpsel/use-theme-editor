@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { get } from "../../state";
 import { Checkbox } from "../controls/Checkbox";
 import { ElementLocator } from "../ui/ElementLocator";
-import { formatTitle } from "./VariableControl";
+import { FormatVariableName } from "./VariableControl";
 import { dragValue } from "../../functions/dragValue";
 
 export function VariableReferences(props) {
@@ -24,19 +24,19 @@ export function VariableReferences(props) {
         Filter found
       </Checkbox>
       <ul style={{ marginTop: '0' }}>
-        {references.map((cssVar) => (
-          <li key={cssVar.name} style={{borderBottom: '1px solid gray'}}>
+        {references.map(({name, usages}) => (
+          <li key={name} style={{borderBottom: '1px solid gray'}}>
             <div
               draggable
-              onDragStart={dragValue(() => `var(${cssVar.name})`)}
+              onDragStart={dragValue(() => `var(${name})`)}
             >
-              {formatTitle(cssVar.name, annoyingPrefix, nameReplacements)}
+              <FormatVariableName {...{name}} />
             </div>
             <ElementLocator
               hideIfNotFound={filterFound}
               initialized
               // Quick fix, this won't be needed once inspection is rewritten.
-              selector={cssVar.usages.reduce((a, u) => a + ',' + u.selector, '').replace(/^,/,'')}
+              selector={usages.reduce((a, u) => a + ',' + u.selector, '').replace(/^,/,'')}
             >
             </ElementLocator>
           </li>

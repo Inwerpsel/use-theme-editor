@@ -4,7 +4,7 @@ import { VariableControl } from './VariableControl';
 
 export function ElementInlineStyles(props) {
   const dispatch = editTheme();
-  const { group, elementScopes } = props;
+  const { group, elementScopes, customProps, editedProps } = props;
 
   if (!group.inlineStyles) {
       return null;
@@ -35,6 +35,7 @@ export function ElementInlineStyles(props) {
 
             return (
               <VariableControl
+                {...{customProps, editedProps}}
                 key={cssVar.name}
                 cssVar={cssVar}
                 scopes={elementScopes}

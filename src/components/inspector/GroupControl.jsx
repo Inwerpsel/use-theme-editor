@@ -33,8 +33,25 @@ export const GroupControl = props => {
     label,
     vars,
     scopes: elementScopes,
+    customProps,
     isRootElement,
   } = group;
+
+  const editedProps = useMemo(
+    () =>
+      elementScopes.reduce((newProps, { selector }) => {
+        // Assume for now new scopes cannot be created.
+        if (selector in scopes) {
+          for (const [name, value] of Object.entries(scopes[selector])) {
+            if (!newProps.hasOwnProperty(name)) {
+              newProps[name] = value;
+            }
+          }
+        }
+        return newProps;
+      }, {}),
+    [scopes]
+  );
 
   const {
     frameRef,
@@ -80,7 +97,8 @@ export const GroupControl = props => {
           valueFromScope ||
           definedValues[':root'][name] ||
           defaultValues[name] ||
-          getValueFromDefaultScopes(elementScopes, someVar)
+          getValueFromDefaultScopes(elementScopes, someVar);
+
 
         if (value && value.toLowerCase() !== 'currentcolor') {
           colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value]);
@@ -152,7 +170,7 @@ export const GroupControl = props => {
                 onClick={() => { setSearch('') }}
               >X</button>
               </span>}
-            {groupColors.length > 0 && <div style={{display: 'contents', margin: 0}}>
+            {groupColors.length > 0 && <div style={{...customProps, ...editedProps, display: 'contents', margin: 0}}>
               {groupColors.map(([{name}, value]) => {
                 const isVar = name.startsWith('--');
                 return (
@@ -207,14 +225,16 @@ export const GroupControl = props => {
         </h4>
       </div>
       {isOpen && <Fragment>
-        <ElementInlineStyles {...{group, elementScopes}}/>
-        <ScopeControl {...{scopes: elementScopes, vars, element}}/>
+        <ElementInlineStyles {...{group, elementScopes, customProps, editedProps}}/>
+        <ScopeControl {...{scopes: elementScopes, customProps, editedProps, vars, element}}/>
         <ul className={'group-list'}>
           {vars.filter(v=>!v.currentScope).map(cssVar => {
             return <VariableControl
               {...{
                 cssVar,
                 scopes: elementScopes,
+                customProps,
+                editedProps,
                 element,
               }}
               initialOpen={vars.length === 1}

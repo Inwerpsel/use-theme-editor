@@ -1,4 +1,4 @@
-import { scopesByProperty } from './collectRuleVars';
+import { definedValues, scopesByProperty } from './collectRuleVars';
 import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 import { HIGHLIGHT_CLASS } from './highlight';
@@ -171,6 +171,14 @@ export const groupVars = (vars, target, allVars) => {
           };
         }),
         scopes,
+        customProps: scopes.reduce((a, {selector}) => {
+          for (const [name, value] of Object.entries(definedValues[selector] || {})) {
+            if (!(name in a)) {
+              a[name] = value;
+            }
+          }
+          return a;
+        }, {}),
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
       });
       previousMatches = currentMatches;

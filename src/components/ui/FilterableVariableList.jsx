@@ -6,6 +6,7 @@ import { TextControl } from "../controls/TextControl";
 import { PREVIEW_SIZE } from "../properties/ColorControl";
 import { dragValue } from "../../functions/dragValue";
 import { get } from "../../state";
+import { FormatVariableName } from "../inspector/VariableControl";
 
 const rootSelectors = [':root', ':where(html)', 'html']
 const initialWindowSize = 20;
@@ -88,11 +89,13 @@ export function FilterableVariableList(props) {
 
               const insides = (
                 <Fragment>
-                  {name}
-                  {/* Exclude some values that get too long. */}
-                  {!/url\(|gradient\(/.test(optionValue) && (
-                    <span style={{ maxWidth: '30%' }}>{optionValue}</span>
-                  )}
+                  <span style={{display: 'flex', justifyContent: 'space-between', flexGrow: 1}}>
+                    <FormatVariableName {...{name, style: {fontWeight: 600}}} />
+                    {/* Exclude some values that get too long. */}
+                    {!/url\(|gradient\(/.test(optionValue) && (
+                      <span style={{ maxWidth: '30%' }}>{optionValue}</span>
+                    )}
+                  </span>
                   <span
                     draggable
                     onDragStart={dragValue(varValue)}
@@ -110,7 +113,7 @@ export function FilterableVariableList(props) {
                     }}
                   >
                     {/var\(/.test(optionValue) && 'var'}
-                  </span>{' '}
+                  </span>
                 </Fragment>
               );
 

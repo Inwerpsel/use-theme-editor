@@ -36,7 +36,8 @@ const format = name => {
   ];
 };
 const preventDefault = e=>e.preventDefault();
-export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
+export const FormatVariableName = ({name, style}) => {
+  const {annoyingPrefix, nameReplacements} = get
   const [prefix, prop] = format(name);
   let formattedProp = prop.replaceAll(/-/g, ' ').trim();
 
@@ -63,7 +64,7 @@ export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
   const annoyingRegex = new RegExp(`^${annoyingPrefix}\\s*\\—\\s*`);
   const cleanedPrefix = prefix.trim().replace(annoyingRegex, '');
 
-  return <Fragment>
+  return <span draggable onDragStart={dragValue(`var(${name})`)} {...{style}}>
     <span
       style={{
         fontSize: '13px',
@@ -72,11 +73,11 @@ export const formatTitle = (name, annoyingPrefix, nameReplacements) => {
         display: 'block',
       }}
     >{capitalize(annoyingPrefix ? cleanedPrefix : prefix)}</span>
-    <span style={{fontWeight: 'bold'}} className={'var-control-property'}>{formattedProp}</span>
-  </Fragment>;
+    <span className={'var-control-property'}>{formattedProp}</span>
+  </span>;
 };
 
-export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen}) => {
+export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen, customProps = {}, editedProps = {}}) => {
   const size = PREVIEW_SIZE;
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(value);
@@ -96,9 +97,10 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
         <span
           draggable
           onDragStart={dragValue(value)}
-          key={1}
           title={title}
           style={{
+            ...customProps,
+            ...editedProps,
             width: size,
             height: size,
             border: '1px solid black',
@@ -117,11 +119,15 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
           {value === 'transparent' && '👻'}
         </span>
         <span style={{ float: 'right', marginRight: '4px' }}>
-          {(referencedVariable?.name || '').replaceAll(/-+/g, ' ').trim() ||
-            (isUrl ? null : value)}
+          {referencedVariable && <FormatVariableName name={referencedVariable.name} />}
+          {!referencedVariable && (isUrl ? null : value)}
         </span>
       </Fragment>
     );
+  }
+  if (referencedVariable && isOpen) {
+    
+    return null;
   }
 
   return <span
@@ -135,7 +141,7 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
       float: 'right',
     } }
   >
-    { value }
+    { referencedVariable ? <FormatVariableName name={referencedVariable.name} /> : value}
   </span>;
 };
 
@@ -164,6 +170,8 @@ export const VariableControl = (props) => {
     initialOpen = false,
     referenceChain = [],
     scopes: elementScopes,
+    customProps = {},
+    editedProps = {},
     parentVar,
     element,
     currentScope = ROOT_SCOPE,
@@ -171,8 +179,6 @@ export const VariableControl = (props) => {
 
   const {
     width,
-    annoyingPrefix,
-    nameReplacements,
     showCssProperties,
     linkCssProperties,
   } = get;
@@ -377,7 +383,7 @@ export const VariableControl = (props) => {
         }
         const value = e.dataTransfer.getData('value');
         const regex = new RegExp(`var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`);
-        // Prevent dropping any direct references to itself.
+        // Prevent self reference.
         if (regex.test(value)) {
           return;
         }
@@ -420,9 +426,9 @@ export const VariableControl = (props) => {
             clear: 'left',
           }}
         >
-          {formatTitle(name, annoyingPrefix, nameReplacements)}
+          <FormatVariableName style={{fontWeight: referenceChain.length === 0 ? 'bold' : 'normal'}}{...{name}} />
         </h5>
-        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen}} />
+        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen, customProps, editedProps}} />
         <div>
           {media && <MediaQueries {...{media}} />}
           {!!showCssProperties && <Fragment>
@@ -466,7 +472,6 @@ export const VariableControl = (props) => {
           {references.length > 0 && (
             <div>
               <ToggleButton
-                title={references.map((r) => r.name).join('\n')}
                 style={{ fontSize: '14px' }}
                 controls={[showReferences, setShowReferences]}
               >
@@ -582,7 +587,7 @@ export const VariableControl = (props) => {
             <ul style={{ margin: 0 }}>
               <span className='monospace-code'>{usedScope}</span>
               <VariableControl
-                {...{ scopes: elementScopes, currentScope: usedScope }}
+                {...{ scopes: elementScopes, currentScope: usedScope, customProps, editedProps }}
                 cssVar={referencedVariable}
                 onChange={(value) => {
                   dispatch({
