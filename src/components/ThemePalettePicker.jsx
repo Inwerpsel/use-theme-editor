@@ -1,7 +1,6 @@
 import {ACTIONS, ROOT_SCOPE} from '../hooks/useThemeEditor';
 import React, {useContext, useMemo} from 'react';
-import {ThemeEditorContext} from './ThemeEditor';
-import {byHexValue, extractColorUsages, PREVIEW_SIZE} from './properties/ColorControl';
+import {PREVIEW_SIZE} from './properties/ColorControl';
 import { get } from '../state';
 
 export function ThemePalettePicker(props) {
@@ -12,17 +11,8 @@ export function ThemePalettePicker(props) {
     allowGradients,
   } = props;
 
-  const { includeDefaultPalette, themeEditor: {scopes} } = get;
+  const { colorUsages } = get;
 
-  const {
-    defaultValues,
-  } = useContext(ThemeEditorContext);
-
-  const colorUsages = useMemo(
-    () => extractColorUsages(scopes[ROOT_SCOPE], !includeDefaultPalette ? {} : defaultValues).sort(byHexValue),
-    [scopes, defaultValues, includeDefaultPalette],
-  );
-  
   return colorUsages.map(({color, usages, isGradient}) => {
     // if (color === value && usages.length === 1) {
     //   return null;

@@ -5,7 +5,9 @@ import { useLocalStorage, useResumableLocalStorage } from "../hooks/useLocalStor
 import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { useResumableState } from "../hooks/useResumableReducer";
 import { useServerThemes } from "../hooks/useServerThemes";
-import { useThemeEditor } from "../hooks/useThemeEditor";
+import { ROOT_SCOPE, useThemeEditor } from "../hooks/useThemeEditor";
+import { byHexValue, extractColorUsages } from "../components/properties/ColorControl";
+import { getDefaults } from "../initializeThemeEditor";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -50,6 +52,11 @@ export const use = {
     () => useLocalStorage('nativeColorPicker', true),
   includeDefaultPalette:
     () => useLocalStorage('includeDefaultPalette', false),
+  colorUsages:
+    () => [mem(
+      get => extractColorUsages(
+        get.themeEditor.scopes[ROOT_SCOPE], !get.includeDefaultPalette ? {} : getDefaults()).sort(byHexValue)
+    )],
   fileName:
     () => useResumableLocalStorage('fileName', 'theme'),
   annoyingPrefix:
