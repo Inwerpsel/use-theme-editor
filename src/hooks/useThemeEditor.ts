@@ -236,18 +236,11 @@ export const ACTIONS: {[index: string]: Handler} = {
 
 const reducer = reducerOf<typeof DEFAULT_STATE>(ACTIONS);
 
-function loadFromStorage(s) {
-  return {
-    ...s,
-    scopes: JSON.parse(localStorage.getItem(LOCAL_STORAGE_KEY) || '{}'),
-  }
-}
-
 export function useThemeEditor() {
   return useResumableReducer(
     reducer,
     DEFAULT_STATE,
-    loadFromStorage,
+    null,
     'THEME_EDITOR'
   );
 };
