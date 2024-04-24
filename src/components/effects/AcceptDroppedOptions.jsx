@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { editTheme } from "../../hooks/useThemeEditor";
+import { ACTIONS, editTheme } from "../../hooks/useThemeEditor";
 
 export function AcceptDroppedOptions() {
   const dispatch = editTheme();
