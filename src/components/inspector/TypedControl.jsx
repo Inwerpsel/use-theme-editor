@@ -16,7 +16,10 @@ export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 // separate control anyway for the other types they allow.
 export const mustBeColor = cssVar => {
   return cssVar.usages.some(({property}) => property.match(/color$/)
-    || ['background', 'background-image', 'fill', 'stroke'].includes(property))
+    || ['background', 'background-image', 'fill', 'stroke'].includes(property)
+    || (property === 'border' && cssVar.name.includes('color'))
+  )
+    
 };
 
 export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc}) => {
