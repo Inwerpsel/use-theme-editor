@@ -71,6 +71,10 @@ export const collectRuleVars = (collected, rule, sheet, media = null, supports =
           // and the syntax doesn't allow unambiguously determining the type of each.
           continue;
         }
+        if (shorthandValue === undefined) {
+          // quick fix
+          continue;
+        }
 
         visitedShorthands.push(shorthandProperty);
         value = shorthandValue;
