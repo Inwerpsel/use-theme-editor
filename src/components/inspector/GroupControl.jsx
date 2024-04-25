@@ -117,7 +117,7 @@ export const GroupControl = props => {
   const isOpen = !!openGroups[group.label];
 
   return (
-    <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
+    <li className={'var-group'} key={label} style={{...customProps, ...editedProps, marginBottom: '12px'}}>
       <div
         onMouseEnter={() => {
           if (element && element.classList) {
@@ -170,7 +170,7 @@ export const GroupControl = props => {
                 onClick={() => { setSearch('') }}
               >X</button>
               </span>}
-            {groupColors.length > 0 && <div style={{...customProps, ...editedProps, display: 'contents', margin: 0}}>
+            {groupColors.length > 0 && <div>
               {groupColors.map(([{name}, value]) => {
                 const isVar = name.startsWith('--');
                 return (
@@ -225,16 +225,14 @@ export const GroupControl = props => {
         </h4>
       </div>
       {isOpen && <Fragment>
-        <ElementInlineStyles {...{group, elementScopes, customProps, editedProps}}/>
-        <ScopeControl {...{scopes: elementScopes, customProps, editedProps, vars, element}}/>
+        <ElementInlineStyles {...{group, elementScopes}}/>
+        <ScopeControl {...{scopes: elementScopes, vars, element}}/>
         <ul className={'group-list'}>
           {vars.filter(v=>!v.currentScope).map(cssVar => {
             return <VariableControl
               {...{
                 cssVar,
                 scopes: elementScopes,
-                customProps,
-                editedProps,
                 element,
               }}
               initialOpen={vars.length === 1}

@@ -1,5 +1,4 @@
-import {ACTIONS, ROOT_SCOPE} from '../hooks/useThemeEditor';
-import React, {useContext, useMemo} from 'react';
+import React from 'react';
 import {PREVIEW_SIZE} from './properties/ColorControl';
 import { get } from '../state';
 

@@ -145,6 +145,7 @@ export const groupVars = (vars, target, allVars) => {
               ''
             ) +  '</svg></div>';
 
+      const isRootElement = element.tagName === 'HTML' || element.tagName === 'BODY'
       groups.push({
         element,
         elSrc: element.getAttribute('src'),
@@ -155,7 +156,7 @@ export const groupVars = (vars, target, allVars) => {
         // Previously this was `element.title`, however if a form element contains an input with name "title",
         // that DOM element would be returned. This causes a crash when this data is sent as a message.
         elTitle: element.getAttribute('title'),
-        isRootElement: element.tagName === 'HTML' || element.tagName === 'BODY',
+        isRootElement,
         label,
         vars: vars.map((v) => {
           let currentScope;
@@ -171,7 +172,8 @@ export const groupVars = (vars, target, allVars) => {
           };
         }),
         scopes,
-        customProps: scopes.reduce((a, {selector}) => {
+        // Provide non-root custom prop values for the previews.
+        customProps: isRootElement ? {} : scopes.reduce((a, {selector}) => {
           for (const [name, value] of Object.entries(definedValues[selector] || {})) {
             if (!(name in a)) {
               a[name] = value;

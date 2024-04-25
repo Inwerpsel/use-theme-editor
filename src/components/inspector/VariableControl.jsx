@@ -77,7 +77,7 @@ export const FormatVariableName = ({name, style}) => {
   </span>;
 };
 
-export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen, customProps = {}, editedProps = {}}) => {
+export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen}) => {
   const size = PREVIEW_SIZE;
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(value);
@@ -99,8 +99,6 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
           onDragStart={dragValue(value)}
           title={title}
           style={{
-            ...customProps,
-            ...editedProps,
             width: size,
             height: size,
             border: '1px solid black',
@@ -170,8 +168,6 @@ export const VariableControl = (props) => {
     initialOpen = false,
     referenceChain = [],
     scopes: elementScopes,
-    customProps = {},
-    editedProps = {},
     parentVar,
     element,
     currentScope = ROOT_SCOPE,
@@ -428,7 +424,7 @@ export const VariableControl = (props) => {
         >
           <FormatVariableName style={{fontWeight: referenceChain.length === 0 ? 'bold' : 'normal'}}{...{name}} />
         </h5>
-        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen, customProps, editedProps}} />
+        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen}} />
         <div>
           {media && <MediaQueries {...{media}} />}
           {!!showCssProperties && <Fragment>
@@ -587,7 +583,7 @@ export const VariableControl = (props) => {
             <ul style={{ margin: 0 }}>
               <span className='monospace-code'>{usedScope}</span>
               <VariableControl
-                {...{ scopes: elementScopes, currentScope: usedScope, customProps, editedProps }}
+                {...{ scopes: elementScopes, currentScope: usedScope,  }}
                 cssVar={referencedVariable}
                 onChange={(value) => {
                   dispatch({
