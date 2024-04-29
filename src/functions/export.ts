@@ -1,8 +1,7 @@
 import { LOCAL_STORAGE_KEY } from '../initializeThemeEditor';
 
-export const exportThemeJson = (fileName) => {
-  const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-  saveAsJsonFile(JSON.parse(raw), fileName)
+export const exportThemeJson = (fileName, scopes) => {
+  saveAsJsonFile(scopes, fileName)
 };
 
 export function saveAsJsonFile(data, fileName) {
@@ -27,9 +26,7 @@ function formatCss(scopes) {
   return Object.entries(scopes).map(([k,v]) => `${k} {\n${formatVars(v)}\n}`).join('\n');
 }
 
-export const exportCss = (fileName) => {
-  const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-  const scopes = JSON.parse(raw);
+export const exportCss = (fileName, scopes) => {
   const css = formatCss(scopes);
   const blob = new Blob([css], {type: 'application/css'});
   const url  = URL.createObjectURL(blob);

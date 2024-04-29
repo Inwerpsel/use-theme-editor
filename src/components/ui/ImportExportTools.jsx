@@ -29,10 +29,10 @@ export function ImportExportTools() {
       <Checkbox controls={[shouldMerge, setShouldMerge]}>Merge into current theme</Checkbox>
     </div>
     <div>
-      <button onClick={() => exportThemeJson(fileName)}>
+      <button onClick={() => exportThemeJson(fileName, scopes)}>
         Export JSON
       </button>
-      <button onClick={() => exportCss(fileName)}>
+      <button onClick={() => exportCss(fileName, scopes)}>
         Export CSS
       </button>
     </div>
