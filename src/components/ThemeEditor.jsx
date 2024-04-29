@@ -66,7 +66,7 @@ export const ThemeEditor = (props) => {
   const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
 
-  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', false);
+  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
 
   useLayoutEffect(() => {
@@ -96,7 +96,7 @@ export const ThemeEditor = (props) => {
         {
           [unfilteredGroups[0].label]: true,
         },
-        { skipHistory: true }
+        { skipHistory: true, appendOnly: true }
       );
     }
   }, [unfilteredGroups, openFirstOnInspect, currentInspected, inspectedIndex, isNewInspection]);
