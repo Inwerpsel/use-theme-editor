@@ -2,7 +2,9 @@ type Payload = {[index: string]: any};
 
 type SingleReducer<T> = (previousState: T, payload: Payload) => T
 
-type CombinedReducer<T> = (previousState: T, action: {type: SingleReducer<T>, payload: Payload }) => T
+export type Action<T> = {type: SingleReducer<T>, payload: Payload }
+
+type CombinedReducer<T> = (previousState: T, action: Action<T>) => T
 
 type Actions<T> = {
   [index: string]: SingleReducer<T>

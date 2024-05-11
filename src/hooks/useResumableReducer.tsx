@@ -10,6 +10,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
 import { INSPECTIONS, getPrevinspections, resetInspections } from '../renderSelectedVars';
+import { Action } from '../functions/reducerOf';
 
 type Reducer<T> = (previous: T, action) => T
 
@@ -82,7 +83,7 @@ function storeLocks() {
 }
 
 // Lock state for a key to an index in the history array, then trigger render.
-export function addLock (id: string, index: number): void {
+export function addLock(id: string, index: number): void {
   locks.set(id, index);
   lockVersion++;
   forceHistoryRender();
@@ -279,6 +280,7 @@ type HistoryOptions = {
   // Action should only ever be played against the most recent state, canceled otherwise.
   appendOnly?: boolean,
   // Force creation of entry regardless of equality.
+  // Needed atm because initial states are not restored properly 100% of the time.
   force?: boolean;
 }
 
@@ -664,8 +666,14 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
   const lockUpdates = new Map();
   // The extra actions that are added when future locks are preserved.
   const futureLockActions = new Map();
+
+  // If the locked state was produced by multiple actions that are in the discarded
+  // part of history, we'll create separate new entries for these.
+  const partialLockActions = [];
+
   let hasFutureLocks = false;
-  for (const [id, index] of locks.entries()) {
+  const oldLocks = locks.entries();
+  for (const [id, index] of oldLocks) {
     if (index > baseIndex) {
       hasFutureLocks = true;
       if (index >= past.length) {
@@ -675,24 +683,49 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
         lockUpdates.set(id, past[index].states.get(id));
         futureLockActions.set(id, past[index].lastActions.get(id));
       }
+      // Collect actions only of reducer-based state.
+      for (let i = baseIndex + 1; i < index; i++) {
+        const action = past[i].lastActions.get(id);
+        if (action !== undefined && action.type) {
+          partialLockActions.push([id, action, past[i].states.get(id)]);
+        }
+      }
       locks.set(id, baseIndex + 1);
     }
+  }
+  for (const id of lockUpdates.keys()) {
+    locks.set(id, baseIndex + partialLockActions.length + 1);
   }
   // const isNowDefaultState = newState === initialStates[id];
   // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in past[baseIndex - 1].states);
   // const {[id]: _, ...otherStates} = !isNowDefaultState ? {} : baseStates;
 
   const prevHistory = historyOffset === 1 ? past : past.slice(0, -historyOffset + 1);
-  lastAlternate = [...past.slice(past.length - historyOffset + 1).map(({lastActions}) => lastActions), lastActions];
+  lastAlternate = [...past.slice(past.length - historyOffset + 1)
+    .filter(({lastActions}) => !([...lockUpdates.keys()].some(k => lastActions.has(k))))
+    .map(({lastActions}) => lastActions), lastActions];
   lastAlternateIndex = past.length - historyOffset;
   storeAlternate();
   if (hasFutureLocks) {
-    const entry = new Map<string, any>([...prevStates, ...lockUpdates]);
+    let base = prevStates;
+    let i = 0;
+    for (const [id, action, state] of partialLockActions) {
+      const entry = new Map<string, any>(base);
+      entry.set(id, state);
+      prevHistory.push({
+        states: entry,
+        lastActions: new Map([[id, action]]),
+      });
+      storeActions([[id, action]], 1, baseIndex + i + 1);
+      base = entry;
+      i++;
+    }
+    const entry = new Map<string, any>([...base, ...lockUpdates]);
     prevHistory.push({
       states: entry,
       lastActions: futureLockActions,
     });
-    storeActions([...futureLockActions.entries()], 1, baseIndex + 1);
+    storeActions([...futureLockActions.entries()], 1, baseIndex + partialLockActions.length + 1);
   }
   if (locks.has(id)) {
     // If there was a lock on this state, update it to the newly created state.
@@ -896,7 +929,10 @@ export function SharedActionHistory(props) {
 
 export type StateAndUpdater<T> = [
   T,
-  (updater: T | ((state: T) => T), options?: HistoryOptions) => void
+  (
+    updater: T | ((state: T) => T ) | Action<T>,
+    options?: HistoryOptions
+  ) => void
 ];
 
 export function useResumableReducer<T>(
@@ -926,14 +962,14 @@ export function useDispatcher(id: string) {
   return dispatcher;
 }
 
-const stateReducer = (s, v) => v;
+const simpleStateReducer = (s, v) => v;
 
 export function useResumableState<T>(
   id: string,
   initial: T | (() => T)
 ): StateAndUpdater<T> {
   return useResumableReducer(
-    stateReducer,
+    simpleStateReducer,
     null,
     // This runtime check is not great, but we have to do it to have the same signature and behavior
     // as React's useState, so that it can be a drop in replacement as much as possible.
