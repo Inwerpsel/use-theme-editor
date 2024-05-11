@@ -2,7 +2,7 @@ import { Fragment, useContext, useMemo } from "react";
 import { HistoryNavigateContext, clearAlternate, replayAlternate } from "../../hooks/useResumableReducer";
 import { Tutorial } from "../../_unstable/Tutorial";
 
-export function HistoryLastAlternate() {
+export function HistoryStash() {
     const { lastAlternate, historyOffset, past, lastAlternateIndex } =
       useContext(HistoryNavigateContext);
 
@@ -34,7 +34,7 @@ export function HistoryLastAlternate() {
           {content}
         </button>
         {lastAlternate.length > 0 && <Clear />}
-        <Tutorial el={HistoryLastAlternate}>
+        <Tutorial el={HistoryStash}>
           If you travel back and discard future, it's still kept here.
 
           This allows you to splice in a new edit earlier into your history and just re-apply everything after it.
@@ -58,4 +58,4 @@ function Clear() {
 //   - either the lock is removed and the old value is used again (probably unwanted a lot of the time but it's an easy option)
 //   - or the lock history can be removed, in which case the locked value has to move all the way to the initial state
 
-HistoryLastAlternate.fName = 'HistoryLastAlternate';
+HistoryStash.fName = 'HistoryStash';

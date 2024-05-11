@@ -35,7 +35,7 @@ import { SignalExample } from './_examples/SignalExample';
 // import { SpeakGlobalHooks } from '../voice/menu/state';
 import { HistoryVisualization } from './ui/HistoryVisualization';
 import { Palette } from './ui/Palette';
-import { HistoryLastAlternate } from './ui/HistoryLastAlternate';
+import { HistoryStash } from './ui/HistoryStash';
 import { StartTutorial } from '../_unstable/Tutorial';
 import { ApplyStyles } from './effects/ApplyStyles';
 import { AcceptDroppedOptions } from './effects/AcceptDroppedOptions';
@@ -148,8 +148,8 @@ export const ThemeEditor = (props) => {
                 flexGrow: 1,
               }}
             >
-              <HistoryLastAlternate />
               <HistoryControls />
+              <HistoryStash />
               <FrameScaleSlider/>
             </Area>
           </div>
