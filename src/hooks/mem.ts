@@ -53,14 +53,17 @@ function getLatestValues(old: {}): [{}, boolean] {
 // Only usage of hooks or literals is allowed.
 // Technically a variable that doesn't change is fine, but still risky.
 // TODO: Write a validator, similar to the rules of hooks.
-export function mem<T>(create: (state: EasyAccessors) => T): T {
+export function mem<T>(create: (state: EasyAccessors, cached?: [T, {}]) => T): T {
   // All browsers except Safari implement a change since ES2018 that forces JS engines
   // to return the function source code verbatim when calling toString(). Prior to this change, browsers would in fact
   // not keep around the source string and derive the string representation on the fly, which
   // does involve quite a lot of steps.
   // However, because this representation cannot accomodate comments and whitespace,
   // most browsers now implement toString() by keeping the original string in memory.
-  // As a result, using the source string as a key should have very good performance, yay!
+  // As a result, using the source string as a key should have good enough performance.
+  // @todo Check if this works well under all circumstances. Since the function's source code is stored by
+  // storing the original script's entire source (at least in Chromium), it might not be ideal to make use of it
+  // in case of large scripts.
   // @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Function/toString
   const key = create.toString();
 
@@ -72,7 +75,7 @@ export function mem<T>(create: (state: EasyAccessors) => T): T {
       return cached;
     }
 
-    const value = create(latestState as EasyAccessors);
+    const value = create(latestState as EasyAccessors, [cached, cachedState]);
     cache.set(key, [value, latestState])
 
     return value;
