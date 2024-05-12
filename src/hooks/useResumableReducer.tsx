@@ -504,7 +504,7 @@ export function replayAlternate(): void {
     // console.log('storing', [...map.entries()], false, past.length);
   }
 
-  historyOffset = entries.length;
+  historyOffset = Math.min(entries.length, past.length - 1);
   lastAlternate = newAlternate;
   storeAlternate();
   oldStates = prevState;
