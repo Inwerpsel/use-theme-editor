@@ -1,9 +1,10 @@
 import { ResizableFrame } from "../components/ResizableFrame";
+import { RemoveAnnoyingPrefix } from "../components/inspector/RemoveAnnoyingPrefix";
 import { MoveControls } from "../components/movable/MoveControls";
 import { FrameScaleSlider } from "../components/ui/FrameScaleSlider";
 import { FrameSizeSettings } from "../components/ui/FrameSizeSettings";
 import { HistoryControls, LockStatus, MiniTimeline } from "../components/ui/HistoryControls";
-import { HistoryLastAlternate } from "../components/ui/HistoryLastAlternate";
+import { HistoryStash } from "../components/ui/HistoryStash";
 import { HistoryVisualization } from "../components/ui/HistoryVisualization";
 import { Inspector } from "../components/ui/Inspector";
 import { Palette } from "../components/ui/Palette";
@@ -23,6 +24,7 @@ export function makeCourses() {
                 Inspector,
                 ScreenSwitcher,
                 FrameSizeSettings,
+                RemoveAnnoyingPrefix,
                 FrameScaleSlider,
             ],
         },
@@ -33,7 +35,7 @@ export function makeCourses() {
                 MiniTimeline,
                 HistoryVisualization,
                 // Keep next one out because it's more confusing than helpful
-                // HistoryLastAlternate,
+                // HistoryStash,
                 LockStatus,
             ],
         },

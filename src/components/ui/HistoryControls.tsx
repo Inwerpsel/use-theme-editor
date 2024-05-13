@@ -90,7 +90,12 @@ export function MiniTimeline() {
   return <div style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey', boxSizing: 'border-box'}}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .3s ease-out', boxSizing: 'border-box'}}></div>
     <Dots amount={past.length + 1} />
-    <Tutorial el={MiniTimeline}>Here's a compact version of the history timeline.</Tutorial>
+    <Tutorial el={MiniTimeline}>
+      Here's a compact version of the history timeline.
+
+      You can scroll above the history section to move the timeline one step at a time,
+      however fast you and your mouse like to work with.
+    </Tutorial>
   </div>
 }
 
@@ -114,11 +119,11 @@ export function LockStatus() {
         }}
       >
         🔒{amount}
-      </button>{' '}
-      {open && <LocksList close={() => setOpen(false)}/>}
       <Tutorial el={LockStatus}>
         This button shows how many locks are applied and allows you to toggle each.
       </Tutorial>
+      </button>
+      {open && <LocksList close={() => setOpen(false)}/>}
     </Fragment>
   );
 }
@@ -199,7 +204,19 @@ export function HistoryControls() {
         >
           Clear
         </button>
-        <Tutorial el={HistoryControls}>These are your regular history buttons, and a few more...</Tutorial>
+        <Tutorial el={HistoryControls}>
+          <p>
+            Every step you do in the editor is tracked in a history timeline.
+            Keyboard shortcuts (control+z and others) work like anywhere else.
+          </p>
+
+          <p>
+            On top of "normal" history buttons, there's the fast button (!→),
+            which jumps to the most important changes like edits to style rules,
+            newly inspected elements, and editor UI layout changes. It jumps
+            over the less interesting steps, while still applying their result.
+          </p>
+        </Tutorial>
       </div>
     );
 }

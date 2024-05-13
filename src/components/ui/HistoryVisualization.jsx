@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from 'react';
+import React, { useContext, useState, useEffect, useRef, Fragment } from 'react';
 import { HistoryNavigateContext, addLock, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
@@ -32,6 +32,30 @@ function getName(action) {
 // Particularly, themeEditor.set should only make it compact if next entry has same scope.
 function nextHistoryEntryHasSameAction() {
 
+}
+
+const tasks = [
+  () => {
+    const { locks } = useContext(HistoryNavigateContext);
+    return ['Lock the screen width and height.', locks.has('width') && locks.has('height')];
+  },
+];
+
+function ExplainLocks() {
+  return <Fragment>
+  <p>
+    We're tracking so many things, that it's quite likely you'll not want to use the older
+    version of certain things, but still want to wind back to any point in history for everything else.
+  </p>
+  <p>
+    To achieve this, there is a lock button, which locks the value at a particular point in time,
+    and so allows you to browse everything else.
+  </p>
+  <p>
+    Note that locking does not prevent you from making new changes to the same type of value (e.g. screen width).
+    Rather, the new value will now be locked instead. You can easily unlock this value again if needed.
+  </p>
+  </Fragment>;
 }
 
 function LockState(props) {
@@ -136,7 +160,10 @@ function CurrentActions() {
     <div onWheelCapture={scrollHistory} style={{minWidth: '170px', minHeight: '240px', overflow: 'hidden visible'}}>
       <ActionList historyIndex={index} actions={actions.entries()} />
       {/* Quick fix for el not always shown... */}
-      <Tutorial el={HistoryVisualization}>Since history visualization is disabled, this only shows current history entry.</Tutorial>
+      <Tutorial el={HistoryVisualization} {...{tasks}}>
+        <ExplainLocks />
+        Since history visualization is disabled, this only shows current history entry.
+      </Tutorial>
     </div>
   ); 
 }
@@ -172,7 +199,8 @@ export function HistoryVisualization() {
 
   return (
     <div className="history">
-      <Tutorial el={HistoryVisualization}>
+      <Tutorial el={HistoryVisualization} {...{tasks}}>
+        <ExplainLocks />
         See all steps you took here.
       </Tutorial>
       <DisableScrollHistoryInArea/>
