@@ -1,5 +1,6 @@
 import React, {useState} from 'react';
 import { TextControl } from '../controls/TextControl';
+import { CalcSizeControl } from './CalcSizeControl';
 
 export const sizeLikeProperties = [
   'font-size',
@@ -35,6 +36,8 @@ export const sizeLikeProperties = [
   'outline-offset',
   'gap',
   'block-size',
+  'inline-size',
+  'max-inline-size',
 ];
 
 const remSize = 16;
@@ -54,6 +57,10 @@ export const SizeControl = props => {
 
   const pxValue = isPx(value) ? value.replace('px', '') : isRem(value) ? convertRemToPixels(parseFloat(value.replace('rem', ''))) : '';
   const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
+
+  if (value.startsWith('calc(')) {
+    return <CalcSizeControl {...props}/>;
+  }
 
   return <div className='theme-length-controls'>
     <div className={'theme-length-control control-px'} style={{clear: 'both'}}>
@@ -134,6 +141,9 @@ export const SizeControl = props => {
       }}
     >0
     </button>
+    <button onClick={() => {
+      onChange(`calc(${value})`);
+    }}>Calculate</button>
     <TextControl
       value={ value }
       onChange={ onChange }
