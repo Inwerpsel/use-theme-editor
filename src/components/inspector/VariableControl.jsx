@@ -305,18 +305,18 @@ export const VariableControl = (props) => {
   let currentLevel = referenceChain.length;
   const key = referenceChainKey(referenceChain, cssVar);
 
-  const [
-    isOpen, setIsOpen
-    // Open all variables that refer to variables immediately.
-  ] = useResumableState(`open_${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
-
-  const toggleOpen = () => setIsOpen(!isOpen );
-
-  const [
-    showSelectors, setShowSelectors
-  ] = useResumableState(`showSelectors_${key}`, cssVar.isRawValue);
-
   const excludedVarName = parentVar?.name;
+
+  // Open all variables that refer to variables immediately.
+  const [isOpen, setIsOpen] = 
+    useResumableState(`open_${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
+  const toggleOpen = () => setIsOpen(!isOpen );
+  const [showSelectors, setShowSelectors] =
+    useResumableState(`showSelectors_${key}`, cssVar.isRawValue);
+  const [showReferences, setShowReferences] = 
+    useResumableState(`showRefs_${key}`, false);
+  const [openVariablePicker, setOpenVariablePicker] = 
+    useResumableState(`showPicker_${key}`, false);
 
   const references = useMemo(() => {
     // Prevent much unneeded work on large lists.
@@ -354,10 +354,6 @@ export const VariableControl = (props) => {
       // return regexp.test(usages[0].defaultValue);
     });
   }, [scopes, excludedVarName, isOpen]);
-
-  const [showReferences, setShowReferences] = useResumableState(`showRefs_${key}`, false);
-  const [openVariablePicker, setOpenVariablePicker] = useResumableState(`showPicker_${key}`, false);
-
   const cssFunc = cssVar.cssFunc;
 
   if (currentLevel > 20) {
