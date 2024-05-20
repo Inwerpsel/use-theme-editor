@@ -68,10 +68,14 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
   order, and thus specificity. Specifically this happens if you change properties that should be overridden
   by a more specfic scope. For example: `.btn` and `.btn-primary`. This currently happens if you create an alias
   for a property on `.btn`.
-</details>
 
-#### Big page with most things
-[🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/demo/bs/cheatsheet/)
+  #### Loading an export of editor history
+  You can import and editor session by saving this JSON file: https://github.com/Inwerpsel/use-theme-editor/blob/main/data/histories/bs-crystal-buttons.json
+
+  Then, use the "Import history JSON" in the "Import/export" panel to load the session from this file.
+
+  It attempts to restore the scroll position, which may not fully work if the screen size is too small.
+
 #### Smaller pages
 [🖌 album](https://inwerpsel.github.io/use-theme-editor/demo/bs/album)
 [🖌 blog](https://inwerpsel.github.io/use-theme-editor/demo/bs/blog)
@@ -104,6 +108,10 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 [🖌 sticky-footer](https://inwerpsel.github.io/use-theme-editor/demo/bs/sticky-footer)
 [🖌 sticky-footer-navbar](https://inwerpsel.github.io/use-theme-editor/demo/bs/sticky-footer-navbar)
 
+</details>
+
+#### Big page with most things
+[🖌 Cheatsheet](https://inwerpsel.github.io/use-theme-editor/demo/bs/cheatsheet/)
 ### Openprops ([source](https://open-props.style/))
 
 <details>

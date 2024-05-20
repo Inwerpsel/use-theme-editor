@@ -1,0 +1,2651 @@
+{
+  "offset": 0,
+  "locks": [
+    [
+      "uiLayout",
+      5
+    ]
+  ],
+  "initialStates": [
+    [
+      "inspected-index",
+      -1
+    ],
+    [
+      "OPEN_GROUPS",
+      {}
+    ],
+    [
+      "THEME_EDITOR",
+      {
+        "scopes": {}
+      }
+    ],
+    [
+      "fileName",
+      "crystal buttons"
+    ],
+    [
+      "uiLayout",
+      {
+        "map": {
+          "ThemeEditorExtraOptions": [
+            "area-bottom",
+            1
+          ],
+          "Palette": [
+            "area-bottom",
+            2
+          ],
+          "FrameScaleSlider": [
+            "area-bottom",
+            3
+          ],
+          "area-left~~dj#0": [
+            "area-left",
+            1
+          ],
+          "area-left~~yj#0": [
+            "area-left",
+            2
+          ],
+          "Inspector": [
+            "area-left",
+            3
+          ],
+          "HistoryVisualization": [
+            "area-right",
+            1
+          ],
+          "area-right~~Pj#0": [
+            "area-right",
+            2
+          ],
+          "ExtraPanelsMenu": [
+            "area-right",
+            3
+          ],
+          "area-right~~hE#1": [
+            "area-right",
+            4
+          ],
+          "ThemesList": [
+            "area-right",
+            5
+          ],
+          "area-right~~theme-editor-menu": [
+            "area-right",
+            6
+          ],
+          "StylesheetDisabler": [
+            "area-right",
+            7
+          ],
+          "area-right~~component#3": [
+            "area-right",
+            8
+          ],
+          "ImportExportTools": [
+            "area-right",
+            9
+          ],
+          "area-right~~component#4": [
+            "area-right",
+            10
+          ],
+          "area-right~~component#5": [
+            "area-right",
+            11
+          ],
+          "area-right~~hj#6": [
+            "area-right",
+            12
+          ],
+          "area-right~~pj#7": [
+            "area-right",
+            13
+          ],
+          "area-right~~8": [
+            "area-right",
+            14
+          ],
+          "ThemeUploadPanel": [
+            "area-right",
+            15
+          ],
+          "Filters": [
+            "area-top",
+            1
+          ],
+          "ScreenSwitcher": [
+            "area-top",
+            2
+          ],
+          "area-top~~0": [
+            "area-top",
+            3
+          ],
+          "area-top~~Sh#1": [
+            "area-top",
+            4
+          ],
+          "area-top~~Ch#2": [
+            "area-top",
+            5
+          ],
+          "area-top~~PE#1": [
+            "area-top",
+            6
+          ],
+          "area-top~~Vj#2": [
+            "area-top",
+            7
+          ],
+          "InformationVisibilitySettings": [
+            "area-top",
+            8
+          ],
+          "HistoryControls": [
+            "area-top-reverse",
+            1
+          ],
+          "HistoryLastAlternate": [
+            "area-top-reverse",
+            2
+          ],
+          "HistoryStash": [
+            "area-top-reverse",
+            3
+          ],
+          "RemoveAnnoyingPrefix": [
+            "area-top-reverse",
+            4
+          ],
+          "MoveControls": [
+            "drawer",
+            1
+          ],
+          "CustomVariableInput": [
+            "drawer",
+            2
+          ],
+          "FrameSizeSettings": [
+            "drawer",
+            3
+          ],
+          "NameReplacements": [
+            "drawer",
+            4
+          ],
+          "SignalExample": [
+            "drawer",
+            5
+          ],
+          "StartTutorial": [
+            "drawer",
+            6
+          ],
+          "InspectionSettings": [
+            "drawer",
+            7
+          ],
+          "CurrentTheme": [
+            "drawer",
+            8
+          ],
+          "ColorSettings": [
+            "drawer",
+            9
+          ]
+        }
+      }
+    ],
+    [
+      "drawer-open",
+      false
+    ],
+    [
+      "areaOffset#area-top",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "propertyFilter",
+      "all"
+    ],
+    [
+      "search",
+      ""
+    ],
+    [
+      "showRawValues",
+      true
+    ],
+    [
+      "width",
+      1024
+    ],
+    [
+      "height",
+      768
+    ],
+    [
+      "isSimpleSizes",
+      true
+    ],
+    [
+      "areaOffset#area-top-reverse",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "scales",
+      {}
+    ],
+    [
+      "areaOffset#area-left",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "excludedRawValues",
+      [
+        "initial",
+        "none"
+      ]
+    ],
+    [
+      "areaOffset#area-left-inner",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "areaOffset#area-right",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "areaOffset#area-bottom",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "areaOffset#area-bottom-reverse",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "areaOffset#drawer",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "open_--bs-btn-active-bg",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-active-bg",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-active-bg",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-active-bg",
+      false
+    ],
+    [
+      "open_--bs-btn-bg",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-bg",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-bg",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-bg",
+      false
+    ],
+    [
+      "open_--bs-btn-disabled-bg",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-disabled-bg",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-disabled-bg",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-disabled-bg",
+      false
+    ],
+    [
+      "open_--bs-btn-hover-bg",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-hover-bg",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-hover-bg",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-hover-bg",
+      false
+    ],
+    [
+      "open_--bs-btn-border-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-border-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-border-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-border-color",
+      false
+    ],
+    [
+      "color-picker~~--bs-btn-border-color",
+      true
+    ],
+    [
+      "open_--bs-btn-active-border-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-active-border-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-active-border-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-active-border-color",
+      false
+    ],
+    [
+      "open_--bs-btn-disabled-border-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-disabled-border-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-disabled-border-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-disabled-border-color",
+      false
+    ],
+    [
+      "open_--bs-btn-hover-border-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-hover-border-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-hover-border-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-hover-border-color",
+      false
+    ],
+    [
+      "open_--bs-btn-active-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-active-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-active-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-active-color",
+      false
+    ],
+    [
+      "open_--bs-btn-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-color",
+      false
+    ],
+    [
+      "open_--bs-btn-disabled-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-disabled-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-disabled-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-disabled-color",
+      false
+    ],
+    [
+      "open_--bs-btn-hover-color",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-hover-color",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-hover-color",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-hover-color",
+      false
+    ],
+    [
+      "open_--bs-btn-border-width",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-border-width",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-border-width",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-border-width",
+      false
+    ],
+    [
+      "open_--bs-btn-border-radius",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-border-radius",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-border-radius",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-border-radius",
+      false
+    ],
+    [
+      "open_--bs-btn-focus-box-shadow",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-focus-box-shadow",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-focus-box-shadow",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-focus-box-shadow",
+      false
+    ],
+    [
+      "open_--bs-btn-font-family",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-font-family",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-font-family",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-font-family",
+      false
+    ],
+    [
+      "open_--bs-btn-font-size",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-font-size",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-font-size",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-font-size",
+      false
+    ],
+    [
+      "open_--bs-btn-font-weight",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-font-weight",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-font-weight",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-font-weight",
+      false
+    ],
+    [
+      "open_--bs-btn-line-height",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-line-height",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-line-height",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-line-height",
+      false
+    ],
+    [
+      "open_--bs-btn-disabled-opacity",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-disabled-opacity",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-disabled-opacity",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-disabled-opacity",
+      false
+    ],
+    [
+      "open_--bs-btn-padding-x",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-padding-x",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-padding-x",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-padding-x",
+      false
+    ],
+    [
+      "open_--bs-btn-padding-y",
+      false
+    ],
+    [
+      "showSelectors_--bs-btn-padding-y",
+      null
+    ],
+    [
+      "showRefs_--bs-btn-padding-y",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-padding-y",
+      false
+    ],
+    [
+      "open_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
+      false
+    ],
+    [
+      "showSelectors_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
+      true
+    ],
+    [
+      "showRefs_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
+      false
+    ],
+    [
+      "showPicker_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
+      false
+    ],
+    [
+      "open_pointer",
+      false
+    ],
+    [
+      "showSelectors_pointer",
+      true
+    ],
+    [
+      "showRefs_pointer",
+      false
+    ],
+    [
+      "showPicker_pointer",
+      false
+    ],
+    [
+      "open_inline-block",
+      false
+    ],
+    [
+      "showSelectors_inline-block",
+      true
+    ],
+    [
+      "showRefs_inline-block",
+      false
+    ],
+    [
+      "showPicker_inline-block",
+      false
+    ],
+    [
+      "open_opacity(0.5)",
+      false
+    ],
+    [
+      "showSelectors_opacity(0.5)",
+      true
+    ],
+    [
+      "showRefs_opacity(0.5)",
+      false
+    ],
+    [
+      "showPicker_opacity(0.5)",
+      false
+    ],
+    [
+      "open_normal",
+      false
+    ],
+    [
+      "showSelectors_normal",
+      true
+    ],
+    [
+      "showRefs_normal",
+      false
+    ],
+    [
+      "showPicker_normal",
+      false
+    ],
+    [
+      "open_center",
+      false
+    ],
+    [
+      "showSelectors_center",
+      true
+    ],
+    [
+      "showRefs_center",
+      false
+    ],
+    [
+      "showPicker_center",
+      false
+    ],
+    [
+      "open_normal, normal, normal, normal",
+      false
+    ],
+    [
+      "showSelectors_normal, normal, normal, normal",
+      true
+    ],
+    [
+      "showRefs_normal, normal, normal, normal",
+      false
+    ],
+    [
+      "showPicker_normal, normal, normal, normal",
+      false
+    ],
+    [
+      "open_0s, 0s, 0s, 0s",
+      false
+    ],
+    [
+      "showSelectors_0s, 0s, 0s, 0s",
+      true
+    ],
+    [
+      "showRefs_0s, 0s, 0s, 0s",
+      false
+    ],
+    [
+      "showPicker_0s, 0s, 0s, 0s",
+      false
+    ],
+    [
+      "open_0.15s, 0.15s, 0.15s, 0.15s",
+      false
+    ],
+    [
+      "showSelectors_0.15s, 0.15s, 0.15s, 0.15s",
+      true
+    ],
+    [
+      "showRefs_0.15s, 0.15s, 0.15s, 0.15s",
+      false
+    ],
+    [
+      "showPicker_0.15s, 0.15s, 0.15s, 0.15s",
+      false
+    ],
+    [
+      "open_color, background-color, border-color, box-shadow",
+      false
+    ],
+    [
+      "showSelectors_color, background-color, border-color, box-shadow",
+      true
+    ],
+    [
+      "showRefs_color, background-color, border-color, box-shadow",
+      false
+    ],
+    [
+      "showPicker_color, background-color, border-color, box-shadow",
+      false
+    ],
+    [
+      "open_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
+      false
+    ],
+    [
+      "showSelectors_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
+      true
+    ],
+    [
+      "showRefs_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
+      false
+    ],
+    [
+      "showPicker_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
+      false
+    ],
+    [
+      "open_middle",
+      false
+    ],
+    [
+      "showSelectors_middle",
+      true
+    ],
+    [
+      "showRefs_middle",
+      false
+    ],
+    [
+      "showPicker_middle",
+      false
+    ]
+  ],
+  "finalStates": [
+    [
+      "inspected-index",
+      5
+    ],
+    [
+      "OPEN_GROUPS",
+      {
+        "button\n.btn\n.btn-info (1/3)": true
+      }
+    ],
+    [
+      "areaOffset#area-left",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "THEME_EDITOR",
+      {
+        "scopes": {
+          ".btn-primary": {
+            "--bs-btn-bg": "#b4d1fe",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-bg": "#8db9fc"
+          },
+          ":root": {
+            "--button-text": "var(--mineshaft)",
+            "--mineshaft": "#292929"
+          },
+          ".btn": {
+            "--bs-btn-border-radius": "0",
+            "--bs-btn-border-width": "2px"
+          },
+          ".btn-success": {
+            "--bs-btn-bg": "#83fcc3",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-bg": "#48f4a4"
+          },
+          ".btn-secondary": {
+            "--bs-btn-bg": "#d3dce4",
+            "--bs-btn-hover-bg": "#b8bdc1",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)"
+          },
+          ".btn-danger": {
+            "--bs-btn-bg": "#f7b1b8",
+            "--bs-btn-hover-bg": "#f18893",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)"
+          },
+          ".btn-warning": {
+            "--bs-btn-bg": "#ffe79e",
+            "--bs-btn-hover-bg": "#ffdb70",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-border-color": "#bd900a"
+          },
+          ".btn-info": {
+            "--bs-btn-bg": "#a5eefd",
+            "--bs-btn-hover-bg": "#7de7fc",
+            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-border-color": "#099cb9"
+          }
+        }
+      }
+    ],
+    [
+      "uiLayout",
+      {
+        "map": {
+          "ThemeEditorExtraOptions": [
+            "area-bottom",
+            1
+          ],
+          "Palette": [
+            "area-bottom",
+            2
+          ],
+          "FrameScaleSlider": [
+            "area-bottom",
+            3
+          ],
+          "area-left~~dj#0": [
+            "area-left",
+            1
+          ],
+          "area-left~~yj#0": [
+            "area-left",
+            2
+          ],
+          "Inspector": [
+            "area-left",
+            3
+          ],
+          "HistoryVisualization": [
+            "area-right",
+            1
+          ],
+          "area-right~~Pj#0": [
+            "area-right",
+            2
+          ],
+          "ExtraPanelsMenu": [
+            "area-right",
+            3
+          ],
+          "area-right~~hE#1": [
+            "area-right",
+            4
+          ],
+          "ThemesList": [
+            "area-right",
+            5
+          ],
+          "area-right~~theme-editor-menu": [
+            "area-right",
+            6
+          ],
+          "StylesheetDisabler": [
+            "area-right",
+            7
+          ],
+          "area-right~~component#3": [
+            "area-right",
+            8
+          ],
+          "ImportExportTools": [
+            "area-right",
+            9
+          ],
+          "area-right~~component#4": [
+            "area-right",
+            10
+          ],
+          "area-right~~component#5": [
+            "area-right",
+            11
+          ],
+          "area-right~~hj#6": [
+            "area-right",
+            12
+          ],
+          "area-right~~pj#7": [
+            "area-right",
+            13
+          ],
+          "area-right~~8": [
+            "area-right",
+            14
+          ],
+          "ThemeUploadPanel": [
+            "area-right",
+            15
+          ],
+          "Filters": [
+            "area-top",
+            1
+          ],
+          "ScreenSwitcher": [
+            "area-top",
+            2
+          ],
+          "area-top~~0": [
+            "area-top",
+            3
+          ],
+          "area-top~~Sh#1": [
+            "area-top",
+            4
+          ],
+          "area-top~~Ch#2": [
+            "area-top",
+            5
+          ],
+          "area-top~~PE#1": [
+            "area-top",
+            6
+          ],
+          "area-top~~Vj#2": [
+            "area-top",
+            7
+          ],
+          "InformationVisibilitySettings": [
+            "area-top",
+            8
+          ],
+          "HistoryControls": [
+            "area-top-reverse",
+            1
+          ],
+          "HistoryLastAlternate": [
+            "area-top-reverse",
+            2
+          ],
+          "HistoryStash": [
+            "area-top-reverse",
+            3
+          ],
+          "RemoveAnnoyingPrefix": [
+            "area-top-reverse",
+            4
+          ],
+          "MoveControls": [
+            "drawer",
+            1
+          ],
+          "CustomVariableInput": [
+            "drawer",
+            2
+          ],
+          "FrameSizeSettings": [
+            "drawer",
+            3
+          ],
+          "NameReplacements": [
+            "drawer",
+            4
+          ],
+          "SignalExample": [
+            "drawer",
+            5
+          ],
+          "StartTutorial": [
+            "drawer",
+            6
+          ],
+          "InspectionSettings": [
+            "drawer",
+            7
+          ],
+          "CurrentTheme": [
+            "drawer",
+            8
+          ],
+          "ColorSettings": [
+            "drawer",
+            9
+          ]
+        }
+      }
+    ],
+    [
+      "open_--bs-btn-border-color",
+      true
+    ],
+    [
+      "open_--bs-btn-border-width",
+      true
+    ],
+    [
+      "showSelectors_--bs-btn-border-width",
+      true
+    ]
+  ],
+  "inspections": [
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        1,
+        "forms"
+      ],
+      [
+        "ARTICLE",
+        1,
+        "overview"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "FORM",
+        0
+      ],
+      [
+        "BUTTON",
+        7
+      ]
+    ],
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        2,
+        "components"
+      ],
+      [
+        "ARTICLE",
+        5,
+        "buttons"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "BUTTON",
+        2
+      ]
+    ],
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        2,
+        "components"
+      ],
+      [
+        "ARTICLE",
+        5,
+        "buttons"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "BUTTON",
+        1
+      ]
+    ],
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        2,
+        "components"
+      ],
+      [
+        "ARTICLE",
+        5,
+        "buttons"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "BUTTON",
+        3
+      ]
+    ],
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        2,
+        "components"
+      ],
+      [
+        "ARTICLE",
+        5,
+        "buttons"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "BUTTON",
+        4
+      ]
+    ],
+    [
+      [
+        "DIV",
+        2
+      ],
+      [
+        "SECTION",
+        2,
+        "components"
+      ],
+      [
+        "ARTICLE",
+        5,
+        "buttons"
+      ],
+      [
+        "DIV",
+        1
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "DIV",
+        0
+      ],
+      [
+        "BUTTON",
+        5
+      ]
+    ]
+  ],
+  "timeline": [
+    [],
+    [
+      [
+        "inspected-index",
+        0
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "input#search_query\n.search__input\n.js-search-input\n.focus-visible": true
+        }
+      ]
+    ],
+    [
+      [
+        "OPEN_GROUPS",
+        {}
+      ]
+    ],
+    [
+      [
+        "OPEN_GROUPS",
+        {
+          "input#search_query\n.search__input\n.js-search-input\n.focus-visible": true
+        }
+      ]
+    ],
+    [
+      [
+        "open_--cb-input-color-background",
+        true
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--cb-input-color-background",
+        false
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-primary (1/16)": true
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#ffffff",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#b4d1fe",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          200,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-color",
+        true
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          300,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "#262626",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "#292929",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "createAlias",
+          "payload": {
+            "name": "button text",
+            "value": "#292929",
+            "generatedName": "--button-text"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-color,--button-text",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "createAlias",
+          "payload": {
+            "name": "mineshaft",
+            "value": "#292929",
+            "generatedName": "--mineshaft"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-color,--button-text",
+        false
+      ]
+    ],
+    [
+      [
+        "uiLayout",
+        {
+          "map": {
+            "ThemeEditorExtraOptions": [
+              "area-bottom",
+              1
+            ],
+            "Palette": [
+              "area-bottom",
+              2
+            ],
+            "FrameScaleSlider": [
+              "area-bottom",
+              3
+            ],
+            "area-left~~dj#0": [
+              "area-left",
+              1
+            ],
+            "area-left~~yj#0": [
+              "area-left",
+              2
+            ],
+            "Inspector": [
+              "area-left",
+              3
+            ],
+            "HistoryVisualization": [
+              "area-right",
+              1
+            ],
+            "area-right~~Pj#0": [
+              "area-right",
+              2
+            ],
+            "ExtraPanelsMenu": [
+              "area-right",
+              3
+            ],
+            "area-right~~hE#1": [
+              "area-right",
+              4
+            ],
+            "ThemesList": [
+              "area-right",
+              5
+            ],
+            "area-right~~theme-editor-menu": [
+              "area-right",
+              6
+            ],
+            "StylesheetDisabler": [
+              "area-right",
+              7
+            ],
+            "area-right~~component#3": [
+              "area-right",
+              8
+            ],
+            "ImportExportTools": [
+              "area-right",
+              9
+            ],
+            "area-right~~component#4": [
+              "area-right",
+              10
+            ],
+            "area-right~~component#5": [
+              "area-right",
+              11
+            ],
+            "area-right~~hj#6": [
+              "area-right",
+              12
+            ],
+            "area-right~~pj#7": [
+              "area-right",
+              13
+            ],
+            "area-right~~8": [
+              "area-right",
+              14
+            ],
+            "ThemeUploadPanel": [
+              "area-right",
+              15
+            ],
+            "Filters": [
+              "area-top",
+              1
+            ],
+            "ScreenSwitcher": [
+              "area-top",
+              2
+            ],
+            "area-top~~0": [
+              "area-top",
+              3
+            ],
+            "area-top~~Sh#1": [
+              "area-top",
+              4
+            ],
+            "area-top~~Ch#2": [
+              "area-top",
+              5
+            ],
+            "area-top~~PE#1": [
+              "area-top",
+              6
+            ],
+            "area-top~~Vj#2": [
+              "area-top",
+              7
+            ],
+            "InformationVisibilitySettings": [
+              "area-top",
+              8
+            ],
+            "HistoryControls": [
+              "area-top-reverse",
+              1
+            ],
+            "HistoryLastAlternate": [
+              "area-top-reverse",
+              2
+            ],
+            "HistoryStash": [
+              "area-top-reverse",
+              3
+            ],
+            "RemoveAnnoyingPrefix": [
+              "area-top-reverse",
+              4
+            ],
+            "MoveControls": [
+              "drawer",
+              1
+            ],
+            "CustomVariableInput": [
+              "drawer",
+              2
+            ],
+            "FrameSizeSettings": [
+              "drawer",
+              3
+            ],
+            "NameReplacements": [
+              "drawer",
+              4
+            ],
+            "SignalExample": [
+              "drawer",
+              5
+            ],
+            "StartTutorial": [
+              "drawer",
+              6
+            ],
+            "InspectionSettings": [
+              "drawer",
+              7
+            ],
+            "CurrentTheme": [
+              "drawer",
+              8
+            ],
+            "ColorSettings": [
+              "drawer",
+              9
+            ]
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-color",
+        false
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-primary"
+          }
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#b4d1fe",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#8db9fc",
+            "scope": ".btn-primary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          900,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-border-radius",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-border-radius",
+            "value": "0",
+            "scope": ".btn"
+          }
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          600,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-border-radius",
+        false
+      ],
+      [
+        "open_--bs-btn-border-width",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-border-width",
+            "value": "2px",
+            "scope": ".btn"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "showSelectors_--bs-btn-border-width",
+        true
+      ]
+    ],
+    [
+      [
+        "inspected-index",
+        1
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-success (1/3)": true
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#83fcc3",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          203,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "var(--button-text)",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-success"
+          }
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#83fcc3",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#48f4a4",
+            "scope": ".btn-success"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "inspected-index",
+        2
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-secondary (1/31)": true
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#d3dce4",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#d3dce4",
+            "scope": ".btn-secondary"
+          }
+        }
+      ],
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#9bcdf8",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#8b9298",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#b8bdc1",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          303,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "var(--button-text)",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-secondary"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "inspected-index",
+        3
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-danger (1/4)": true
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#f7b1b8",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#f7b1b8",
+            "scope": ".btn-danger"
+          }
+        }
+      ],
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#f18893",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          203,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "var(--button-text)",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-danger"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "inspected-index",
+        4
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-warning (1/3)": true
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#ffe79e",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#ffe79e",
+            "scope": ".btn-warning"
+          }
+        }
+      ],
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#ffdf80",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#ffdb70",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          203,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-color",
+            "value": "var(--button-text)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-color",
+            "value": "var(--bs-btn-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          103,
+          0
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-border-color",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-border-color",
+            "value": "#bd900a",
+            "scope": ".btn-warning"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "inspected-index",
+        5
+      ],
+      [
+        "OPEN_GROUPS",
+        {
+          "button\n.btn\n.btn-info (1/3)": true
+        }
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          82
+        ]
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#97e7f7",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-bg",
+            "value": "#a5eefd",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-bg",
+        false
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#a5eefd",
+            "scope": ".btn-info"
+          }
+        }
+      ],
+      [
+        "open_--bs-btn-hover-bg",
+        true
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-bg",
+            "value": "#7de7fc",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "open_--bs-btn-hover-bg",
+        false
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          303,
+          82
+        ]
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-active-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-disabled-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-hover-border-color",
+            "value": "var(--bs-btn-border-color)",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "THEME_EDITOR",
+        {
+          "type": "set",
+          "payload": {
+            "name": "--bs-btn-border-color",
+            "value": "#099cb9",
+            "scope": ".btn-info"
+          }
+        }
+      ]
+    ],
+    [
+      [
+        "fileName",
+        "crystal buttons"
+      ],
+      [
+        "areaOffset#area-left",
+        [
+          0,
+          0
+        ]
+      ]
+    ]
+  ]
+}
