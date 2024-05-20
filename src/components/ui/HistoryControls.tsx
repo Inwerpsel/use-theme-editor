@@ -95,6 +95,24 @@ export function MiniTimeline() {
 
       You can scroll above the history section to move the timeline one step at a time,
       however fast you and your mouse like to work with.
+
+      <h1>
+        Warning!
+      </h1>
+      <p>
+        This will restore the UI state across the whole screen,
+        which definitely is a concern for people with epilepsy.
+      </p>
+      <p>
+        After having changed the page background color multiple times, for example,
+        going through this history timeline fast will cause the whole preview screen to flash.
+      </p>
+      <p>
+        It's recommended to only use it when controlled, small nudges of the wheel are possible.
+      </p>
+      <p>
+        Keeping some state locked can help reduce the amount of changes happening in rapid succession.
+      </p>
     </Tutorial>
   </div>
 }
@@ -120,7 +138,13 @@ export function LockStatus() {
       >
         🔒{amount}
       <Tutorial el={LockStatus}>
-        This button shows how many locks are applied and allows you to toggle each.
+        <p>
+          This button shows how many locks are applied and allows you to toggle each.
+        </p>
+        <strong>Tutorial is currently covering the lock list, sorry 'bout that.</strong>
+        <p>
+          Notice how the timeline now jumps over the entries we locked earlier.
+        </p>
       </Tutorial>
       </button>
       {open && <LocksList close={() => setOpen(false)}/>}

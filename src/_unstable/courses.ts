@@ -34,9 +34,8 @@ export function makeCourses() {
                 HistoryControls,
                 MiniTimeline,
                 HistoryVisualization,
-                // Keep next one out because it's more confusing than helpful
-                // HistoryStash,
                 LockStatus,
+                HistoryStash,
             ],
         },
         movable: {
