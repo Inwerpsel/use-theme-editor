@@ -358,6 +358,9 @@ div[id^=font-picker] ul {
 .area > :hover {
   border-color: black;
 }
+.is-dragging .area > :hover {
+  border-color: transparent;
+}
 
 #area-left, #area-right {
   scrollbar-gutter: stable;

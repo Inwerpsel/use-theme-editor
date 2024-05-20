@@ -21,6 +21,21 @@ $subtle-grey: rgb(179, 162, 162);
   > :hover {
     border-color: black;
   }
+
+  // Workaround for browser bug when starting a drag and ending up
+  // above another element. The current behavior in Chromium is definitely wrong:
+  // We can only arrive above the element after already having initiated the drag.
+  // Which should have made it ignore the cursor for normal mouse events outside of
+  // the in progress drag. Nevertheless this is what Chromium does.
+  //     => drag has started
+  //     => capture drag image of picked up element before changing its appearance
+  //     => modify the height of picked up element
+  //     => cursor still triggers hover state of next element, but drag image is correct
+  // This false hovered state stays present until you drop the dragged element,
+  // making a random element look different for no reason, very confusing.
+  .is-dragging & > :hover {
+    border-color: transparent;
+  }
 }
 
 $area-speed: .2s;
