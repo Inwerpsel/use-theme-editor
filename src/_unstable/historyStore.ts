@@ -1,4 +1,4 @@
-import { addUnprocessedAction, createEmptyEntry, forceHistoryRender, initialStates, performActionOnLatest, reducerQueue, reducers, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
+import { addUnprocessedAction, createEmptyEntry, forceHistoryRender, initialStates, interestingKeys, performActionOnLatest, reducerQueue, reducers, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
 import { INSPECTIONS } from "../renderSelectedVars";
 
 let db;
@@ -98,8 +98,12 @@ export function deleteStoredHistory(createSnap = false, lastState = null) {
     store.clear();
     localStorage.removeItem(snapshotKey);
     localStorage.removeItem(INSPECTIONS);
-    needsSnapshot = true;
-    createSnap && storeActions([], false, 0, lastState);
 
-    console.log('Start store delte transaction in ', performance.now( ) - start) 
+    if (lastState) {
+        // Use interesting part of current state as snapshot.
+        const snap = JSON.stringify([...lastState.entries()].filter(([k]) => interestingKeys.includes(k)));
+        localStorage.setItem(snapshotKey, snap); 
+    }
+
+    console.log('Start store delete transaction in ', performance.now( ) - start) 
 }
