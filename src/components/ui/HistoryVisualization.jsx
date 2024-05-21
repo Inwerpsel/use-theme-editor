@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef, Fragment } from 'react';
-import { HistoryNavigateContext, addLock, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, performAction, removeLock } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addLock, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, lockLatest, performAction, removeLock } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
@@ -75,10 +75,33 @@ function LockState(props) {
         lockedHere ? removeLock(id) : addLock(id, historyIndex);
         event.stopPropagation();
       }}
+      title="Lock here"
     >
       🔒
     </button>
   );
+}
+
+function LockLatest(props) {
+  const { id, historyIndex  } = props;
+  const { locks } = useContext(HistoryNavigateContext);
+  const latestForId = latestOccurrence(id);
+  if (historyIndex === latestForId) {
+    return null;
+  }
+  const lockedIndex = locks.get(id);
+  const lockedAtLatest = lockedIndex === latestForId;
+
+  return <button style={{
+    float: 'right',
+    outline: lockedAtLatest ? '2px solid black' : 'none',
+    background: lockedAtLatest ? 'white' : 'transparent',
+    // visibility: lockedAtLatest ? 'visible' : null,
+  }} onClick={lockedAtLatest ? () => {removeLock(id)} : () => {
+    lockLatest(id);
+  }} title="Lock to latest">
+    🔒→
+  </button>
 }
 
 function ActionList(props) {
@@ -119,6 +142,7 @@ function ActionList(props) {
             style={{ clear: 'both', opacity: isLockedElsewhere ? .5 : 1}}
           >
             <LockState {...{id, historyIndex}} />
+            <LockLatest {...{id, historyIndex}} />
             {!Preview && (
               <span>
                 <b>{id}</b>

@@ -91,6 +91,30 @@ export function addLock(id: string, index: number): void {
   storeLocks();
 }
 
+export function latestOccurrence(id) {
+  if (lastActions.has(id)) {
+    return past.length;
+  }
+  let offset = 0;
+  while (offset < past.length) {
+    offset++;
+    if (past[past.length - offset].lastActions.has(id)) {
+      break;
+    }
+  }
+
+  return past.length - offset;
+}
+
+export function isLockedAtLatest(id) {
+  const lockIndex = locks.get(id);
+  return lockIndex === latestOccurrence(id);
+}
+
+export function lockLatest(id: string) {
+  addLock(id, latestOccurrence(id));
+}
+
 // Removing the lock on a key, then trigger render.
 export function removeLock(id: string): void {
   locks.delete(id);

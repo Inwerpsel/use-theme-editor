@@ -9,6 +9,7 @@ import {
   historyForward,
   historyForwardFast,
   historyForwardOne,
+  historyGo,
   removeLock,
 } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
@@ -153,7 +154,7 @@ export function LockStatus() {
 }
 
 function LocksList({close}) {
-  const { locks, past, states } = useContext(HistoryNavigateContext);
+  const { locks, past, historyOffset, states } = useContext(HistoryNavigateContext);
   const [origLocks] = useState(new Map(locks));
   const entries = [...origLocks.entries()];
   const ref = useRef();
@@ -187,6 +188,7 @@ function LocksList({close}) {
         const entry = index < past.length ? past[index].states : states;
         const value = entry.has(key) ? entry.get(key) : 'default';
         i++;
+        const targetOffset = past.length - index;
 
         return (
           <li {...{ key }}>
@@ -194,6 +196,10 @@ function LocksList({close}) {
               {active ? 'on' : 'off'}
             </button>
             {key}: { typeof value === 'object' ? '[obj]' : value}
+            {targetOffset !== historyOffset && <button onClick={() => {
+              historyGo(targetOffset);
+            }}>visit</button>}
+            
           </li>
         );
       })}
