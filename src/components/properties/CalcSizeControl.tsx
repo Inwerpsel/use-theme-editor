@@ -200,7 +200,14 @@ function evaluateScenarios(expression, scenarios) {
 
 export function CalcSizeControl(props) {
   const {value, onChange} = props;
-  const expression = value.replace(/calc\(/, '').replace(/\)$/, '').replaceAll('calc(', '(');
+
+  const expression = value
+  // Extract only inner expression.
+  .replace(/calc\(/, '')
+  .replace(/\)$/, '')
+  // Replace inner `calc` expressions with just parentheses.
+  .replaceAll('calc(', '(');
+
   const results = evaluateScenarios(expression, [
     {width: 360, height: 640, remFactor: 16, resultUnit: 'px'},
     {width: 1920, height: 1080, remFactor: 16, resultUnit: 'px'},
@@ -217,7 +224,7 @@ export function CalcSizeControl(props) {
         {results.map(([{ width, height, resultUnit, remFactor }, result]) => {
           const k = `${width}x${height}~${resultUnit}~${remFactor}`;
           return (
-            <li key={k}><code>{result}{resultUnit}</code> at {width} x {height}</li>
+            <li key={k}><code onClick={() => onChange(`${result}${resultUnit}`)}>{result}{resultUnit}</code> at {width} x {height}</li>
           );
         })}
       </ul>
