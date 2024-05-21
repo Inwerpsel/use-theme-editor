@@ -20,7 +20,7 @@ function getPropertyKeys ({ selector, winningSelector = '', property, index }, m
     (winningSelector === '' ? selector : '') + 
     indexSuffix;
 
-  return [propName, allPropName];
+  return [propName, allPropName, stateSuffix, pseudoElementSuffix];
 }
 
 
@@ -178,7 +178,7 @@ export const getOnlyMostSpecific = (vars, element) => {
         return;
       }
       found = true;
-      const [propName, allPropName] = getPropertyKeys(maxSpecific, media);
+      const [propName, allPropName, states, pseudos] = getPropertyKeys(maxSpecific, media);
       // This depends on "all" running first so that we can assume it's there already if it exists.
       // Set the overriding media
       if (media !== 'all') {
@@ -194,7 +194,7 @@ export const getOnlyMostSpecific = (vars, element) => {
       }
 
       if (!specificVars[propName]) {
-        specificVars[propName] = {...cssVar, maxSpecific};
+        specificVars[propName] = {...cssVar, maxSpecific, states, pseudos};
       } else {
         if (!specificVars[propName].usages.some(u => {
           return u.property === maxSpecific.property 
@@ -206,7 +206,7 @@ export const getOnlyMostSpecific = (vars, element) => {
         })) {
           const comparedUsage = getMaxMatchingSpecificity([specificVars[propName].maxSpecific, maxSpecific], element);
           if (maxSpecific === comparedUsage) {
-            specificVars[propName] = {...cssVar, maxSpecific};
+            specificVars[propName] = {...cssVar, maxSpecific, states, pseudos};
           }
         }
       }

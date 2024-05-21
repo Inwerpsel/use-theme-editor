@@ -426,17 +426,20 @@ export const VariableControl = (props) => {
           {!!showCssProperties && <Fragment>
             {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
             {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => {
+              const isCurrent = property === maxSpecific?.property;
               const comp = (
                 <span
                   key={property}
                   className="monospace-code"
                   style={{
                     fontSize: '14px',
-                    ...(property !== maxSpecific?.property ? { background: 'grey' } : {})
+                    ...( !isCurrent ? { background: 'grey' } : {})
                   }}
                   title={isFullProperty ? '' : fullValue} 
                 >
                   {property}
+                  {isCurrent && cssVar.states && !cssVar.pseudos && <b style={{color: 'purple'}}>{cssVar.states}</b>}
+                  {isCurrent && cssVar.pseudos && <b style={{color: 'indigo'}}>{cssVar.pseudos}</b>}
                   {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
                   {!!isImportant && <b style={{ fontWeight: 'bold', color: 'darkorange' }}>!important</b>}
                 </span>
