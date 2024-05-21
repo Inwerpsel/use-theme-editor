@@ -74,7 +74,7 @@ export function storeActions(actions: [string, any][], clearFuture, index, prevS
         alert(`Tried store undefined for ${undefKey[1]}`);
     }
     if (needsSnapshot) {
-        const snap = JSON.stringify([...initialStates.entries(), ...prevStates.entries()]);
+        const snap = JSON.stringify([...prevStates.entries()].filter(([k]) => interestingKeys.includes(k)));
         localStorage.setItem(snapshotKey, snap);
         needsSnapshot = false;
         snapshot = snap;
