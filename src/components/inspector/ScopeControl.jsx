@@ -46,12 +46,6 @@ export function ScopeControl(props) {
               return (
                 <li
                   key={selector}
-                  title={elementScopeVars
-                    .map(
-                      ({ name }) =>
-                        `${name}: ${(scopesByProperty[name] || {})[selector]}`
-                    )
-                    .join('\n')}
                 >
                   <span
                     style={{
@@ -85,7 +79,6 @@ export function ScopeControl(props) {
                             element,
                             currentScope: selector,
                           }}
-                          initialOpen={false}
                           key={cssVar.name}
                           onChange={(value) => {
                             dispatch({
