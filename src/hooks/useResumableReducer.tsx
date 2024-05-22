@@ -707,8 +707,9 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
         lockUpdates.set(id, past[index].states.get(id));
         futureLockActions.set(id, past[index].lastActions.get(id));
       }
+      const max = Math.min(index, past.length - 1);
       // Collect actions only of reducer-based state.
-      for (let i = baseIndex + 1; i < index; i++) {
+      for (let i = baseIndex + 1; i < max; i++) {
         const action = past[i].lastActions.get(id);
         if (action !== undefined && action.type) {
           partialLockActions.push([id, action, past[i].states.get(id)]);
