@@ -88,27 +88,32 @@ function Variable(props) {
       `var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
     );
 
-    const currentValues = Object.values(scopes);
-    const defaultValues = Object.values(definedValues);
+    const refs = [];
 
-    return allVars.filter(({ name }) => {
+    for (const otherVar of allVars) {
+      const {name} = otherVar;
       if (!name.startsWith('--')) {
-        return false;
+        continue;
       }
-
-      const fromCurrentScope = currentValues.some(s=>s[name] && regexp.test(s[name]));
-      if (fromCurrentScope) {
-        return true;
-      }
-      return defaultValues.some((scope) => {
-        const value = scope[name];
-        return value && value.includes('--') && regexp.test(value)
+      const matchScopes = new Set();
+      Object.entries(scopes).forEach(([selector, vars])=>{
+        if (vars[name] && regexp.test(vars[name])) {
+          matchScopes.add(selector);
+        }
       });
-      // if (definedValues[name]) {
-      //   return regexp.test(definedValues[name]);
-      // }
-      // return regexp.test(usages[0].defaultValue);
-    });
+      Object.entries(definedValues).forEach(([selector, vars]) => {
+        if (matchScopes.has(selector)) return;
+        const value = vars[name];
+
+        if (value && value.includes('--') && regexp.test(value)) {
+          matchScopes.add(selector);
+        }
+      });
+      if (matchScopes.size > 0) {
+        refs.push([[...matchScopes.values()], otherVar]);
+      }
+    }
+    return refs;
   }, [scopes, showUsages]);
 
   const baseValues = Object.entries(scopesByProperty[varName] || {});
