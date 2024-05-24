@@ -9,14 +9,14 @@ function selectOption(o) {
 }
 
 export function SelectControl(props) {
-    const { value, options = [], onChange: propsOnChange } = props;
+    const { options = [], value, onChange: propsOnChange, title, style} = props;
 
     const onChange = useCallback(e => {
         // latestHandlerRef.current(e.target.value);
         propsOnChange(e.target.value);
-    }, [])
+    }, [propsOnChange])
 
     return (
-      <select {...{ value, onChange }}>{options.map(selectOption)}</select>
+      <select {...{ value, onChange, title, style }}>{options.map(selectOption)}</select>
     );
 }
