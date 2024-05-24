@@ -49,7 +49,7 @@ export const use = {
   frameClickBehavior:
     () => useLocalStorage('frameClickBehavior', 'any' as 'any' | 'alt'),
   nativeColorPicker:
-    () => useLocalStorage('nativeColorPicker', true),
+    () => useLocalStorage('nativeColorPicker', false),
   includeDefaultPalette:
     () => useLocalStorage('includeDefaultPalette', false),
   colorUsages:
