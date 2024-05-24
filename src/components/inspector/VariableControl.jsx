@@ -309,7 +309,7 @@ export const VariableControl = (props) => {
 
   // Open all variables that refer to variables immediately.
   const [isOpen, setIsOpen] = 
-    useResumableState(`open_${key}`, initialOpen || (currentLevel > 0 && !!referencedVariable));
+    useResumableState(`open_${key}`, currentLevel > 0 && !!referencedVariable);
   const toggleOpen = () => setIsOpen(!isOpen );
   const [showSelectors, setShowSelectors] =
     useResumableState(`showSelectors_${key}`, cssVar.isRawValue);
@@ -330,29 +330,32 @@ export const VariableControl = (props) => {
       `var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
     );
 
-    const currentValues = Object.values(scopes);
-    const defaultValues = Object.values(definedValues);
+    const refs = [];
 
-    return allVars.filter(({ name }) => {
-      if (!name.startsWith('--')) {
-        return false;
+    for (const otherVar of allVars) {
+      const {name} = otherVar;
+      if (name === excludedVarName || !name.startsWith('--')) {
+        continue;
       }
-      if (name === excludedVarName) {
-        return false;
-      }
-      const fromCurrentScope = currentValues.some(s=>s[name] && regexp.test(s[name]));
-      if (fromCurrentScope) {
-        return true;
-      }
-      return defaultValues.some((scope) => {
-        const value = scope[name];
-        return value && value.includes('--') && regexp.test(value)
+      const matchScopes = new Set();
+      Object.entries(scopes).forEach(([selector, vars])=>{
+        if (vars[name] && regexp.test(vars[name])) {
+          matchScopes.add(selector);
+        }
       });
-      // if (definedValues[name]) {
-      //   return regexp.test(definedValues[name]);
-      // }
-      // return regexp.test(usages[0].defaultValue);
-    });
+      Object.entries(definedValues).forEach(([selector, vars]) => {
+        if (matchScopes.has(selector)) return;
+        const value = vars[name];
+
+        if (value && value.includes('--') && regexp.test(value)) {
+          matchScopes.add(selector);
+        }
+      });
+      if (matchScopes.size > 0) {
+        refs.push([[...matchScopes.values()], otherVar]);
+      }
+    }
+    return refs;
   }, [scopes, excludedVarName, isOpen]);
   const cssFunc = cssVar.cssFunc;
 
@@ -439,7 +442,7 @@ export const VariableControl = (props) => {
                 >
                   {property}
                   {isCurrent && cssVar.states && !cssVar.pseudos && <b style={{color: 'purple'}}>{cssVar.states}</b>}
-                  {isCurrent && cssVar.pseudos && <b style={{color: 'indigo'}}>{cssVar.pseudos}</b>}
+                  {isCurrent && cssVar.pseudos && <a target='_blank' href={!linkCssProperties ? null : `https://developer.mozilla.org/en-US/docs/Web/CSS/${cssVar.pseudos}`}><b style={{color: 'indigo'}}>{cssVar.pseudos}</b></a>}
                   {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
                   {!!isImportant && <b style={{ fontWeight: 'bold', color: 'darkorange' }}>!important</b>}
                 </span>
@@ -489,7 +492,7 @@ export const VariableControl = (props) => {
                   color: 'grey',
                 }}
               >
-                default{' '}
+                default
               </span>
             )}
             {isInTheme && defaultValue !== null && (
