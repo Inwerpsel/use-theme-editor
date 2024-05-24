@@ -235,7 +235,6 @@ export const GroupControl = props => {
                 scopes: elementScopes,
                 element,
               }}
-              initialOpen={vars.length === 1}
               key={cssVar.name}
               onChange={value => {
                 dispatch({
