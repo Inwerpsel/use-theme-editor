@@ -8,7 +8,7 @@ const pseudoStateRegex = allStateSelectorsRegexp;
 function getPropertyKeys ({ selector, winningSelector = '', property, index }, media) {
   // Won't have anything added if it doesn't match
   const stateSuffix = (winningSelector.split(',')[0].match(pseudoStateRegex) || []).join('');
-  const pseudoElementSuffix = (winningSelector.split(',')[0].match(/:?:(before|after)/g) || []).join('');
+  const pseudoElementSuffix = (winningSelector.split(',')[0].match(/:(:(\w*(\-\w+)*)|after|before)/g) || []).join('');
   const indexSuffix= !index ? '' : `#${index}`;
   const propName = property + stateSuffix + media + pseudoElementSuffix + indexSuffix;
   const allPropName =
