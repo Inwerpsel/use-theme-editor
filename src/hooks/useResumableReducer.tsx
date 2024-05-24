@@ -173,6 +173,7 @@ export function exportHistory() {
     ...past.map(({ lastActions }) => [...lastActions.entries()]),
     [...lastActions.entries()],
   ];
+  const date = new Date();
   saveAsJsonFile(
     { 
       offset: historyOffset,
@@ -182,7 +183,7 @@ export function exportHistory() {
       inspections: getPrevinspections(),
       timeline,
     },
-    'theme-editor-history'
+    `theme-editor-history-${date.toLocaleString()}`
   );
 }
 
