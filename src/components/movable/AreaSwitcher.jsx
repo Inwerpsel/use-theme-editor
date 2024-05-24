@@ -8,7 +8,7 @@ export function AreaSwitcher(props) {
 
   return <div
     className={'area-switcher'}
-    style={{position: 'absolute'}}
+    style={{display: 'flex', position: 'absolute'}}
   >
     <SelectControl
       style={{
@@ -23,10 +23,5 @@ export function AreaSwitcher(props) {
         movePanelTo(elementId, value);
       }}
     />
-    {!currentArea && <button
-      onClick={() => {
-        movePanelTo(elementId, null);
-      }}
-    >reset</button>}
-  </div>;
+ </div>;
 }

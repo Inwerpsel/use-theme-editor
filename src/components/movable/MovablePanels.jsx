@@ -73,10 +73,8 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks, custom
   const [overElement, setOverElement] = useState(null);
   const [overArea, setOverArea] = useState(null);
   const [draggedElement, setDraggedElement] = useState(null);
-  const [_uiState, setUiState] = stateHook();
-  // Ensure older format is interpreted correctly.
-  const uiState = 'map' in _uiState ? _uiState : { map: _uiState };
-  const map = uiState.map;
+  const [uiState, setUiState] = stateHook();
+  const {map} = uiState;
 
   const [showMovers, setShowMovers] = hooks.showMovers();
   const [drawerOpen, setDrawerOpen] = hooks.drawerOpen();
@@ -197,7 +195,7 @@ export function MovablePanels({stateHook, children, hooks = defaultHooks, custom
     }
 
     // console.timeEnd('Rectify order');
-  }, [JSON.stringify(uiState.map), elementsRendered, drawerOpen]);
+  }, [map, elementsRendered, drawerOpen]);
 
   const resetPanels = () => {
     setUiState({...uiState, map: {}});
