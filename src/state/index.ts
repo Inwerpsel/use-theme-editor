@@ -34,7 +34,7 @@ export const use = {
   prefersColorScheme:
     () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
   uiLayout:
-    () => useResumableLocalStorage('uiLayout', {}),
+    () => useResumableLocalStorage('uiLayout', {map: {}}),
   propertyFilter:
     () => useResumableLocalStorage('propertyFilter', 'all' as 'all' | 'colors'),
   search:
