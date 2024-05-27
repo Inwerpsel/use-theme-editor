@@ -21,9 +21,9 @@ const DEFAULT_STATE = {
 
 export const ROOT_SCOPE = ':root';
 
-type Handler = (state: typeof DEFAULT_STATE, action: { [index: string]: any }) => typeof DEFAULT_STATE;
+// type Handler = (state: typeof DEFAULT_STATE, action: { [index: string]: any }) => typeof DEFAULT_STATE;
 
-export const ACTIONS: {[index: string]: Handler} = {
+export const ACTIONS = {
   set: (state, { name, value, scope = ROOT_SCOPE }) => {
     const {
       scopes,
@@ -250,3 +250,28 @@ export function useThemeEditor() {
 export function editTheme() {
     return useDispatcher('THEME_EDITOR');
 }
+
+
+type A = typeof ACTIONS;
+
+type Effects = {
+  [K in keyof A]: (...args: Parameters<A[K]>) => void;
+}
+
+const references = new Map();
+const handlers: Effects = {
+  set() {
+    // existing reference was maybe removed
+    // new reference was maybe added
+  },
+  unset() {
+    // added reference is maybe removed
+    // default reference is maybe restored
+  },
+  createAlias() {
+    // new reference for each substitution
+  },
+  loadTheme() {
+    // references can completely change, so load from scratch as initially
+  },
+};
