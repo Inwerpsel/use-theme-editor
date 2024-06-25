@@ -1,12 +1,13 @@
-import React, { Fragment }  from "react";
+import React  from "react";
 import { get, use } from "../../state";
 import { TextControl } from "../controls/TextControl";
 import { Tutorial } from "../../_unstable/Tutorial";
+import { DragHandle } from "../movable/DragHandle";
 
 export function RemoveAnnoyingPrefix() {
   const [annoyingPrefix, setAnnoyingPrefix] = use.annoyingPrefix();
 
-  return <Fragment>
+  return <div>
     <Tutorial
       el={RemoveAnnoyingPrefix}
       tasks={[() => [
@@ -18,6 +19,7 @@ export function RemoveAnnoyingPrefix() {
 
         In case of Bootstrap it's "bs", for Halfmoon you find a lot of redundant "lm" prefixes.
     </Tutorial>
+    <DragHandle />
     <TextControl
       placeholder='Remove annoying prefix'
       title='Remove annoying prefix'
@@ -29,7 +31,7 @@ export function RemoveAnnoyingPrefix() {
         textDecorationThickness: '1px',
       }}
     />
-  </Fragment>;
+  </div>;
 }
 
 RemoveAnnoyingPrefix.fName = 'RemoveAnnoyingPrefix';
