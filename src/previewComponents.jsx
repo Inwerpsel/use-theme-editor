@@ -5,6 +5,7 @@ import { SelectControl } from './components/controls/SelectControl';
 import { Checkbox } from './components/controls/Checkbox';
 import { ElementLocator } from './components/ui/ElementLocator';
 import { dragValue } from './functions/dragValue';
+import { FormatVariableName } from './components/inspector/VariableControl';
 
 const size = 18;
 
@@ -50,7 +51,7 @@ export const previewComponents = {
         <Fragment>
           {scope && <pre className="monospace-code">{scope}</pre>}
           <br />
-          <b draggable onDragStart={dragValue(`var(${name})`)}>{name}</b> =
+          <b draggable onDragStart={dragValue(`var(${name})`)}><FormatVariableName {...{name}}/></b> =&nbsp;
           <span draggable onDragStart={dragValue(value)}>
             {(COLOR_VALUE_REGEX.test(value) ||
               GRADIENT_REGEX.test(value) ||
@@ -96,7 +97,7 @@ export const previewComponents = {
       <Fragment>
         {scope && <pre className="monospace-code">{scope}</pre>}
         <br />
-        <b>{name}</b> = default
+        <b><FormatVariableName {...{name}} /></b> = default
       </Fragment>
     ),
 
@@ -125,7 +126,7 @@ export const previewComponents = {
             }}
           ></span>
         )}
-        <b>{generatedName} = {value}</b>
+        <b><FormatVariableName name={generatedName}/> = {value}</b>
       </span>
     ),
   },
