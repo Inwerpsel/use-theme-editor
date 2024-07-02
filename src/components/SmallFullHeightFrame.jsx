@@ -135,7 +135,8 @@ export function SmallFullHeightFrame(props) {
   };
 
   const jumpFrame = (e) => {
-    const diff = e.clientY - top;
+    // Quick fix using parentNode.
+    const diff = e.clientY - top - scrollFrameRef.current.parentNode.getBoundingClientRect().top;
     setOwnPosition(Math.max(0, scrollPosition + diff * inverseScale - (height / 2)));
     setShouldSmoothScroll(false);
   };
