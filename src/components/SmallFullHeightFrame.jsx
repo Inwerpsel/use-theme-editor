@@ -1,11 +1,11 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { get } from '../state';
+import { get, use } from '../state';
 import { ThemeEditorContext } from './ThemeEditor';
+import { fixupFixedElements, fixupStickyElements, getFixedElements, getStickyElements } from '../functions/fixupFixedElements';
+import { useResumableLocalStorage } from '../hooks/useLocalStorage';
+import { Checkbox } from './controls/Checkbox';
 
 const wrapperMargin = 28;
-
-const scale = 0.05;
-const inverseScale = 1 / scale;
 
 // Getting this component to work in any reasonable way is hard in most cases, and impossible in many.
 // Some fixed or sticky elements simply don't have a "right" position to be in when you stretch out the page.
@@ -13,7 +13,8 @@ const inverseScale = 1 / scale;
 // The result is there's only few cases where you'll actually get a matching frame beyond the top position.
 export function SmallFullHeightFrame(props) {
   const { src } = props;
-  const { width, height } = get;
+  const { width, height, fullHeightFrameScale: scale, fullHeightFrameShowFixed } = get;
+  const inverseScale = 1 / scale;
 
   const [scrollPosition, setScrollPosition] = useState(0);
   const [windowDragged, setWindowDragged] = useState(false);
@@ -39,7 +40,9 @@ export function SmallFullHeightFrame(props) {
   const { frameRef, scrollFrameRef } = useContext(ThemeEditorContext);
 
   useEffect(() => {
+    scrollFrameRef.current.contentDocument.documentElement.classList.add('hide-scrollbars')
     setTimeout(() => {
+      scrollFrameRef.current.contentDocument.documentElement.classList.add('hide-scrollbars')
       const listener = ({ data: { type, payload } }) => {
         if (type === 'frame-scrolled') {
           setScrollPosition(payload.scrollPosition);
@@ -56,28 +59,71 @@ export function SmallFullHeightFrame(props) {
       return () => {
         window.removeEventListener('message', listener);
       };
-    }, 1000);
+    }, 2000);
   }, []);
 
+  useEffect(() => {
+    const doc = scrollFrameRef.current.contentWindow.document;
+    const fixed = getFixedElements(doc); 
+    const sticky = getStickyElements(doc); 
+    if (!fullHeightFrameShowFixed) {
+      // hide
+      const fixed = getFixedElements(doc); 
+      const sticky = getStickyElements(doc); 
+
+      for (const el of [...fixed, ...sticky]) {
+        el.classList.add('hide-important');
+      }
+
+      return;
+    } else {
+      //unhide
+      for (const el of [...fixed, ...sticky]) {
+        el.classList.remove('hide-important');
+      }
+    }
+  }, [fullHeightFrameShowFixed]);
+
   useEffect( () => {
-    setWindowHeight(frameRef.current.contentWindow.document.body.scrollHeight);
+    setWindowHeight(frameRef.current.contentWindow.document.body.parentNode.scrollHeight);
 
     const timeout = setTimeout(() => {
-      setWindowHeight(frameRef.current.contentWindow.document.body.scrollHeight);
+      setWindowHeight(frameRef.current.contentWindow.document.body.parentNode.scrollHeight);
       // Give some time for possible animations that affect the height.
       // It seems a lot but for the Bootstrap masonry demo it's barely enough.
-    }, 500);
+    }, 800);
     
     return () => {
       clearTimeout(timeout);
     };
   }, [width, height]);
 
+  let last = 0;
+  useEffect(() => {
+    if (!fullHeightFrameShowFixed) {
+      return;
+    }
+    const now = performance.now();
+    if (now - last > 50) {
+      const doc = scrollFrameRef.current.contentWindow.document;
+      const fixed = getFixedElements(doc); 
+      const sticky = getStickyElements(doc); 
+
+      last = now;
+
+      fixupStickyElements(sticky, scrollPosition, height, scrollFrameRef.current);
+      fixupFixedElements(fixed, scrollPosition, height, scrollFrameRef.current);
+    }
+
+    return () => {
+    }
+  }, [scrollPosition, height, fullHeightFrameShowFixed])
+
   const top =
     Math.max(
       0,
       (windowDragged ? ownPosition || scrollPosition : scrollPosition) * scale
-    ) - 2;
+    );
 
   const applyDragDelta = (event) => {
     if (windowDragged) {
@@ -89,13 +135,15 @@ export function SmallFullHeightFrame(props) {
   };
 
   const jumpFrame = (e) => {
-    const diff = e.clientY - top - 1.5 * cursorRef.current.offsetHeight;
-    setOwnPosition(scrollPosition + diff * inverseScale);
+    const diff = e.clientY - top;
+    setOwnPosition(Math.max(0, scrollPosition + diff * inverseScale - (height / 2)));
     setShouldSmoothScroll(false);
   };
 
   return (
-    <div
+    // <div style={{maxHeight: '80vh', border: '1px solid pink'}}>
+    // </div>
+    (<div
       onWheel={(e) => {
         setOwnPosition(Math.max(0, scrollPosition + e.deltaY * 6));
         setShouldSmoothScroll(true);
@@ -153,16 +201,54 @@ export function SmallFullHeightFrame(props) {
           userSelect: 'none',
           zIndex: 2,
           top,
-          left: -2,
+          // left: `calc(4px * ${scale})`,
           position: 'absolute',
           display: 'inline-block',
-          border: '2px solid yellow',
+          outline: '3px solid indigo',
+          // outlineOffset: '1px',
           width: width * scale,
-          height: height * scale,
+          height: (height + 12) * scale,
           transition: 'top .05s ease-out',
           boxSizing: 'content-box',
+          visibility: windowDragged ? 'hidden' : ''
         }}
       />
+    </div>)
+  );
+}
+
+export function FullHeightFrameScale() {
+  const [showFixed, setShowFixed] = use.fullHeightFrameShowFixed();
+  const [value, setValue] = use.fullHeightFrameScale();
+  const [step, setStep] = useResumableLocalStorage('fullheightframescalestep', '0.01');
+
+  return (
+    <div style={{display: 'flex'}}>
+      <input
+        type="number"
+        {...{
+          value,
+          step,
+          onChange: (event) => {
+            setValue(event.target.value);
+          },
+        }}
+      />
+      <label>
+        step
+        <input
+          type="number"
+          {...{
+            value: step,
+            onChange: (event) => {
+              setStep(event.target.value);
+            },
+          }}
+        />
+      </label>
+      <Checkbox controls={[showFixed, setShowFixed]}>Show fixed and sticky elements</Checkbox>
     </div>
   );
 }
+
+FullHeightFrameScale.fName = 'FullHeightFrameScale'

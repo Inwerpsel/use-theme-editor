@@ -61,18 +61,19 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   flex-wrap: wrap;
   justify-content: space-between;
 
-  .theme-length-control {
-    input _-- {
-      margin-right: 5px;
-      text-align: right;
-      min-width: 40px;
-      max-width: 120px;
-    }
-    display: inline-flex;
-    > * {
-      display: inline;
-      flex-shrink: 2;
-    }
+}
+
+.theme-length-control {
+  input _-- {
+    margin-right: 5px;
+    text-align: right;
+    min-width: 40px;
+    max-width: 120px;
+  }
+  display: inline-flex;
+  > * {
+    display: inline;
+    flex-shrink: 2;
   }
 }
 
@@ -361,10 +362,6 @@ div[id^=font-picker] ul {
 .font-weight-control {
   display: flex;
   justify-content: space-between;
-  .components-base-control {
-    display: inline-block;
-    width: 48%;
-  }
 }
 
 .render-info {
@@ -377,6 +374,8 @@ div[id^=font-picker] ul {
 .theme-editor .history-button {
   // padding: 0 4px;
   font-size: 24px;
+  min-width: 64px;
+  min-height: 64px;
 }
 
 .content {
@@ -605,4 +604,12 @@ li[data-done=true]:before {
 
 button:disabled {
   filter: opacity(.5);
+}
+
+.hide-important {
+  visibility: hidden !important;
+}
+
+.hide-scrollbars {
+  overflow-y: hidden !important;
 }

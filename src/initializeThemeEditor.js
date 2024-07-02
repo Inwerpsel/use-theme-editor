@@ -1,4 +1,4 @@
-import { INSPECTIONS, getPrevinspections, renderSelectedVars } from './renderSelectedVars';
+import { getPrevinspections, renderSelectedVars } from './renderSelectedVars';
 import { getMatchingVars } from './functions/getMatchingVars';
 import { addHighlight, removeHighlight } from './functions/highlight';
 import { groupVars } from './functions/groupVars';
@@ -121,7 +121,6 @@ function restoreInspections() {
       target = toNode(path);
     } catch (e) {
       console.log(e, path);
-      // localStorage.removeItem(INSPECTIONS);
       break;
     }
     inspectedElements.push(target);
@@ -522,9 +521,6 @@ export const setupThemeEditor = async (config) => {
 
   const storedSheetConfig = localStorage.getItem(getLocalStorageNamespace() + 'set-disabled-sheets');
 
-  // This intentionally only runs on the frame.
-  // If this would go wrong in the main window,
-  // it might not be possible for a user to reach the settings to fix it.
   if (storedSheetConfig) {
     const disabledSheets = JSON.parse(storedSheetConfig);
     toggleStylesheets(disabledSheets);
@@ -560,6 +556,8 @@ export const setupThemeEditor = async (config) => {
 
     lastHighlightTimeout = [setTimeout(handler, 600), handler, element];    
   }
+
+  let scrollListener;
 
   const messageListener = event => {
     const {type, payload} = event.data;
@@ -661,14 +659,16 @@ export const setupThemeEditor = async (config) => {
             );
             scrollDebounceTimeout = null;
           }
-        document.addEventListener('scroll', () => {
-          if (ignoreScroll) {
-            return;
+          // scrollListener && document.removeEventListener('scroll');
+          scrollListener = (event) => {
+           if (ignoreScroll) {
+              return;
+            }
+            if (!scrollDebounceTimeout) {
+              scrollDebounceTimeout = setTimeout(notifyParent, 40);
+            }
           }
-          if (!scrollDebounceTimeout) {
-            scrollDebounceTimeout = setTimeout(notifyParent, 40);
-          }
-        }, {passive: true})
+          document.addEventListener('scroll', scrollListener, {passive: true})
         break;
       case 'inspect-previous': {
         // Because of some shaky effect code, it now immediately sends this after inspection.

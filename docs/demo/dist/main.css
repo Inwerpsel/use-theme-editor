@@ -50,16 +50,17 @@ body {
   flex-wrap: wrap;
   justify-content: space-between;
 }
-.theme-length-controls .theme-length-control {
+
+.theme-length-control {
   display: inline-flex;
 }
-.theme-length-controls .theme-length-control input{
-  margin-right: var(--theme-length-controls--theme-length-control--input--margin-right, 5px);
-  text-align: var(--theme-length-controls--theme-length-control--input--text-align, right);
-  min-width: var(--theme-length-controls--theme-length-control--input--min-width, 40px);
-  max-width: var(--theme-length-controls--theme-length-control--input--max-width, 120px);
+.theme-length-control input{
+  margin-right: var(--theme-length-control--input--margin-right, 5px);
+  text-align: var(--theme-length-control--input--text-align, right);
+  min-width: var(--theme-length-control--input--min-width, 40px);
+  max-width: var(--theme-length-control--input--max-width, 120px);
 }
-.theme-length-controls .theme-length-control > * {
+.theme-length-control > * {
   display: inline;
   flex-shrink: 2;
 }
@@ -321,10 +322,6 @@ div[id^=font-picker] ul {
   display: flex;
   justify-content: space-between;
 }
-.font-weight-control .components-base-control {
-  display: inline-block;
-  width: 48%;
-}
 
 .render-info {
   --bg-opacity: calc(var(--current-renders, 1) / max(var(--max-tracked-renders, 1), 2));
@@ -333,6 +330,8 @@ div[id^=font-picker] ul {
 
 .theme-editor .history-button {
   font-size: 24px;
+  min-width: 64px;
+  min-height: 64px;
 }
 
 .content {
@@ -783,6 +782,14 @@ li[data-done=true]:before {
 
 button:disabled {
   filter: opacity(0.5);
+}
+
+.hide-important {
+  visibility: hidden !important;
+}
+
+.hide-scrollbars {
+  overflow-y: hidden !important;
 }
 
 /*# sourceMappingURL=main.css.map*/

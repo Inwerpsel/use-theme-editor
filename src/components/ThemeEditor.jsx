@@ -23,7 +23,7 @@ import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
 import { HistoryControls } from './ui/HistoryControls';
 import { useResumableState } from '../hooks/useResumableReducer';
-import { SmallFullHeightFrame } from './SmallFullHeightFrame';
+import { FullHeightFrameScale, SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
 import { use } from '../state';
 import { Hotkeys } from './Hotkeys';
@@ -159,8 +159,8 @@ export const ThemeEditor = (props) => {
               <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
             </Area>
             <Area id="area-left-inner" />
-            <ResizableFrame src={window.location.href} />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
+            <ResizableFrame src={window.location.href} />
             
             <Area id="area-right">
               <HistoryVisualization />
@@ -224,6 +224,7 @@ export const ThemeEditor = (props) => {
               <SignalExample />
               {/* <VoiceCommands /> */}
               <CurrentTheme />
+              <FullHeightFrameScale />
             </Drawer>
           </div>
         </MovablePanels>

@@ -8,6 +8,7 @@ import { useServerThemes } from "../hooks/useServerThemes";
 import { ROOT_SCOPE, useThemeEditor } from "../hooks/useThemeEditor";
 import { byHexValue, extractColorUsages } from "../components/properties/ColorControl";
 import { getDefaults } from "../initializeThemeEditor";
+import { useGlobalState } from "../hooks/useGlobalState";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -100,8 +101,13 @@ export const use = {
     })],
   themeEditor:
     () => useThemeEditor(),
-  
-
+  path: 
+    () => useResumableLocalStorage('path', ''),
+  fullHeightFrameShowFixed:
+    // Ideally this should useLocalStorage, but that currently fails to apply it on page load.
+    () => useGlobalState('fullHeightFrameShowFixed', true),
+  fullHeightFrameScale:
+    () => useResumableLocalStorage('fullHeightFrameScale', 0.05),
   // 
   // State below this is only used in a demo element.
   //
@@ -117,6 +123,8 @@ export const use = {
     // What would actually make sense as this is not very expensive.
     () => [get.width * get.height],
 } as const;
+// Todo: Check if this has any positive/negative impact.
+// Object.freeze(use);
 
 // Let's time this for now to show this doesn't take long even if we're creating
 // signals that aren't yet used.

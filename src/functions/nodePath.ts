@@ -3,11 +3,11 @@ function getIndex(node: HTMLElement, parent: HTMLElement) {
 }
 
 // Generate a path that can be used to find the node if the relevant document structure hasn't changed.
-export function toPath(node) {
+export function toPath(node, doc = document) {
     const path = [];
     // Only collected deepest id for now.
     let didId = false;
-    while (node !== document.body) {
+    while (node !== doc.body && node.parentNode) {
         const parent = node.parentNode;
         const entry = [node.tagName, getIndex(node, parent)];
         if (!didId && node.id) {
@@ -20,8 +20,8 @@ export function toPath(node) {
 }
 
 // Find node from path.
-export function toNode(path: string[]) {
-    let node = document.body;
+export function toNode(path: string[], doc = document) {
+    let node = doc.body;
     let i = 0;
     let deepestIdIndex;
     for (const [,,id] of path) {
@@ -32,7 +32,7 @@ export function toNode(path: string[]) {
     }
 
     if (deepestIdIndex) {
-        const elById = document.getElementById(path[deepestIdIndex][2]);
+        const elById = doc.getElementById(path[deepestIdIndex][2]);
         if (elById) {
             // Start from deepest specified id if it exists.
             node = elById;
