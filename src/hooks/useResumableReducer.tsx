@@ -470,13 +470,15 @@ export function clearHistory(): void {
   const currentlyInThePast = historyOffset > 0;
 
   for (const [id, index] of locks.entries()) {
-      locks.set(id, 0);
+      // locks.set(id, 0);
+      locks.delete(id);
       // Only locks on older state
       if (index !== historyOffset) {
         const value = index >= past.length ? states.get(id) : past[index].states.get(id);
-        pointedStates.set(id, value);
+        pointedStates.set(id, value === undefined ? initialStates.get(id) : value);
       }
   }
+  storeLocks();
   // lockVersion++;
 
   lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
