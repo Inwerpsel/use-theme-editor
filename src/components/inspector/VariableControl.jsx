@@ -42,7 +42,10 @@ export const FormatVariableName = ({name, style}) => {
   let formattedProp = prop.replaceAll(/-/g, ' ').trim();
 
   if (annoyingPrefix) {
-    formattedProp = formattedProp.replace( new RegExp(`^${annoyingPrefix} `), '').trim();
+    try {
+      formattedProp = formattedProp.replace( new RegExp(`^${annoyingPrefix} `), '').trim();
+    } catch (e) {
+    }
   }
 
   formattedProp = !nameReplacements
@@ -61,7 +64,11 @@ export const FormatVariableName = ({name, style}) => {
           formattedProp
         );
 
-  const annoyingRegex = new RegExp(`^${annoyingPrefix}\\s*\\—\\s*`);
+  let annoyingRegex;
+  try {
+    annoyingRegex = new RegExp(`^${annoyingPrefix}\\s*\\—\\s*`);
+  } catch (e) {
+  }
   const cleanedPrefix = prefix.trim().replace(annoyingRegex, '');
 
   return <span draggable onDragStart={dragValue(`var(${name})`)} {...{style}}>
@@ -321,7 +328,7 @@ export const VariableControl = (props) => {
   const references = useMemo(() => {
     // Prevent much unneeded work on large lists.
     if (!isOpen) {
-      return null;
+      return [];
     }
     if (!cssVar.name.startsWith('--')) {
       return [];
@@ -334,7 +341,7 @@ export const VariableControl = (props) => {
 
     for (const otherVar of allVars) {
       const {name} = otherVar;
-      if (name === excludedVarName || !name.startsWith('--')) {
+      if (!name.startsWith('--')) {
         continue;
       }
       const matchScopes = new Set();
@@ -356,7 +363,8 @@ export const VariableControl = (props) => {
       }
     }
     return refs;
-  }, [scopes, excludedVarName, isOpen]);
+  }, [scopes, isOpen]);
+
   const cssFunc = cssVar.cssFunc;
 
   if (currentLevel > 20) {
@@ -367,6 +375,8 @@ export const VariableControl = (props) => {
   }
 
   const isInTheme = name in theme || name in (scopes[currentScope] || {});
+
+  const otherReferencesLength = references.length - (excludedVarName ? 1 : 0);
 
   return (
     <li
@@ -467,15 +477,15 @@ export const VariableControl = (props) => {
       {!!positions[0] && <IdeLink {...(positions[0] || {})} />}
       {isOpen && (
         <Fragment>
-          {references.length > 0 && (
+          {otherReferencesLength > 0 && (
             <div>
               <ToggleButton
                 style={{ fontSize: '14px' }}
                 controls={[showReferences, setShowReferences]}
               >
-                Used by {references.length} other
+                {otherReferencesLength} other links
               </ToggleButton>
-              {showReferences && <VariableReferences {...{ references }} />}
+              {showReferences && <VariableReferences {...{ references, excludedVarName }} />}
             </div>
           )}
           <div

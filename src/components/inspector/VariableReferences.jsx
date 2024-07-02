@@ -7,7 +7,7 @@ import { dragValue } from "../../functions/dragValue";
 import { getLocateSelector } from "./VariableUsages";
 
 export function VariableReferences(props) {
-  const { references } = props;
+  const { references, excludedVarName } = props;
 
   const [filterFound, setFilterFound] = useState(true);
 
@@ -25,6 +25,9 @@ export function VariableReferences(props) {
       </Checkbox>
       <ul style={{ marginTop: '0' }}>
         {references.map(([scopes, {name, usages}]) => {
+          if (name === excludedVarName) {
+            return null;
+          }
           return <Fragment>
             <h5 style={{marginTop: '8px'}}>
               <FormatVariableName {...{ name }} />
