@@ -181,7 +181,7 @@ function CurrentActions() {
   const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
   
   return (
-    <div onWheelCapture={scrollHistory} style={{minWidth: '170px', minHeight: '240px', overflow: 'hidden visible'}}>
+    <div onWheelCapture={scrollHistory} style={{minWidth: '280px', maxWidth: '400px', minHeight: '240px', overflow: 'hidden visible'}}>
       <ActionList historyIndex={index} actions={actions.entries()} />
       {/* Quick fix for el not always shown... */}
       <Tutorial el={HistoryVisualization} {...{tasks}}>
