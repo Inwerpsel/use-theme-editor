@@ -119,6 +119,12 @@ export const GroupControl = props => {
   return (
     <li className={'var-group'} key={label} style={{...customProps, ...editedProps, marginBottom: '12px'}}>
       <div
+        style={{
+          position: 'sticky',
+          top: 0,
+          background: 'white',
+          zIndex: 12,
+        }}
         onMouseEnter={() => {
           if (element && element.classList) {
             addHighlight(element);

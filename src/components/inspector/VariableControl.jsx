@@ -1,4 +1,4 @@
-import React, {useState, useMemo, Fragment, useContext} from 'react';
+import React, {useState, useMemo, Fragment, useContext, useRef} from 'react';
 import {mustBeColor, TypedControl} from './TypedControl';
 import { PSEUDO_REGEX, ACTIONS, ROOT_SCOPE} from '../../hooks/useThemeEditor';
 import classnames from 'classnames';
@@ -95,10 +95,6 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
   const presentable = isColor || isUrl;
 
   if (value && presentable && !/currentcolor/i.test(value)) {
-    if (referencedVariable && isOpen) {
-      // Both value and preview are shown on the referenced variable when open.
-      return null;
-    }
     return (
       <Fragment>
         <span
@@ -366,6 +362,7 @@ export const VariableControl = (props) => {
   }, [scopes, isOpen]);
 
   const cssFunc = cssVar.cssFunc;
+  // const openerRef = useRef();
 
   if (currentLevel > 20) {
     // Very long dependency chain, probably cyclic, let's break it here.
@@ -373,6 +370,7 @@ export const VariableControl = (props) => {
     // Though this could also be an error in the source CSS.
     return null;
   }
+  // const stickyOffset = 72 + currentLevel * 36;
 
   const isInTheme = name in theme || name in (scopes[currentScope] || {});
 
@@ -417,7 +415,28 @@ export const VariableControl = (props) => {
       }}
     >
       {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media }} />}
-      <div style={{ paddingTop: '6px' }} onClick={() => isOpen && toggleOpen()}>
+      <div
+        // ref={openerRef}
+        style={{
+          // float: isOpen ? 'right' : 'none',
+          paddingTop: 6,
+          // position: isOpen ? 'sticky' : 'static',
+          // zIndex: isOpen ? 11 : 0,
+          // top: stickyOffset,
+          // // top: 72 + currentLevel * 40,
+          // minHeight: 40,
+          // background: 'inherit',
+        }}
+        onClick={() => {
+          if (isOpen) {
+            toggleOpen();
+            // setTimeout(() => {
+            //   openerRef.current?.scrollIntoView({block: 'nearest'});
+            //   // window.scrollBy(0, -100);
+            // }, 0);
+          }
+        }}
+      >
         <h5
           draggable
           onDragStart={dragValue(() => `var(${name})`)}
@@ -431,48 +450,76 @@ export const VariableControl = (props) => {
             clear: 'left',
           }}
         >
-          <FormatVariableName style={{fontWeight: referenceChain.length === 0 ? 'bold' : 'normal'}}{...{name}} />
+          <FormatVariableName
+            style={{
+              fontWeight: referenceChain.length === 0 ? 'bold' : 'normal',
+            }}
+            {...{ name }}
+          />
         </h5>
-        <PreviewValue {...{value, cssVar, isDefault, referencedVariable, isOpen}} />
-        <div>
-          {media && <MediaQueries {...{media}} />}
-          {!!showCssProperties && <Fragment>
-            {!!cssFunc && <span style={{color: 'darkcyan'}}>{cssFunc}</span>}
-            {Object.entries(properties).map(([property, {isFullProperty, fullValue, isImportant}]) => {
-              const isCurrent = property === maxSpecific?.property;
-              const comp = (
-                <span
-                  key={property}
-                  className="monospace-code"
-                  style={{
-                    fontSize: '14px',
-                    ...( !isCurrent ? { background: 'grey' } : {})
-                  }}
-                  title={isFullProperty ? '' : fullValue} 
-                >
-                  {property}
-                  {isCurrent && cssVar.states && !cssVar.pseudos && <b style={{color: 'purple'}}>{cssVar.states}</b>}
-                  {isCurrent && cssVar.pseudos && <a target='_blank' href={!linkCssProperties ? null : `https://developer.mozilla.org/en-US/docs/Web/CSS/${cssVar.pseudos}`}><b style={{color: 'indigo'}}>{cssVar.pseudos}</b></a>}
-                  {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
-                  {!!isImportant && <b style={{ fontWeight: 'bold', color: 'darkorange' }}>!important</b>}
-                </span>
-              );
-              if (!linkCssProperties) {
-                return comp;
+        <PreviewValue
+          {...{ value, cssVar, isDefault, referencedVariable, isOpen }}
+        />
+      </div>
+      <div>
+        {media && <MediaQueries {...{ media }} />}
+        {!!showCssProperties && (
+          <Fragment>
+            {!!cssFunc && <span style={{ color: 'darkcyan' }}>{cssFunc}</span>}
+            {Object.entries(properties).map(
+              ([property, { isFullProperty, fullValue, isImportant }]) => {
+                const isCurrent = property === maxSpecific?.property;
+                const comp = (
+                  <span
+                    key={property}
+                    className="monospace-code"
+                    style={{
+                      fontSize: '14px',
+                      ...(!isCurrent ? { background: 'grey' } : {}),
+                    }}
+                    title={isFullProperty ? '' : fullValue}
+                  >
+                    {property}
+                    {isCurrent && cssVar.states && !cssVar.pseudos && (
+                      <b style={{ color: 'purple' }}>{cssVar.states}</b>
+                    )}
+                    {isCurrent && cssVar.pseudos && (
+                      <a
+                        target="_blank"
+                        href={
+                          !linkCssProperties
+                            ? null
+                            : `https://developer.mozilla.org/en-US/docs/Web/CSS/${cssVar.pseudos}`
+                        }
+                      >
+                        <b style={{ color: 'indigo' }}>{cssVar.pseudos}</b>
+                      </a>
+                    )}
+                    {!isFullProperty && <b style={{ color: 'red' }}>*</b>}
+                    {!!isImportant && (
+                      <b style={{ fontWeight: 'bold', color: 'darkorange' }}>
+                        !important
+                      </b>
+                    )}
+                  </span>
+                );
+                if (!linkCssProperties) {
+                  return comp;
+                }
+                return (
+                  <a
+                    key={property}
+                    target={'_blank'}
+                    href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}
+                    style={{ cursor: 'help' }}
+                  >
+                    {comp}
+                  </a>
+                );
               }
-              return (
-                <a
-                  key={property}
-                  target={'_blank'}
-                  href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}
-                  style={{ cursor: 'help' }}
-                >
-                  {comp}
-                </a>
-              );
-            })}
-          </Fragment>}
-        </div>
+            )}
+          </Fragment>
+        )}
       </div>
       {!!positions[0] && <IdeLink {...(positions[0] || {})} />}
       {isOpen && (
@@ -480,12 +527,14 @@ export const VariableControl = (props) => {
           {otherReferencesLength > 0 && (
             <div>
               <ToggleButton
-                style={{ fontSize: '14px' }}
+                // style={{ float: 'right', fontSize: '14px', position: 'sticky', top: stickyOffset + 36, zIndex: showReferences ? 9 : 0 }}
                 controls={[showReferences, setShowReferences]}
               >
-                {otherReferencesLength} other links
+                {otherReferencesLength}{currentLevel > 0 && ' more'} links
               </ToggleButton>
-              {showReferences && <VariableReferences {...{ references, excludedVarName }} />}
+              {showReferences && (
+                <VariableReferences {...{ references, excludedVarName }} />
+              )}
             </div>
           )}
           <div
@@ -493,6 +542,10 @@ export const VariableControl = (props) => {
               display: 'flex',
               clear: 'both',
               justifyContent: 'flex-end',
+              // position: 'sticky',
+              // top: stickyOffset + 42,
+              // background: 'inherit',
+              // zIndex: 9,
             }}
           >
             {isDefault && !cssVar.isRawValue && (
