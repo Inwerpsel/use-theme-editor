@@ -74,16 +74,13 @@ export function RemoveAnnoyingPrefix() {
 
   function confirmMultiSelection() {
     setAnnoyingPrefix(`${[...multiSelection.values()].join('|')}`)
-    // setDetectionResult(null);
+    setDetectionResult(null);
   }
 
   function setPrefixAndCleanup(prefix) {
     setAnnoyingPrefix(prefix);
-    // setDetectionResult(null);
+    setDetectionResult(null);
   }
-  // useEffect(() => {
-  //   setDetectionResult(detectPrefixes(allVars));
-  // }, [])
 
   return <div>
     <Tutorial

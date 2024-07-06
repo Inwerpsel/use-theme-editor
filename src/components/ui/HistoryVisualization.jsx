@@ -87,7 +87,7 @@ function LockLatest(props) {
   const { locks } = useContext(HistoryNavigateContext);
   const latestForId = latestOccurrence(id);
   if (historyIndex === latestForId) {
-    return null;
+    return <span style={{float: 'right'}}>latest</span> 
   }
   const lockedIndex = locks.get(id);
   const lockedAtLatest = lockedIndex === latestForId;

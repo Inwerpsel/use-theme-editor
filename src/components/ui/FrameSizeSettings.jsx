@@ -9,7 +9,7 @@ export function FrameSizeSettings() {
   const [height, setHeight] = use.height();
 
   return <div className={id} id={id}>
-    <span>Dimensions: <input
+    <span><input
       type="number" onChange={ event => setWidth(parseInt(event.target.value)) } value={ width }
     /> x <input
       type="number" onChange={ event => setHeight(parseInt(event.target.value)) } value={ height }

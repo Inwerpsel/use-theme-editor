@@ -146,7 +146,7 @@ export function SmallFullHeightFrame(props) {
     // </div>
     (<div
       onWheel={(e) => {
-        setOwnPosition(Math.max(0, scrollPosition + e.deltaY * 6));
+        setOwnPosition(Math.max(0, scrollPosition + e.deltaY));
         setShouldSmoothScroll(true);
       }}
       style={{
@@ -227,6 +227,9 @@ export function FullHeightFrameScale() {
     <div style={{display: 'flex'}}>
       <input
         type="number"
+        style={{
+          maxWidth: '72px',
+        }}
         {...{
           value,
           step,
@@ -239,6 +242,9 @@ export function FullHeightFrameScale() {
         step
         <input
           type="number"
+          style={{
+            maxWidth: '72px',
+          }}
           {...{
             value: step,
             onChange: (event) => {
@@ -247,7 +253,7 @@ export function FullHeightFrameScale() {
           }}
         />
       </label>
-      <Checkbox controls={[showFixed, setShowFixed]}>Show fixed and sticky elements</Checkbox>
+      <Checkbox controls={[showFixed, setShowFixed]}>Show fixed and sticky</Checkbox>
     </div>
   );
 }

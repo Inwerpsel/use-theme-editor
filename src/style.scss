@@ -404,14 +404,14 @@ div[id^=font-picker] ul {
 
 // Quick and dirty way to visualize linked variables.
 // The big old equal sign works well visually, but pseudo element is not properly clickable.
-.var-control:not([data-nesting-level="0"]):before {
+.var-control:not([data-nesting-level="0"]) > div:first-child:before {
   _-- {
     content: "=" !important;
-    font-size: 32px;
+    font-size: 36px;
   }
+  vertical-align: top;
   float: left;
-  margin-right: 6px;
-  margin-left: 3px;
+  margin-top: -10px;
 }
 
 .var-control .var-control {
