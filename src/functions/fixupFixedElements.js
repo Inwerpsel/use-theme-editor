@@ -29,7 +29,9 @@ export function getStickyElements(document) {
         return stickyCache;
     }
     const elements = [...document.querySelectorAll('*')].filter(
-      (e) => getComputedStyle(e).position === 'sticky' && !isInFixedOrStickyParent(e)
+      (e) => 
+        getComputedStyle(e).position === 'sticky' 
+        // && !isInFixedOrStickyParent(e)
     );
     // console.log('got sticky elements', elements);
     stickyCache = elements;
@@ -97,6 +99,8 @@ function isInFixedOrStickyParent(node) {
 }
 
 const origTop = new WeakMap();
+const origHeight = new WeakMap();
+const parentEnd = new WeakMap();
 
 export function fixupStickyElements(elements, scrollOffset, screenHeight, frame) {
     // Every time we pass a sticky element, we can add the height if pushed, so later elements can be pushed earlier.
@@ -106,40 +110,33 @@ export function fixupStickyElements(elements, scrollOffset, screenHeight, frame)
         // if (isInFixedOrStickyParent(el)) {
         //     continue;
         // }
+        // el.style.backgroundColor = 'lightblue' ;
         if (!origTransforms.has(el)) {
             origTransforms.set(el, el.style.transform);
             origTop.set(el, el.getBoundingClientRect().top);
+            origHeight.set(el, el.getBoundingClientRect().height)
+            parentEnd.set(el, el.parentNode.getBoundingClientRect().bottom)
         }
+        const computedTop = parseInt(getComputedStyle(el).top.replace('px', ''));
+        // const computedScrollMargin = parseInt(getComputedStyle(el.parentNode).scrollMarginTop.replace('px', ''));
 
         const elStart = origTop.get(el);
 
-        let parentExtra = containerHeights.get(el.parentNode) || 0;
-        let ancestor = el.parentNode;
-        let allParentExtra = parentExtra;
-        // if (parentExtra === 0) {
-            while (ancestor = ancestor.parentNode, ancestor) {
-                if (containerHeights.has(ancestor)) {
-                    allParentExtra += containerHeights.get(ancestor);
-                    // break;
-                }
-            }
-        // }
-        containerHeights.set(el.parentNode, parentExtra + el.getBoundingClientRect().height);
-        el.style.maxHeight = `${screenHeight - elStart - allParentExtra + Math.min(scrollOffset, elStart)}px`;
-        if (scrollOffset + allParentExtra < elStart) {
+        el.style.maxHeight = `${screenHeight - computedTop}px`;
+        if (scrollOffset + computedTop < elStart) {
             restoreOrigTransform(el);
             continue;
         }
         // console.log(el.offsetHeight)
-        const maxOffset =
-          allParentExtra === 0
-            ? Infinity
-            : el.parentNode.getBoundingClientRect().bottom - screenHeight - allParentExtra;
-
-        const pushedAmount = Math.min(maxOffset, scrollOffset - elStart + allParentExtra);
+        const maxOffset = parentEnd.get(el) - elStart - el.getBoundingClientRect().height;
+        const pushedAmount = Math.min(maxOffset, scrollOffset - elStart + computedTop);
+        if (maxOffset === pushedAmount) {
+            // console.log(el, 'reached end', parentEnd.get(el), elStart, origHeight.get(el), computedTop);
+        }
         // console.log(pushedAmount, maxOffset);
         let bottomCorrection = 0;
         if (el.style.top === '' && el.style.bottom !== '')  {
+            // console.log('correct bottom', bottomCorrection);
             bottomCorrection = frame.contentWindow.innerHeight - screenHeight;
         }
 

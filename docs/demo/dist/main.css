@@ -617,12 +617,12 @@ div[id^=font-picker] ul {
   color: var(--monospace-code--var-control-property--color, purple) !important;
 }
 
-.var-control:not([data-nesting-level="0"]):before {
+.var-control:not([data-nesting-level="0"]) > div:first-child:before {
+  vertical-align: top;
   float: left;
-  margin-right: 6px;
-  margin-left: 3px;
-  content: var(--var-control--not--data-nesting-level--0--before--content, "=") !important;
-  font-size: var(--var-control--not--data-nesting-level--0--before--font-size, 32px);
+  margin-top: -10px;
+  content: var(--var-control--not--data-nesting-level--0--div--first-child--before--content, "=") !important;
+  font-size: var(--var-control--not--data-nesting-level--0--div--first-child--before--font-size, 36px);
 }
 
 .var-control .var-control {
