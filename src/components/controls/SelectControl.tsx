@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { useCallback, useMemo } from "react";
 
 function selectOption(o) {
   return (
@@ -25,9 +25,11 @@ export function SelectControl(props: {
     [propsOnChange]
   );
 
+  const els = useMemo(() => options.map(selectOption), options);
+
   return (
     <select {...{ value, onChange, title, style }}>
-      {options.map(selectOption)}
+      {els}
     </select>
   );
 }
