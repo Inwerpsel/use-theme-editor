@@ -29,7 +29,7 @@ export function MoveControls() {
     <div>
       <DragHandle/>
       <Tutorial el={MoveControls} tasks={[
-        () => ['Enable dragging elements', dragEnabled],
+        () => ['Enable dragging elements', useContext(MovableElementContext).hostAreaId === 'area-right' || dragEnabled],
         () => ['Drag this element into the right area', useContext(MovableElementContext).hostAreaId === 'area-right'],
         () => ['Close the drawer', !drawerOpen],
       ]}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
