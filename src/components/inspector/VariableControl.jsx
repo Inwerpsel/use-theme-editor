@@ -9,8 +9,6 @@ import {ThemeEditorContext} from '../ThemeEditor';
 import {IdeLink} from './IdeLink';
 import { definedValues } from '../../functions/collectRuleVars';
 import { VariableReferences } from './VariableReferences';
-import { Checkbox } from "../controls/Checkbox";
-import { ScrollInViewButton } from './ScrollInViewButton';
 import { FilterableVariableList } from '../ui/FilterableVariableList';
 import { VariableUsages } from './VariableUsages';
 import { useResumableState } from '../../hooks/useResumableReducer';
@@ -168,11 +166,9 @@ export const VariableControl = (props) => {
     cssVar,
     onChange,
     onUnset,
-    initialOpen = false,
     referenceChain = [],
     scopes: elementScopes,
     parentVar,
-    element,
     currentScope = ROOT_SCOPE,
   } = props;
 
@@ -593,12 +589,6 @@ export const VariableControl = (props) => {
               <ToggleButton controls={[showSelectors, setShowSelectors]}>
                 Rules ({uniqueSelectors})
               </ToggleButton>
-            )}
-
-            {typeof element !== 'undefined' && (
-              <span key="foobar">
-                <ScrollInViewButton {...{ element }} />
-              </span>
             )}
           </div>
           {openVariablePicker && (
