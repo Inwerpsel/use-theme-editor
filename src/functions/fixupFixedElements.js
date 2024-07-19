@@ -10,104 +10,137 @@ import { toNode, toPath } from "./nodePath";
 //   Common case is sticky sidebar menu with many items.
 // - Account for existing `transform` on elements: don't replace but adjust the values.
 
+// Some pages rely on trying several times before fixed or sticky elements are picked up.
+// Could be styles added later, nodes added later, or classes being changed.
+// We're try this many times whenever the list was empty.
+// Just a quick fix though, this has to be more robust.
+const MAX_TRIES = 20;
+let triedFixed = 0, triedSticky = 0;
+
 let fixedCache;
 export function getFixedElements(document) {
+    if (fixedCache?.length === 0) {
+        triedFixed++;
+        if (triedFixed === MAX_TRIES) {
+            return [];
+        }
+    }
     if (fixedCache && fixedCache.length > 0) {
         return fixedCache;
     }
     const elements = [...document.querySelectorAll('*')].filter(e => getComputedStyle(e).position === 'fixed');
-    // console.log('got fixed elements', elements);
-    fixedCache = elements;
+    fixedCache = elements.filter(el => !elements.some(other => other !== el && other.contains(el)));
 
-    return elements;
+    return fixedCache;
 }
 
 let stickyCache;
 
-export function getStickyElements(document) {
+function isInFixedElement(el, fixedElements) {
+    let ancestor = el.parentNode;
+    while (ancestor) {
+        if (fixedElements.includes(ancestor)) {
+            return true;
+        }
+        ancestor = ancestor.parentNode;
+    }
+    return false;
+}
+
+export function getStickyElements(document, fixedElements) {
+    if (stickyCache?.length === 0) {
+        triedSticky++;
+        if (triedSticky === MAX_TRIES) {
+            return [];
+        }
+    }
     if (stickyCache && stickyCache.length > 0) {
         return stickyCache;
     }
     const elements = [...document.querySelectorAll('*')].filter(
-      (e) => 
-        getComputedStyle(e).position === 'sticky' 
-        // && !isInFixedOrStickyParent(e)
+      (el) => 
+        getComputedStyle(el).position === 'sticky' 
+        && !isInFixedElement(el, fixedElements)
     );
-    // console.log('got sticky elements', elements);
     stickyCache = elements;
 
     return elements;
 }
 
-const transition = 'transform .05s ease-out';
+const transition = 'transform .07s ease-out';
 
 export function fixupFixedElements(elements, scrollOffset, screenHeight, frame) {
+    // const pushedElements = new WeakSet();
 
-
-    if (elements[0]) {
-    //   let node = elements[0];
-    //   while (node.parentNode) {
-    //     node = node.parentNode;
-    //   }
-    //   const root = node;
-    //   const pageHeight = Math.max(
-    //     root.clientHeight,
-    //     root.scrollHeight,
-    //     root.offsetHeight
-    //   );
-      for (const el of elements) {
-        if (isInFixedOrStickyParent(el)) {
-            continue;
-        }
+    for (const el of elements) {
+        // if (pushedElements.has(el.parentNode)) {
+        //     continue;
+        // }
         let bottomCorrection = 0;
         const {bottom, top, height} = getComputedStyle(el);
-        // console.log(el, bottom, top, screenHeight)
+        if (height === '0px') {
+            continue;
+        }
         if (parseInt(top.replace('px', '')) > screenHeight && parseInt(bottom.replace('px', '')) < screenHeight)  {
             bottomCorrection = frame.contentWindow.innerHeight - screenHeight;
-            // console.log(el, bottomCorrection)
         }
+        const pushedAmount = scrollOffset - bottomCorrection; 
+        // if (pushedAmount !== 0) {
+        //     pushedElements.add(el);
+        // }
 
-        el.style.transform = `translateY(${scrollOffset - bottomCorrection}px)`;
+        el.style.transform = `translateY(${pushedAmount}px)`;
         el.style.transition = transition;
         if (screenHeight < parseInt(top) + parseInt(height)) {
-            el.style.maxHeight = `calc(${screenHeight}px - ${top})`;
+            el.style.maxHeight = `${screenHeight - parseInt(top)}px`;
         }
-      }
     }
 }
 
 const origTransforms = new WeakMap();
 function restoreOrigTransform(el) {
     el.style.transform = origTransforms.get(el);
-    origTransforms.delete(el);
-}
-
-function isInFixedOrStickyParent(node) {
-    let parent = node.parentNode;
-    while (parent && parent.nodeName !== 'body') {
-        try {
-            const pos = getComputedStyle(parent).position;
-            if (pos === 'fixed' || pos === 'sticky') {
-                return true;
-            }
-            parent = parent.parentNode;
-        } catch (e) {
-            break;
-        }
-    }
-    return false;
+    // origTransforms.delete(el);
 }
 
 const origTop = new WeakMap();
 const origHeight = new WeakMap();
-const parentEnd = new WeakMap();
+const containerEnd = new WeakMap();
 
 export function fixupStickyElements(elements, scrollOffset, screenHeight, frame) {
-    // Every time we pass a sticky element, we can add the height if pushed, so later elements can be pushed earlier.
-    let containerHeights = new WeakMap();
+    const pushedElements = new WeakSet();
 
     for (const el of elements) {
-        // if (isInFixedOrStickyParent(el)) {
+        if (el.offsetHeight === 0) {
+            continue;
+        }
+        let container = el.parentNode, insideMoved = false, s;
+        while (s = getComputedStyle(container), s.display === 'contents' || s.display === '') {
+            // Special case where the container acts as though it's not there.
+            // As a result, we need to use its parent to calculate available space.
+            container = container.parentNode;
+            if (container.nodeName === 'BODY') {
+                break;
+            }
+        }
+
+        if (container.parentNode.nodeName === 'TABLE') {
+            container = container.parentNode;
+        }
+
+        let ancestor = el.parentNode;
+        while (ancestor) {
+            if (pushedElements.has(ancestor)) {
+                insideMoved = true;
+                break;
+            }
+            ancestor = ancestor.parentNode;
+        }
+        // if (pushedElements.has(el.parentNode)) {
+        //     // This fixes the MDN example pages, but I'm not sure if it's the right thing to do.
+        //     // In these demo pages, they actually applied the same class to an element and its immediate
+        //     // descendant, so it's probably by mistake. Without this check it would apply some things twice.
+        //     // TODO: check what is the expected behavior with nested sticky/fixed elements.
         //     continue;
         // }
         // el.style.backgroundColor = 'lightblue' ;
@@ -115,34 +148,37 @@ export function fixupStickyElements(elements, scrollOffset, screenHeight, frame)
             origTransforms.set(el, el.style.transform);
             origTop.set(el, el.getBoundingClientRect().top);
             origHeight.set(el, el.getBoundingClientRect().height)
-            parentEnd.set(el, el.parentNode.getBoundingClientRect().bottom)
+            containerEnd.set(el, container.getBoundingClientRect().bottom)
         }
         const computedTop = parseInt(getComputedStyle(el).top.replace('px', ''));
-        // const computedScrollMargin = parseInt(getComputedStyle(el.parentNode).scrollMarginTop.replace('px', ''));
 
         const elStart = origTop.get(el);
 
         el.style.maxHeight = `${screenHeight - computedTop}px`;
-        if (scrollOffset + computedTop < elStart) {
+
+        if (insideMoved) {
+            continue;
+        }
+        if ((scrollOffset + computedTop) < elStart) {
             restoreOrigTransform(el);
             continue;
         }
-        // console.log(el.offsetHeight)
-        const maxOffset = parentEnd.get(el) - elStart - el.getBoundingClientRect().height;
-        const pushedAmount = Math.min(maxOffset, scrollOffset - elStart + computedTop);
-        if (maxOffset === pushedAmount) {
-            // console.log(el, 'reached end', parentEnd.get(el), elStart, origHeight.get(el), computedTop);
-        }
-        // console.log(pushedAmount, maxOffset);
-        let bottomCorrection = 0;
-        if (el.style.top === '' && el.style.bottom !== '')  {
-            // console.log('correct bottom', bottomCorrection);
-            bottomCorrection = frame.contentWindow.innerHeight - screenHeight;
+        const end = containerEnd.get(el);
+        const elHeight = el.getBoundingClientRect().height;
+        const maxOffset =  end - elHeight - elStart;
+
+        el.classList.contains('sidebar') && console.log({scrollOffset, maxOffset, end, computedTop, h: elHeight})
+        if (scrollOffset > end) {
+            restoreOrigTransform(el);
+            continue;
         }
 
-        // console.log('N is', n);
-        // el.style.transform = `translateY(${n}px)`;
-        el.style.transform = `translateY(${pushedAmount - bottomCorrection}px)`;
+        const pushedAmount = Math.min(maxOffset, scrollOffset - elStart + computedTop);
+        if (pushedAmount > 0) {
+            pushedElements.add(el);
+        }
+
+        el.style.transform = `translateY(${pushedAmount}px)`;
         el.style.transition = transition;
 
         // Below is a stab at syncing fixed/sticky elements internal scroll position.
