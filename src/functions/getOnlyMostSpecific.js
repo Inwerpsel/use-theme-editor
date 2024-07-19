@@ -1,5 +1,4 @@
-import { compare } from './compare';
-import { statelessSelector } from './extractPageVariables';
+import { compare, hasClosingBracket } from './compare';
 import { allStateSelectorsRegexp, residualNotRegexp } from './getMatchingVars';
 import {sortForUI} from './groupVars';
 
@@ -23,6 +22,45 @@ function getPropertyKeys ({ selector, winningSelector = '', property, index }, m
   return [propName, allPropName, stateSuffix, pseudoElementSuffix];
 }
 
+// should be safe for CSS selectors
+export function splitCommaSafeParentheses(selector) {
+    const parts = selector.split(',');
+    const actualParts = [];
+    let joined = '';
+    for (const part of parts) {
+      let ignoreNext = false, shouldJoin = false;
+      let i = 0;
+      const chunk = joined + part;
+      for (const char of chunk) {
+        if (ignoreNext) {
+          ignoreNext = false;
+          continue;
+        }
+        if (char === '(' && !hasClosingBracket(chunk, i)) {
+          shouldJoin = true;
+          break;
+        }
+        if (char === '\\') {
+          ignoreNext = true;
+        }
+
+        i++;
+      }
+
+      if (shouldJoin) {
+        joined += (joined ? ',' : '') + part;
+      } else {
+        actualParts.push(chunk)
+        joined = '';
+      }
+    }
+
+    if (joined) {
+      actualParts.push(joined);
+    }
+
+    return actualParts;
+}
 
 export function getMaxMatchingSpecificity(usages, element) {
   const previousMatchedSelectors = {};
@@ -36,27 +74,7 @@ export function getMaxMatchingSpecificity(usages, element) {
       return max;
     }
 
-    const parts = usage.selector.split(',');
-    let lastIsOpen = false;
-    const getActualParts = parts => parts.reduce((actual, part) => {
-      if (lastIsOpen) {
-        actual[actual.length - 1] = actual[actual.length - 1] + ',' + part;
-      } else {
-        actual.push(part);
-      }
-      lastIsOpen = lastIsOpen
-
-        ? !/^[^(\r\n]*\).*?$/.test(part)
-
-        : /^.*?\((?!.*?\))[^)]*$/.test(part);
-      return actual;
-    }, []);
-    const pass1 = getActualParts(parts);
-    lastIsOpen = false;
-    // Do a second pass to account for bracket mismatches that only became detectable
-    // after the first pass.
-    const actualParts = getActualParts(pass1);
-
+    const parts = splitCommaSafeParentheses(usage.selector);
     const comparePart = (max, part) => {
       const selector = part
         .replace(pseudoStateRegex, '')
@@ -87,7 +105,7 @@ export function getMaxMatchingSpecificity(usages, element) {
         return max;
       }
     };
-    usage.winningSelector = actualParts.reduce(comparePart);
+    usage.winningSelector = parts.reduce(comparePart);
 
     const hasInlineStyle = typeof element.style[usage.property] !== 'undefined' && element.style[usage.property] !== '';
     const inlineIsImportant = hasInlineStyle && element.style.getPropertyPriority(usage.property) === 'important';
@@ -118,7 +136,7 @@ export function getMaxMatchingSpecificity(usages, element) {
         return usage;
       }
     } catch (e) {
-      console.log(e);
+      console.log(e, max.winningSelector, usage.winningSelector);
       return usage;
     }
     return max;
