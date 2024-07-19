@@ -13,7 +13,7 @@ export function Drawer({children}) {
       {children}
     </Area>
 
-    <ToggleButton id="drawer-opener" controls={[drawerOpen, setDrawerOpen]} dispatchArgs={[{skipHistory: true}]}>
+    <ToggleButton id="drawer-opener" controls={[drawerOpen, setDrawerOpen]}>
       Drawer
     </ToggleButton>
   </div>;

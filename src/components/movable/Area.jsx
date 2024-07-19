@@ -71,7 +71,7 @@ export function setExcludedArea(id) {
 function TrackScrollOffset(props) {
   const { historyOffset } = useContext(HistoryNavigateContext);
 
-  if (excludedArea === props.id) {
+  if (excludedArea === props.id || props.id === 'drawer') {
     return null;
   }
   return historyOffset === 0 ? <RecordScrollPosition {...props}/> : <RestoreScrollPosition {...props}/>;

@@ -1,6 +1,6 @@
 import React, {createContext, useCallback, useLayoutEffect, useRef, useState} from 'react';
 import { useInsertionEffect } from 'react';
-import {useLocalStorage, useResumableLocalStorage} from '../../hooks/useLocalStorage';
+import {useLocalStorage} from '../../hooks/useLocalStorage';
 // import { MovableElement } from './MovableElement';
 
 export const AreasContext = createContext({});
@@ -59,7 +59,7 @@ export const defaultHooks = {
     return useState(false);
   },
   drawerOpen() {
-    return useResumableLocalStorage('drawer-open', false);
+    return useLocalStorage('drawer-open', false);
   },
   dragEnabled() {
     return useLocalStorage('drag-on', false);
