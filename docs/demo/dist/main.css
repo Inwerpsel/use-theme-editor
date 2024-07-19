@@ -86,22 +86,8 @@ body {
   color: var(--theme-editor--acent-color, #007cba);
 }
 
-.simulating-touch-device body::-webkit-scrollbar {
-  width: 12px;
-}
-.simulating-touch-device body::-webkit-scrollbar-track {
-  border-radius: 5px;
-  background: rgba(140, 140, 140, 0.2);
-}
-.simulating-touch-device body::-webkit-scrollbar-thumb {
-  border-radius: 5px;
-  background: rgba(140, 140, 140, 0.6);
-}
-.simulating-touch-device body::-webkit-scrollbar-thumb:hover {
-  background: rgba(140, 140, 140, 0.9);
-}
-.simulating-touch-device body::-webkit-scrollbar-thumb:window-inactive {
-  background: rgba(140, 140, 140, 0.05);
+.force-cursor, .force-cursor * {
+  cursor: help !important;
 }
 
 .responsive-frame-container {
@@ -789,7 +775,12 @@ button:disabled {
 }
 
 .hide-scrollbars {
-  overflow-y: hidden !important;
+  overflow-y: scroll !important;
+  text-rendering: optimizeSpeed;
+}
+
+.chrome-picker {
+  user-select: none;
 }
 
 /*# sourceMappingURL=main.css.map*/

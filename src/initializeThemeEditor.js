@@ -14,6 +14,7 @@ import { makeCourses } from './_unstable/courses';
 import { setServerConfig } from './hooks/useServerThemes';
 import { balancedVar } from './functions/balancedVar';
 import { definedValues } from './functions/collectRuleVars';
+import { furthest } from './functions/furthest';
 
 export const LOCAL_STORAGE_KEY = `${getLocalStorageNamespace()}theme`;
 const isRunningAsFrame = window.self !== window.top;
@@ -290,27 +291,6 @@ export const setupThemeEditor = async (config) => {
   let ignoreScroll = false;
   let scrollDebounceTimeout = null;
 
-  function furthest(element, selector) {
-    let i = 0;
-      let closest = element.closest(selector);
-
-      while (closest?.parentNode) {
-        i++;
-        try {
-          const parentClosest = closest.parentNode.closest(selector);
-          if (parentClosest) {
-            closest = parentClosest;
-          } else {
-            break;
-          }
-        } catch (e) {
-          break;
-        }
-      }
-
-      return closest;
-    }
-
   function inspectNew(element) {
     // TODO: Cache (perhaps WeakMap or WeakRef on the DOM element)
     console.time('new');
@@ -370,45 +350,54 @@ export const setupThemeEditor = async (config) => {
     // console.log('groups', groups);
   }
 
-  function inspect(target) {
-    // Laziest feature flag ever.
-    if (window._testNewInspection) {
-      inspectNew(target);
-    }
+  const inspectIndexes = new WeakMap();
 
+  function inspect(target) {
     if (target === lastInspected) {
       return;
     }
     lastInspectTime = performance.now();
-    ++inspectedIndex;
+
     lastInspected = target;
 
-    inspectedElements.push(target);
-    // This algorithm was created in a case with certain assumptions that made it more than fast enough.
-    // - Not more than 4 or 5 custom props per selector on average.
-    // - Not a lot of selectors per HTML element.
-    // - Not a lot of properties on root elements (body and html).
-    // Now that the goal is to support any CSS, I'm running into pages with CSS that is far enough
-    // from these assumptions to make the performance not ideal and sometimes really poor.
-    // Possibly the whole approach doesn't make sense as a general one, and overall the efficiency of 
-    // just checking each element individually could be better.
-    // Additionally, this approach makes it unavoidable that properties are only shown in the element nearest
-    // to the root, even if they're also used deeper down. Though you can get used to that and will always find
-    // everything.
-    // console.time('old');
-    // 🐢
-    const matchedVars = getMatchingVars({ cssVars, target });
-    const rawGroups = groupVars(matchedVars, target, cssVars);
-    const groups = filterMostSpecific(rawGroups, target);
-    groupElementsCache.set(target, groups.map(({element}) => ({element})));
-    // console.timeEnd('old');
-    // console.log('oldgroups', groups);
+    // const isReinspect = inspectIndexes.has(target);
+    const isReinspect = false;
 
-    // It's not possible to send a message that includes a reference to a DOM element. 
-    // Instead, every time we update the groups, we store the last groups. This
-    // way we still know which element to access when a message gets back from the parent window.
-    lastGroups = groups;
-    const withElementIndexes = groups.map((group, index) => ({...group, element: index}));
+    let targetIndex, groups;
+    if (isReinspect) {
+      targetIndex = inspectIndexes.get(target);
+    } else {
+      ++inspectedIndex;
+      targetIndex = inspectedIndex;
+      inspectIndexes.set(target, targetIndex);
+      inspectedElements.push(target);
+
+      // This algorithm was created in a case with certain assumptions that made it more than fast enough.
+      // - Not more than 4 or 5 custom props per selector on average.
+      // - Not a lot of selectors per HTML element.
+      // - Not a lot of properties on root elements (body and html).
+      // Now that the goal is to support any CSS, I'm running into pages with CSS that is far enough
+      // from these assumptions to make the performance not ideal and sometimes really poor.
+      // Possibly the whole approach doesn't make sense as a general one, and overall the efficiency of 
+      // just checking each element individually could be better.
+      // Additionally, this approach makes it unavoidable that properties are only shown in the element nearest
+      // to the root, even if they're also used deeper down. Though you can get used to that and will always find
+      // everything.
+      // console.time('old');
+      // 🐢
+      const matchedVars = getMatchingVars({ cssVars, target });
+      const rawGroups = groupVars(matchedVars, target, cssVars);
+      const filtered = filterMostSpecific(rawGroups, target);
+      groupElementsCache.set(target, filtered.map(({element}) => ({element})));
+      // console.timeEnd('old');
+      // console.log('oldgroups', groups);
+
+      // It's not possible to send a message that includes a reference to a DOM element. 
+      // Instead, every time we update the groups, we store the last groups. This
+      // way we still know which element to access when a message gets back from the parent window.
+      lastGroups = filtered;
+      groups = filtered.map((group, index) => ({...group, element: index}));
+    }
 
     const inspectionPath = toPath(target);
 
@@ -417,16 +406,18 @@ export const setupThemeEditor = async (config) => {
       {
         type: 'render-vars',
         payload: {
-          groups: withElementIndexes,
-          index: inspectedIndex,
+          groups,
+          index: targetIndex,
           inspectionPath,
         },
       },
       window.location.href
     );
 
-    if (groups.length > 0) {
-      const {element} = groups[0];
+    const matchedElements = groupElementsCache.get(target);
+
+    if (matchedElements) {
+      const {element} = matchedElements[0];
       element.scrollIntoView({
         block: 'nearest',
         inline: 'end',
@@ -458,6 +449,8 @@ export const setupThemeEditor = async (config) => {
     makeCourses();
     return;
   }
+  // document.documentElement.classList.add('simulating-touch-device')
+  document.documentElement.classList.add('force-cursor')
 
   restoreInspections();
 
@@ -528,13 +521,11 @@ export const setupThemeEditor = async (config) => {
 
   function restoreInspection(index) {
     const element = inspectedElements[index];
-    setTimeout(() => {
-      element.scrollIntoView({
-        block: 'center',
-        inline: 'end',
-        // behavior: 'smooth',
-      });
-    }, 120);
+    element?.scrollIntoView({
+      block: 'center',
+      inline: 'end',
+      // behavior: 'smooth',
+    });
 
     if (lastHighlightTimeout) {
       const [timeout, handler, timeoutElement] = lastHighlightTimeout;
@@ -602,6 +593,7 @@ export const setupThemeEditor = async (config) => {
 
     case 'theme-edit-alt-click':
       requireAlt = payload.frameClickBehavior !== 'any';
+      document.documentElement.classList.toggle('force-cursor', !requireAlt);
       break;
 
     case 'set-sheet-config':
@@ -665,7 +657,7 @@ export const setupThemeEditor = async (config) => {
               return;
             }
             if (!scrollDebounceTimeout) {
-              scrollDebounceTimeout = setTimeout(notifyParent, 40);
+              scrollDebounceTimeout = setTimeout(notifyParent, 20);
             }
           }
           document.addEventListener('scroll', scrollListener, {passive: true})

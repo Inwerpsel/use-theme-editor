@@ -1,5 +1,6 @@
-import { addUnprocessedAction, createEmptyEntry, forceHistoryRender, initialStates, interestingKeys, performActionOnLatest, reducerQueue, reducers, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
+import { createTimeline,  initialStates, interestingKeys, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
 import { INSPECTIONS } from "../renderSelectedVars";
+import { use } from "../state";
 
 let db;
 const DBOpenRequest = window.indexedDB.open('history', 1);
@@ -14,8 +15,6 @@ DBOpenRequest.onupgradeneeded = function(event) {
     };
 
     db.createObjectStore(ACTIONS, { autoIncrement: true });  
-
-    // objectStore.createIndex('year', 'year', { unique: false });
 };
 
 const snapshotKey = 'history-start-snapshot';
@@ -36,28 +35,10 @@ export function restoreHistory() {
     const store = transaction.objectStore(ACTIONS);
 
     store.getAll().onsuccess = event => {
-        console.time('Restore history');
         const records = event.target.result;
         setStates(new Map(snapshot));
 
-        for (const actions of records) {
-            if (!actions?.length) {
-                continue;
-            }
-            createEmptyEntry();
-            for (const [key, action] of actions) {
-                if (!reducers.has(key)) {
-                    console.log('Create queue item');
-                    if (!reducerQueue.has(key)) reducerQueue.set(key, []);
-                    reducerQueue.get(key).push([i + 1, action]);
-                    addUnprocessedAction(key, action);
-                } else {
-                    performActionOnLatest(key, action, { force: true, debounceTime: Infinity });
-                }
-            }
-            i++;
-        }
-        console.timeEnd('Restore history');
+        createTimeline(records);
 
         needsSnapshot = i === 0;
         restoreLocks();
@@ -68,13 +49,10 @@ export function restoreHistory() {
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
 //   so that it can be applied when replaying.
-export function storeActions(actions: [string, any][], clearFuture, index, prevStates = null): void {
-    const undefKey = actions.find(([k,v]) => v === undefined);
-    if (undefKey) {
-        alert(`Tried store undefined for ${undefKey[1]}`);
-    }
+export function storeActions(actions: [string, any][], clearFuture, index): void {
     if (needsSnapshot) {
-        const snap = JSON.stringify([...prevStates.entries()].filter(([k]) => interestingKeys.includes(k)));
+        // Quick way to exclude dynamic keys, which would cause initial state to keep growing.
+        const snap = JSON.stringify([...initialStates.entries()].filter(([k]) => use.hasOwnProperty(k)));
         localStorage.setItem(snapshotKey, snap);
         needsSnapshot = false;
         snapshot = snap;

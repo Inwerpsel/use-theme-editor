@@ -22,13 +22,13 @@ export let reducers = new Map<string, Reducer<any>>();
 // Will be replayed right after the reducer gets added.
 export const reducerQueue = new Map<string, [number, any][]>();
 // The function with which the key can be updated.
-const dispatchers = new Map<string, (action: any, options: HistoryOptions) => void>;
+// const dispatchers = new Map<string, (action: any, options: HistoryOptions) => void>;
 // A function with no args and no return value.
 type voidFn = () => void;
 // Function for each key that subscribes to updates, and returns function that unsubscribes.
-const subscribers = new Map<string, (notify: voidFn) => voidFn>();
+// const subscribers = new Map<string, (notify: voidFn) => voidFn>();
 // The function that is passed to React to obtain a snapshot of the state for a key, taking history into account.
-const getSnapshots = new Map<string, () => any>();
+// const getSnapshots = new Map<string, () => any>();
 // The set of notify functions to trigger subscribed React elements to render, for each key.
 const notifiers = new Map<string, Set<voidFn>>();
 // The history index to which some keys are locked.
@@ -187,31 +187,33 @@ export function exportHistory() {
   );
 }
 
+export function createTimeline(timeline, store = false) {
+  let i = 0;
+
+  for (const actions of timeline) { 
+    createEmptyEntry();
+    for (const [key, action] of actions) {
+        performActionOnLatest(key, action, { force: true, debounceTime: Infinity });
+    }
+    if (store) {
+      storeActions(actions, false, i);
+    }
+    i++;
+  }
+}
+
 export function importHistory({timeline, initialStates: _initialStates, finalStates, locks: newLocks, offset = 0, inspections}, frames: HTMLIFrameElement[]) {
   oldStates = pointedStates;
-  let i = 0;
-  initialStates = new Map(_initialStates);
   past = [];
   historyOffset = 0;
   locks = new Map();
   resetInspections();
   deleteStoredHistory();
   
-  for (const actions of timeline) { 
-    createEmptyEntry();
-    for (const [key, action] of actions) {
-        if (!reducers.has(key)) {
-            console.log('Create queue item');
-            if (!reducerQueue.has(key)) reducerQueue.set(key, []);
-            reducerQueue.get(key).push([i + 1, action]);
-            addUnprocessedAction(key, action);
-        } else {
-            performActionOnLatest(key, action, { debounceTime: Infinity });
-        }
-    }
-    storeActions(actions, false, i, _initialStates);
-    i++;
+  for (const [key, value] of _initialStates) {
+    initialStates.set(key, value);
   }
+  createTimeline(timeline, true);
 
   // Sanity check.
   for (const [key, value] of finalStates) {
@@ -234,37 +236,28 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
 }
 
 // Set up initial state and all handlers for a new key.
-function addReducer(id, reducer, rawInitialState, initializer) {
+function addReducer(id, reducer) {
   reducers.set(id, reducer);
-  const initialState =
-    typeof initializer === 'function'
-      ? initializer(rawInitialState)
-      : rawInitialState;
-  initialStates.set( id, initialState);
   processActionQueue(id);
+}
 
-  dispatchers.set(
-    id,
-    performAction.bind(null, id),
-  )
-  // dispatchers[id] = (action, options = {}) => {
-  //   performAction(id, action, options);
-  // };
-  subscribers.set(id, (notify) => {
-    let set = notifiers.get(id);
-    if (set === undefined) {
-      set = new Set();
-      notifiers.set(id, set);
+function subscribe(notify) {
+  const id = this;
+  let set = notifiers.get(id);
+  if (set === undefined) {
+    set = new Set();
+    notifiers.set(id, set);
+  }
+  set.add(notify);
+  return () => {
+    set.delete(notify);
+    if (set.size === 0) {
+      notifiers.delete(id);
     }
-    set.add(notify);
-    return () => {
-      set.delete(notify);
-      if (set.size === 0) {
-        notifiers.delete(id);
-      }
-    };
-  });
-  getSnapshots.set(id, () => {
+  };
+}
+
+function getSnapShot(id) {
     let sourceStates;
     if (locks.has(id)) {
       const index = locks.get(id);
@@ -275,7 +268,6 @@ function addReducer(id, reducer, rawInitialState, initializer) {
     return sourceStates.has(id)
       ? sourceStates.get(id)
       : initialStates.get(id);
-  });
 }
 
 export const interestingKeys = ['THEME_EDITOR', 'uiLayout', 'inspected-index'];
@@ -508,7 +500,6 @@ export function replayAlternate(): void {
   lastAlternateIndex = past.length - historyOffset;
 
   let didFirst = false;
-  const prevState = pointedStates;
   let currentOffset = historyOffset;
 
   for (const map of entries) {
@@ -531,10 +522,22 @@ export function replayAlternate(): void {
     // console.log('storing', [...map.entries()], false, past.length);
   }
 
-  historyOffset = Math.min(entries.length, past.length - 1);
+  if (entries.length === 0) {
+    // In case no new entries updated the history
+    const newLatest = past.at(-historyOffset);
+    console.log(past);
+    states = newLatest.states;
+    // no need to update oldStates, as it didn't change
+    lastActions = newLatest.lastActions;
+    past = past.slice(0, -historyOffset);
+    // Clear future by storing same record again.
+    storeActions([...newLatest.lastActions.entries()], true, past.length)
+    historyOffset = 0;
+  } else {
+    historyOffset = Math.min(entries.length, past.length - 1);
+  }
   lastAlternate = newAlternate;
   storeAlternate();
-  oldStates = prevState;
   checkNotifyAll();
 }
 
@@ -554,7 +557,6 @@ export function performAction(id, action, options?: HistoryOptions): void {
 
   // Reliably prevent certain actions from changing history.
   if (wasPast && options?.appendOnly) {
-    console.log('too late', action, options)
     return;
   }
 
@@ -568,14 +570,14 @@ export function performAction(id, action, options?: HistoryOptions): void {
     action.type = action.type.name;
   }
   
-  storeActions([...lastActions.entries()], wasPast, past.length, oldStates);
+  storeActions([...lastActions.entries()], wasPast, past.length);
   notifyOne(id);
 }
 
 // This path is the only one that can execute frequently, as actions on top
 // of an older state will result in the next action being on the latest state.
 export function performActionOnLatest(id, action, options: HistoryOptions = {}): boolean {
-  const reducer = reducers.get(id);
+  const reducer = reducers.get(id) || simpleStateReducer;
   if (!reducer) {
     console.log('no reducer for', id);
     return false;
@@ -664,7 +666,7 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
 }
 
 function performActionOnPast(id, action, options: HistoryOptions = {}): boolean {
-  const reducer = reducers.get(id);
+  const reducer = reducers.get(id) || simpleStateReducer;
   if (!reducer) {
     return false;
   }
@@ -969,21 +971,28 @@ export function useResumableReducer<T>(
   initializer = (s) => s,
   id: string
 ): StateAndUpdater<T> {
-  if (!reducers.has(id)) {
+  if (!initialStates.has(id)) {
+    const state =
+      typeof initializer === 'function'
+        ? initializer(initialState)
+        : initialState;
+    initialStates.set( id, state);
+  }
+  if (reducer !== simpleStateReducer && !reducers.has(id)) {
     // First one for an id gets to add the reducer.
-    addReducer(id, reducer, initialState, initializer);
+    addReducer(id, reducer);
   }
 
   const currentState = useSyncExternalStore(
-    subscribers.get(id),
-    getSnapshots.get(id),
+    subscribe.bind(id),
+    getSnapShot.bind(null, id),
   );
 
-  return [currentState as T, dispatchers.get(id)];
+  return [currentState as T, performAction.bind(null, id)];
 }
 
 export function useDispatcher(id: string) {
-  const dispatcher = dispatchers.get(id);
+  const dispatcher = performAction.bind(null, id);
   if (!dispatcher) {
     throw new Error(`Attempted to use dispatcher for ${id}, but it doesn't exist yet.`)
   }

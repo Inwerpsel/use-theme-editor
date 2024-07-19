@@ -6,15 +6,10 @@ export function HistoryStash() {
     const { lastAlternate, historyOffset, past, lastAlternateIndex } =
       useContext(HistoryNavigateContext);
 
-    // if (!lastAlternate) return null;
-
     const position = past.length - historyOffset - lastAlternateIndex;
 
-    if (lastAlternate.length === 0) {
-      return null;
-    }
-
-    const content = lastAlternate.length === 0 
+    const empty = lastAlternate.length === 0;
+    const content = empty 
     ? <Fragment>Stash</Fragment> 
     : <Fragment>{lastAlternate.length} steps stashed <br/>{position} steps since</Fragment>;
 
@@ -30,10 +25,11 @@ export function HistoryStash() {
           title={'Apply/create stash:\n' + stringied}
           onClick={replayAlternate}
           style={{textAlign: 'left'}}
+          disabled={empty && historyOffset === 0}
         >
           {content}
         </button>
-        {lastAlternate.length > 0 && <Clear />}
+        {!empty && <Clear />}
         <Tutorial el={HistoryStash}>
           If you travel back and discard future, it's still kept here.
 
