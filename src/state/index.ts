@@ -32,8 +32,8 @@ export const use = {
     () => useResumableLocalStorage('height', 768),
   scales:
     () => useResumableLocalStorage('scales', {} as {[index: string]: string}),
-  prefersColorScheme:
-    () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
+  // prefersColorScheme:
+  //   () => useResumableLocalStorage('prefersColorScheme', 'light' as 'light' | 'dark'),
   uiLayout:
     () => useResumableLocalStorage('uiLayout', {map: {}}),
   propertyFilter:
@@ -48,7 +48,7 @@ export const use = {
   excludedRawValues:
     () => useResumableLocalStorage('excludedRawValues', ['initial', 'none'] as string[]),
   frameClickBehavior:
-    () => useLocalStorage('frameClickBehavior', 'any' as 'any' | 'alt'),
+    () => useGlobalState('frameClickBehavior', 'any' as 'any' | 'alt'),
   nativeColorPicker:
     () => useLocalStorage('nativeColorPicker', false),
   includeDefaultPalette:

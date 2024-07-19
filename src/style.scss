@@ -100,28 +100,33 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   color: $accent-color;
 }
 
-.simulating-touch-device body {
-  &::-webkit-scrollbar {
-    width: 12px;
-  }
+// .simulating-touch-device {
+//   &::-webkit-scrollbar {
+//     width: 12px;
+//   }
 
-  &::-webkit-scrollbar-track {
-    border-radius: 5px;
-    background: rgba(140, 140, 140, 0.2);
-  }
+//   &::-webkit-scrollbar-track {
+//     border-radius: 5px;
+//     background: rgba(140, 140, 140, 0.2);
+//   }
 
-  &::-webkit-scrollbar-thumb {
-    border-radius: 5px;
-    background: rgba(140, 140, 140, 0.6);
-  }
+//   &::-webkit-scrollbar-thumb {
+//     border-radius: 5px;
+//     background: rgba(140, 140, 140, 0.6);
+//   }
 
-  &::-webkit-scrollbar-thumb:hover {
-    background: rgba(140, 140, 140, 0.9);
-  }
+//   &::-webkit-scrollbar-thumb:hover {
+//     background: rgba(140, 140, 140, 0.9);
+//   }
 
-  &::-webkit-scrollbar-thumb:window-inactive {
-    background: rgba(140, 140, 140, 0.05);
-  }
+//   &::-webkit-scrollbar-thumb:window-inactive {
+//     background: rgba(140, 140, 140, 0.05);
+//   }
+
+// }
+
+.force-cursor, .force-cursor * {
+  cursor: help !important;
 }
 
 .responsive-frame-container {
@@ -611,5 +616,20 @@ button:disabled {
 }
 
 .hide-scrollbars {
-  overflow-y: hidden !important;
+  // scrollbar-gutter: stable;
+  overflow-y: scroll !important;
+  text-rendering: optimizeSpeed;
+}
+
+// .btn.btn {
+//   --bs-btn-bg: blue;
+// }
+
+// .btn:not(:where(.foo), :is(idontexist, .test, li)) {
+//   --bs-btn-bg: red;
+// }
+
+.chrome-picker {
+  // Prevent selecting when dragging color marker.
+  user-select: none;
 }

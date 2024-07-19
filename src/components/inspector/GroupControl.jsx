@@ -1,4 +1,3 @@
-import {addHighlight, removeHighlight} from '../../functions/highlight';
 import {getValueFromDefaultScopes, VariableControl} from './VariableControl';
 import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useMemo} from 'react';
@@ -10,6 +9,8 @@ import { definedValues, scopesByProperty } from '../../functions/collectRuleVars
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { get, use } from '../../state';
 import { dragValue } from '../../functions/dragValue';
+
+const previewSize = '28px';
 
 export const GroupControl = props => {
   const {
@@ -35,6 +36,7 @@ export const GroupControl = props => {
     scopes: elementScopes,
     customProps,
     isRootElement,
+    inlineStyles,
   } = group;
 
   const editedProps = useMemo(
@@ -94,13 +96,13 @@ export const GroupControl = props => {
             : scopes[currentScope.selector][name];
 
         const value =
-          valueFromScope ||
-          definedValues[':root'][name] ||
+          valueFromScope  ||
           defaultValues[name] ||
-          getValueFromDefaultScopes(elementScopes, someVar);
+          getValueFromDefaultScopes(elementScopes, someVar) ||
+          definedValues[':root'][name];
 
 
-        if (value && value.toLowerCase() !== 'currentcolor') {
+        if (value && value!== 'inherit' && value.toLowerCase() !== 'currentcolor') {
           colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value]);
         }
       }
@@ -108,13 +110,11 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && !group.inlineStyles && !group.elSrc && !group.elHtml) { 
+  if (vars.length === 0 && !inlineStyles && !elSrc && !elHtml) { 
     return null;
   }
 
-  const previewSize = '28px';
-
-  const isOpen = !!openGroups[group.label];
+  const isOpen = !!openGroups[label];
 
   return (
     <li className={'var-group'} key={label} style={{...customProps, ...editedProps, marginBottom: '12px'}}>
@@ -126,11 +126,6 @@ export const GroupControl = props => {
           zIndex: 12,
         }}
         onMouseEnter={() => {
-          if (element && element.classList) {
-            addHighlight(element);
-            return;
-          }
-
           frameRef.current?.contentWindow.postMessage(
             {
               type: 'highlight-element-start', payload: {index: element}
@@ -139,11 +134,6 @@ export const GroupControl = props => {
           );
         }}
         onMouseLeave={() => {
-          if (element?.classList) {
-            removeHighlight(element);
-            return;
-          }
-
           frameRef.current?.contentWindow.postMessage(
             {
               type: 'highlight-element-end', payload: {index: element}
@@ -155,7 +145,16 @@ export const GroupControl = props => {
         {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{element}}/>}
         
         <h4
-          style={{fontWeight: 400, marginBottom: 0, paddingRight: '4px',cursor: 'pointer', display: 'flex', justifyContent: 'space-between'}}
+          style={{
+            fontWeight: 400,
+            marginBottom: 0,
+            paddingRight: '4px',
+            cursor: 'pointer',
+            display: 'flex',
+            justifyContent: 'space-between',
+            maxHeight: isOpen ? '128px' : '300px',
+            overflowY: 'auto',
+          }}
           onClick={() => toggleGroup(label)}
         >
           <div>
@@ -226,7 +225,7 @@ export const GroupControl = props => {
             onClick={(e) => {setDarkSvg(!darkSvg); e.stopPropagation()}}
             dangerouslySetInnerHTML={{__html: elHtml}}
           ></div>}
-          {group.inlineStyles && <span style={{...{border: '1px solid black'}, ...group.inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
+          {inlineStyles && <span style={{...{border: '1px solid black'}, ...inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
           
         </h4>
       </div>

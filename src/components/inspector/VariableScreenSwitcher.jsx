@@ -1,6 +1,7 @@
 import mediaQuery from 'css-mediaquery';
 import React from 'react';
 import { get, use } from '../../state';
+import { mediaMatchOptions } from './VariableControl';
 
 // Whether a variable is overridden by a later media query.
 export const isOverridden = ({media, width, cssVar}) => {
@@ -12,7 +13,7 @@ export const isOverridden = ({media, width, cssVar}) => {
     if (found) {
       // The order should correspond to CSS order. So after we found the current var name it should start
       // checking if a later one overrides it.
-      return mediaQuery.match(media, {type: 'screen', width});
+      return mediaQuery.match(media, {width, ...mediaMatchOptions});
     }
     if (queryVar.name === cssVar.name) {
       found = true;

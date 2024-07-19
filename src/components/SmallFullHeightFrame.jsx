@@ -65,11 +65,8 @@ export function SmallFullHeightFrame(props) {
   useEffect(() => {
     const doc = scrollFrameRef.current.contentWindow.document;
     const fixed = getFixedElements(doc); 
-    const sticky = getStickyElements(doc); 
+    const sticky = getStickyElements(doc, fixed); 
     if (!fullHeightFrameShowFixed) {
-      // hide
-      const fixed = getFixedElements(doc); 
-      const sticky = getStickyElements(doc); 
 
       for (const el of [...fixed, ...sticky]) {
         el.classList.add('hide-important');
@@ -107,7 +104,7 @@ export function SmallFullHeightFrame(props) {
     if (now - last > 50) {
       const doc = scrollFrameRef.current.contentWindow.document;
       const fixed = getFixedElements(doc); 
-      const sticky = getStickyElements(doc); 
+      const sticky = getStickyElements(doc, fixed); 
 
       last = now;
 
@@ -172,11 +169,15 @@ export function SmallFullHeightFrame(props) {
             src,
             width,
             height: Math.max(height, windowHeight),
+            // Possibly width was set with a CSS rule, which prevents the regular attribute,
+            // from working. Add it as a CSS attribute too to prevent this.
+            // This is a byproduct of loading arbitrary CSS in the editor.
+            style: {width},
           }}
         />
       </div>
       <div
-        onClick={jumpFrame}
+        onMouseDown={jumpFrame}
         onMouseUp={() => setWindowDragged(false)}
         onMouseMove={applyDragDelta}
         style={{
@@ -208,7 +209,7 @@ export function SmallFullHeightFrame(props) {
           outline: '3px solid indigo',
           // outlineOffset: '1px',
           width: width * scale,
-          height: (height + 12) * scale,
+          height: (height - 8) * scale,
           transition: 'top .05s ease-out',
           boxSizing: 'content-box',
           visibility: windowDragged ? 'hidden' : ''

@@ -153,6 +153,7 @@ export function Tutorial({ el, children, tasks = [] }: {el: any, children: any, 
           borderRadius: '7px',
           padding: '4px',
           position: 'absolute',
+          zIndex: 10,
           // top: '100%',
         }}
       >

@@ -39,7 +39,7 @@ export function ElementLocator({
   // Should happen up front for all selectors, so that they're properly grouped from the start.
 
   useEffect(() => {
-    if (!initialized) {
+    if (!initialized || !strippedSelector) {
       return;
     }
     const listener = ({data: {type, payload}}) => {
@@ -94,7 +94,6 @@ export function ElementLocator({
           <span className={'var-control-property monospace-code'}>{property}</span>
       </div>}
 
-        <span>Not found on page</span>
         {children}
     </div>;
   }

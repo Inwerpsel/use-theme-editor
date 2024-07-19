@@ -89,7 +89,7 @@ export function MiniTimeline() {
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
   return <div style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey', boxSizing: 'border-box'}}>
-    <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .3s ease-out', boxSizing: 'border-box'}}></div>
+    <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .06s ease-out', boxSizing: 'border-box'}}></div>
     <Dots amount={past.length + 1} />
     <Tutorial el={MiniTimeline}>
       Here's a compact version of the history timeline.
@@ -142,7 +142,6 @@ export function LockStatus() {
         <p>
           This button shows how many locks are applied and allows you to toggle each.
         </p>
-        <strong>Tutorial is currently covering the lock list, sorry 'bout that.</strong>
         <p>
           Notice how the timeline now jumps over the entries we locked earlier.
         </p>
@@ -176,6 +175,7 @@ function LocksList({close}) {
     <ul
       {...{ref}}
       style={{
+        zIndex: 100,
         position: 'absolute',
         background: 'white',
         border: '1px solid black',
@@ -191,9 +191,9 @@ function LocksList({close}) {
         const targetOffset = past.length - index;
 
         return (
-          <li {...{ key }}>
-            <button autoFocus={i === 1} onClick={active ? disable : enable}>
-              {active ? 'on' : 'off'}
+          <li {...{ key, style: {listStyleType: 'none', opacity: active ? 1 : .7} }}>
+            <button style={{fontSize: '18px',background: active ? '' : 'transparent'}} autoFocus={i === 1} onClick={active ? disable : enable}>
+              {active ? '🔒' : '🔓'}
             </button>
             {key}: { typeof value === 'object' ? '[obj]' : value}
             {targetOffset !== historyOffset && <button onClick={() => {

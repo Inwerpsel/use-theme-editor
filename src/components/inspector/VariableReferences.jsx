@@ -24,7 +24,7 @@ export function VariableReferences(props) {
         Filter found
       </Checkbox>
       <ul style={{ marginTop: '0' }}>
-        {references.map(([scopes, {name, usages}]) => {
+        {references.map(([{name, usages}, scopes]) => {
           if (name === excludedVarName) {
             return null;
           }

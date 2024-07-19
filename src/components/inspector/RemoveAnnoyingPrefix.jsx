@@ -21,7 +21,6 @@ function getPossiblePrefixes(name) {
 }
 
 function detectPrefixes(allVars) {
-  const start = performance.now();
   const allPrefixes = new Map();
   function initPrefix(str) {
     if (!allPrefixes.has(str)) {
@@ -51,8 +50,6 @@ function detectPrefixes(allVars) {
 
   const sorted = filtered.sort(([,setA], [,setB]) => setB.size - setA.size);
 
-  console.log(sorted);
-  console.log('time', performance.now() - start);
   return sorted;
 }
 

@@ -158,7 +158,7 @@ function ActionList(props) {
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
-            {!isPayloadLess && showPayloads && !isShortString && (
+            {!isPayloadLess && showPayloads && (
               <pre className="monospace-code">
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>

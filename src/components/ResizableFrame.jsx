@@ -3,7 +3,7 @@ import { use, get } from '../state';
 import {ThemeEditorContext} from './ThemeEditor';
 import { Tutorial } from '../_unstable/Tutorial';
 
-const wrapperMargin = 28;
+const wrapperMargin = 16;
 
 export const ResizableFrame = props => {
   const {
@@ -50,22 +50,23 @@ export const ResizableFrame = props => {
         boxSizing: 'border-box',
       } }
     >
-      <Tutorial 
-        el={ResizableFrame}
-        tasks={[
-          get => [
-            'Click any element on the page',
-            get.inspectedIndex !== -1,
-          ],
-        ]}
-      >
-        Select an element here to see all its styles.
-      </Tutorial>
+      {tutorial}
       <iframe
         className='responsive-frame'
         ref={frameRef}
-        { ...{ src, width: parseInt(width) + 12, height: parseInt(height) + 12 } }
+        { ...{ src, width: parseInt(width), height: parseInt(height) } }
       />
     </div>
   </div>;
 };
+
+const tutorial = (
+  <Tutorial
+    el={ResizableFrame}
+    tasks={[
+      (get) => ['Click any element on the page', get.inspectedIndex !== -1],
+    ]}
+  >
+    Select an element here to see all its styles.
+  </Tutorial>
+);

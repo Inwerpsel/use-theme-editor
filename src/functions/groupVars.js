@@ -159,10 +159,11 @@ export const groupVars = (vars, target, allVars) => {
         isRootElement,
         label,
         vars: vars.map((v) => {
-          let currentScope;
-          for (const key in scopesByProperty[v.name] || {}) {
-            if (scopes?.some((s) => s.selector === key)) {
-              currentScope = key;
+          let currentScope, max;
+          for (const {scopeVars, selector} of scopes) {
+            if (scopeVars.some(sv=>sv.name===v.name)) {
+              currentScope = selector;
+              break;
             }
           }
 

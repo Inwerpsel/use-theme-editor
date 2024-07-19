@@ -8,9 +8,16 @@ const currentSelectorStyle = {
 };
 
 export function getLocateSelector(scope, selector) {
-  return !scope || scope === selector || scope === ROOT_SCOPE || scope === 'body' || scope === ':root' || scope === 'html' || scope === ':where(html)'
-      ? selector
-      : `:where(
+  if (scope.includes(':root')) {
+    return selector
+  }
+
+  if (!scope || scope === selector || scope === ROOT_SCOPE || scope === 'body'  || scope === 'html' || scope === ':where(html)') {
+    return selector;
+  }
+
+  return `
+:where(
     ${scope},
     ${scope} *
 ):where(
@@ -22,6 +29,13 @@ function Usage(props) {
   const {scope, selector, highLightMatch, position, property} = props;
 
   const locateSelector = getLocateSelector(scope, selector);
+
+  if (!locateSelector) {
+    return <li key={selector}>
+      {!!position && <IdeLink {...position} />}
+      <code>{selector}</code>;a
+    </li>
+  }
 
   return (
     <li key={selector} style={!highLightMatch ? {} : currentSelectorStyle}>

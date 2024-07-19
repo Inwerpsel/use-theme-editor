@@ -161,6 +161,43 @@ function referenceChainKey(references, cssVar) {
   return [...references, cssVar].map(v=>v.name).join();
 }
 
+export const mediaMatchOptions = {
+  type: 'screen',
+  // Below are some values which can later be pulled from settings.
+  // This way the `match` dependency can properly resolve all media rules.
+  // Hence this list will contain some obscure entries that will likely never be used.
+  // Entries for which no clear value can be determined are not included for now.
+  'any-hover': 'hover',
+  'any-pointer': 'fine',
+  // 'aspect-ratio': '',
+  // 'color': '',
+  // 'color-gamut': '',
+  // 'color-index': '',
+  // The following 3 are deprecated, but perhaps still common enough?
+  // 'device-aspect-ratio': '',
+  // 'device-height': '',
+  // 'device-width': '',
+  // 'display-mode': '',
+  // 'dynamic-range': 'standard',
+  'forced-colors': 'none',
+  // grid: '',
+  hover: 'hover',
+  'inverted-colors': 'none',
+  // monochrome: '',
+  // orientation: width > height ? 'landscape' : 'portrait',
+  // 'overflow-block': '',
+  // 'overflow-inline': '',
+  pointer: 'fine',
+  'prefers-color-scheme': 'no-preference',
+  'prefers-contrast': 'no-preference',
+  'prefers-reduced-motion': 'no-preference',
+  'prefers-reduced-transparency': 'no-preference',
+  // resolution: '',
+  scripting: 'enabled',
+  update: 'fast',
+        // 'video-dynamic-range': 'standard',
+};
+
 export const VariableControl = (props) => {
   const {
     cssVar,
@@ -236,8 +273,8 @@ export const VariableControl = (props) => {
     resolvedValue = resolvedValue.replace(/var\(.*\)/, replacingValue)
   }
 
-  const varMatches = value && value.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
   const [referencedVariable, usedScope] = useMemo(() => {
+    const varMatches = value?.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
     const referredVar = !varMatches || varMatches.length === 0
       ? null
       : allVars.find((cssVar) => cssVar.name === varMatches[1]) || {
@@ -259,47 +296,18 @@ export const VariableControl = (props) => {
     )?.selector;
     return [referredVar, usedScope];
   }, [value]);
-  const {overridingMedia} = cssVar.allVar || cssVar;
-  const matchesQuery =
-    !media ||
-    match(media, {
-      type: 'screen',
-      width,
-      // Below are some values which can later be pulled from settings.
-      // This way the `match` dependency can properly resolve all media rules.
-      // Hence this list will contain some obscure entries that will likely never be used.
-      // Entries for which no clear value can be determined are not included for now.
-      'any-hover': 'hover',
-      'any-pointer': 'fine',
-      // 'aspect-ratio': '',
-      // 'color': '',
-      // 'color-gamut': '',
-      // 'color-index': '',
-      // The following 3 are deprecated, but perhaps still common enough?
-      // 'device-aspect-ratio': '',
-      // 'device-height': '',
-      // 'device-width': '',
-      // 'display-mode': '',
-      // 'dynamic-range': 'standard',
-      'forced-colors': 'none',
-      // grid: '',
-      hover: 'hover',
-      'inverted-colors': 'none',
-      // monochrome: '',
-      // orientation: width > height ? 'landscape' : 'portrait',
-      // 'overflow-block': '',
-      // 'overflow-inline': '',
-      pointer: 'fine',
-      'prefers-color-scheme': get.prefersColorScheme,
-      'prefers-contrast': 'no-preference',
-      'prefers-reduced-motion': 'no-preference',
-      'prefers-reduced-transparency': 'no-preference',
-      // resolution: '',
-      scripting: 'enabled',
-      update: 'fast',
-      // 'video-dynamic-range': 'standard',
-    });
-  const matchesScreen = matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width}));
+
+  const matchesScreen = useMemo(() => {
+    const {overridingMedia} = cssVar.allVar || cssVar;
+    const matchesQuery =
+      !media ||
+      match(media, {
+        width,
+        ...mediaMatchOptions,
+      });
+
+    return matchesQuery && (!overridingMedia || !isOverridden({media, cssVar, width}))
+  }, [width]);
 
   let currentLevel = referenceChain.length;
   const key = referenceChainKey(referenceChain, cssVar);
@@ -322,39 +330,38 @@ export const VariableControl = (props) => {
     if (!isOpen) {
       return [];
     }
-    if (!cssVar.name.startsWith('--')) {
+    if (!name.startsWith('--')) {
       return [];
     }
-    const regexp = new RegExp(
-      `var\\(\\s*${cssVar.name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
+    const hasRef = new RegExp(
+      `var\\(\\s*${name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`
     );
 
-    const refs = [];
-
-    for (const otherVar of allVars) {
-      const {name} = otherVar;
-      if (!name.startsWith('--')) {
-        continue;
-      }
-      const matchScopes = new Set();
-      Object.entries(scopes).forEach(([selector, vars])=>{
-        if (vars[name] && regexp.test(vars[name])) {
-          matchScopes.add(selector);
+    const matches = new Map();
+    for (const [selector, vars] of Object.entries(scopes)) {
+      for (const [otherName, otherValue] of Object.entries(vars)) {
+        if (hasRef.test(otherValue)) {
+          matches.set(otherName, [...(matches.get(otherName) || []), selector]);
         }
-      });
-      Object.entries(definedValues).forEach(([selector, vars]) => {
-        if (matchScopes.has(selector)) return;
-        const value = vars[name];
-
-        if (value && value.includes('--') && regexp.test(value)) {
-          matchScopes.add(selector);
-        }
-      });
-      if (matchScopes.size > 0) {
-        refs.push([[...matchScopes.values()], otherVar]);
       }
     }
-    return refs;
+    for (const [selector, vars] of Object.entries(definedValues)) {
+      const scopeEdited = selector in scopes;
+      for (const [otherName, otherValue] of Object.entries(vars)) {
+        if (scopeEdited && scopes[selector].hasOwnProperty(otherName)) {
+          // Assume that if it exists in editor scopes, it has changed.
+          continue;
+        }
+        if (hasRef.test(otherValue)) {
+          matches.set(otherName, [...(matches.get(otherName) || []), selector]);
+        }
+      }
+    }
+
+    return [...matches.entries()].map(([name, selectors]) => [
+      allVars.find((v) => v.name === name) || { name, usages: [] },
+      selectors,
+    ]);
   }, [scopes, isOpen]);
 
   const cssFunc = cssVar.cssFunc;

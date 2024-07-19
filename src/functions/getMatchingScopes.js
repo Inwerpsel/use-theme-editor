@@ -7,10 +7,6 @@ import { getMaxMatchingSpecificity } from './getOnlyMostSpecific';
 export function getMatchingScopes(target, allVars, prevGroups) {
   const matchingSelectors = Object.keys(definedValues).filter((rawSelector) => {
     const selector = statelessSelector(rawSelector);
-    if (rawSelector.endsWith(':root')) {
-      return true;
-    }
-
     try {
       return target.matches(selector);
     } catch (e) {

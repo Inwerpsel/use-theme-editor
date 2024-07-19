@@ -1,5 +1,3 @@
-import { useEffect } from 'react';
-import {LOCAL_STORAGE_KEY} from '../initializeThemeEditor';
 import {reducerOf} from '../functions/reducerOf';
 import { useDispatcher, useResumableReducer } from './useResumableReducer';
 import { definedValues } from '../functions/collectRuleVars';
@@ -45,7 +43,7 @@ export const ACTIONS = {
   unset: (state, { name, scope = ROOT_SCOPE }) => {
     const { scopes } = state;
 
-    if (!(name in scopes[scope])) {
+    if (!(scopes[scope] && name in scopes[scope])) {
       return state;
     }
 
@@ -252,26 +250,95 @@ export function editTheme() {
 }
 
 
+// INCOMPLETE
 type A = typeof ACTIONS;
+type S = typeof DEFAULT_STATE;
 
 type Effects = {
-  [K in keyof A]: (...args: Parameters<A[K]>) => void;
+  [K in keyof A]: (prevState: S, nextState: S, action: Parameters<A[K]>[1]) => void;
 }
 
-const references = new Map();
-const handlers: Effects = {
-  set() {
+// I guess it needs 2 way lookup.
+// referredVar > selector > variables (that reference it)
+const references = new Map<string, Map<string, Set<string>>>();
+// referringVar > selector > variable
+const sources = new Map<string, Map<string, string>>();
+
+function initReference(selector: string, from: string, to: string) {
+
+  if (!references.has(to)) {
+    const refsMap = new Map();
+    refsMap.set(selector, new Set());
+    references.set(to, refsMap);
+  } else {
+    const selectors = references.get(to)
+    if (!selectors.has(selector)) {
+      selectors.set(selector, new Set());
+    }
+  }
+
+  if (!sources.has(from)) {
+    const map = new Map();
+    map.set(selector, to);
+    sources.set(from, map)
+  } else {
+    sources.get(from).set(selector, to);
+  }
+}
+
+function getReference(value: string) {
+  const varMatches = value && value.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);    
+  if (varMatches) {
+    return varMatches[1];
+  }
+  return null;
+}
+
+// Incrementally update references along with state.
+// open question: define apply and unapply handlers? Or one way handler only and keep results in memory.
+// First approach would work with a single copy of the map, but requires a lot of updates when history changes.
+// Second approach is overall much simpler, but would probably incur a max length on history.
+export const refsHandlers: Effects = {
+  set(prevState, nextState, action) {
+    const {scope = ROOT_SCOPE, name, value} = action;
     // existing reference was maybe removed
+    const selectors = sources.get(name);
+    if (selectors && selectors.has(scope)) {
+      selectors.delete(scope);
+    }
+
+    if (prevState.scopes.hasOwnProperty(scope)) {
+      const prevValue = prevState.scopes[scope][name];
+      const prevReferencedName = getReference(prevValue);
+      // console.log(prevReferencedName)
+      if (prevReferencedName) {
+        references.get(prevReferencedName).get(scope).delete(name);
+        sources.get(name).delete(scope);
+      }
+    }
+
     // new reference was maybe added
+    const referencedName = getReference(value);
+
+    if (referencedName) {
+      initReference(scope, name, referencedName);
+      references.get(referencedName).get(scope).add(name);
+      sources.get(name).set(scope, referencedName);
+    }
+    // console.log(
+    //   [...sources.entries()].map(([k,v]) => [k, [...v.entries()]]), 
+    //   [...references.entries()].map(([k,v]) => [k, [...v.entries()].map(([k,v]) => [k, [...v.values()]])]),
+    //   action );
   },
-  unset() {
+  unset(prevState, nextState, action) {
     // added reference is maybe removed
     // default reference is maybe restored
   },
-  createAlias() {
+  createAlias(prevState, nextState, action) {
     // new reference for each substitution
+
   },
-  loadTheme() {
+  loadTheme(prevState, nextState, action) {
     // references can completely change, so load from scratch as initially
   },
 };
