@@ -174,16 +174,6 @@ export const groupVars = (vars, target, allVars) => {
         }),
         scopes,
         // Provide non-root custom prop values for the previews.
-        customProps: isRootElement ? {} : scopes.reduce((a, {selector}) => {
-          
-          if (![':root', 'html', 'body'].includes(selector))
-          for (const [name, value] of Object.entries(definedValues[selector] || {})) {
-            if (!(name in a)) {
-              a[name] = value;
-            }
-          }
-          return a;
-        }, {}),
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
       });
       previousMatches = currentMatches;

@@ -16,6 +16,7 @@ import { get, use } from '../../state';
 import { MediaQueries } from './MediaQueries';
 import { ToggleButton } from '../controls/ToggleButton';
 import { dragValue } from '../../functions/dragValue';
+import { findClosingBracket } from '../../functions/compare';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -82,9 +83,9 @@ export const FormatVariableName = ({name, style}) => {
   </span>;
 };
 
-export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOpen}) => {
+export const PreviewValue = ({value: rawValue, resolvedValue: value, cssVar, isDefault, referencedVariable, isOpen}) => {
   const size = PREVIEW_SIZE;
-  const title = `${value}${!isDefault ? '' : ' (default)'}`;
+  const title = `${rawValue}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(value);
   const isColor =
     mustBeColor(cssVar) ||
@@ -114,7 +115,7 @@ export const PreviewValue = ({value, cssVar, isDefault, referencedVariable, isOp
             // backgroundSize: 'cover',
           }}
         >
-          {/var\(/.test(value) && 'var'}
+          {/var\(/.test(rawValue) && 'var'}
           {value === 'transparent' && '👻'}
         </span>
         <span style={{ float: 'right', marginRight: '4px' }}>
@@ -198,6 +199,57 @@ export const mediaMatchOptions = {
         // 'video-dynamic-range': 'standard',
 };
 
+// Avoid expensive circular reference check by just assuming one happened
+// after trying this many times.
+const maxTries = 10;
+// Look up value in edited state and default state.
+export function resolveVariables(value = '', elementScopes, scopes) {
+  let tries = 0, matchIndex;
+  // const origValue = value;
+  // console.log({origValue});
+  while (matchIndex = value.indexOf('var(--'), matchIndex !== -1) {
+    if (tries > maxTries) {
+      return '<<invalid: circular reference>>';
+    }
+    tries ++;
+
+    const openingBracket = matchIndex + 3;
+    const closingBracket = findClosingBracket(value, openingBracket);
+    const args = value.slice(openingBracket + 1, closingBracket).trim();
+    const firstComma = args.indexOf(',');
+    const noComma = firstComma === -1;
+    const name = noComma ? args : args.slice(0, firstComma).trim();
+    // const name = '--' + value.slice(matchIndex + 6).replace(/[\s\),].*/, '')
+    let replacingValue
+    for (const {selector} of elementScopes || []) {
+      if (name in (scopes[selector] || {})) {
+        replacingValue = scopes[selector][name]
+        // console.log('replace from editor', {name,value, replacingValue});
+        break;
+      }
+      if (name in (definedValues[selector] || {})) {
+        replacingValue = definedValues[selector][name]
+        // console.log('replace from defaults', {name,value, replacingValue, definedValues, selector});
+        break;
+      }
+    }
+    if (!replacingValue) {
+      if (noComma) {
+        // debugger;
+        return `<<invalid: "${name}" is undefined>>`;
+      }
+      const fallback = args.slice(firstComma + 1).trim();
+      // console.log({fallback});
+      replacingValue = fallback;
+    }
+
+    // console.log('before', value);
+    value = value.slice(0, matchIndex) + replacingValue + value.slice(closingBracket + 1);
+    // console.log('after', value);
+  }
+  return value;
+}
+
 export const VariableControl = (props) => {
   const {
     cssVar,
@@ -248,30 +300,7 @@ export const VariableControl = (props) => {
 
   // Resolve variables inside the value.
   // WIP: doesn't do all substitutions yet, but simple work.
-  let resolvedValue = value;
-  while (resolvedValue?.includes('var(--')) {
-    const name = '--' + resolvedValue.split('var(--')[1].replace(/[\s\),].*/, '')
-    let replacingValue
-    for (const {selector} of elementScopes || []) {
-      if (name in (scopes[selector] || {})) {
-        replacingValue = scopes[selector][name]
-        break;
-      }
-      if (name in (definedValues[selector] || {})) {
-        replacingValue = definedValues[selector][name]
-        break;
-      }
-    }
-    if (!replacingValue) {
-      break;
-    }
-    const regex = new RegExp(`var\\(\\s*${name.replaceAll(/-/g, "\\-")}[\\s\\,\\)]`);
-    if (regex.test(replacingValue)) {
-      resolvedValue = '<<invalid: self-reference>>';
-      break;
-    }
-    resolvedValue = resolvedValue.replace(/var\(.*\)/, replacingValue)
-  }
+  let resolvedValue = resolveVariables(value, elementScopes, scopes);
 
   const [referencedVariable, usedScope] = useMemo(() => {
     const varMatches = value?.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
@@ -461,7 +490,7 @@ export const VariableControl = (props) => {
           />
         </h5>
         <PreviewValue
-          {...{ value, cssVar, isDefault, referencedVariable, isOpen }}
+          {...{ value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen }}
         />
       </div>
       <div>

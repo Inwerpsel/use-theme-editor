@@ -148,7 +148,7 @@ export let rootScopes = [];
 export function statelessSelector(selectors) {
   // if (selectors.some(s=>s === '*'))
   const cleaned = selectors
-    .replace(allStateSelectorsRegexp, '')
+    .replaceAll(allStateSelectorsRegexp, '')
     .replace(/:?:(before|after|first\-letter)/, '')
     // Try fix remaining descendants pointing to nothing.
     .trim()
@@ -156,6 +156,7 @@ export function statelessSelector(selectors) {
     .replaceAll(/,\s*[\>+~]/g, ',')
     .replaceAll(/\(,/g, '(')
     .replaceAll(/[\>+~]\s*,/g, '>*,')
+    // .replaceAll(/>\s*~/g, '>*~')
     .replaceAll(/[\>+~]\s*$/g, '~*')
     .replaceAll(/[\>+~]\s*\)/g, '~*)')
     .replaceAll(/\(\s*[\>+~]/g, '(')

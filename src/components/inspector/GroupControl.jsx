@@ -1,4 +1,4 @@
-import {getValueFromDefaultScopes, VariableControl} from './VariableControl';
+import {getValueFromDefaultScopes, resolveVariables, VariableControl} from './VariableControl';
 import {ACTIONS} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
@@ -34,26 +34,9 @@ export const GroupControl = props => {
     label,
     vars,
     scopes: elementScopes,
-    customProps,
     isRootElement,
     inlineStyles,
   } = group;
-
-  const editedProps = useMemo(
-    () =>
-      elementScopes.reduce((newProps, { selector }) => {
-        // Assume for now new scopes cannot be created.
-        if (selector in scopes) {
-          for (const [name, value] of Object.entries(scopes[selector])) {
-            if (!newProps.hasOwnProperty(name)) {
-              newProps[name] = value;
-            }
-          }
-        }
-        return newProps;
-      }, {}),
-    [scopes]
-  );
 
   const {
     frameRef,
@@ -88,6 +71,10 @@ export const GroupControl = props => {
           for (const key in propertyScopes || {}) {
             currentScope =
               elementScopes.find((s) => s.selector === key) || currentScope;
+            if (currentScope) {
+              // Scopes should be sorted by specificity, and maybe also take body and html into account.
+              break;
+            }
           }
         }
         const valueFromScope =
@@ -95,15 +82,16 @@ export const GroupControl = props => {
             ? null
             : scopes[currentScope.selector][name];
 
-        const value =
+        const rawValue =
           valueFromScope  ||
           defaultValues[name] ||
           getValueFromDefaultScopes(elementScopes, someVar) ||
           definedValues[':root'][name];
 
+        const value = resolveVariables(rawValue, elementScopes, scopes);
 
         if (value && value!== 'inherit' && value.toLowerCase() !== 'currentcolor') {
-          colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value]);
+          colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value, rawValue]);
         }
       }
       return colorVars;
@@ -117,7 +105,7 @@ export const GroupControl = props => {
   const isOpen = !!openGroups[label];
 
   return (
-    <li className={'var-group'} key={label} style={{...customProps, ...editedProps, marginBottom: '12px'}}>
+    <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
       <div
         style={{
           position: 'sticky',
@@ -176,7 +164,7 @@ export const GroupControl = props => {
               >X</button>
               </span>}
             {groupColors.length > 0 && <div>
-              {groupColors.map(([{name}, value]) => {
+              {groupColors.map(([{name}, value, rawValue]) => {
                 const isVar = name.startsWith('--');
                 return (
                   <div
@@ -192,9 +180,9 @@ export const GroupControl = props => {
                       dispatch({type: ACTIONS.set, payload: {name, value}})
                     }}
                     draggable
-                    onDragStart={dragValue(value)}
+                    onDragStart={dragValue(rawValue)}
                     key={name}
-                    title={name === value ? name : `${name}: ${value}`}
+                    title={name === value ? name : `${name}: ${rawValue}`}
                     style={{
                       display: 'inline-block',
                       width: previewSize,
@@ -212,7 +200,7 @@ export const GroupControl = props => {
                       fontSize: '14px',
                       textAlign: 'center',
                       textShadow: isVar ? 'white 0px 3px' : 'white 2px 2px'
-                    }}>{/^var\(/.test(value) ? 'v' : value === 'transparent' ? '👻' : ! isVar ? 'r': <Fragment>&nbsp;</Fragment>}</div>
+                    }}>{/^var\(/.test(rawValue) ? 'v' : value === 'transparent' ? '👻' : ! isVar ? 'r': <Fragment>&nbsp;</Fragment>}</div>
                 );
                 })}
             </div>}
