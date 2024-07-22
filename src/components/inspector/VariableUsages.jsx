@@ -52,7 +52,7 @@ function Usage(props) {
   );
 }
 
-export const VariableUsages = ({usages, maxSpecificSelector, winningSelector, scope}) => {
+export const VariableUsages = ({usages, maxSpecificSelector, winningSelector, scope = ':root'}) => {
   const [openSelectors, setOpenSelectors] = useState({});
   const visitedSelectors = {};
 

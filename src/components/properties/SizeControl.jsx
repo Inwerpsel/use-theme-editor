@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import { TextControl } from '../controls/TextControl';
-import { CalcSizeControl } from './CalcSizeControl';
+import { CalcSizeControl, isSingleMathExpression } from './CalcSizeControl';
 
 export const sizeLikeProperties = [
   'font-size',
@@ -20,6 +20,7 @@ export const sizeLikeProperties = [
   'padding-left',
   'padding-right',
   'padding-top',
+  'padding-block-start',
   'width',
   'height',
   'min-width',
@@ -38,6 +39,7 @@ export const sizeLikeProperties = [
   'block-size',
   'inline-size',
   'max-inline-size',
+  'min-inline-size',
 ];
 
 const remSize = 16;
@@ -52,14 +54,14 @@ const isVh = value => value && value.match(/vh$/);
 const isVw = value => value && value.match(/vw$/);
 
 export const SizeControl = props => {
-  const {onChange, value} = props;
+  const {onChange, value, resolvedValue} = props;
   const [step, setStep] = useState(.1);
 
   const pxValue = isPx(value) ? value.replace('px', '') : isRem(value) ? convertRemToPixels(parseFloat(value.replace('rem', ''))) : '';
   const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
 
-  if (value.startsWith('calc(')) {
-    return <CalcSizeControl {...props}/>;
+  if (isSingleMathExpression(value)) {
+    return <CalcSizeControl {...props} {...{resolvedValue}}/>;
   }
 
   return <div className='theme-length-controls'>

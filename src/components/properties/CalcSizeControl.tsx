@@ -1,5 +1,30 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { TextControl } from "../controls/TextControl";
+import { ThemeEditorContext } from '../ThemeEditor';
+import { findClosingBracket } from '../../functions/compare';
+import { splitCommaSafeParentheses } from '../../functions/getOnlyMostSpecific';
+import { get } from '../../state';
+
+// True if the expression is a single `calc` expression,
+// or a single mathematical function (min, max, clamp).
+export function isSingleMathExpression(value = '') {
+  if (!value.includes('(')) {
+    return false;
+  }
+  const openingBracket = value.indexOf('(');
+  const fName = value.slice(0, openingBracket).toLowerCase();
+  if (!['calc', 'min', 'max', 'clamp'].includes(fName)) {
+    // console.log('No math function', fName)
+    return false;
+  }
+
+  if (findClosingBracket(value, openingBracket) < value.length - 1) {
+    // console.log('Not a single expression', value);
+    return false;
+  }
+
+  return true;
+}
 
 const operators = {
   '+'(a, b) {
@@ -84,7 +109,11 @@ function resolveOperation([operator, arg1], arg2, scenario) {
   const a = resolveUnits(`${arg1}`.trim(), scenario);
   const b = resolveUnits(`${arg2}`.trim(), scenario);
 
-  return operators[operator](a, b);
+  const result = operators[operator](a, b);
+
+  console.log('operation', {orig: {arg1, arg2}, a, operator, b, result})
+
+  return result;
 }
 
 const precedence = {
@@ -106,37 +135,41 @@ function evaluateCalc(expression, scenario) {
 
   const parser = {
     '('() {
-      // Locate closing and evaluate inner expression.
-      let nests = 0;
-      const startPosition = cursor + 1;
-      let closingBracketPosition = cursor + 1;
-      for (; closingBracketPosition <= expression.length; closingBracketPosition++) {
-        if (expression[closingBracketPosition] === ')') {
-          if (nests === 0) {
-            break;
-          }
-          nests--;
-          if (nests < 0) {
-            throw new Error('Unmatched closing bracket.')
-          }
-        }
-        if (expression[closingBracketPosition] === '(') {
-          nests++;
-        }
-      }
+      const closingBracketPosition = findClosingBracket(expression, cursor);
       if (buffer === 'var') {
-        // Might be some other functions possible here if they return the right values.
-        throw new Error('var inside calc support coming soon.')
-      } else {
-        buffer = evaluateCalc(
-          expression.substring(startPosition, closingBracketPosition),
-          scenario
-        );
-        cursor = closingBracketPosition;
+        throw new Error('Expression contains unresolved variable.')
       }
 
+      const inside = expression.substring(cursor + 1, closingBracketPosition);
+      const possibleFunction = buffer.toLowerCase();
+
+      if (possibleFunction === 'clamp') {
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        const [min, preferred, max] = args;
+        // console.log('CLAMP', args);
+        buffer = parseFloat(preferred) < parseFloat(min) ? min : parseFloat(preferred) > parseFloat(max) ? max : preferred;
+      } else if (possibleFunction === 'min') {
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        buffer = args.reduce(
+          (lowest, v) => (v < lowest ? v : lowest),
+          Infinity
+        );
+      } else if (possibleFunction === 'max') {
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        buffer = args.reduce(
+          (highest, v) => (v > highest ? v : highest),
+          -Infinity
+        );
+      } else {
+        buffer = evaluateCalc(
+          inside,
+          scenario
+        );
+      }
+      cursor = closingBracketPosition;
     },
     ')'() {
+        // 
         throw new Error('Unmatched closing bracket.')
     },
     '+'() {
@@ -199,35 +232,64 @@ function evaluateScenarios(expression, scenarios) {
 }
 
 export function CalcSizeControl(props) {
-  const {value, onChange} = props;
+  const {value, resolvedValue, onChange} = props;
+  const {width, height} = get;
+  const {
+    frameRef,
+  } = useContext(ThemeEditorContext);
 
-  const expression = value
-  // Extract only inner expression.
-  .replace(/calc\(/, '')
-  .replace(/\)$/, '')
+  const outer = value.startsWith('calc(') 
+    ? value.replace(/calc\(/, '').replace(/\)$/, '')
+    : value;
+
   // Replace inner `calc` expressions with just parentheses.
-  .replaceAll('calc(', '(');
+  const expression = outer.replaceAll('calc(', '(');
 
-  const results = evaluateScenarios(expression, [
-    {width: 360, height: 640, remFactor: 16, resultUnit: 'px'},
-    {width: 1920, height: 1080, remFactor: 16, resultUnit: 'px'},
-    {width: 360, height: 640, remFactor: 16, resultUnit: 'rem'},
-    {width: 1920, height: 1080, remFactor: 16, resultUnit: 'rem'},
+  const resolvedOuter = resolvedValue.startsWith('calc(')
+    ? resolvedValue.replace(/calc\(/, '').replace(/\)$/, '')
+    : resolvedValue;
+  const resolvedExpression = resolvedOuter.replaceAll('calc(', '(');
+
+  const rootFontSize = getComputedStyle(frameRef.current.contentWindow.document.documentElement).getPropertyValue('font-size');
+
+  const remFactor = parseInt(rootFontSize.replace('px', ''));
+
+  const results = evaluateScenarios(resolvedExpression, [
+    {width, height, remFactor, resultUnit: 'px'},
+    {width, height, remFactor, resultUnit: 'rem'},
+    // {width: 360, height: 640, remFactor, resultUnit: 'px'},
+    // {width: 360, height: 640, remFactor, resultUnit: 'rem'},
+    // {width: 1920, height: 1080, remFactor, resultUnit: 'px'},
+    // {width: 1920, height: 1080, remFactor, resultUnit: 'rem'},
   ]);
 
   return (
     <div>
       <h3>Calculation</h3>
-      <TextControl {...{value: expression, onChange: v => onChange(`calc(${v})`)}} />
+      <TextControl
+        {...{
+          style: { width: '100%' },
+          value: expression,
+          onChange: (v) => onChange(isSingleMathExpression(v) ? v : `calc(${v})`),
+        }}
+      />
       <h4>Evaluates to</h4>
       <ul>
         {results.map(([{ width, height, resultUnit, remFactor }, result]) => {
           const k = `${width}x${height}~${resultUnit}~${remFactor}`;
           return (
-            <li key={k}><code onClick={() => onChange(`${result}${resultUnit}`)}>{result}{resultUnit}</code> at {width} x {height}</li>
+            <li key={k}>
+              <code onClick={() => onChange(`${result}${resultUnit}`)}>
+                {result}
+                {resultUnit}
+              </code>{' '}
+              at {width} x {height}
+            </li>
           );
         })}
       </ul>
+      <br />
+      <i>Root font size: {remFactor}px</i>
     </div>
   );
 }

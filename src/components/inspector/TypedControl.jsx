@@ -34,7 +34,7 @@ export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc})
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
 
-    return <SizeControl{...{value, onChange}}/>;
+    return <SizeControl{...{value, resolvedValue, onChange}}/>;
   }
 
   if (cssVar.usages.some(usage => timeLikeProperties.includes(usage.property))) {

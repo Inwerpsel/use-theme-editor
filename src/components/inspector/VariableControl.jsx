@@ -83,30 +83,30 @@ export const FormatVariableName = ({name, style}) => {
   </span>;
 };
 
-export const PreviewValue = ({value: rawValue, resolvedValue: value, cssVar, isDefault, referencedVariable, isOpen}) => {
+export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen}) => {
   const size = PREVIEW_SIZE;
-  const title = `${rawValue}${!isDefault ? '' : ' (default)'}`;
-  const isUrl = /url\(/.test(value);
+  const title = `${value}${!isDefault ? '' : ' (default)'}`;
+  const isUrl = /url\(/.test(resolvedValue);
   const isColor =
     mustBeColor(cssVar) ||
-    COLOR_VALUE_REGEX.test(value) ||
-    GRADIENT_REGEX.test(value);
+    COLOR_VALUE_REGEX.test(resolvedValue) ||
+    GRADIENT_REGEX.test(resolvedValue);
   const presentable = isColor || isUrl;
 
-  if (value && presentable && !/currentcolor/i.test(value)) {
+  if (resolvedValue && presentable && !/currentcolor/i.test(resolvedValue)) {
     return (
       <Fragment>
         <span
           draggable
-          onDragStart={dragValue(value)}
+          onDragStart={dragValue(resolvedValue)}
           title={title}
           style={{
             width: size,
             height: size,
             border: '1px solid black',
             borderRadius: '6px',
-            backgroundImage: `${value}`,
-            backgroundColor: cssVar.cssFunc ? `${cssVar.cssFunc}(${value})` : value,
+            backgroundImage: `${resolvedValue}`,
+            backgroundColor: cssVar.cssFunc ? `${cssVar.cssFunc}(${resolvedValue})` : resolvedValue,
             backgroundRepeat: `no-repeat`,
             backgroundSize: 'cover',
             // background:,
@@ -115,12 +115,12 @@ export const PreviewValue = ({value: rawValue, resolvedValue: value, cssVar, isD
             // backgroundSize: 'cover',
           }}
         >
-          {/var\(/.test(rawValue) && 'var'}
-          {value === 'transparent' && '👻'}
+          {/var\(/.test(value) && 'var'}
+          {resolvedValue === 'transparent' && '👻'}
         </span>
         <span style={{ float: 'right', marginRight: '4px' }}>
           {referencedVariable && <FormatVariableName name={referencedVariable.name} />}
-          {!referencedVariable && (isUrl ? null : value)}
+          {!referencedVariable && (isUrl ? null : resolvedValue)}
         </span>
       </Fragment>
     );
@@ -201,7 +201,7 @@ export const mediaMatchOptions = {
 
 // Avoid expensive circular reference check by just assuming one happened
 // after trying this many times.
-const maxTries = 10;
+const maxTries = 50;
 // Look up value in edited state and default state.
 export function resolveVariables(value = '', elementScopes, scopes) {
   let tries = 0, matchIndex;
