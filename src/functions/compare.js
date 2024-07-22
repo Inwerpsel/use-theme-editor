@@ -7,13 +7,13 @@ export function hasClosingBracket(string, openingBracketIndex) {
 export function findClosingBracket(string, openingBracketIndex) {
   let ignoreNext = false, innerLevel = 0, index = openingBracketIndex + 1;
 
-  if (string[openingBracketIndex] !== '(') {
-    throw new Error(`No opening bracket at index ${openingBracketIndex}, found ${string[openingBracketIndex]} instead`);
-  }
+  // if (string[openingBracketIndex] !== '(') {
+  //   throw new Error(`No opening bracket at index ${openingBracketIndex}, found ${string[openingBracketIndex]} instead`);
+  // }
 
-  if (string[openingBracketIndex - 1] === '\\' && string[openingBracketIndex - 2] !== '\\') {
-    throw new Error(`The opening bracket is escaped`);
-  }
+  // if (string[openingBracketIndex - 1] === '\\' && string[openingBracketIndex - 2] !== '\\') {
+  //   throw new Error(`The opening bracket is escaped`);
+  // }
 
   while (
     index < string.length &&
