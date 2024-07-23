@@ -1,9 +1,11 @@
-import React, { useContext } from 'react';
+import React, { Fragment, useContext } from 'react';
 import { TextControl } from "../controls/TextControl";
 import { ThemeEditorContext } from '../ThemeEditor';
 import { findClosingBracket } from '../../functions/compare';
 import { splitCommaSafeParentheses } from '../../functions/getOnlyMostSpecific';
-import { get } from '../../state';
+import { get, use } from '../../state';
+import { VariableControl } from '../inspector/VariableControl';
+import { ACTIONS } from '../../hooks/useThemeEditor';
 
 // True if the expression is a single `calc` expression,
 // or a single mathematical function (min, max, clamp).
@@ -53,8 +55,11 @@ function resolveUnits(value, scenario) {
   if (value in mathConstants) {
     return mathConstants[value];
   }
-  const numericPart = value.replaceAll(/[^\d\.]/g, '');
+  const numericPart = parseFloat(value.replaceAll(/[^\d\.]/g, ''));
   let unitPart = value.replace(/\d|\./g, '');
+  // Todo: Inject correct value measured from element.
+  // This is also needed for other units and probably needs other things, like container dimensions.
+  // Now wrongly using root size to be able to use the expression anyway for testing.
   if (unitPart === 'em') {
     unitPart = 'rem';
   }
@@ -64,8 +69,7 @@ function resolveUnits(value, scenario) {
   const {width = 360, height = 640, remFactor = 16, resultUnit = 'px'} = scenario;
 
   if (unitPart === '%') {
-    const up = new Error('Cannot handle percentages.')
-    throw up;
+    throw new Error('Cannot handle percentages.')
   }
 
   if (resultUnit === 'rem') {
@@ -76,24 +80,43 @@ function resolveUnits(value, scenario) {
       return numericPart / remFactor;
     }
     if (unitPart === 'vw') {
-      return (numericPart / 100) * width / 26;
+      return (numericPart / 100) * width / remFactor;
     }
     if (unitPart === 'vh') {
-      return (numericPart / 100) * height / 26;
+      return (numericPart / 100) * height / remFactor;
     }
     throw new Error(`Unsupported unit. "${unitPart}"`)
+
   } else if (resultUnit === 'px') {
     if (unitPart === 'rem') {
-      return numericPart * remFactor;
+      const result = numericPart * remFactor;
+      scenario.steps.push({
+        before: value,
+        result:
+          numericPart === 1
+            ? result
+            : `${numericPart} * ${remFactor} = ${result}`,
+      });
+      return result;
     }
     if (unitPart === 'px') {
       return numericPart;
     }
     if (unitPart === 'vw') {
-      return width * numericPart / 100;
+      const result = width * numericPart / 100;
+      scenario.steps.push({
+        before: value,
+        result: `${width} * ${numericPart}/100 = ${result}`,
+      });
+      return result;
     }
     if (unitPart === 'vh') {
-      return height * numericPart / 100;
+      const result = height * numericPart / 100;
+      scenario.steps.push({
+        before: value,
+        result: `${height} * ${numericPart}/100 = ${result}`,
+      });
+      return result;
     }
     throw new Error(`Unsupported unit. "${unitPart}"`)
   }
@@ -111,7 +134,7 @@ function resolveOperation([operator, arg1], arg2, scenario) {
 
   const result = operators[operator](a, b);
 
-  console.log('operation', {orig: {arg1, arg2}, a, operator, b, result})
+  scenario.steps.push({orig: {arg1, arg2}, a, operator, b, result});
 
   return result;
 }
@@ -144,22 +167,27 @@ function evaluateCalc(expression, scenario) {
       const possibleFunction = buffer.toLowerCase();
 
       if (possibleFunction === 'clamp') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
         const [min, preferred, max] = args;
         // console.log('CLAMP', args);
         buffer = parseFloat(preferred) < parseFloat(min) ? min : parseFloat(preferred) > parseFloat(max) ? max : preferred;
+
+        scenario.steps.push({mathFunc: 'clamp', args, result: buffer});
+
       } else if (possibleFunction === 'min') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
         buffer = args.reduce(
           (lowest, v) => (v < lowest ? v : lowest),
           Infinity
         );
+        scenario.steps.push({mathFunc: 'min', args, result: buffer});
       } else if (possibleFunction === 'max') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v, scenario));
+        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
         buffer = args.reduce(
           (highest, v) => (v > highest ? v : highest),
           -Infinity
         );
+        scenario.steps.push({mathFunc: 'max', args, result: buffer});
       } else {
         buffer = evaluateCalc(
           inside,
@@ -221,6 +249,7 @@ function evaluateCalc(expression, scenario) {
 function evaluateScenarios(expression, scenarios) {
   const results = [];
   for (const scenario of scenarios) {
+    scenario.steps = [];
     try {
       results.push([scenario, evaluateCalc(expression, scenario)]);
     } catch(e) {
@@ -231,11 +260,27 @@ function evaluateScenarios(expression, scenarios) {
   return results;
 }
 
+type Args = (string|number)[];
+
+const describeInvocation = {
+  min(args: Args, result) {
+    return `Take lowest of [${args.join(', ')}] = ${result}`
+  },
+  max(args: Args, result) {
+    return `Take highest of [${args.join(', ')}] = ${result}`
+  },
+  clamp([min, preferred, max], result) {
+    return `Clamp ${preferred} between ${min} and ${max} = ${result}`;
+  },
+};
+
 export function CalcSizeControl(props) {
-  const {value, resolvedValue, onChange} = props;
+  const {value, resolvedValue, referencedVars, onChange, elementScopes, element} = props;
   const {width, height} = get;
+  const [{scopes}, dispatch] = use.themeEditor();
   const {
     frameRef,
+    allVars,
   } = useContext(ThemeEditorContext);
 
   const outer = value.startsWith('calc(') 
@@ -252,15 +297,11 @@ export function CalcSizeControl(props) {
 
   const rootFontSize = getComputedStyle(frameRef.current.contentWindow.document.documentElement).getPropertyValue('font-size');
 
-  const remFactor = parseInt(rootFontSize.replace('px', ''));
+  const remFactor = parseFloat(rootFontSize.replace('px', ''));
 
   const results = evaluateScenarios(resolvedExpression, [
     {width, height, remFactor, resultUnit: 'px'},
-    {width, height, remFactor, resultUnit: 'rem'},
-    // {width: 360, height: 640, remFactor, resultUnit: 'px'},
-    // {width: 360, height: 640, remFactor, resultUnit: 'rem'},
-    // {width: 1920, height: 1080, remFactor, resultUnit: 'px'},
-    // {width: 1920, height: 1080, remFactor, resultUnit: 'rem'},
+    // {width, height, remFactor, resultUnit: 'rem'},
   ]);
 
   return (
@@ -275,15 +316,79 @@ export function CalcSizeControl(props) {
       />
       <h4>Evaluates to</h4>
       <ul>
-        {results.map(([{ width, height, resultUnit, remFactor }, result]) => {
+        {results.map(([{ width, height, resultUnit, remFactor, steps }, result]) => {
           const k = `${width}x${height}~${resultUnit}~${remFactor}`;
           return (
             <li key={k}>
-              <code onClick={() => onChange(`${result}${resultUnit}`)}>
+              <code style={{cursor: 'pointer', fontSize: '2rem'}} onClick={() => onChange(`${result}${resultUnit}`)}>
                 {result}
                 {resultUnit}
-              </code>{' '}
-              at {width} x {height}
+              </code>
+              <pre><code>at {width}x{height}</code></pre>
+              <br />
+              <br />
+              <code>{resolvedOuter}</code>
+              <h5>Steps</h5>
+              <ul>
+                {steps.map((step, i) => {
+                  let comp;
+                  if (step.mathFunc) {
+                    const {mathFunc, args, result} = step;
+                    comp = <code>{describeInvocation[mathFunc](args, result)}</code>;
+                  } else if (step.operator) {
+                    const {orig: {arg1, arg2}, a, operator, b, result} = step;
+                    comp = <code title={`${arg1} ${operator} ${arg2}`}>{a} {operator} {b} = {result}</code>;
+                  } else {
+                    const {before, result} = step;
+                    comp = <code>{before} = {result}</code>;
+                  }
+
+                  return <li key={i}>{comp}</li>;
+                })}
+              </ul>
+              {referencedVars?.length > 0 && <Fragment>
+                <br />
+                <br />
+                <h5>Variables</h5>
+                <ul style={{border: '1px solid black'}}>
+                  {referencedVars.map(name => {
+                    const cssVar = allVars.find(v=>v.name===name) || {
+                      name,
+                      usages: [
+                        {
+                          property: 'width',
+                        },
+                      ],
+                      properties: {width: {isFullProperty: true, fullValue: value, isImportant: false}},
+                      maxSpecific: {property: 'width'},
+                      positions: [],
+                  };;
+                    return <li key={name}>
+                      <VariableControl
+                        {...{
+                          cssVar,
+                          scopes: elementScopes,
+                          element,
+                        }}
+                        
+                        referenceChain={[{name: expression}]}
+                        onChange={value => {
+                          dispatch({
+                            type: ACTIONS.set,
+                            payload: {
+                              name: cssVar.name, 
+                              value,
+                            }
+                          });
+                        }}
+                        onUnset={() => {
+                          dispatch({ type: ACTIONS.unset, payload: { name: cssVar.name } });
+                        }}
+                      />
+                    </li>
+                  })}
+                </ul>
+              </Fragment>}
             </li>
           );
         })}

@@ -199,20 +199,16 @@ export const mediaMatchOptions = {
         // 'video-dynamic-range': 'standard',
 };
 
-// Avoid expensive circular reference check by just assuming one happened
-// after trying this many times.
-const maxTries = 50;
+const maxNesting = 20;
 // Look up value in edited state and default state.
-export function resolveVariables(value = '', elementScopes, scopes) {
-  let tries = 0, matchIndex;
-  // const origValue = value;
-  // console.log({origValue});
-  while (matchIndex = value.indexOf('var(--'), matchIndex !== -1) {
-    if (tries > maxTries) {
-      return '<<invalid: circular reference>>';
-    }
-    tries ++;
+export function resolveVariables(value = '', elementScopes, scopes, nestingLevel = 0) {
+  if (nestingLevel > maxNesting) {
+    return ['<<invalid: circular reference>>'];
+  }
+  const vars = [];
 
+  let matchIndex;
+  while (matchIndex = value.indexOf('var(--'), matchIndex !== -1) {
     const openingBracket = matchIndex + 3;
     const closingBracket = findClosingBracket(value, openingBracket);
     const args = value.slice(openingBracket + 1, closingBracket).trim();
@@ -236,18 +232,19 @@ export function resolveVariables(value = '', elementScopes, scopes) {
     if (!replacingValue) {
       if (noComma) {
         // debugger;
-        return `<<invalid: "${name}" is undefined>>`;
+        return [`<<invalid: "${name}" is undefined>>`];
       }
       const fallback = args.slice(firstComma + 1).trim();
       // console.log({fallback});
       replacingValue = fallback;
     }
-
-    // console.log('before', value);
-    value = value.slice(0, matchIndex) + replacingValue + value.slice(closingBracket + 1);
-    // console.log('after', value);
+    if (nestingLevel === 0 && !vars.includes(name)) {
+      vars.push(name);
+    }
+    value = value.slice(0, matchIndex) + resolveVariables(replacingValue, elementScopes, scopes, nestingLevel + 1)[0] + value.slice(closingBracket + 1);
   }
-  return value;
+
+  return [value, vars];
 }
 
 export const VariableControl = (props) => {
@@ -300,7 +297,7 @@ export const VariableControl = (props) => {
 
   // Resolve variables inside the value.
   // WIP: doesn't do all substitutions yet, but simple work.
-  let resolvedValue = resolveVariables(value, elementScopes, scopes);
+  let [resolvedValue, referencedVars] = resolveVariables(value, elementScopes, scopes);
 
   const [referencedVariable, usedScope] = useMemo(() => {
     const varMatches = value?.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
@@ -666,8 +663,7 @@ export const VariableControl = (props) => {
               //     });
               // }}
             >
-              <br />
-              <TypedControl {...{ cssVar, value, resolvedValue, onChange, cssFunc }} />
+              <TypedControl {...{ cssVar, value, resolvedValue, referencedVars, onChange, cssFunc, elementScopes }} />
             </div>
           )}
           {!!referencedVariable && !overwriteVariable && (

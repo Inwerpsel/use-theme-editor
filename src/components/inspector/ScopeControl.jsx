@@ -8,7 +8,7 @@ import { ElementLocator } from "../ui/ElementLocator";
 import { VariableControl } from "./VariableControl";
 
 export function ScopeControl(props) {
-    const { scopes, vars, element } = props;
+    const { scopes, vars } = props;
     const dispatch = editTheme();
     // Remove locator for now as it makes the UI jump too much.
     const [showLocator, setShowLocator] = useLocalStorage('show-scope-locators', false);
@@ -74,7 +74,6 @@ export function ScopeControl(props) {
                           {...{
                             cssVar,
                             scopes,
-                            element,
                             currentScope: selector,
                           }}
                           key={cssVar.name}

@@ -30,7 +30,7 @@ export function splitCommaSafeParentheses(selector) {
     for (const part of parts) {
       let ignoreNext = false, shouldJoin = false;
       let i = 0;
-      const chunk = joined + part;
+      const chunk = joined + (joined ? ',' : '') + part;
       for (const char of chunk) {
         if (ignoreNext) {
           ignoreNext = false;

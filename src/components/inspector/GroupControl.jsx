@@ -88,7 +88,7 @@ export const GroupControl = props => {
           getValueFromDefaultScopes(elementScopes, someVar) ||
           definedValues[':root'][name];
 
-        const value = resolveVariables(rawValue, elementScopes, scopes);
+        const [value] = resolveVariables(rawValue, elementScopes, scopes);
 
         if (value && value!== 'inherit' && value.toLowerCase() !== 'currentcolor') {
           colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value, rawValue]);
@@ -98,7 +98,7 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && !inlineStyles && !elSrc && !elHtml) { 
+  if (vars.length === 0 ) { 
     return null;
   }
 
@@ -226,7 +226,6 @@ export const GroupControl = props => {
               {...{
                 cssVar,
                 scopes: elementScopes,
-                element,
               }}
               key={cssVar.name}
               onChange={value => {

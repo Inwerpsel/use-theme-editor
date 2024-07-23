@@ -61,7 +61,7 @@ export const SizeControl = props => {
   const remValue = isRem(value) ? value.replace('rem', '') : isPx(value) ? convertPixelsToRem(parseFloat(value.replace('px', ''))) : '';
 
   if (isSingleMathExpression(value)) {
-    return <CalcSizeControl {...props} {...{resolvedValue}}/>;
+    return <CalcSizeControl {...props}/>;
   }
 
   return <div className='theme-length-controls'>

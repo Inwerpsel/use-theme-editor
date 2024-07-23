@@ -22,7 +22,7 @@ export const mustBeColor = cssVar => {
     
 };
 
-export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc}) => {
+export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc, referencedVars, elementScopes}) => {
   if (!/^--/.test(cssVar.name)) {
     // For now these can't be adjusted anyway, saves some performance.
     return null;
@@ -34,7 +34,7 @@ export const TypedControl = ({ cssVar, value, resolvedValue, onChange, cssFunc})
 
   if (cssVar.usages.some(usage => sizeLikeProperties.includes(usage.property))) {
 
-    return <SizeControl{...{value, resolvedValue, onChange}}/>;
+    return <SizeControl{...{value, resolvedValue, referencedVars, onChange, elementScopes}}/>;
   }
 
   if (cssVar.usages.some(usage => timeLikeProperties.includes(usage.property))) {
