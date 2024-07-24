@@ -50,12 +50,16 @@ const mathConstants = {
   // Let's ignore minus infinity, seems useless as a keyword and it makes parsing a lot harder.
 }
 
-function resolveUnits(value, scenario) {
+function resolveUnits(_value, scenario) {
+  const isNegative = _value[0] === '-';
+  const sign = isNegative ? -1 : 1;
+  const value = isNegative ? _value.slice(1) : _value;
+
   // Resolve constants
-  if (value in mathConstants) {
-    return mathConstants[value];
+  if (value.toLowerCase() in mathConstants) {
+    return mathConstants[value.toLowerCase()] * sign;
   }
-  const numericPart = parseFloat(value.replaceAll(/[^\d\.]/g, ''));
+  const numericPart = parseFloat(value.replaceAll(/[^\d\.]/g, '')) * sign;
   let unitPart = value.replace(/\d|\./g, '');
   // Todo: Inject correct value measured from element.
   // This is also needed for other units and probably needs other things, like container dimensions.
@@ -154,7 +158,7 @@ function evaluateCalc(expression, scenario) {
   const pendingStack = [];
 
   // Position in expression.
-  let cursor = 0;
+  let cursor = 0, previousChar = '', char = '', nextChar = '';
 
   const parser = {
     '('() {
@@ -201,12 +205,24 @@ function evaluateCalc(expression, scenario) {
         throw new Error('Unmatched closing bracket.')
     },
     '+'() {
-      pendingOperation = ['+', buffer];
+      if (previousChar !== ' ' && previousChar !== undefined) {
+        throw new Error('Plus operator cannot be preceded by a space.')
+      }
+      if (nextChar === ' ') {
+        pendingOperation = ['+', buffer];
+      }
       buffer = '';
     },
     '-'() {
-      pendingOperation = ['-', buffer];
-      buffer = '';
+      if (previousChar !== ' ' && previousChar !== undefined) {
+        throw new Error('Minus operator cannot be preceded by a space.')
+      }
+      if (nextChar === ' ') {
+        pendingOperation = ['-', buffer];
+        buffer = '';
+      } else {
+        buffer = '-';
+      }
     },
     '/'() {
       pendingOperation = ['/', buffer];
@@ -218,15 +234,20 @@ function evaluateCalc(expression, scenario) {
     },
   }
   while (cursor < expression.length) {
-    const char = expression[cursor];
+    previousChar = expression[cursor - 1];
+    char = expression[cursor];
+    nextChar = expression[cursor + 1];
+
     if (char in parser) {
-      if (char !== '(' && pendingOperation) {
+      const isPlusOrMinusSomething = (nextChar !== ' ') && (char === '+' || char === '-');
+      if (!isPlusOrMinusSomething && char !== '(' && pendingOperation) {
         if (precedence[char] > precedence[pendingOperation[0]]) {
-            // throw new Error('Help I cannot handle this precedence thing yet.')
-            pendingStack.push(pendingOperation);
-       } else {
-            buffer = resolveOperation(pendingOperation, buffer, scenario);
-            pendingOperation = null;
+          console.log('higher precedence, delay', pendingOperation, buffer, char);
+          pendingStack.push(pendingOperation);
+        } else {
+          console.log('lower or equal precedence, perform', pendingOperation, buffer, char);
+          buffer = resolveOperation(pendingOperation, buffer, scenario);
+          pendingOperation = null;
         }
       }
       parser[char]();
@@ -275,7 +296,7 @@ const describeInvocation = {
 };
 
 export function CalcSizeControl(props) {
-  const {value, resolvedValue, referencedVars, onChange, elementScopes, element} = props;
+  const {value, resolvedValue, referencedVars, onChange, elementScopes} = props;
   const {width, height} = get;
   const [{scopes}, dispatch] = use.themeEditor();
   const {
@@ -368,9 +389,7 @@ export function CalcSizeControl(props) {
                         {...{
                           cssVar,
                           scopes: elementScopes,
-                          element,
                         }}
-                        
                         referenceChain={[{name: expression}]}
                         onChange={value => {
                           dispatch({
