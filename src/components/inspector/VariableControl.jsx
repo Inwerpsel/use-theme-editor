@@ -17,6 +17,7 @@ import { MediaQueries } from './MediaQueries';
 import { ToggleButton } from '../controls/ToggleButton';
 import { dragValue } from '../../functions/dragValue';
 import { findClosingBracket } from '../../functions/compare';
+import { CalcSizeControl, isSingleMathExpression } from '../properties/CalcSizeControl';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -345,7 +346,7 @@ export const VariableControl = (props) => {
     useResumableState(`open_${key}`, currentLevel > 0 && !!referencedVariable);
   const toggleOpen = () => setIsOpen(!isOpen );
   const [showSelectors, setShowSelectors] =
-    useResumableState(`showSelectors_${key}`, cssVar.isRawValue);
+    useResumableState(`showSelectors_${key}`, false);
   const [showReferences, setShowReferences] = 
     useResumableState(`showRefs_${key}`, false);
   const [openVariablePicker, setOpenVariablePicker] = 
@@ -665,6 +666,9 @@ export const VariableControl = (props) => {
             >
               <TypedControl {...{ cssVar, value, resolvedValue, referencedVars, onChange, cssFunc, elementScopes }} />
             </div>
+          )}
+          {!name.startsWith('--') && isSingleMathExpression(name) && (
+            <CalcSizeControl {...{value, resolvedValue, referencedVars, onChange: () => {}, elementScopes}} />
           )}
           {!!referencedVariable && !overwriteVariable && (
             <ul style={{ margin: 0 }}>
