@@ -25,6 +25,8 @@ export function MoveControls() {
     return JSON.stringify(uiState) === windowArrangments[inputName];
   }, [windowArrangments, uiState, inputName]);
 
+  const supportsDrag = matchMedia('(pointer:fine)').matches;
+
   return (
     <div>
       <DragHandle/>
@@ -33,10 +35,10 @@ export function MoveControls() {
         () => ['Drag this element into the right area', useContext(MovableElementContext).hostAreaId === 'area-right'],
         () => ['Close the drawer', !drawerOpen],
       ]}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
-      <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
-      <Checkbox controls={[dragEnabled, setDragEnabled]}>
+      {supportsDrag && <Checkbox controls={[dragEnabled, setDragEnabled]}>
         Drag elements
-      </Checkbox>
+      </Checkbox>}
+      <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
       {Object.keys(uiState.map).length > 0 && (
         <button onClick={() => confirm('Reset to default?') && resetPanels()}>
           reset

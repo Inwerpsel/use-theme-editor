@@ -738,6 +738,7 @@ button {
 }
 #drawer .tutorial-content {
   bottom: 100%;
+  right: 0;
 }
 #area-left .tutorial-content, #area-left-inner .tutorial-content {
   left: 100%;
