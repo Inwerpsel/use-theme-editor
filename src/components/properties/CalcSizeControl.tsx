@@ -43,6 +43,46 @@ const operators = {
   },
 }
 
+// Get right unit depending on units of operands.
+const resultHasUnit = {
+  '+'(a, b) {
+    if (a) {
+      if (!b) throw new Error('Tried adding unitless value to value with unit.');
+
+      return true;
+    }
+    if (b) {
+      if (!a) throw new Error('Tried adding value with unit to unitless value.');
+
+      return true;
+    }
+    return false;
+  },
+  '-'(a, b) {
+    if (a) {
+      if (!b) throw new Error('Tried subtracting unitless value from value with unit.');
+
+      return true;
+    }
+    if (b) {
+      if (!a) throw new Error('Tried subtracting value with unit from unitless value.');
+
+      return true;
+    }
+    return false;
+  },
+  '*'(a, b) {
+    if (a && b) throw new Error('At least 1 operand must be unitless.');
+
+    return a || b;
+  },
+  '/'(a, b) {
+    if (b) throw new Error('Divisor must be unitless.');
+
+    return a;
+  },
+};
+
 const mathConstants = {
   e: Math.E,
   pi: Math.PI,
@@ -50,14 +90,13 @@ const mathConstants = {
   // Let's ignore minus infinity, seems useless as a keyword and it makes parsing a lot harder.
 }
 
-function resolveUnits(_value, scenario) {
+function resolveUnits(_value, scenario): [number, boolean?] {
   const isNegative = _value[0] === '-';
   const sign = isNegative ? -1 : 1;
   const value = isNegative ? _value.slice(1) : _value;
 
-  // Resolve constants
   if (value.toLowerCase() in mathConstants) {
-    return mathConstants[value.toLowerCase()] * sign;
+    return [mathConstants[value.toLowerCase()] * sign, false];
   }
   const numericPart = parseFloat(value.replaceAll(/[^\d\.]/g, '')) * sign;
   let unitPart = value.replace(/\d|\./g, '');
@@ -68,7 +107,7 @@ function resolveUnits(_value, scenario) {
     unitPart = 'rem';
   }
   if (unitPart === '') {
-    return numericPart;
+    return [numericPart, false];
   }
   const {width = 360, height = 640, remFactor = 16, resultUnit = 'px'} = scenario;
 
@@ -78,16 +117,16 @@ function resolveUnits(_value, scenario) {
 
   if (resultUnit === 'rem') {
     if (unitPart === 'rem') {
-      return numericPart;
+      return [numericPart, true];
     }
     if (unitPart === 'px') {
-      return numericPart / remFactor;
+      return [numericPart / remFactor, true];
     }
     if (unitPart === 'vw') {
-      return (numericPart / 100) * width / remFactor;
+      return [(numericPart / 100) * width / remFactor, true];
     }
     if (unitPart === 'vh') {
-      return (numericPart / 100) * height / remFactor;
+      return [(numericPart / 100) * height / remFactor, true];
     }
     throw new Error(`Unsupported unit. "${unitPart}"`)
 
@@ -101,10 +140,10 @@ function resolveUnits(_value, scenario) {
             ? result
             : `${numericPart} * ${remFactor} = ${result}`,
       });
-      return result;
+      return [result, true];
     }
     if (unitPart === 'px') {
-      return numericPart;
+      return [numericPart, true];
     }
     if (unitPart === 'vw') {
       const result = width * numericPart / 100;
@@ -112,7 +151,7 @@ function resolveUnits(_value, scenario) {
         before: value,
         result: `${width} * ${numericPart}/100 = ${result}`,
       });
-      return result;
+      return [result, true];
     }
     if (unitPart === 'vh') {
       const result = height * numericPart / 100;
@@ -120,7 +159,7 @@ function resolveUnits(_value, scenario) {
         before: value,
         result: `${height} * ${numericPart}/100 = ${result}`,
       });
-      return result;
+      return [result, true];
     }
     throw new Error(`Unsupported unit. "${unitPart}"`)
   }
@@ -128,19 +167,22 @@ function resolveUnits(_value, scenario) {
   throw new Error('Unsupported result unit.')
 }
 
-function resolveOperation([operator, arg1], arg2, scenario) {
+function resolveOperation([operator, arg1, aHadUnit], arg2, scenario, bHadUnit = false) {
   if (!(operator in operators)) {
     throw new Error('Unknown operator');
   }
 
-  const a = resolveUnits(`${arg1}`.trim(), scenario);
-  const b = resolveUnits(`${arg2}`.trim(), scenario);
+  const [a, _aHasUnit] = resolveUnits(`${arg1}`.trim(), scenario);
+  const [b, _bHasUnit] = resolveUnits(`${arg2}`.trim(), scenario);
+  const aHasUnit = _aHasUnit || aHadUnit;
+  const bHasUnit = _bHasUnit || bHadUnit;
 
+  const hasUnit = resultHasUnit[operator](aHasUnit, bHasUnit);
   const result = operators[operator](a, b);
 
   scenario.steps.push({orig: {arg1, arg2}, a, operator, b, result});
 
-  return result;
+  return [result, hasUnit];
 }
 
 const precedence = {
@@ -150,8 +192,25 @@ const precedence = {
   '/': 3,
 };
 
-function evaluateCalc(expression, scenario) {
-  let buffer = '';
+function getArgumentListOfSameType(argString, scenario): [number[], boolean] {
+  const results = splitCommaSafeParentheses(argString).map(v => evaluateCalc(v.trim(), scenario))
+
+  let resultHasUnit;
+  for (const [, hasUnit] of results) {
+    if (resultHasUnit === undefined) {
+      resultHasUnit  = hasUnit;
+      continue;
+    }
+    if (hasUnit !== resultHasUnit) {
+      throw new Error('All arguments need to be of the same type.')
+    }
+  }
+
+  return [results.map(([n]) => n), resultHasUnit];
+}
+
+function evaluateCalc(expression, scenario): [number, boolean] {
+  let buffer = '' as number|string, bufferHasUnit = false;
   // [operator, first arg] sits waiting for new arg as it's discovered.
   let pendingOperation;
 
@@ -171,7 +230,8 @@ function evaluateCalc(expression, scenario) {
       const possibleFunction = buffer.toLowerCase();
 
       if (possibleFunction === 'clamp') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
+        const [args, resultHasUnit] = getArgumentListOfSameType(inside, scenario);
+        bufferHasUnit = resultHasUnit;
         const [min, preferred, max] = args;
         // console.log('CLAMP', args);
         buffer = parseFloat(preferred) < parseFloat(min) ? min : parseFloat(preferred) > parseFloat(max) ? max : preferred;
@@ -179,24 +239,28 @@ function evaluateCalc(expression, scenario) {
         scenario.steps.push({mathFunc: 'clamp', args, result: buffer});
 
       } else if (possibleFunction === 'min') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
+        const [args, resultHasUnit] = getArgumentListOfSameType(inside, scenario);
+        bufferHasUnit = resultHasUnit;
         buffer = args.reduce(
           (lowest, v) => (v < lowest ? v : lowest),
           Infinity
         );
         scenario.steps.push({mathFunc: 'min', args, result: buffer});
       } else if (possibleFunction === 'max') {
-        const args = splitCommaSafeParentheses(inside).map(v => evaluateCalc(v.trim(), scenario));
+        const [args, resultHasUnit] = getArgumentListOfSameType(inside, scenario);
+        bufferHasUnit = resultHasUnit;
         buffer = args.reduce(
           (highest, v) => (v > highest ? v : highest),
           -Infinity
         );
         scenario.steps.push({mathFunc: 'max', args, result: buffer});
       } else {
-        buffer = evaluateCalc(
+        const [result, hasUnit] = evaluateCalc(
           inside,
           scenario
         );
+        buffer = result;
+        bufferHasUnit = hasUnit;
       }
       cursor = closingBracketPosition;
     },
@@ -209,7 +273,7 @@ function evaluateCalc(expression, scenario) {
         throw new Error('Plus operator cannot be preceded by a space.')
       }
       if (nextChar === ' ') {
-        pendingOperation = ['+', buffer];
+        pendingOperation = ['+', buffer, bufferHasUnit];
       }
       buffer = '';
     },
@@ -218,18 +282,18 @@ function evaluateCalc(expression, scenario) {
         throw new Error('Minus operator cannot be preceded by a space.')
       }
       if (nextChar === ' ') {
-        pendingOperation = ['-', buffer];
+        pendingOperation = ['-', buffer, bufferHasUnit];
         buffer = '';
       } else {
         buffer = '-';
       }
     },
     '/'() {
-      pendingOperation = ['/', buffer];
+      pendingOperation = ['/', buffer, bufferHasUnit];
       buffer = '';
     },
     '*'() {
-      pendingOperation = ['*', buffer];
+      pendingOperation = ['*', buffer, bufferHasUnit];
       buffer = '';
     },
   }
@@ -242,11 +306,11 @@ function evaluateCalc(expression, scenario) {
       const isPlusOrMinusSomething = (nextChar !== ' ') && (char === '+' || char === '-');
       if (!isPlusOrMinusSomething && char !== '(' && pendingOperation) {
         if (precedence[char] > precedence[pendingOperation[0]]) {
-          console.log('higher precedence, delay', pendingOperation, buffer, char);
+          // console.log('higher precedence, delay', pendingOperation, buffer, char);
           pendingStack.push(pendingOperation);
         } else {
-          console.log('lower or equal precedence, perform', pendingOperation, buffer, char);
-          buffer = resolveOperation(pendingOperation, buffer, scenario);
+          // console.log('lower or equal precedence, perform', pendingOperation, buffer, char);
+          [buffer, bufferHasUnit] = resolveOperation(pendingOperation, buffer, scenario);
           pendingOperation = null;
         }
       }
@@ -259,12 +323,15 @@ function evaluateCalc(expression, scenario) {
     cursor++;
   }
   if (pendingOperation) {
-    buffer = resolveOperation(pendingOperation, `${buffer}`.trim(), scenario);
+    [buffer, bufferHasUnit] = resolveOperation(pendingOperation, `${buffer}`.trim(), scenario);
   }
   while (pendingStack.length > 0) {
-    buffer = resolveOperation(pendingStack.pop(), buffer, scenario);
+    [buffer, bufferHasUnit] = resolveOperation(pendingStack.pop(), buffer, scenario, bufferHasUnit);
   }
-  return resolveUnits(`${buffer}`.trim(), scenario);
+
+  const [result, resultHasUnit] = resolveUnits(`${buffer}`.trim(), scenario);
+
+  return [result, resultHasUnit || bufferHasUnit];
 }
 
 function evaluateScenarios(expression, scenarios) {
@@ -272,7 +339,7 @@ function evaluateScenarios(expression, scenarios) {
   for (const scenario of scenarios) {
     scenario.steps = [];
     try {
-      results.push([scenario, evaluateCalc(expression, scenario)]);
+      results.push([scenario, ...evaluateCalc(expression, scenario)]);
     } catch(e) {
       results.push([scenario, e.message]);
     }
@@ -337,17 +404,15 @@ export function CalcSizeControl(props) {
       />
       <h4>Evaluates to</h4>
       <ul>
-        {results.map(([{ width, height, resultUnit, remFactor, steps }, result]) => {
+        {results.map(([{ width, height, resultUnit, remFactor, steps }, result, hasUnit]) => {
           const k = `${width}x${height}~${resultUnit}~${remFactor}`;
           return (
             <li key={k}>
               <code style={{cursor: 'pointer', fontSize: '2rem'}} onClick={() => onChange(`${result}${resultUnit}`)}>
                 {result}
-                {resultUnit}
+                {hasUnit && resultUnit}
               </code>
               <pre><code>at {width}x{height}</code></pre>
-              <br />
-              <br />
               <code>{resolvedOuter}</code>
               <h5>Steps</h5>
               <ul>
@@ -364,11 +429,10 @@ export function CalcSizeControl(props) {
                     comp = <code>{before} = {result}</code>;
                   }
 
-                  return <li key={i}>{comp}</li>;
+                  return <li key={i}>{comp}<br /><br /></li>;
                 })}
               </ul>
               {referencedVars?.length > 0 && <Fragment>
-                <br />
                 <br />
                 <h5>Variables</h5>
                 <ul style={{border: '1px solid black'}}>

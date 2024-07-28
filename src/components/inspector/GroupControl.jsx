@@ -98,7 +98,7 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 ) { 
+  if (vars.length === 0 && !inlineStyles && !elSrc && !elHtml) { 
     return null;
   }
 
