@@ -177,7 +177,12 @@ function resolveOperation([operator, arg1, aHadUnit], arg2, scenario, bHadUnit =
   const aHasUnit = _aHasUnit || aHadUnit;
   const bHasUnit = _bHasUnit || bHadUnit;
 
-  const hasUnit = resultHasUnit[operator](aHasUnit, bHasUnit);
+  let hasUnit;
+  try {
+    hasUnit = resultHasUnit[operator](aHasUnit, bHasUnit);
+  } catch (e) {
+    throw new Error(e.message + ' ' + `\nFound:\n${arg1} ${operator} ${arg2}`)
+  }
   const result = operators[operator](a, b);
 
   scenario.steps.push({orig: {arg1, arg2}, a, operator, b, result});
@@ -202,7 +207,7 @@ function getArgumentListOfSameType(argString, scenario): [number[], boolean] {
       continue;
     }
     if (hasUnit !== resultHasUnit) {
-      throw new Error('All arguments need to be of the same type.')
+      throw new Error('All arguments need to be of the same type. ' + argString);
     }
   }
 
@@ -269,19 +274,19 @@ function evaluateCalc(expression, scenario): [number, boolean] {
         throw new Error('Unmatched closing bracket.')
     },
     '+'() {
-      if (previousChar !== ' ' && previousChar !== undefined) {
-        throw new Error('Plus operator cannot be preceded by a space.')
-      }
       if (nextChar === ' ') {
+        if (previousChar !== ' ' && previousChar !== undefined) {
+          throw new Error('Plus operator must be preceded by a space.')
+        }
         pendingOperation = ['+', buffer, bufferHasUnit];
       }
       buffer = '';
     },
     '-'() {
-      if (previousChar !== ' ' && previousChar !== undefined) {
-        throw new Error('Minus operator cannot be preceded by a space.')
-      }
       if (nextChar === ' ') {
+        if (previousChar !== ' ' && previousChar !== undefined) {
+          throw new Error('Minus operator must be preceded by a space.')
+        }
         pendingOperation = ['-', buffer, bufferHasUnit];
         buffer = '';
       } else {
@@ -340,8 +345,9 @@ function evaluateScenarios(expression, scenarios) {
     scenario.steps = [];
     try {
       results.push([scenario, ...evaluateCalc(expression, scenario)]);
-    } catch(e) {
-      results.push([scenario, e.message]);
+    } catch(error) {
+      scenario.steps.push({error: error.message})
+      results.push([scenario, error.message]);
     }
   }
 
@@ -470,6 +476,9 @@ export function CalcSizeControl(props) {
                   } else if (step.operator) {
                     const {orig: {arg1, arg2}, a, operator, b, result} = step;
                     comp = <code title={`${arg1} ${operator} ${arg2}`}>{a} {operator} {b} = {result}</code>;
+                  } else if (step.error) {
+                    const {error} = step;
+                    comp = <code>Error: {error}</code>;
                   } else {
                     const {before, result} = step;
                     comp = <code>{before} = {result}</code>;
