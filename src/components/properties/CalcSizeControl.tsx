@@ -3,9 +3,9 @@ import { TextControl } from "../controls/TextControl";
 import { ThemeEditorContext } from '../ThemeEditor';
 import { findClosingBracket } from '../../functions/compare';
 import { splitCommaSafeParentheses } from '../../functions/getOnlyMostSpecific';
-import { get, use } from '../../state';
+import { get } from '../../state';
 import { VariableControl } from '../inspector/VariableControl';
-import { ACTIONS } from '../../hooks/useThemeEditor';
+import { ACTIONS, editTheme } from '../../hooks/useThemeEditor';
 
 // True if the expression is a single `calc` expression,
 // or a single mathematical function (min, max, clamp).
@@ -362,14 +362,57 @@ const describeInvocation = {
   },
 };
 
+function UsedVariables(props) {
+  const { referencedVars, elementScopes, expression } = props;
+  const dispatch = editTheme();
+  const { allVars } = useContext(ThemeEditorContext);
+
+  return <Fragment>
+    <br />
+    <h5>Variables</h5>
+    <ul style={{border: '1px solid black'}}>
+      {referencedVars.map(name => {
+        const cssVar = allVars.find(v=>v.name===name) || {
+          name,
+          usages: [
+            {
+              property: 'width',
+            },
+          ],
+          properties: {width: {isFullProperty: true, fullValue: `var(--${name})`, isImportant: false}},
+          maxSpecific: {property: 'width'},
+          positions: [],
+        };
+        return <li key={name}>
+          <VariableControl
+            {...{
+              cssVar,
+              scopes: elementScopes,
+            }}
+            referenceChain={[{name: expression}]}
+            onChange={value => {
+              dispatch({
+                type: ACTIONS.set,
+                payload: {
+                  name: cssVar.name, 
+                  value,
+                }
+              });
+            }}
+            onUnset={() => {
+              dispatch({ type: ACTIONS.unset, payload: { name: cssVar.name } });
+            }}
+          />
+        </li>
+      })}
+    </ul>
+  </Fragment>;
+}
+
 export function CalcSizeControl(props) {
-  const {value, resolvedValue, referencedVars, onChange, elementScopes} = props;
-  const {width, height} = get;
-  const [{scopes}, dispatch] = use.themeEditor();
-  const {
-    frameRef,
-    allVars,
-  } = useContext(ThemeEditorContext);
+  const { value, resolvedValue, referencedVars, onChange, elementScopes, disabled = false } = props;
+  const { width, height } = get;
+  const { frameRef } = useContext(ThemeEditorContext);
 
   const outer = value.startsWith('calc(') 
     ? value.replace(/calc\(/, '').replace(/\)$/, '')
@@ -397,6 +440,7 @@ export function CalcSizeControl(props) {
       <h3>Calculation</h3>
       <TextControl
         {...{
+          disabled,
           style: { width: '100%' },
           value: expression,
           onChange: (v) => onChange(isSingleMathExpression(v) ? v : `calc(${v})`),
@@ -413,6 +457,8 @@ export function CalcSizeControl(props) {
                 {hasUnit && resultUnit}
               </code>
               <pre><code>at {width}x{height}</code></pre>
+              {referencedVars?.length > 0 && <UsedVariables {...{ referencedVars, elementScopes, expression }} />}
+              <br />
               <code>{resolvedOuter}</code>
               <h5>Steps</h5>
               <ul>
@@ -432,46 +478,6 @@ export function CalcSizeControl(props) {
                   return <li key={i}>{comp}<br /><br /></li>;
                 })}
               </ul>
-              {referencedVars?.length > 0 && <Fragment>
-                <br />
-                <h5>Variables</h5>
-                <ul style={{border: '1px solid black'}}>
-                  {referencedVars.map(name => {
-                    const cssVar = allVars.find(v=>v.name===name) || {
-                      name,
-                      usages: [
-                        {
-                          property: 'width',
-                        },
-                      ],
-                      properties: {width: {isFullProperty: true, fullValue: value, isImportant: false}},
-                      maxSpecific: {property: 'width'},
-                      positions: [],
-                  };;
-                    return <li key={name}>
-                      <VariableControl
-                        {...{
-                          cssVar,
-                          scopes: elementScopes,
-                        }}
-                        referenceChain={[{name: expression}]}
-                        onChange={value => {
-                          dispatch({
-                            type: ACTIONS.set,
-                            payload: {
-                              name: cssVar.name, 
-                              value,
-                            }
-                          });
-                        }}
-                        onUnset={() => {
-                          dispatch({ type: ACTIONS.unset, payload: { name: cssVar.name } });
-                        }}
-                      />
-                    </li>
-                  })}
-                </ul>
-              </Fragment>}
             </li>
           );
         })}

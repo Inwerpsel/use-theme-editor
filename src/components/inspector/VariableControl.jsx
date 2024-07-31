@@ -668,7 +668,7 @@ export const VariableControl = (props) => {
             </div>
           )}
           {!name.startsWith('--') && isSingleMathExpression(name) && (
-            <CalcSizeControl {...{value, resolvedValue, referencedVars, onChange: () => {}, elementScopes}} />
+            <CalcSizeControl disabled {...{value, resolvedValue, referencedVars, onChange: () => {}, elementScopes}} />
           )}
           {!!referencedVariable && !overwriteVariable && (
             <ul style={{ margin: 0 }}>
