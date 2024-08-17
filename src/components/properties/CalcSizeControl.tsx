@@ -328,7 +328,7 @@ function evaluateCalc(expression, scenario): [number, boolean] {
     cursor++;
   }
   if (pendingOperation) {
-    [buffer, bufferHasUnit] = resolveOperation(pendingOperation, `${buffer}`.trim(), scenario);
+    [buffer, bufferHasUnit] = resolveOperation(pendingOperation, `${buffer}`.trim(), scenario, bufferHasUnit); 
   }
   while (pendingStack.length > 0) {
     [buffer, bufferHasUnit] = resolveOperation(pendingStack.pop(), buffer, scenario, bufferHasUnit);
