@@ -22,7 +22,8 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   text-align: start;
 
   button, input {
-    background: revert;
+    // Quick fix for some unwanted dark modes in demos.
+    background: white;
     margin-right: 2px;
     border: 1px solid black;
     padding: 4px 7px;
@@ -488,8 +489,17 @@ div[id^=font-picker] ul {
   }
 }
 
-.history > ul > li:not(:hover) button:not(.locked-here) {
+.history > ul > li:not(:hover) button:not(.pinned-here) {
   visibility: hidden;
+}
+
+.pin {
+  display: block;
+  transition: transform .15s ease-in;
+}
+
+.pinned-here .pin { 
+  transform: rotate(-45deg) translate(-7px, 7px);
 }
 
 button {

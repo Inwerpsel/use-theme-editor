@@ -1,4 +1,4 @@
-import { createTimeline,  initialStates, interestingKeys, restoreLocks, restoreOffset, setStates } from "../hooks/useResumableReducer";
+import { createTimeline,  initialStates, interestingKeys, restorePins, restoreOffset, setStates } from "../hooks/useResumableReducer";
 import { INSPECTIONS } from "../renderSelectedVars";
 import { use } from "../state";
 
@@ -41,7 +41,7 @@ export function restoreHistory() {
         createTimeline(records);
 
         needsSnapshot = i === 0;
-        restoreLocks();
+        restorePins();
         restoreOffset();
     };
 }

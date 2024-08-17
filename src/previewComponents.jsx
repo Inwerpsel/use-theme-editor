@@ -37,7 +37,7 @@ export const previewComponents = {
     </div>;
   },
 
-  'inspected-index': ({ action: index }) => (
+  'inspected-index': ({ action: index }) => index == -1 ? null : (
     <Fragment>
       Inspect
       <pre className="monospace-code">{prevGroups.length <= index ? '' : prevGroups[index][0]?.label}</pre>

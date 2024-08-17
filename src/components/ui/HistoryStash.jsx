@@ -48,10 +48,10 @@ function Clear() {
 // - boolean behavior after applying stash (stay before or go after?)
 
 // todo:
-// - locks
-// - initial history entry should contain all state values, so it can be locked there
-//   - this in turn allows for a way to deal with locks when they're on the thing that's about to be stashed
-//   - either the lock is removed and the old value is used again (probably unwanted a lot of the time but it's an easy option)
-//   - or the lock history can be removed, in which case the locked value has to move all the way to the initial state
+// - pins
+// - initial history entry should contain all state values, so it can be pinned there
+//   - this in turn allows for a way to deal with pins when they're on the thing that's about to be stashed
+//   - either the pin is removed and the old value is used again (probably unwanted a lot of the time but it's an easy option)
+//   - or the pin history can be removed, in which case the pinned value has to move all the way to the initial state
 
 HistoryStash.fName = 'HistoryStash';

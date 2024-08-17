@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef, Fragment } from 'react';
-import { HistoryNavigateContext, addLock, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, lockLatest, performAction, removeLock } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addPin, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, pinInitial, pinLatest, performAction, removePin } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
@@ -36,71 +36,91 @@ function nextHistoryEntryHasSameAction() {
 
 const tasks = [
   () => {
-    const { locks } = useContext(HistoryNavigateContext);
-    return ['Lock the screen width and height.', locks.has('width') && locks.has('height')];
+    const { pins } = useContext(HistoryNavigateContext);
+    return ['Pin the screen width and height.', pins.has('width') && pins.has('height')];
   },
 ];
 
-function ExplainLocks() {
+function ExplainPins() {
   return <Fragment>
   <p>
     We're tracking so many things, that it's quite likely you'll not want to use the older
     version of certain things, but still want to wind back to any point in history for everything else.
   </p>
   <p>
-    To achieve this, there is a lock button, which locks the value at a particular point in time,
+    To achieve this, there is a pin button, which pins the value at a particular point in time,
     and so allows you to browse everything else.
   </p>
   <p>
-    Note that locking does not prevent you from making new changes to the same type of value (e.g. screen width).
-    Rather, the new value will now be locked instead. You can easily unlock this value again if needed.
+    Note that pinning does not prevent you from making new changes to the same type of value (e.g. screen width).
+    Rather, the new value will now be pinned instead. You can easily unpin this value again if needed.
   </p>
   </Fragment>;
 }
 
-function LockState(props) {
+function PinState(props) {
   const { id, historyIndex } = props;
-  const { locks } = useContext(HistoryNavigateContext);
-  const lockedIndex = locks.get(id);
-  const lockedHere = historyIndex === lockedIndex;
+  const { pins } = useContext(HistoryNavigateContext);
+  const pinIndex = pins.get(id);
+  const pinnedHere = historyIndex === pinIndex;
 
   return (
     <button
-      className={lockedHere ? 'locked-here' : ''}
+      className={pinnedHere ? 'pinned-here' : ''}
       style={{
-        outline: lockedHere ? '2px solid black' : 'none',
-        background: lockedHere ? 'white' : 'transparent',
+        outline: pinnedHere ? '2px solid black' : 'none',
+        background: pinnedHere ? 'white' : 'transparent',
       }}
       onClick={(event) => {
-        lockedHere ? removeLock(id) : addLock(id, historyIndex);
+        pinnedHere ? removePin(id) : addPin(id, historyIndex);
         event.stopPropagation();
       }}
-      title="Lock here"
+      title="Pin here"
     >
-      🔒
+      <span className='pin'>📌</span>
     </button>
   );
 }
 
-function LockLatest(props) {
+function PinLatest(props) {
   const { id, historyIndex  } = props;
-  const { locks } = useContext(HistoryNavigateContext);
+  const { pins } = useContext(HistoryNavigateContext);
   const latestForId = latestOccurrence(id);
   if (historyIndex === latestForId) {
     return <span style={{float: 'right'}}>latest</span> 
   }
-  const lockedIndex = locks.get(id);
-  const lockedAtLatest = lockedIndex === latestForId;
+  const pinIndex = pins.get(id);
+  const pinnedAtLatest = pinIndex === latestForId;
 
   return <button style={{
     float: 'right',
-    outline: lockedAtLatest ? '2px solid black' : 'none',
-    background: lockedAtLatest ? 'white' : 'transparent',
-    // visibility: lockedAtLatest ? 'visible' : null,
-  }} onClick={lockedAtLatest ? () => {removeLock(id)} : () => {
-    lockLatest(id);
-  }} title="Lock to latest">
-    🔒→
+    outline: pinnedAtLatest ? '2px solid black' : 'none',
+    background: pinnedAtLatest ? 'white' : 'transparent',
+  }} onClick={pinnedAtLatest ? () => {removePin(id)} : () => {
+    pinLatest(id);
+  }} title="Pin to latest">
+    📌→
+  </button>
+}
+
+function PinFirst(props) {
+  const { id, historyIndex  } = props;
+  const { pins } = useContext(HistoryNavigateContext);
+  if (historyIndex === 0) {
+    return null;
+  }
+  const pinnedIndex = pins.get(id);
+  const pinnedInitial = pinnedIndex === 0;
+
+  return <button style={{
+    float: 'right',
+    outline: pinnedInitial ? '2px solid black' : 'none',
+    background: pinnedInitial ? 'white' : 'transparent',
+    // visibility: pinnedAtLatest ? 'visible' : null,
+  }} onClick={pinnedInitial ? () => {removePin(id)} : () => {
+    pinInitial(id);
+  }} title="Pin to initial">
+   ←📌
   </button>
 }
 
@@ -108,7 +128,7 @@ function ActionList(props) {
   const {actions, showPayloads, historyIndex} = props;
   const {
       previewComponents,
-      locks,
+      pins,
   } = useContext(HistoryNavigateContext);
 
   return (
@@ -134,15 +154,16 @@ function ActionList(props) {
             ? null
             : previewComponents[id][getName(action)];
 
-        const isLockedElsewhere = locks.has(id) && locks.get(id) !== historyIndex;
+        const isPinnedElsewhere = pins.has(id) && pins.get(id) !== historyIndex;
 
         return (
-          <li {...{ key }} 
-            title={isLockedElsewhere ? 'Overridden by lock' : ''}
-            style={{ clear: 'both', opacity: isLockedElsewhere ? .5 : 1}}
+          <li key={`${historyIndex}:${key}`}
+            title={isPinnedElsewhere ? 'Overridden by pin' : ''}
+            style={{ clear: 'both', opacity: isPinnedElsewhere ? .5 : 1}}
           >
-            <LockState {...{id, historyIndex}} />
-            <LockLatest {...{id, historyIndex}} />
+            <PinState {...{id, historyIndex}} />
+            <PinLatest {...{id, historyIndex}} />
+            <PinFirst {...{id, historyIndex}} />
             {!Preview && (
               <span>
                 <b>{id}</b>
@@ -176,16 +197,23 @@ function CurrentActions() {
     past,
     historyOffset,
     lastActions,
+    initialStates,
   } = useContext(HistoryNavigateContext);
+  const [showInitial, setShowInitial] = useState(false);
   const index = past.length - historyOffset;
   const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
+  const isInitial = index === 0; 
+  const entries =  (isInitial && showInitial)
+    ? [...initialStates.entries()].filter(([id]) => id in use) 
+    : [...actions.entries()];
   
   return (
     <div onWheelCapture={scrollHistory} style={{minWidth: '280px', maxWidth: '400px', minHeight: '240px', overflow: 'hidden visible'}}>
-      <ActionList historyIndex={index} actions={actions.entries()} />
+      {isInitial && <Checkbox controls={[showInitial, setShowInitial]} >Show all initial values</Checkbox>}
+      <ActionList historyIndex={index} actions={entries} />
       {/* Quick fix for el not always shown... */}
       <Tutorial el={HistoryVisualization} {...{tasks}}>
-        <ExplainLocks />
+        <ExplainPins />
         Since history visualization is disabled, this only shows current history entry.
       </Tutorial>
     </div>
@@ -203,7 +231,7 @@ export function HistoryVisualization() {
     historyOffset,
     lastActions,
     pointedStates,
-    locks,
+    pins,
   } = useContext(HistoryNavigateContext);
 
   const showHistory = get.visualizeHistory && (visualizeAlways || historyOffset !== 0);
@@ -224,7 +252,7 @@ export function HistoryVisualization() {
   return (
     <div className="history">
       <Tutorial el={HistoryVisualization} {...{tasks}}>
-        <ExplainLocks />
+        <ExplainPins />
         See all steps you took here.
       </Tutorial>
       <DisableScrollHistoryInArea/>
@@ -262,10 +290,10 @@ export function HistoryVisualization() {
           );
 
           if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
-            // Always display an entry if state is locked to its index
+            // Always display an entry if state is pinned to its index
             const keys = [...lastActions.keys()];
-            const anyLockedHere = keys.some(id=>locks.has(id) && locks.get(id) === index);
-            if (!anyLockedHere && !keys.some(k=>interestingKeys.includes(k))) {
+            const anyPinnedHere = keys.some(id=>pins.has(id) && pins.get(id) === index);
+            if (!anyPinnedHere && !keys.some(k=>interestingKeys.includes(k))) {
               return null;
             }
           }
@@ -288,7 +316,7 @@ export function HistoryVisualization() {
               </span>
               <ActionList
                 historyIndex={index}
-                actions={lastActions.entries()}
+                actions={[...lastActions.entries()]}
                 {...{ showPayloads }}
               />
               <div
@@ -347,7 +375,7 @@ export function HistoryVisualization() {
           </span>
           <ActionList
             historyIndex={past.length}
-            actions={lastActions.entries()}
+            actions={[...lastActions.entries()]}
             {...{ showPayloads }}
           />
         </li>

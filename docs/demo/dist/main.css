@@ -19,7 +19,7 @@ body {
   background-color: var(--theme-editor--background-color, rgb(201, 190, 190));
 }
 .theme-editor button, .theme-editor input {
-  background: revert;
+  background: white;
   margin-right: 2px;
   border: 1px solid black;
   padding: 4px 7px;
@@ -671,8 +671,17 @@ div[id^=font-picker] ul {
   margin-bottom: 0;
 }
 
-.history > ul > li:not(:hover) button:not(.locked-here) {
+.history > ul > li:not(:hover) button:not(.pinned-here) {
   visibility: hidden;
+}
+
+.pin {
+  display: block;
+  transition: transform 0.15s ease-in;
+}
+
+.pinned-here .pin {
+  transform: rotate(-45deg) translate(-7px, 7px);
 }
 
 button {

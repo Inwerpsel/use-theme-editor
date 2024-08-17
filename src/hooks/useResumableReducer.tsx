@@ -31,22 +31,22 @@ type voidFn = () => void;
 // const getSnapshots = new Map<string, () => any>();
 // The set of notify functions to trigger subscribed React elements to render, for each key.
 const notifiers = new Map<string, Set<voidFn>>();
-// The history index to which some keys are locked.
-const lockData = JSON.parse(localStorage.getItem('locks') || '[]')
-let locks = new Map<string, number>();
-export function restoreLocks(){
-  locks = new Map<string, number>(lockData);
+// The history index to which some keys are pinned.
+const pinData = JSON.parse(localStorage.getItem('pins') || '[]')
+let pins = new Map<string, number>();
+export function restorePins(){
+  pins = new Map<string, number>(pinData);
 }
-// Incremented each time the lock map changes.
-let lockVersion = 0;
+// Incremented each time the pin map changes.
+let pinVersion = 0;
 
 // Each piece of state can have a single effect, which is simply added to the notifiers for that id, once.
 const effectsDone = new Set<string>();
 
 function readSync(id: string): any {
   let sourceState;
-  if (locks.has(id)) {
-    const index = locks.get(id);
+  if (pins.has(id)) {
+    const index = pins.get(id);
     sourceState = index >= past.length ? states : past[index].states;
   } else {
     sourceState = pointedStates;
@@ -78,17 +78,17 @@ export function useSingleEffect(id: string, f: (id: string, value: any) => void)
   effectsDone.add(id);
 }
 
-function storeLocks() {
-  localStorage.setItem('locks', JSON.stringify([...locks.entries()]))
+function storePins() {
+  localStorage.setItem('pins', JSON.stringify([...pins.entries()]))
 }
 
-// Lock state for a key to an index in the history array, then trigger render.
-export function addLock(id: string, index: number): void {
-  locks.set(id, index);
-  lockVersion++;
+// Pin state for a key to an index in the history array, then trigger render.
+export function addPin(id: string, index: number): void {
+  pins.set(id, index);
+  pinVersion++;
   forceHistoryRender();
   notifyOne(id);
-  storeLocks();
+  storePins();
 }
 
 export function latestOccurrence(id) {
@@ -106,22 +106,25 @@ export function latestOccurrence(id) {
   return past.length - offset;
 }
 
-export function isLockedAtLatest(id) {
-  const lockIndex = locks.get(id);
-  return lockIndex === latestOccurrence(id);
+export function isPinnedAtLatest(id) {
+  const pinIndex = pins.get(id);
+  return pinIndex === latestOccurrence(id);
 }
 
-export function lockLatest(id: string) {
-  addLock(id, latestOccurrence(id));
+export function pinLatest(id: string) {
+  addPin(id, latestOccurrence(id));
 }
 
-// Removing the lock on a key, then trigger render.
-export function removeLock(id: string): void {
-  locks.delete(id);
-  lockVersion++;
+export function pinInitial(id: string) {
+  addPin(id, 0);
+}
+
+export function removePin(id: string): void {
+  pins.delete(id);
+  pinVersion++;
   forceHistoryRender();
   notifyOne(id);
-  storeLocks();
+  storePins();
 }
 
 function processActionQueue(key: string): void {
@@ -131,8 +134,8 @@ function processActionQueue(key: string): void {
   const reducer = reducers.get(key);
   // Replay actions
 
-  // To avoid issues while replaying, locks should detect whether
-  // any history entries are "skipped over" when using an older locked value.
+  // To avoid issues while replaying, pins should detect whether
+  // any history entries are "skipped over" when using an older pinned value.
   // These can immediately be cleaned up (perhaps moved to sort of branch),
   // to avoid losing state. When this works as described, we can just process the
   // queue against the previous state here.
@@ -177,7 +180,7 @@ export function exportHistory() {
   saveAsJsonFile(
     { 
       offset: historyOffset,
-      locks: [...locks.entries()],
+      pins: [...pins.entries()],
       initialStates: [...initialStates.entries()] ,
       finalStates: [...states.entries()],
       inspections: getPrevinspections(),
@@ -202,11 +205,11 @@ export function createTimeline(timeline, store = false) {
   }
 }
 
-export function importHistory({timeline, initialStates: _initialStates, finalStates, locks: newLocks, offset = 0, inspections}, frames: HTMLIFrameElement[]) {
+export function importHistory({timeline, initialStates: _initialStates, finalStates, pins: newPins, offset = 0, inspections}, frames: HTMLIFrameElement[]) {
   oldStates = pointedStates;
   past = [];
   historyOffset = 0;
-  locks = new Map();
+  pins = new Map();
   resetInspections();
   deleteStoredHistory();
   
@@ -222,7 +225,7 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
     }
   }
 
-  locks = new Map(newLocks);
+  pins = new Map(newPins);
   historyOffset = offset;
 
   localStorage.setItem(INSPECTIONS, JSON.stringify(inspections));
@@ -259,8 +262,8 @@ function subscribe(notify) {
 
 function getSnapShot(id) {
     let sourceStates;
-    if (locks.has(id)) {
-      const index = locks.get(id);
+    if (pins.has(id)) {
+      const index = pins.get(id);
       sourceStates = index >= past.length ? states : past[index].states;
     } else {
       sourceStates = pointedStates;
@@ -276,7 +279,7 @@ export const interestingKeys = ['THEME_EDITOR', 'uiLayout', 'inspected-index'];
 // Hard coded to keep it simple for now, it could be user configurable.
 export function isInterestingState(lastActions) {
   for (const k of interestingKeys) {
-    if (locks.has(k)) continue;
+    if (pins.has(k)) continue;
     if (lastActions.has(k)) {
       return true;
     }
@@ -356,7 +359,7 @@ export function setStates(newStates: Map<string, any>) {
   setCurrentState();
 }
 
-export function historyBack(amount = 1, skipLocked = false): void {
+export function historyBack(amount = 1, skipPinned = false): void {
   const oldIndex = past.length - historyOffset;
   if (oldIndex < 1) {
     return;
@@ -366,8 +369,8 @@ export function historyBack(amount = 1, skipLocked = false): void {
   // It's possible the amount is more than what's left.
   let offset = Math.min(past.length, historyOffset + amount);
 
-  if (skipLocked) {
-    while (offset < past.length && isFullyLocked(past[past.length - offset])) {
+  if (skipPinned) {
+    while (offset < past.length && isFullyPinned(past[past.length - offset])) {
        offset++;
     }
   }
@@ -376,7 +379,7 @@ export function historyBack(amount = 1, skipLocked = false): void {
   checkNotifyAll();
 }
 
-export function historyForward(amount = 1, skipLocked = false): void {
+export function historyForward(amount = 1, skipPinned = false): void {
   if (historyOffset === 0) {
     return;
   }
@@ -384,8 +387,8 @@ export function historyForward(amount = 1, skipLocked = false): void {
 
   let offset = Math.max(0, historyOffset - amount);
 
-  if (skipLocked) {
-    while (offset > 0 && isFullyLocked(past[past.length - offset])) {
+  if (skipPinned) {
+    while (offset > 0 && isFullyPinned(past[past.length - offset])) {
        offset--;
     }
   }
@@ -394,9 +397,9 @@ export function historyForward(amount = 1, skipLocked = false): void {
   checkNotifyAll();
 }
 
-function isFullyLocked(entry: HistoryEntry) {
+function isFullyPinned(entry: HistoryEntry) {
   for (const key of entry.lastActions.keys()) {
-    if (!locks.has(key)) return false;
+    if (!pins.has(key)) return false;
   }
   return true;
 }
@@ -461,22 +464,21 @@ export function historyGo(offset): void {
 export function clearHistory(): void {
   const currentlyInThePast = historyOffset > 0;
 
-  for (const [id, index] of locks.entries()) {
-      // locks.set(id, 0);
-      locks.delete(id);
-      // Only locks on older state
+  for (const [id, index] of pins.entries()) {
+      pins.delete(id);
+      // Only pins on older state
       if (index !== historyOffset) {
         const value = index >= past.length ? states.get(id) : past[index].states.get(id);
         pointedStates.set(id, value === undefined ? initialStates.get(id) : value);
       }
   }
-  storeLocks();
-  // lockVersion++;
+  storePins();
 
   lastActions = !currentlyInThePast ? lastActions : past[past.length - historyOffset].lastActions;;
   past = [];
   historyOffset = 0;
   states = pointedStates;
+  initialStates = new Map([...initialStates.entries(), ...pointedStates.entries()]);
 
   deleteStoredHistory(true, pointedStates);
   setCurrentState();
@@ -584,12 +586,12 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
   }
   const now = performance.now();
 
-  const lockIndex = locks.get(id);
-  const hasLock = locks.has(id);
-  const hasLockInPast = hasLock && lockIndex < past.length;
+  const pinIndex = pins.get(id);
+  const hasPin = pins.has(id);
+  const hasPinInPast = hasPin && pinIndex < past.length;
 
-  const baseState = hasLockInPast
-    ? past[lockIndex].states.get(id)
+  const baseState = hasPinInPast
+    ? past[pinIndex].states.get(id)
     : states.has(id)
     ? states.get(id)
     : initialStates.get(id);
@@ -658,9 +660,9 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
 
   lastActions.set(id, action);
 
-  if (hasLock) {
-    // If there was a lock on this state, update it to the newly created state.
-    addLock(id, past.length);
+  if (hasPin) {
+    // If there was a pin on this state, update it to the newly created state.
+    addPin(id, past.length);
   }
   return true;
 }
@@ -680,10 +682,10 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
   const baseIndex = past.length - historyOffset;
   const prevEntry = past[baseIndex];
   const prevStates = prevEntry.states;
-  const lockIndex = locks.has(id) ? locks.get(id) : baseIndex;
-  const baseStatesWithLock = past[lockIndex]?.states || states;
+  const pinIndex = pins.has(id) ? pins.get(id) : baseIndex;
+  const baseStatesWithPin = past[pinIndex]?.states || states;
 
-  const baseState = baseStatesWithLock.has(id) ? baseStatesWithLock.get(id) : initialStates.get(id);
+  const baseState = baseStatesWithPin.has(id) ? baseStatesWithPin.get(id) : initialStates.get(id);
   const newState = reducer(
     baseState,
     // Action can be a function in case of setState.
@@ -692,39 +694,39 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
   if (newState === baseState && !options.force) {
     return false;
   }
-  const lockUpdates = new Map();
-  // The extra actions that are added when future locks are preserved.
-  const futureLockActions = new Map();
+  const pinUpdates = new Map();
+  // The extra actions that are added when future pins are preserved.
+  const futurePinActions = new Map();
 
-  // If the locked state was produced by multiple actions that are in the discarded
+  // If the pinned state was produced by multiple actions that are in the discarded
   // part of history, we'll create separate new entries for these.
-  const partialLockActions = [];
+  const partialPinActions = [];
 
-  let hasFutureLocks = false;
-  const oldLocks = locks.entries();
-  for (const [id, index] of oldLocks) {
+  let hasFuturePins = false;
+  const oldPins = pins.entries();
+  for (const [id, index] of oldPins) {
     if (index > baseIndex) {
-      hasFutureLocks = true;
+      hasFuturePins = true;
       if (index >= past.length) {
-        lockUpdates.set(id, states.get(id));
-        futureLockActions.set(id, lastActions.get(id));
+        pinUpdates.set(id, states.get(id));
+        futurePinActions.set(id, lastActions.get(id));
       } else {
-        lockUpdates.set(id, past[index].states.get(id));
-        futureLockActions.set(id, past[index].lastActions.get(id));
+        pinUpdates.set(id, past[index].states.get(id));
+        futurePinActions.set(id, past[index].lastActions.get(id));
       }
       const max = Math.min(index, past.length - 1);
       // Collect actions only of reducer-based state.
       for (let i = baseIndex + 1; i < max; i++) {
         const action = past[i].lastActions.get(id);
         if (action !== undefined && action.type) {
-          partialLockActions.push([id, action, past[i].states.get(id)]);
+          partialPinActions.push([id, action, past[i].states.get(id)]);
         }
       }
-      locks.set(id, baseIndex + 1);
+      pins.set(id, baseIndex + 1);
     }
   }
-  for (const id of lockUpdates.keys()) {
-    locks.set(id, baseIndex + partialLockActions.length + 1);
+  for (const id of pinUpdates.keys()) {
+    pins.set(id, baseIndex + partialPinActions.length + 1);
   }
   // const isNowDefaultState = newState === initialStates[id];
   // const previousAlsoDefaultState = isNowDefaultState && baseIndex && !(id in past[baseIndex - 1].states);
@@ -732,14 +734,14 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
 
   const prevHistory = historyOffset === 1 ? past : past.slice(0, -historyOffset + 1);
   lastAlternate = [...past.slice(past.length - historyOffset + 1)
-    .filter(({lastActions}) => !([...lockUpdates.keys()].some(k => lastActions.has(k))))
+    .filter(({lastActions}) => !([...pinUpdates.keys()].some(k => lastActions.has(k))))
     .map(({lastActions}) => lastActions), lastActions];
   lastAlternateIndex = past.length - historyOffset;
   storeAlternate();
-  if (hasFutureLocks) {
+  if (hasFuturePins) {
     let base = prevStates;
     let i = 0;
-    for (const [id, action, state] of partialLockActions) {
+    for (const [id, action, state] of partialPinActions) {
       const entry = new Map<string, any>(base);
       entry.set(id, state);
       prevHistory.push({
@@ -750,19 +752,19 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
       base = entry;
       i++;
     }
-    const entry = new Map<string, any>([...base, ...lockUpdates]);
+    const entry = new Map<string, any>([...base, ...pinUpdates]);
     prevHistory.push({
       states: entry,
-      lastActions: futureLockActions,
+      lastActions: futurePinActions,
     });
-    storeActions([...futureLockActions.entries()], 1, baseIndex + partialLockActions.length + 1);
+    storeActions([...futurePinActions.entries()], 1, baseIndex + partialPinActions.length + 1);
   }
-  if (locks.has(id)) {
-    // If there was a lock on this state, update it to the newly created state.
-    addLock(id, prevHistory.length);
+  if (pins.has(id)) {
+    // If there was a pin on this state, update it to the newly created state.
+    addPin(id, prevHistory.length);
   }
  
-  states = new Map([...prevStates, ...lockUpdates]);
+  states = new Map([...prevStates, ...pinUpdates]);
   if (newState === initialStates.get(id)) {
     states.delete(id);
   } else {
@@ -934,13 +936,14 @@ export function SharedActionHistory(props) {
       historyOffset,
       lastActions,
       pointedStates,
+      initialStates,
       previewComponents,
-      locks,
+      pins,
       states,
       lastAlternate,
       lastAlternateIndex,
     }),
-    [past, historyOffset, lastActions, states, lockVersion, lastAlternate]
+    [past, historyOffset, lastActions, states, pinVersion, lastAlternate]
   );
 
   useLayoutEffect(() => {

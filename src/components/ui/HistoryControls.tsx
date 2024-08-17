@@ -1,7 +1,7 @@
 import React, { Fragment, useContext, useEffect, useRef, useState } from 'react';
 import {
   HistoryNavigateContext,
-  addLock,
+  addPin,
   clearHistory,
   historyBack,
   historyBackFast,
@@ -10,7 +10,7 @@ import {
   historyForwardFast,
   historyForwardOne,
   historyGo,
-  removeLock,
+  removePin,
 } from '../../hooks/useResumableReducer';
 import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
@@ -112,18 +112,18 @@ export function MiniTimeline() {
         It's recommended to only use it when controlled, small nudges of the wheel are possible.
       </p>
       <p>
-        Keeping some state locked can help reduce the amount of changes happening in rapid succession.
+        Keeping some state pinned can help reduce the amount of changes happening in rapid succession.
       </p>
     </Tutorial>
   </div>
 }
 
-export function LockStatus() {
-  const { locks } = useContext(HistoryNavigateContext);
+export function ActivePins() {
+  const { pins } = useContext(HistoryNavigateContext);
 
   const [open, setOpen] = useState(false);
 
-  const amount = locks.size;
+  const amount = pins.size;
 
   // if (amount === 0) {
   //   return null;
@@ -132,30 +132,30 @@ export function LockStatus() {
   return (
     <Fragment>
       <button
-        title={open ? '' : [...locks.keys()].join(', ')} 
+        title={open ? '' : [...pins.keys()].join(', ')} 
         onClick={(event) => {
           setOpen(!open);
         }}
       >
-        🔒{amount}
-      <Tutorial el={LockStatus}>
+        📌{amount}
+      <Tutorial el={ActivePins}>
         <p>
-          This button shows how many locks are applied and allows you to toggle each.
+          This button shows how many pins are applied and allows you to toggle each.
         </p>
         <p>
-          Notice how the timeline now jumps over the entries we locked earlier.
+          Notice how the timeline now jumps over the entries we pinned earlier.
         </p>
       </Tutorial>
       </button>
-      {open && <LocksList close={() => setOpen(false)}/>}
+      {open && <PinList close={() => setOpen(false)}/>}
     </Fragment>
   );
 }
 
-function LocksList({close}) {
-  const { locks, past, historyOffset, states } = useContext(HistoryNavigateContext);
-  const [origLocks] = useState(new Map(locks));
-  const entries = [...origLocks.entries()];
+function PinList({close}) {
+  const { pins, past, historyOffset, states } = useContext(HistoryNavigateContext);
+  const [origPins] = useState(new Map(pins));
+  const entries = [...origPins.entries()];
   const ref = useRef();
   let i = 0;
 
@@ -182,9 +182,9 @@ function LocksList({close}) {
       }}
     >
       {entries.map(([key, index]) => {
-        const active = locks.has(key);
-        const enable = () => addLock(key, index);
-        const disable = () => removeLock(key);
+        const active = pins.has(key);
+        const enable = () => addPin(key, index);
+        const disable = () => removePin(key);
         const entry = index < past.length ? past[index].states : states;
         const value = entry.has(key) ? entry.get(key) : 'default';
         i++;
@@ -192,8 +192,8 @@ function LocksList({close}) {
 
         return (
           <li {...{ key, style: {listStyleType: 'none', opacity: active ? 1 : .7} }}>
-            <button style={{fontSize: '18px',background: active ? '' : 'transparent'}} autoFocus={i === 1} onClick={active ? disable : enable}>
-              {active ? '🔒' : '🔓'}
+            <button className={active ? 'pinned-here' : ''} style={{fontSize: '18px',background: active ? '' : 'transparent'}} autoFocus={i === 1} onClick={active ? disable : enable}>
+              <span className='pin'>📌</span>
             </button>
             {key}: { typeof value === 'object' ? '[obj]' : value}
             {targetOffset !== historyOffset && <button onClick={() => {
@@ -219,7 +219,7 @@ export function HistoryControls() {
     return (
       <div onWheelCapture={scrollHistory}>
         <MiniTimeline />
-        <LockStatus />
+        <ActivePins />
         <HistoryBackFast />
         <HistoryBack />
         <HistoryForward />
