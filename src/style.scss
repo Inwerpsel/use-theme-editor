@@ -494,12 +494,24 @@ div[id^=font-picker] ul {
 }
 
 .pin {
-  display: block;
-  transition: transform .15s ease-in;
+  display: inline-block;
+  transition: transform .12s ease-in;
 }
 
 .pinned-here .pin { 
   transform: rotate(-45deg) translate(-7px, 7px);
+}
+
+.pinned-initial .pin {
+  transform: rotate(45deg) translate(-15px, 16px);
+}
+
+.pin-latest .pin {
+  transform: rotate(-90deg);
+}
+
+.pinned-latest .pin {
+  transform: rotate(-135deg) translate(-18px, 14px);
 }
 
 button {

@@ -75,7 +75,7 @@ function PinState(props) {
         pinnedHere ? removePin(id) : addPin(id, historyIndex);
         event.stopPropagation();
       }}
-      title="Pin here"
+      // title="Pin here"
     >
       <span className='pin'>📌</span>
     </button>
@@ -92,14 +92,14 @@ function PinLatest(props) {
   const pinIndex = pins.get(id);
   const pinnedAtLatest = pinIndex === latestForId;
 
-  return <button style={{
+  return <button className={pinnedAtLatest ? 'pinned-latest' : 'pin-latest'} style={{
     float: 'right',
     outline: pinnedAtLatest ? '2px solid black' : 'none',
     background: pinnedAtLatest ? 'white' : 'transparent',
   }} onClick={pinnedAtLatest ? () => {removePin(id)} : () => {
     pinLatest(id);
   }} title="Pin to latest">
-    📌→
+    <span className='pin'>📌</span>→
   </button>
 }
 
@@ -112,7 +112,7 @@ function PinFirst(props) {
   const pinnedIndex = pins.get(id);
   const pinnedInitial = pinnedIndex === 0;
 
-  return <button style={{
+  return <button className={pinnedInitial ? 'pinned-initial' : ''} style={{
     float: 'right',
     outline: pinnedInitial ? '2px solid black' : 'none',
     background: pinnedInitial ? 'white' : 'transparent',
@@ -120,7 +120,7 @@ function PinFirst(props) {
   }} onClick={pinnedInitial ? () => {removePin(id)} : () => {
     pinInitial(id);
   }} title="Pin to initial">
-   ←📌
+   ←<span className='pin'>📌</span>
   </button>
 }
 
