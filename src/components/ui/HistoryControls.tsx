@@ -54,7 +54,7 @@ function HistoryBackFast() {
     disabled={noHistory}
     title={noHistory ? 'No history' : remainingLength}
     onClick={historyBackFast}
-  >←!
+  >!←
   </button>;
 }
 
@@ -68,7 +68,7 @@ function HistoryForwardFast() {
     disabled={noFuture}
     title={noFuture ? 'No future' : historyOffset}
     onClick={historyForwardFast}
-  >!→
+  >→!
   </button>;
 }
 
@@ -243,7 +243,7 @@ export function HistoryControls() {
           </p>
 
           <p>
-            On top of "normal" history buttons, there's the fast button (!→),
+            On top of "normal" history buttons, there's the fast buttons (!← and →!),
             which jumps to the most important changes like edits to style rules,
             newly inspected elements, and editor UI layout changes. It jumps
             over the less interesting steps, while still applying their result.
