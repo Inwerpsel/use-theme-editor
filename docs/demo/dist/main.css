@@ -677,23 +677,30 @@ div[id^=font-picker] ul {
 
 .pin {
   display: inline-block;
-  transition: transform 0.12s ease-in;
+  transition: rotate 0.1s ease-in, translate 0.12s;
+  transition-delay: 0.07s, 0s;
 }
 
 .pinned-here .pin {
-  transform: rotate(-45deg) translate(-7px, 7px);
+  rotate: -45deg;
+  translate: 0 9px;
+  transition-delay: 0s, 0.07s;
 }
 
 .pinned-initial .pin {
-  transform: rotate(45deg) translate(-15px, 16px);
+  rotate: 45deg;
+  translate: -22px 2px;
+  transition-delay: 0s, 0.07s;
 }
 
 .pin-latest .pin {
-  transform: rotate(-90deg);
+  rotate: -90deg;
 }
 
 .pinned-latest .pin {
-  transform: rotate(-135deg) translate(-18px, 14px);
+  rotate: -135deg;
+  translate: 22px 3px;
+  transition-delay: 0s, 0.07s;
 }
 
 button {

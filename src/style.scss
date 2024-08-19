@@ -493,25 +493,36 @@ div[id^=font-picker] ul {
   visibility: hidden;
 }
 
+$pin-delay: .07s;
+$pin-in: 0s, $pin-delay;
+$pin-out: $pin-delay, 0s;
+
 .pin {
   display: inline-block;
-  transition: transform .12s ease-in;
+  transition: rotate .1s ease-in, translate .12s;
+  transition-delay: $pin-out;
 }
 
 .pinned-here .pin { 
-  transform: rotate(-45deg) translate(-7px, 7px);
+  rotate: -45deg;
+  translate: 0 9px;
+  transition-delay: $pin-in;
 }
 
 .pinned-initial .pin {
-  transform: rotate(45deg) translate(-15px, 16px);
+  rotate: 45deg;
+  translate: -22px 2px;
+  transition-delay: $pin-in;
 }
 
 .pin-latest .pin {
-  transform: rotate(-90deg);
+  rotate: -90deg;
 }
 
 .pinned-latest .pin {
-  transform: rotate(-135deg) translate(-18px, 14px);
+  rotate: -135deg;
+  translate: 22px 3px;
+  transition-delay: $pin-in;
 }
 
 button {
