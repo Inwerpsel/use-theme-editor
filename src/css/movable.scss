@@ -40,7 +40,7 @@ $subtle-grey: rgb(179, 162, 162);
 
 $area-speed: .2s;
 
-#area-left, #area-right {
+#area-left, #area-left-inner, #area-right {
   // Todo: Best way to make widths user configurable.
   > .movable-element > * {
     width: 400px;
