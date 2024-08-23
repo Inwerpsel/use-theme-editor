@@ -119,8 +119,9 @@ export const groupVars = (vars, target, allVars) => {
     const isSvg = previous.tagName === 'svg';
     const isInSvg = !isSvg && !!previous.closest('svg');
     const isImage = previous.tagName === 'IMG';
+    const isDeepest = previous === target;
 
-     if (isImage || isSvg || isInSvg || previousHasInlineStyles || currentMatchesLess) {
+     if (isDeepest || isImage || isSvg || isInSvg || previousHasInlineStyles || currentMatchesLess) {
       const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
       const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars, groups);
@@ -130,7 +131,12 @@ export const groupVars = (vars, target, allVars) => {
       labelCounts[labelText] = count + 1;
       const label = labelText + (count === 0 ? '' : `#${count}`);
 
-      const elHtml = isInSvg ? svgPartHtml(element) : !isSvg ? null : element.outerHTML + '<div style="display:none"><svg>' +
+      const html = 
+        isInSvg 
+          ? svgPartHtml(element) 
+          : !isSvg 
+          ? null 
+          : element.outerHTML + '<div style="display:none"><svg>' +
           // Also grab HTML of each referenced symbol.
             [...element.childNodes].reduce(
               (html, node) =>
@@ -148,15 +154,20 @@ export const groupVars = (vars, target, allVars) => {
       const isRootElement = element.tagName === 'HTML' || element.tagName === 'BODY'
       groups.push({
         element,
-        elSrc: element.getAttribute('src'),
-        elSrcset: element.getAttribute('srcset'),
-        elAlt: element.getAttribute('alt'),
-        elHtml,
-        elWidth: !isSvg ? null : element.getBoundingClientRect().width,
-        // Previously this was `element.title`, however if a form element contains an input with name "title",
-        // that DOM element would be returned. This causes a crash when this data is sent as a message.
-        elTitle: element.getAttribute('title'),
+        elementInfo: {
+          src: element.getAttribute('src'),
+          srcset: element.getAttribute('srcset'),
+          alt: element.getAttribute('alt'),
+          html: html,
+          width: !isSvg ? null : element.getBoundingClientRect().width,
+          // Previously this was `element.title`, however if a form element contains an input with name "title",
+          // that DOM element would be returned. This causes a crash when this data is sent as a message.
+          title: element.getAttribute('title'),
+          
+        },
         isRootElement,
+        isDeepest,
+        textContent: isDeepest && [...element.childNodes].some(el => el.nodeType === 3 && el.textContent.trim() !== '') ? element.textContent.trim() : '',
         label,
         vars: vars.map((v) => {
           let currentScope, max;

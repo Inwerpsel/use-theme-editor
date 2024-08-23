@@ -25,16 +25,20 @@ export const GroupControl = props => {
 
   const {
     element,
-    elSrc,
-    elSrcset,
-    elAlt,
-    elTitle,
-    elHtml,
-    elWidth,
+    elementInfo: {
+      src,
+      srcset,
+      alt,
+      title,
+      html,
+      width,
+    },
+    textContent,
     label,
     vars,
     scopes: elementScopes,
     isRootElement,
+    isDeepest,
     inlineStyles,
   } = group;
 
@@ -98,7 +102,7 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && !inlineStyles && !elSrc && !elHtml) { 
+  if (vars.length === 0 && !isDeepest && !inlineStyles && !src && !html) { 
     return null;
   }
 
@@ -112,6 +116,7 @@ export const GroupControl = props => {
           top: 0,
           background: 'white',
           zIndex: 12,
+          overflow: isOpen ? 'hidden' : 'auto',
         }}
         onMouseEnter={() => {
           frameRef.current?.contentWindow.postMessage(
@@ -140,6 +145,7 @@ export const GroupControl = props => {
             cursor: 'pointer',
             display: 'flex',
             justifyContent: 'space-between',
+            alignItems: 'flex-start',
             maxHeight: isOpen ? '128px' : '300px',
             overflowY: 'auto',
           }}
@@ -206,13 +212,14 @@ export const GroupControl = props => {
             </div>}
           </div>
 
-          {elSrc && <img src={elSrc} srcSet={elSrcset} alt={elAlt} title={elTitle || elAlt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
-          {elHtml?.length > 0 && <div
+          {src && <img src={src} srcSet={srcset} alt={alt} title={title || alt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
+          {html?.length > 0 && <div
             className='svg-inspect-wrapper'
-            style={{display: 'inline', position: 'relative', minWidth: `${elWidth}px`, maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
+            style={{display: 'inline', position: 'relative', minWidth: `${width}px`, maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
             onClick={(e) => {setDarkSvg(!darkSvg); e.stopPropagation()}}
-            dangerouslySetInnerHTML={{__html: elHtml}}
+            dangerouslySetInnerHTML={{__html: html}}
           ></div>}
+          {textContent && <div style={{fontSize: '12px', border: '1p solid grey',background:'lightgrey',maxWidth: '45%', margin: '4px', padding: '4px', float: 'right', maxHeight: '62px', overflow: 'auto'}}>{textContent}</div>}
           {inlineStyles && <span style={{...{border: '1px solid black'}, ...inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
           
         </h4>
