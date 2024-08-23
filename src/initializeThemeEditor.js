@@ -567,7 +567,7 @@ export const setupThemeEditor = async (config) => {
     case 'scroll-in-view':
       const element = selector ? locatedElements[selector][index] : group.element;
 
-      element.scrollIntoView({
+      element.scrollIntoView(payload.options || {
         behavior: 'smooth',
         block: 'center',
         inline: 'end',

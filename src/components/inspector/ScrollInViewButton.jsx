@@ -1,14 +1,44 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { ThemeEditorContext } from "../ThemeEditor";
 
 export function ScrollInViewButton(props) {
     const { element } = props;
+    const [dragged, setDragged] = useState(false);
 
     const {
         frameRef,
     } = useContext(ThemeEditorContext);
 
     return <button
+        draggable
+        onDragStart={() => {
+            setDragged(true);
+        }}
+        onDragEnd={() => {
+            setDragged(false);
+        }}
+        onDragLeave={(event) => {
+            if (!dragged) {
+                return;
+            }
+            const isToRight = event.clientX > event.currentTarget.getBoundingClientRect().right;
+            const isToLeft = event.clientX < event.currentTarget.getBoundingClientRect().left
+            const isAbove = event.clientY < event.currentTarget.getBoundingClientRect().top;
+            const isBelow = event.clientY > event.currentTarget.getBoundingClientRect().bottom;
+            const options = {
+                        behavior: 'smooth',
+                        block: isAbove ? 'start' : isBelow ? 'end' : 'center',
+                        inline: isToRight ? 'end' : isToLeft ? 'start' : 'center',
+                        // inline: 'start',
+                    };
+            frameRef.current.contentWindow.postMessage(
+                {
+                    type: 'scroll-in-view', payload: { index: element, options }
+                },
+                window.location.href,
+            );
+            
+        }}
         title='Scroll in view'
         className='scroll-in-view'
         style={{

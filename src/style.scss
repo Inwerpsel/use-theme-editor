@@ -242,6 +242,11 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   outline: 4px solid rgb(105, 82, 236) !important;
   outline-offset: -2px;
   animation: pulse .2s;
+  // This allows you to see the edges better.
+  // It doesn't entirely work well. Most of the time when dragging to view button it will have the class,
+  // but if you wait long enough it's gone, and then it's quite weird to see it scrolling a few pixels differently.
+  scroll-margin-top: 12px;
+  scroll-margin-bottom: 12px;
 }
 
 .shadow-picker {
@@ -655,15 +660,12 @@ button:disabled {
   text-rendering: optimizeSpeed;
 }
 
-// .btn.btn {
-//   --bs-btn-bg: blue;
-// }
-
-// .btn:not(:where(.foo), :is(idontexist, .test, li)) {
-//   --bs-btn-bg: red;
-// }
-
 .chrome-picker {
   // Prevent selecting when dragging color marker.
   user-select: none;
+
+  .saturation-white > * {
+    transition-property: top, left;
+    transition-duration: .12s, .12s;
+  }
 }

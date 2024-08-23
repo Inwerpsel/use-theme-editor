@@ -191,6 +191,8 @@ body {
   outline: 4px solid rgb(105, 82, 236) !important;
   outline-offset: -2px;
   animation: pulse 0.2s;
+  scroll-margin-top: 12px;
+  scroll-margin-bottom: 12px;
 }
 
 .shadow-picker {
@@ -347,7 +349,7 @@ div[id^=font-picker] ul {
   border-color: transparent;
 }
 
-#area-left, #area-right {
+#area-left, #area-left-inner, #area-right {
   scrollbar-gutter: stable;
   overflow-y: auto;
   overflow-x: visible;
@@ -355,18 +357,18 @@ div[id^=font-picker] ul {
   flex-shrink: 0;
   align-items: stretch;
 }
-#area-left > .movable-element > *, #area-right > .movable-element > * {
+#area-left > .movable-element > *, #area-left-inner > .movable-element > *, #area-right > .movable-element > * {
   width: 400px;
 }
 @media screen and (min-height: 350px) {
-  #area-left, #area-right {
+  #area-left, #area-left-inner, #area-right {
     max-height: calc(100vh - var(--top-area--height, 60px) - var(--bottom-area--height, 60px));
   }
 }
-#area-left .area-dropzone, #area-right .area-dropzone {
+#area-left .area-dropzone, #area-left-inner .area-dropzone, #area-right .area-dropzone {
   transition: width, height 0.2s ease-in;
 }
-#area-left .area-switcher, #area-right .area-switcher {
+#area-left .area-switcher, #area-left-inner .area-switcher, #area-right .area-switcher {
   top: 0;
   right: 0;
 }
@@ -810,6 +812,10 @@ button:disabled {
 
 .chrome-picker {
   user-select: none;
+}
+.chrome-picker .saturation-white > * {
+  transition-property: top, left;
+  transition-duration: 0.12s, 0.12s;
 }
 
 /*# sourceMappingURL=main.css.map*/
