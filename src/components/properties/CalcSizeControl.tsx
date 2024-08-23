@@ -72,12 +72,15 @@ const resultHasUnit = {
     return false;
   },
   '*'(a, b) {
-    if (a && b) throw new Error('At least 1 operand must be unitless.');
+    // Disable error as it improperly detects.
+
+    // if (a && b) throw new Error('At least 1 operand must be unitless.');
 
     return a || b;
   },
   '/'(a, b) {
-    if (b) throw new Error('Divisor must be unitless.');
+    // Disable error as it improperly detects.
+    // if (b) throw new Error('Divisor must be unitless.');
 
     return a;
   },
