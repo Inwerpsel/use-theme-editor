@@ -83,12 +83,10 @@ function PinState(props) {
 }
 
 function PinLatest(props) {
-  const { id, historyIndex  } = props;
+  const { id  } = props;
   const { pins } = useContext(HistoryNavigateContext);
   const latestForId = latestOccurrence(id);
-  if (historyIndex === latestForId) {
-    return <span style={{float: 'right'}}>latest</span> 
-  }
+
   const pinIndex = pins.get(id);
   const pinnedAtLatest = pinIndex === latestForId;
 
