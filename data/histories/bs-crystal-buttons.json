@@ -1,11 +1,6 @@
 {
   "offset": 0,
-  "locks": [
-    [
-      "uiLayout",
-      5
-    ]
-  ],
+  "pins": [],
   "initialStates": [
     [
       "inspected-index",
@@ -201,10 +196,6 @@
       }
     ],
     [
-      "drawer-open",
-      false
-    ],
-    [
       "areaOffset#area-top",
       [
         0,
@@ -268,6 +259,10 @@
       ]
     ],
     [
+      "fullHeightFrameScale",
+      0.1548
+    ],
+    [
       "areaOffset#area-right",
       [
         0,
@@ -289,11 +284,8 @@
       ]
     ],
     [
-      "areaOffset#drawer",
-      [
-        0,
-        0
-      ]
+      "fullheightframescalestep",
+      "0.001"
     ],
     [
       "open_--bs-btn-active-bg",
@@ -301,7 +293,7 @@
     ],
     [
       "showSelectors_--bs-btn-active-bg",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-active-bg",
@@ -317,7 +309,7 @@
     ],
     [
       "showSelectors_--bs-btn-bg",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-bg",
@@ -333,7 +325,7 @@
     ],
     [
       "showSelectors_--bs-btn-disabled-bg",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-disabled-bg",
@@ -349,7 +341,7 @@
     ],
     [
       "showSelectors_--bs-btn-hover-bg",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-hover-bg",
@@ -365,7 +357,7 @@
     ],
     [
       "showSelectors_--bs-btn-border-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-border-color",
@@ -376,16 +368,12 @@
       false
     ],
     [
-      "color-picker~~--bs-btn-border-color",
-      true
-    ],
-    [
       "open_--bs-btn-active-border-color",
       false
     ],
     [
       "showSelectors_--bs-btn-active-border-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-active-border-color",
@@ -401,7 +389,7 @@
     ],
     [
       "showSelectors_--bs-btn-disabled-border-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-disabled-border-color",
@@ -417,7 +405,7 @@
     ],
     [
       "showSelectors_--bs-btn-hover-border-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-hover-border-color",
@@ -433,7 +421,7 @@
     ],
     [
       "showSelectors_--bs-btn-active-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-active-color",
@@ -449,7 +437,7 @@
     ],
     [
       "showSelectors_--bs-btn-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-color",
@@ -465,7 +453,7 @@
     ],
     [
       "showSelectors_--bs-btn-disabled-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-disabled-color",
@@ -481,7 +469,7 @@
     ],
     [
       "showSelectors_--bs-btn-hover-color",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-hover-color",
@@ -497,7 +485,7 @@
     ],
     [
       "showSelectors_--bs-btn-border-width",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-border-width",
@@ -513,7 +501,7 @@
     ],
     [
       "showSelectors_--bs-btn-border-radius",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-border-radius",
@@ -529,7 +517,7 @@
     ],
     [
       "showSelectors_--bs-btn-focus-box-shadow",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-focus-box-shadow",
@@ -545,7 +533,7 @@
     ],
     [
       "showSelectors_--bs-btn-font-family",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-font-family",
@@ -561,7 +549,7 @@
     ],
     [
       "showSelectors_--bs-btn-font-size",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-font-size",
@@ -577,7 +565,7 @@
     ],
     [
       "showSelectors_--bs-btn-font-weight",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-font-weight",
@@ -593,7 +581,7 @@
     ],
     [
       "showSelectors_--bs-btn-line-height",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-line-height",
@@ -609,7 +597,7 @@
     ],
     [
       "showSelectors_--bs-btn-disabled-opacity",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-disabled-opacity",
@@ -625,7 +613,7 @@
     ],
     [
       "showSelectors_--bs-btn-padding-x",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-padding-x",
@@ -641,7 +629,7 @@
     ],
     [
       "showSelectors_--bs-btn-padding-y",
-      null
+      false
     ],
     [
       "showRefs_--bs-btn-padding-y",
@@ -657,7 +645,7 @@
     ],
     [
       "showSelectors_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
-      true
+      false
     ],
     [
       "showRefs_var(--bs-btn-border-width) solid var(--bs-btn-border-color)",
@@ -673,7 +661,7 @@
     ],
     [
       "showSelectors_pointer",
-      true
+      false
     ],
     [
       "showRefs_pointer",
@@ -689,7 +677,7 @@
     ],
     [
       "showSelectors_inline-block",
-      true
+      false
     ],
     [
       "showRefs_inline-block",
@@ -705,7 +693,7 @@
     ],
     [
       "showSelectors_opacity(0.5)",
-      true
+      false
     ],
     [
       "showRefs_opacity(0.5)",
@@ -721,7 +709,7 @@
     ],
     [
       "showSelectors_normal",
-      true
+      false
     ],
     [
       "showRefs_normal",
@@ -737,7 +725,7 @@
     ],
     [
       "showSelectors_center",
-      true
+      false
     ],
     [
       "showRefs_center",
@@ -753,7 +741,7 @@
     ],
     [
       "showSelectors_normal, normal, normal, normal",
-      true
+      false
     ],
     [
       "showRefs_normal, normal, normal, normal",
@@ -769,7 +757,7 @@
     ],
     [
       "showSelectors_0s, 0s, 0s, 0s",
-      true
+      false
     ],
     [
       "showRefs_0s, 0s, 0s, 0s",
@@ -785,7 +773,7 @@
     ],
     [
       "showSelectors_0.15s, 0.15s, 0.15s, 0.15s",
-      true
+      false
     ],
     [
       "showRefs_0.15s, 0.15s, 0.15s, 0.15s",
@@ -801,7 +789,7 @@
     ],
     [
       "showSelectors_color, background-color, border-color, box-shadow",
-      true
+      false
     ],
     [
       "showRefs_color, background-color, border-color, box-shadow",
@@ -817,7 +805,7 @@
     ],
     [
       "showSelectors_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
-      true
+      false
     ],
     [
       "showRefs_ease-in-out, ease-in-out, ease-in-out, ease-in-out",
@@ -833,7 +821,7 @@
     ],
     [
       "showSelectors_middle",
-      true
+      false
     ],
     [
       "showRefs_middle",
@@ -842,93 +830,25 @@
     [
       "showPicker_middle",
       false
+    ],
+    [
+      "open_--bs-btn-color,--button-text",
+      true
+    ],
+    [
+      "showSelectors_--bs-btn-color,--button-text",
+      false
+    ],
+    [
+      "showRefs_--bs-btn-color,--button-text",
+      false
+    ],
+    [
+      "showPicker_--bs-btn-color,--button-text",
+      false
     ]
   ],
   "finalStates": [
-    [
-      "inspected-index",
-      5
-    ],
-    [
-      "OPEN_GROUPS",
-      {
-        "button\n.btn\n.btn-info (1/3)": true
-      }
-    ],
-    [
-      "areaOffset#area-left",
-      [
-        0,
-        0
-      ]
-    ],
-    [
-      "THEME_EDITOR",
-      {
-        "scopes": {
-          ".btn-primary": {
-            "--bs-btn-bg": "#b4d1fe",
-            "--bs-btn-color": "var(--button-text)",
-            "--bs-btn-hover-color": "var(--bs-btn-color)",
-            "--bs-btn-disabled-color": "var(--bs-btn-color)",
-            "--bs-btn-active-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-bg": "#8db9fc"
-          },
-          ":root": {
-            "--button-text": "var(--mineshaft)",
-            "--mineshaft": "#292929"
-          },
-          ".btn": {
-            "--bs-btn-border-radius": "0",
-            "--bs-btn-border-width": "2px"
-          },
-          ".btn-success": {
-            "--bs-btn-bg": "#83fcc3",
-            "--bs-btn-color": "var(--button-text)",
-            "--bs-btn-active-color": "var(--bs-btn-color)",
-            "--bs-btn-disabled-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-bg": "#48f4a4"
-          },
-          ".btn-secondary": {
-            "--bs-btn-bg": "#d3dce4",
-            "--bs-btn-hover-bg": "#b8bdc1",
-            "--bs-btn-color": "var(--button-text)",
-            "--bs-btn-active-color": "var(--bs-btn-color)",
-            "--bs-btn-disabled-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-color": "var(--bs-btn-color)"
-          },
-          ".btn-danger": {
-            "--bs-btn-bg": "#f7b1b8",
-            "--bs-btn-hover-bg": "#f18893",
-            "--bs-btn-color": "var(--button-text)",
-            "--bs-btn-active-color": "var(--bs-btn-color)",
-            "--bs-btn-disabled-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-color": "var(--bs-btn-color)"
-          },
-          ".btn-warning": {
-            "--bs-btn-bg": "#ffe79e",
-            "--bs-btn-hover-bg": "#ffdb70",
-            "--bs-btn-color": "var(--button-text)",
-            "--bs-btn-active-color": "var(--bs-btn-color)",
-            "--bs-btn-disabled-color": "var(--bs-btn-color)",
-            "--bs-btn-hover-color": "var(--bs-btn-color)",
-            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-border-color": "#bd900a"
-          },
-          ".btn-info": {
-            "--bs-btn-bg": "#a5eefd",
-            "--bs-btn-hover-bg": "#7de7fc",
-            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
-            "--bs-btn-border-color": "#099cb9"
-          }
-        }
-      }
-    ],
     [
       "uiLayout",
       {
@@ -1105,8 +1025,151 @@
       }
     ],
     [
-      "open_--bs-btn-border-color",
+      "propertyFilter",
+      "all"
+    ],
+    [
+      "search",
+      ""
+    ],
+    [
+      "showRawValues",
       true
+    ],
+    [
+      "width",
+      1024
+    ],
+    [
+      "height",
+      768
+    ],
+    [
+      "isSimpleSizes",
+      true
+    ],
+    [
+      "scales",
+      {}
+    ],
+    [
+      "excludedRawValues",
+      [
+        "initial",
+        "none"
+      ]
+    ],
+    [
+      "fullHeightFrameScale",
+      0.1548
+    ],
+    [
+      "inspected-index",
+      5
+    ],
+    [
+      "OPEN_GROUPS",
+      {
+        "button\n.btn\n.btn-info (1/3)": true
+      }
+    ],
+    [
+      "open_--cb-input-color-background",
+      false
+    ],
+    [
+      "areaOffset#area-left",
+      [
+        0,
+        0
+      ]
+    ],
+    [
+      "open_--bs-btn-bg",
+      false
+    ],
+    [
+      "THEME_EDITOR",
+      {
+        "scopes": {
+          ".btn-primary": {
+            "--bs-btn-bg": "#b4d1fe",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-bg": "#8db9fc"
+          },
+          ":root": {
+            "--button-text": "var(--mineshaft)",
+            "--mineshaft": "#292929"
+          },
+          ".btn": {
+            "--bs-btn-border-radius": "0",
+            "--bs-btn-border-width": "2px"
+          },
+          ".btn-success": {
+            "--bs-btn-bg": "#83fcc3",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-bg": "#48f4a4"
+          },
+          ".btn-secondary": {
+            "--bs-btn-bg": "#d3dce4",
+            "--bs-btn-hover-bg": "#b8bdc1",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)"
+          },
+          ".btn-danger": {
+            "--bs-btn-bg": "#f7b1b8",
+            "--bs-btn-hover-bg": "#f18893",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)"
+          },
+          ".btn-warning": {
+            "--bs-btn-bg": "#ffe79e",
+            "--bs-btn-hover-bg": "#ffdb70",
+            "--bs-btn-color": "var(--button-text)",
+            "--bs-btn-active-color": "var(--bs-btn-color)",
+            "--bs-btn-disabled-color": "var(--bs-btn-color)",
+            "--bs-btn-hover-color": "var(--bs-btn-color)",
+            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-border-color": "#bd900a"
+          },
+          ".btn-info": {
+            "--bs-btn-bg": "#a5eefd",
+            "--bs-btn-hover-bg": "#7de7fc",
+            "--bs-btn-active-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-disabled-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-hover-border-color": "var(--bs-btn-border-color)",
+            "--bs-btn-border-color": "#099cb9"
+          }
+        }
+      }
+    ],
+    [
+      "open_--bs-btn-color",
+      false
+    ],
+    [
+      "open_--bs-btn-color,--button-text",
+      false
+    ],
+    [
+      "open_--bs-btn-hover-bg",
+      false
+    ],
+    [
+      "open_--bs-btn-border-radius",
+      false
     ],
     [
       "open_--bs-btn-border-width",
@@ -1114,6 +1177,10 @@
     ],
     [
       "showSelectors_--bs-btn-border-width",
+      true
+    ],
+    [
+      "open_--bs-btn-border-color",
       true
     ]
   ],
@@ -1315,8 +1382,8 @@
       ]
     ]
   ],
+  "url": "https://inwerpsel.github.io/use-theme-editor/demo/bs/cheatsheet/",
   "timeline": [
-    [],
     [
       [
         "inspected-index",

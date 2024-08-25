@@ -76,7 +76,7 @@ export function Inspector(props) {
       <ul className={'group-list'} {...{ref}}>
         {groups.length === 0 && (
           <li>
-            <span className="alert">No results</span>
+            <span className="alert">No element</span>
           </li>
         )}
         {groups.map((group) => (

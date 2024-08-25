@@ -192,6 +192,7 @@ body {
   outline-offset: -2px;
   animation: pulse 0.2s;
   scroll-margin-top: 12px;
+  scroll-margin-right: 12px;
   scroll-margin-bottom: 12px;
 }
 
@@ -813,7 +814,7 @@ button:disabled {
 .chrome-picker {
   user-select: none;
 }
-.chrome-picker .saturation-white > * {
+.chrome-picker .saturation-white > *, .chrome-picker .hue-horizontal > * {
   transition-property: top, left;
   transition-duration: 0.12s, 0.12s;
 }

@@ -184,6 +184,7 @@ export function exportHistory() {
       initialStates: [...initialStates.entries()] ,
       finalStates: [...states.entries()],
       inspections: getPrevinspections(),
+      url: window.location.href,
       timeline,
     },
     `theme-editor-history-${date.toLocaleString()}`
@@ -205,7 +206,9 @@ export function createTimeline(timeline, store = false) {
   }
 }
 
-export function importHistory({timeline, initialStates: _initialStates, finalStates, pins: newPins, offset = 0, inspections}, frames: HTMLIFrameElement[]) {
+let historyUrl = localStorage.getItem('originalUrl');
+
+export function importHistory({timeline, initialStates: _initialStates, finalStates, pins: newPins, offset = 0, inspections, url}, frames: HTMLIFrameElement[]) {
   oldStates = pointedStates;
   past = [];
   historyOffset = 0;
@@ -217,6 +220,10 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
     initialStates.set(key, value);
   }
   createTimeline(timeline, true);
+  historyUrl = url;
+  if (url) {
+    localStorage.setItem('originalUrl', url);
+  }
 
   // Sanity check.
   for (const [key, value] of finalStates) {
@@ -481,6 +488,7 @@ export function clearHistory(): void {
   initialStates = new Map([...initialStates.entries(), ...pointedStates.entries()]);
 
   deleteStoredHistory(true, pointedStates);
+  localStorage.removeItem('originalUrl');
   setCurrentState();
   forceHistoryRender();
 }
@@ -930,8 +938,15 @@ export function SharedActionHistory(props) {
     hotkeysOptions
   );
 
-  const historyNavigationData = useMemo(
-    () => ({
+  useLayoutEffect(() => {
+    forceHistoryRender = () => forceRender({});
+    return () => {
+      forceHistoryRender = () => {};
+    };
+  } ,[]); 
+
+  return (
+    <HistoryNavigateContext.Provider value={{
       past,
       historyOffset,
       lastActions,
@@ -942,19 +957,8 @@ export function SharedActionHistory(props) {
       states,
       lastAlternate,
       lastAlternateIndex,
-    }),
-    [past, historyOffset, lastActions, states, pinVersion, lastAlternate]
-  );
-
-  useLayoutEffect(() => {
-    forceHistoryRender = () => forceRender({});
-    return () => {
-      forceHistoryRender = () => {};
-    };
-  } ,[]); 
-
-  return (
-    <HistoryNavigateContext.Provider value={historyNavigationData}>
+      historyUrl,
+    }}>
       {children}
     </HistoryNavigateContext.Provider>
   );

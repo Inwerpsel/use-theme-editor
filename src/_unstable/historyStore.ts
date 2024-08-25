@@ -54,6 +54,7 @@ export function storeActions(actions: [string, any][], clearFuture, index): void
         // Quick way to exclude dynamic keys, which would cause initial state to keep growing.
         const snap = JSON.stringify([...initialStates.entries()].filter(([k]) => use.hasOwnProperty(k)));
         localStorage.setItem(snapshotKey, snap);
+        localStorage.setItem('originalUrl', window.location.href);
         needsSnapshot = false;
         snapshot = snap;
     }

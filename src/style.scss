@@ -246,6 +246,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   // It doesn't entirely work well. Most of the time when dragging to view button it will have the class,
   // but if you wait long enough it's gone, and then it's quite weird to see it scrolling a few pixels differently.
   scroll-margin-top: 12px;
+  scroll-margin-right: 12px;
   scroll-margin-bottom: 12px;
 }
 
@@ -664,7 +665,7 @@ button:disabled {
   // Prevent selecting when dragging color marker.
   user-select: none;
 
-  .saturation-white > * {
+  .saturation-white > *, .hue-horizontal > * {
     transition-property: top, left;
     transition-duration: .12s, .12s;
   }

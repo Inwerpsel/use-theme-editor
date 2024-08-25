@@ -209,6 +209,18 @@ function PinList({close}) {
   );
 }
 
+function OriginalUrl() {
+  const { historyUrl } = useContext(HistoryNavigateContext);
+
+  const currentUrl = window.location.href;
+ 
+  if (!historyUrl || (historyUrl === currentUrl)) {
+    return;
+  }
+
+  return <a href={historyUrl}>{historyUrl.replace(/http:\/\/|https:\/\//, '')}</a>
+}
+
 export function scrollHistory(event) {
   const delta = Math.round(event.deltaY / 100);
   delta > 0 ? historyBack(delta, true) : historyForward(-delta, true);
@@ -236,6 +248,7 @@ export function HistoryControls() {
         >
           Clear
         </button>
+        <OriginalUrl />
         <Tutorial el={HistoryControls}>
           <p>
             Every step you do in the editor is tracked in a history timeline.
