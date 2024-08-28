@@ -11,8 +11,9 @@ export function ScrollInViewButton(props) {
 
     return <button
         draggable
-        onDragStart={() => {
+        onDragStart={(event) => {
             setDragged(true);
+            event.stopPropagation();
         }}
         onDragEnd={() => {
             setDragged(false);
