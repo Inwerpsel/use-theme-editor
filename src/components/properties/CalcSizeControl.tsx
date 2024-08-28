@@ -398,7 +398,6 @@ function UsedVariables(props) {
               cssVar,
               scopes: elementScopes,
             }}
-            referenceChain={[{name: expression}]}
             onChange={value => {
               dispatch({
                 type: ACTIONS.set,
