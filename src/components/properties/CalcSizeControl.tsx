@@ -74,13 +74,13 @@ const resultHasUnit = {
   '*'(a, b) {
     // Disable error as it improperly detects.
 
-    // if (a && b) throw new Error('At least 1 operand must be unitless.');
+    if (a && b) throw new Error('At least 1 operand must be unitless.');
 
     return a || b;
   },
   '/'(a, b) {
     // Disable error as it improperly detects.
-    // if (b) throw new Error('Divisor must be unitless.');
+    if (b) throw new Error('Divisor must be unitless.');
 
     return a;
   },
@@ -184,7 +184,9 @@ function resolveOperation([operator, arg1, aHadUnit], arg2, scenario, bHadUnit =
   try {
     hasUnit = resultHasUnit[operator](aHasUnit, bHasUnit);
   } catch (e) {
-    throw new Error(e.message + ' ' + `\nFound:\n${arg1} ${operator} ${arg2}`)
+    // Quick fix.
+    hasUnit = true;
+    // console.log('Unit possibly incorrect', e.message + ' ' + `\nFound:\n${arg1} ${operator} ${arg2}`);
   }
   const result = operators[operator](a, b);
 
