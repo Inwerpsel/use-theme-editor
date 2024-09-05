@@ -167,7 +167,6 @@ export function fixupStickyElements(elements, scrollOffset, screenHeight, frame)
         const elHeight = el.getBoundingClientRect().height;
         const maxOffset =  end - elHeight - elStart;
 
-        el.classList.contains('sidebar') && console.log({scrollOffset, maxOffset, end, computedTop, h: elHeight})
         if (scrollOffset > end) {
             restoreOrigTransform(el);
             continue;
