@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { get, use } from '../state';
 import { ThemeEditorContext } from './ThemeEditor';
 import { fixupFixedElements, fixupStickyElements, getFixedElements, getStickyElements } from '../functions/fixupFixedElements';
@@ -96,7 +96,7 @@ export function SmallFullHeightFrame(props) {
   }, [width, height]);
 
   let last = 0;
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (!fullHeightFrameShowFixed) {
       return;
     }
@@ -162,6 +162,19 @@ export function SmallFullHeightFrame(props) {
           //   boxSizing: 'border-box',
         }}
       >
+        <div
+          onMouseDown={jumpFrame}
+          onMouseUp={() => setWindowDragged(false)}
+          onMouseMove={applyDragDelta}
+          style={{
+            zIndex: 1,
+            position: 'absolute',
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+          }}
+        />
         <iframe
           className="responsive-frame"
           ref={scrollFrameRef}
@@ -176,19 +189,6 @@ export function SmallFullHeightFrame(props) {
           }}
         />
       </div>
-      <div
-        onMouseDown={jumpFrame}
-        onMouseUp={() => setWindowDragged(false)}
-        onMouseMove={applyDragDelta}
-        style={{
-          zIndex: 1,
-          position: 'absolute',
-          top: 0,
-          right: 0,
-          bottom: 0,
-          left: 0,
-        }}
-      ></div>
       <span
         ref={cursorRef}
         onClick={jumpFrame}
