@@ -102,7 +102,10 @@ export const GroupControl = props => {
     }, []);
   }, [vars, elementScopes, scopes]);
 
-  if (vars.length === 0 && !isDeepest && !inlineStyles && !src && !html) { 
+  const isEmpty = vars.length === 0;
+  const hasContent = !isEmpty || inlineStyles;
+
+  if (!hasContent && !isDeepest && !src && !html) { 
     return null;
   }
 
@@ -142,14 +145,14 @@ export const GroupControl = props => {
             fontWeight: 400,
             marginBottom: 0,
             paddingRight: '4px',
-            cursor: 'pointer',
+            cursor: !hasContent ? 'initial' : 'pointer',
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             maxHeight: isOpen ? '128px' : '300px',
             overflowY: 'auto',
           }}
-          onClick={() => toggleGroup(label)}
+          onClick={!hasContent ? null : () => toggleGroup(label)}
         >
           <div>
             {label} ({vars.length})
