@@ -19,7 +19,7 @@ export function getLocateSelector(scope, selector) {
   return `
 :where(
     ${scope},
-    ${scope} *
+    is:(${scope}) *
 ):where(
     ${selector}
 )`;
