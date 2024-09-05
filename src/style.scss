@@ -667,8 +667,9 @@ button:disabled {
   // Prevent selecting when dragging color marker.
   user-select: none;
 
-  .saturation-white > *, .hue-horizontal > * {
+  * {
     transition-property: top, left;
     transition-duration: .12s, .12s;
+    transition-timing-function: ease-out;
   }
 }
