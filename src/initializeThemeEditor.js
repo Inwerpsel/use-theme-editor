@@ -401,7 +401,16 @@ export const setupThemeEditor = async (config) => {
 
     const inspectionPath = toPath(target);
 
-    // 🐢
+    // Quick fix, disable pointer-events: none rule on all children
+    [...target.children].forEach(el => {
+      const comp = getComputedStyle(el).pointerEvents;
+      console.log(comp)
+      if (comp === 'none') {
+        el.style.pointerEvents = 'auto';
+      }
+    });
+
+    // 🐢 Serializes large message
     window.parent.postMessage(
       {
         type: 'render-vars',

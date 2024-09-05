@@ -19,7 +19,6 @@ body {
   background-color: var(--theme-editor--background-color, rgb(201, 190, 190));
 }
 .theme-editor button, .theme-editor input {
-  background: white;
   margin-right: 2px;
   border: 1px solid black;
   padding: 4px 7px;
@@ -679,18 +678,21 @@ div[id^=font-picker] ul {
 }
 
 .pin {
+  filter: grayscale(1);
   display: inline-block;
   transition: rotate 0.1s ease-in, translate 0.12s;
   transition-delay: 0.07s, 0s;
 }
 
 .pinned-here .pin {
+  filter: none;
   rotate: -45deg;
   translate: 0 9px;
   transition-delay: 0s, 0.07s;
 }
 
 .pinned-initial .pin {
+  filter: none;
   rotate: 45deg;
   translate: -22px 2px;
   transition-delay: 0s, 0.07s;
@@ -701,6 +703,7 @@ div[id^=font-picker] ul {
 }
 
 .pinned-latest .pin {
+  filter: none;
   rotate: -135deg;
   translate: 22px 3px;
   transition-delay: 0s, 0.07s;
@@ -814,9 +817,10 @@ button:disabled {
 .chrome-picker {
   user-select: none;
 }
-.chrome-picker .saturation-white > *, .chrome-picker .hue-horizontal > * {
+.chrome-picker * {
   transition-property: top, left;
   transition-duration: 0.12s, 0.12s;
+  transition-timing-function: ease-out;
 }
 
 /*# sourceMappingURL=main.css.map*/
