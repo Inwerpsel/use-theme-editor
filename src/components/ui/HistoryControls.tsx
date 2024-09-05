@@ -137,7 +137,9 @@ export function ActivePins() {
           setOpen(!open);
         }}
       >
+        <span style={{filter: amount === 0 ? 'grayscale(1)' :  'none'}}>
         📌{amount}
+        </span>
       <Tutorial el={ActivePins}>
         <p>
           This button shows how many pins are applied and allows you to toggle each.

@@ -22,8 +22,6 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   text-align: start;
 
   button, input {
-    // Quick fix for some unwanted dark modes in demos.
-    background: white;
     margin-right: 2px;
     border: 1px solid black;
     padding: 4px 7px;
@@ -504,18 +502,21 @@ $pin-in: 0s, $pin-delay;
 $pin-out: $pin-delay, 0s;
 
 .pin {
+  filter: grayscale(1);
   display: inline-block;
   transition: rotate .1s ease-in, translate .12s;
   transition-delay: $pin-out;
 }
 
 .pinned-here .pin { 
+  filter: none;
   rotate: -45deg;
   translate: 0 9px;
   transition-delay: $pin-in;
 }
 
 .pinned-initial .pin {
+  filter: none;
   rotate: 45deg;
   translate: -22px 2px;
   transition-delay: $pin-in;
@@ -526,6 +527,7 @@ $pin-out: $pin-delay, 0s;
 }
 
 .pinned-latest .pin {
+  filter: none;
   rotate: -135deg;
   translate: 22px 3px;
   transition-delay: $pin-in;
