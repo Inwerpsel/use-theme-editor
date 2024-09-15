@@ -121,7 +121,7 @@ export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, reference
         </span>
         <span style={{ float: 'right', marginRight: '4px' }}>
           {referencedVariable && <FormatVariableName name={referencedVariable.name} />}
-          {!referencedVariable && (isUrl ? null : resolvedValue)}
+          {!referencedVariable && (isUrl ? null : value)}
         </span>
       </Fragment>
     );
