@@ -17,7 +17,7 @@ export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 export const mustBeColor = cssVar => {
   return cssVar.usages.some(({property}) => property.match(/color$/)
     || ['background', 'background-image', 'fill', 'stroke'].includes(property)
-    || (property === 'border' && cssVar.name.includes('color'))
+    || (property === 'border' && !cssVar.name.includes('width') && !cssVar.name.includes('size'))
   )
     
 };
