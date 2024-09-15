@@ -600,6 +600,8 @@ button {
 .tutorial-content {
   z-index: 1000000;
   min-width: 320px;
+  padding: .25rem;
+  padding-left: 2rem;
 
   :has(&) {
     // A bit aggressive, but this is a simple way to display the tutorial message outside the normal area boundaries,
@@ -673,3 +675,16 @@ button:disabled {
     transition-timing-function: ease-out;
   }
 }
+
+// .oklch-picker {
+//   // Prevent selecting when dragging color marker.
+//   user-select: none;
+
+//   * {
+//     transition-property: --picked-lightness,--picked-chroma,--picked-hue;
+//     transition-duration: 1s, 1s, 1s;
+//     transition-timing-function: ease-out;
+//   }
+// }
+
+@import 'css/picker.scss';

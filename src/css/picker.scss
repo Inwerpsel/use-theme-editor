@@ -1,0 +1,69 @@
+.oklch-picker input[type=range] {
+    // filter: grayscale(1);
+    min-height: 0;
+    padding: 0;
+    outline: none !important;
+    --picked: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
+    accent-color: grey;
+
+
+    &::-webkit-slider-thumb {
+        appearance: auto;
+        accent-color: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
+    }
+
+    &:focus {
+
+        &::-webkit-slider-runnable-track {
+            background: var(--picked);
+        }
+    }
+}
+
+#hue,
+#lightness,
+#chroma {
+    position: absolute;
+    top: 36px;
+    width: calc(100% + 12px);
+    margin-left: -6px;
+}
+
+.hue, .chroma, .lightness {
+    position: relative;
+    height: 42px;
+    width: 340px;
+    margin: 30px auto;
+    border-radius: 12px;
+}
+
+.hue {
+    --p: 92%;
+    --c: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.138) 0);
+
+    background: linear-gradient(90deg in oklch longer hue, var(--c), var(--c));
+}
+
+.chroma {
+    --hue: var(--picked-hue, 180);
+    --lightness: var(--picked-lightness, 63%);
+    --purest: oklch(var(--lightness) var(--max-chroma, 0.4) var(--hue) / 1);
+    --fromgray: oklch(var(--lightness) 0 0 / 1);
+    --togray: oklch(var(--lightness) 0 0 / 0);
+
+    // width: calc(340px * (var(--max-chroma) / 0.4));
+    // margin: 0;
+    // margin-left: 14px;
+
+    background: linear-gradient(90deg in oklch, var(--fromgray), var(--togray)), var(--purest);
+}
+
+.lightness {
+    --hue: var(--picked-hue, 180);
+    --lightness: var(--picked-lightness, 63%);
+    --p: 92%;
+    --from: oklch(0% var(--picked-chroma, 0.1) var(--hue, 180));
+    --to: oklch(100% var(--picked-chroma, 0.4) var(--hue, 180));
+
+    background: linear-gradient(90deg in oklch, var(--from), var(--to));
+}

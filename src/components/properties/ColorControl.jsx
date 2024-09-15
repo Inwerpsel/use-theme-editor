@@ -5,7 +5,7 @@ import {
   GooglePicker,
 } from 'react-color';
 import { ACTIONS, editTheme } from '../../hooks/useThemeEditor';
-import React, { Fragment } from 'react';
+import React, { Fragment, useState } from 'react';
 import tinycolor from 'tinycolor2';
 import { ThemePalettePicker } from '../ThemePalettePicker';
 import { useThrottler } from '../../hooks/useThrottler';
@@ -14,6 +14,7 @@ import { CreateAlias } from '../inspector/CreateAlias';
 import { get } from '../../state';
 import { SelectControl } from '../controls/SelectControl';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { OklchColorControl } from './OklchColorControl';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
@@ -102,7 +103,6 @@ export const ColorControl = (props) => {
   // }
 
   const {name, usages} = cssVar;
-  const hideColorPicker = false;
   // const [hideColorPicker, setHideColorPicker] = useResumableState(
   //   `color-picker~~${cssVar.name}`,
   //   true
@@ -120,12 +120,19 @@ export const ColorControl = (props) => {
 
   const [variant, setVariant] = useLocalStorage('color-picker-variant', 'chrome');
   const ColorPicker = pickers[variant];
+  const isOk = value.includes('oklch');
+  const [useOk, setUseOk] = useLocalStorage('ok-picker', false);
 
   if (!nativeColorPicker) {
     return (
       <Fragment>
-        <div style={{ clear: 'both' }}>
+        {useOk && <OklchColorControl {...{value, onChange}}/>}
+        <div style={{ display: 'flex', clear: 'both' }}>
           <CreateAlias key={value} {...{ value }} />
+          <div style={{display: 'flex'}}>
+            <button style={{borderTopRightRadius: 0, borderBottomRightRadius: 0, marginRight: 0, borderRight: 'none'}} onClick={()=>setUseOk(false)} disabled={!useOk}>rbgh/hsl</button>
+            <button style={{borderTopLeftRadius: 0, borderBottomLeftRadius: 0}} onClick={()=>setUseOk(true)} disabled={useOk}>oklch</button>
+          </div>
           {/* <button
             onClick={() => setHideColorPicker(!hideColorPicker)}
             title={hideColorPicker ? 'Add a new color' : 'Hide color picker'}
@@ -142,7 +149,7 @@ export const ColorControl = (props) => {
             {!hideColorPicker ? 'Hide picker' : 'New color'}
           </button> */}
         </div>
-        {!hideColorPicker && (
+        {!useOk && (
           <Fragment>
             <ColorPicker
               // Apparently the Google picker comes with a header text baked in.
@@ -173,25 +180,25 @@ export const ColorControl = (props) => {
                 value={value}
                 onChange={(value) => onChange(value, true)}
               />
+              <button
+                onClick={() => {
+                  value === 'transparent'
+                    ? dispatch({ type: ACTIONS.unset, payload: { name } })
+                    : onChange('transparent');
+                }}
+                style={{
+                  fontSize: '12px',
+                  opacity: value === 'transparent' ? 1 : 0.4,
+                }}
+              >
+                👻
+              </button>
+            <SelectControl title='Change color picker style' style={{float: 'right'}} options={pickerOptions} value={variant} onChange={setVariant}/>
             </div>
-            <button
-              onClick={() => {
-                value === 'transparent'
-                  ? dispatch({ type: ACTIONS.unset, payload: { name } })
-                  : onChange('transparent');
-              }}
-              style={{
-                fontSize: '12px',
-                float: 'right',
-                opacity: value === 'transparent' ? 1 : 0.4,
-              }}
-            >
-              👻
-            </button>
+            
           </Fragment>
         )}
         <ThemePalettePicker {...{ value, onChange, name, allowGradients }} />
-        <SelectControl title='Change color picker style' style={{float: 'right'}} options={pickerOptions} value={variant} onChange={setVariant}/>
       </Fragment>
     );
   }
