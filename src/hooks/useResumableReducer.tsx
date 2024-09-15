@@ -339,7 +339,7 @@ export function clearAlternate() {
 // Amount of steps back in time.
 let historyOffset = 0;
 // Prompt before destroying future when this many steps back in history.
-let historyWarnOnUpdateLimit = 5;
+let historyWarnOnUpdateLimit = 8;
 // The tail of the history.
 let states = new Map<string, any>();
 // The state that was rendered before the last state transition.
@@ -535,7 +535,6 @@ export function replayAlternate(): void {
   if (entries.length === 0) {
     // In case no new entries updated the history
     const newLatest = past.at(-historyOffset);
-    console.log(past);
     states = newLatest.states;
     // no need to update oldStates, as it didn't change
     lastActions = newLatest.lastActions;
