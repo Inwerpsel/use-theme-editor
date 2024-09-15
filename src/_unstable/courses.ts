@@ -3,7 +3,7 @@ import { RemoveAnnoyingPrefix } from "../components/inspector/RemoveAnnoyingPref
 import { MoveControls } from "../components/movable/MoveControls";
 import { FrameScaleSlider } from "../components/ui/FrameScaleSlider";
 import { FrameSizeSettings } from "../components/ui/FrameSizeSettings";
-import { HistoryControls, LockStatus, MiniTimeline } from "../components/ui/HistoryControls";
+import { HistoryControls, ActivePins, MiniTimeline } from "../components/ui/HistoryControls";
 import { HistoryStash } from "../components/ui/HistoryStash";
 import { HistoryVisualization } from "../components/ui/HistoryVisualization";
 import { Inspector } from "../components/ui/Inspector";
@@ -11,6 +11,7 @@ import { Palette } from "../components/ui/Palette";
 import { ScreenSwitcher } from "../components/ui/ScreenSwitcher";
 import { ServerThemesList } from "../components/ui/ServerThemesList";
 import { ThemeEditorExtraOptions } from "../components/ui/ThemeEditorExtraOptions";
+import { StartTutorial } from "./Tutorial";
 
 export let courses;
 
@@ -20,6 +21,7 @@ export function makeCourses() {
         basics: {
             name: 'basics',
             steps: [
+                StartTutorial,
                 ResizableFrame,
                 Inspector,
                 ScreenSwitcher,
@@ -34,7 +36,7 @@ export function makeCourses() {
                 HistoryControls,
                 MiniTimeline,
                 HistoryVisualization,
-                LockStatus,
+                ActivePins,
                 HistoryStash,
             ],
         },
