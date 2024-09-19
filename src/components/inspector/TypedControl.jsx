@@ -15,6 +15,10 @@ export const valuesAsLabels = value => ({value: `${value}`, label: `${value}`});
 // NOTE: for now this also includes background and background-image, because for now these have no
 // separate control anyway for the other types they allow.
 export const mustBeColor = cssVar => {
+  // This should be generally true and shortcuts more expensive logic, as well as capturing more cases.
+  if (cssVar.name.includes('color')) {
+    return true;
+  }
   return cssVar.usages.some(({property}) => property.match(/color$/)
     || ['background', 'background-image', 'fill', 'stroke'].includes(property)
     || (property === 'border' && !cssVar.name.includes('width') && !cssVar.name.includes('size'))
