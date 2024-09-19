@@ -83,38 +83,49 @@ function Dots({amount}) {
   </div>
 }
 
+const tutorial = (
+  <Tutorial el={MiniTimeline}>
+    Here's a compact version of the history timeline. You can scroll above the
+    history section to move the timeline one step at a time, however fast you
+    and your mouse like to work with.
+    <h1>Warning!</h1>
+    <p>
+      This will restore the UI state across the whole screen, which definitely
+      is a concern for people with epilepsy.
+    </p>
+    <p>
+      After having changed the page background color multiple times, for
+      example, going through this history timeline fast will cause the whole
+      preview screen to flash.
+    </p>
+    <p>
+      It's recommended to only use it when controlled, small nudges of the wheel
+      are possible.
+    </p>
+    <p>
+      Keeping some state pinned can help reduce the amount of changes happening
+      in rapid succession.
+    </p>
+  </Tutorial>
+);
+
+function scrollToPoint(length, event: MouseEvent) {
+  const target = event.currentTarget;
+  const rect = target.getBoundingClientRect();
+  const ratio = Math.abs((event.clientX - rect.left) / rect.width);
+  const newIndex = Math.round(length * ratio);
+  historyGo(length - newIndex);
+}
+
 export function MiniTimeline() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
 
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
-  return <div style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey', boxSizing: 'border-box'}}>
+  return <div onClick={scrollToPoint.bind(null, past.length)} style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey', boxSizing: 'border-box'}}>
     <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .06s ease-out', boxSizing: 'border-box'}}></div>
     <Dots amount={past.length + 1} />
-    <Tutorial el={MiniTimeline}>
-      Here's a compact version of the history timeline.
-
-      You can scroll above the history section to move the timeline one step at a time,
-      however fast you and your mouse like to work with.
-
-      <h1>
-        Warning!
-      </h1>
-      <p>
-        This will restore the UI state across the whole screen,
-        which definitely is a concern for people with epilepsy.
-      </p>
-      <p>
-        After having changed the page background color multiple times, for example,
-        going through this history timeline fast will cause the whole preview screen to flash.
-      </p>
-      <p>
-        It's recommended to only use it when controlled, small nudges of the wheel are possible.
-      </p>
-      <p>
-        Keeping some state pinned can help reduce the amount of changes happening in rapid succession.
-      </p>
-    </Tutorial>
+    {tutorial}
   </div>
 }
 
@@ -259,7 +270,7 @@ export function HistoryControls() {
 
           <p>
             On top of "normal" history buttons, there's the fast buttons (!← and →!),
-            which jumps to the most important changes like edits to style rules,
+            that jump to the most important steps like edits to style rules,
             newly inspected elements, and editor UI layout changes. It jumps
             over the less interesting steps, while still applying their result.
           </p>
