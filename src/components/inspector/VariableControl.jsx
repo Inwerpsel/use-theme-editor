@@ -284,6 +284,7 @@ export const VariableControl = (props) => {
   const uniqueSelectors = new Set(usages.map(u=>u.selector)).size;
 
   const defaultValue =
+    definedValues[currentScope][name] ||
     getValueFromDefaultScopes(elementScopes, cssVar) ||
     defaultValues[name] ||
     cssVar.maxSpecific?.defaultValue || cssVar.usages[0].defaultValue;
@@ -540,7 +541,7 @@ export const VariableControl = (props) => {
                   <a
                     key={property}
                     target={'_blank'}
-                    href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property}`}
+                    href={`https://developer.mozilla.org/en-US/docs/Web/CSS/${property.replace(/^-webkit-/, '')}`}
                     style={{ cursor: 'help' }}
                   >
                     {comp}
