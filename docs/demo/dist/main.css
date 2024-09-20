@@ -845,7 +845,7 @@ button:disabled {
 #chroma {
   position: absolute;
   top: 41px;
-  width: calc(100% + 12px);
+  width: 352px;
   margin-left: -6px;
   box-sizing: border-box;
   user-select: none;

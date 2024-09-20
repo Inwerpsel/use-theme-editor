@@ -89,10 +89,9 @@ export function OklchColorControl({value, onChange}) {
     const h = !_h ? 0 : _h;
     const clamped = clampChroma(`oklch(${l}% 0.4 ${h})`, 'oklch', 'p3');
     const maxChroma = clamped.c; 
-    const isNotInGamut = maxChroma > c;
+    const isNotInGamut = maxChroma < c;
     const lowerL = minLightness(c, h);
     const upperL = maxLightness(c, h);
-    // console.log(lower);
 
     return (
       <div className="oklch-picker" style={{
@@ -121,12 +120,12 @@ export function OklchColorControl({value, onChange}) {
             id="chroma"
             type="range"
             min={0}
-            max={maxChroma}
+            max={0.4}
             value={c}
-            step={0.0001}
+            step={0.001}
             onInput={e=>{
-              const input = Math.min(maxChroma, e.target.value);
-              return onChange(`oklch(${l.toFixed(2)}% ${input} ${h.toFixed(2)})`);
+              const input = Math.min(maxChroma.toFixed(3) - 0.001, e.target.value);
+              return onChange(`oklch(${l.toFixed(2)}% ${input.toFixed(3)} ${h.toFixed(2)})`);
             }} 
           />
         </div>
@@ -141,7 +140,7 @@ export function OklchColorControl({value, onChange}) {
           <input id="hue" type="range" min={0} max={360} value={h}onChange={e=>onChange(`oklch(${l.toFixed(2)}% ${c.toFixed(3)} ${e.target.value})`)}  />
         </div>
         <OnlinePickerLink {...{l,c,h}} />
-        {!isNotInGamut && <span style={{color: 'red'}}>NOT IN GAMUT</span>}
+        {isNotInGamut && <span style={{color: 'red', fontWeight: 'bold'}}>NOT IN GAMUT</span>}
       </div>
     );
 }
