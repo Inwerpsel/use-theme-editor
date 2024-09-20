@@ -1,13 +1,12 @@
 import React, { Fragment, useMemo, useState } from "react"
 import { TextControl } from "../controls/TextControl";
-import { COLOR_VALUE_REGEX } from "../properties/ColorControl";
 import nameThatColor from '@yatiac/name-that-color';
 import { ACTIONS, editTheme } from "../../hooks/useThemeEditor";
-import tinycolor from 'tinycolor2';
+import { converter, formatHex, parse, clampGamut  } from 'culori';
 
 // The library currently used has some color names with accents, like "screamin'".
 const invalidNameChars = /[^\w\-]/;
-
+const toRgb = converter('rgb');
 export function CreateAlias(props) {
     const {value} = props;
     const dispatch = editTheme();
@@ -19,17 +18,12 @@ export function CreateAlias(props) {
         if (!wasOpened) {
             return null;
         }
-        // No valid syntax besides hsl can include the string "deg".
-        // In theory, it's possible removing "deg" makes certain invalid color strings valid,
-        // but that's not a problem here.
-        const parsed = tinycolor(value.replace('deg', ''));
-        if (parsed.isValid()) {
-          const alphaSuffix = parsed.getAlpha() === 1 ? '' : ` ${parsed.getAlpha().toString().replace('.', '')}`;
-          return nameThatColor(parsed.toHexString()).colorName.toLowerCase().replace(invalidNameChars, '') + alphaSuffix;
-        }
-        if (COLOR_VALUE_REGEX.test(value)) {
-          console.log('valid color not parsed by tinycolor (should not happen)');
-          return nameThatColor(value).colorName.toLowerCase().replace(invalidNameChars, '');
+        const parsed = parse(value);
+        if (parsed) {
+          const rgb = toRgb(clampGamut('rgb')(parsed));
+          const {alpha = 1} = rgb;
+          const alphaSuffix = alpha === 1 ? '' : ` ${alpha.toString().replace('.', '')}`;
+          return nameThatColor(formatHex(rgb)).colorName.toLowerCase().replace(invalidNameChars, '') + alphaSuffix;
         }
         return '';
     } , [wasOpened])
