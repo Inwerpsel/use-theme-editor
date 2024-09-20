@@ -16,6 +16,8 @@ import { SelectControl } from '../controls/SelectControl';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { OklchColorControl } from './OklchColorControl';
 
+import { converter, clampGamut, formatHsl } from 'culori';
+
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
 
@@ -81,9 +83,12 @@ const pickers = {
 
 const pickerOptions = Object.keys(pickers).map(k => ({label: k, value: k}))
 
+const toRgb = converter('rgb');
+
 export const ColorControl = (props) => {
-  const { onChange, onUnset, value: maybeVar, resolvedValue, cssVar } = props;
-  const value = maybeVar?.includes('var(--') ? resolvedValue : maybeVar;
+  const { onChange, onUnset, value: maybeVar, resolvedValue, cssVar, cssFunc } = props;
+  const parsed = toRgb(clampGamut('hsl')(resolvedValue)) || {};
+  const value = resolvedValue;
   const { nativeColorPicker } = get;
   // const { onChange: _onChange, onUnset, value: _value, cssVar, cssFunc } = props;
 
@@ -111,16 +116,15 @@ export const ColorControl = (props) => {
   const dispatch = editTheme();
 
   const throttle = useThrottler({ ms: 20 });
-  const opacity = tinycolor(value).getAlpha();
+  const opacity = parsed.alpha || 1;
 
   // Disallow gradients if not all usages support it.
   const allowGradients = !usages.some(({property}) => property !== 'background');
 
-  const hexValue = tinycolor(value).toHexString();
+  const hslValue = formatHsl(parsed);
 
   const [variant, setVariant] = useLocalStorage('color-picker-variant', 'chrome');
   const ColorPicker = pickers[variant];
-  const isOk = value.includes('oklch');
   const [useOk, setUseOk] = useLocalStorage('ok-picker', false);
 
   if (!nativeColorPicker) {
@@ -162,7 +166,7 @@ export const ColorControl = (props) => {
                   width: '100%',
                 },
               }}
-              color={value}
+              color={hslValue}
               onChange={(color) => {
                 const hasTransparency = color.rgb.a !== 1;
 
@@ -214,7 +218,7 @@ export const ColorControl = (props) => {
           float: 'right',
           opacity,
         }}
-        value={hexValue}
+        value={hslValue}
         onChange={(event) => {
           const color = tinycolor(event.target.value);
           const newColor = pickFormat(color, opacity);
@@ -233,7 +237,7 @@ export const ColorControl = (props) => {
         min={0}
         max={1}
         step={.05}
-        value={tinycolor(value).toRgb().a}
+        value={parsed.a}
         onChange={(event) => {
           const opacity = Number(event.target.value);
           const color = tinycolor(value);
