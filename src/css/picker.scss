@@ -12,7 +12,7 @@
         accent-color: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
     }
 
-    &:focus {
+    &:focus, .hovering-with-color {
 
         &::-webkit-slider-runnable-track {
             background: var(--picked);
@@ -24,16 +24,18 @@
 #lightness,
 #chroma {
     position: absolute;
-    top: 36px;
+    top: 41px;
     width: calc(100% + 12px);
     margin-left: -6px;
+    box-sizing: border-box;
+    user-select: none;
 }
 
 .hue, .chroma, .lightness {
     position: relative;
     height: 42px;
     width: 340px;
-    margin: 30px auto;
+    margin: 20px 0;
     border-radius: 12px;
 }
 
@@ -47,16 +49,53 @@
 .chroma {
     --hue: var(--picked-hue, 180);
     --lightness: var(--picked-lightness, 63%);
-    --purest: oklch(var(--lightness) var(--max-chroma, 0.4) var(--hue) / 1);
+    --purest: oklch(var(--lightness) var(--max-chroma, 0.4) var(--hue));
     --fromgray: oklch(var(--lightness) 0 0 / 1);
-    --togray: oklch(var(--lightness) 0 0 / 0);
 
-    // width: calc(340px * (var(--max-chroma) / 0.4));
-    // margin: 0;
-    // margin-left: 14px;
+    width: calc(340px * (var(--max-chroma) / 0.4));
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
 
-    background: linear-gradient(90deg in oklch, var(--fromgray), var(--togray)), var(--purest);
+    background: linear-gradient(
+        to right in oklch,
+        var(--fromgray) 0%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.05) var(--hue)) 5%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.1) var(--hue)) 10%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.15) var(--hue)) 15%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.2) var(--hue)) 20%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.25) var(--hue)) 25%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.3) var(--hue)) 30%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.35) var(--hue)) 35%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.4) var(--hue)) 40%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.45) var(--hue)) 45%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.5) var(--hue)) 50%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.55) var(--hue)) 55%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.6) var(--hue)) 60%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.65) var(--hue)) 65%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.7) var(--hue)) 70%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.75) var(--hue)) 75%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.8) var(--hue)) 80%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.85) var(--hue)) 85%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.9) var(--hue)) 90%,
+        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.95) var(--hue)) 95%,
+        var(--purest) 100%,
+    );
 }
+
+$stripe-color-1: grey;
+$stripe-color-2: rgb(137, 137, 137);
+
+$stripe-bg: repeating-linear-gradient(45deg,
+        $stripe-color-1,
+        $stripe-color-1 2px,
+        $stripe-color-2 2px,
+        $stripe-color-2 4px);
+
+$stripe-bg-r: repeating-linear-gradient(225deg,
+        $stripe-color-1,
+        $stripe-color-1 2px,
+        $stripe-color-2 2px,
+        $stripe-color-2 4px);
 
 .lightness {
     --hue: var(--picked-hue, 180);
@@ -65,5 +104,28 @@
     --from: oklch(0% var(--picked-chroma, 0.1) var(--hue, 180));
     --to: oklch(100% var(--picked-chroma, 0.4) var(--hue, 180));
 
-    background: linear-gradient(90deg in oklch, var(--from), var(--to));
+    background: linear-gradient(to right in oklch, var(--from), var(--to));
+    box-sizing: border-box;
+
+    &::before {
+    box-sizing: border-box;
+        content: '';
+        position: absolute;
+        width: var(--min-lightness, 0);
+        top: 0;
+        height: 100%;
+        left: 0;
+        background: $stripe-bg;
+    }
+
+    &::after {
+    box-sizing: border-box;
+        content: '';
+        position: absolute;
+        width: calc(100% - var(--max-lightness, 0));
+        top: 0;
+        height: 100%;
+        right: 0;
+        background: $stripe-bg-r;
+    }
 }
