@@ -133,7 +133,7 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
 
 [🖌 Home page](https://inwerpsel.github.io/use-theme-editor/demo/openprops/home/)
 
-### Mozilla developers
+### MDN web docs
 
 <details>
   <summary>Info/instructions</summary>
@@ -147,10 +147,10 @@ please let me know in a [new issue](https://github.com/Inwerpsel/use-theme-edito
   Possible related to the `:root:not(.light):not(.dark)` selector
 </details>
 
-[🖌 How CSS is structured](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/how-is-css-structured/)
+[🖌 Using CSS custom properties](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/use-custom-properties/)
 [🖌 Basic math in JavaScript — numbers and operators](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/jsmath/)
 [🖌 @media hover](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/media-hover/)
-[🖌 Using CSS custom properties](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/use-custom-properties/)
+[🖌 How CSS is structured](https://inwerpsel.github.io/use-theme-editor/demo/mozilladocs/how-is-css-structured/)
 
 ### Pico CSS
 
