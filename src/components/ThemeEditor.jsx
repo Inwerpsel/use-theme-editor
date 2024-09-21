@@ -39,6 +39,7 @@ import { HistoryStash } from './ui/HistoryStash';
 import { StartTutorial } from '../_unstable/Tutorial';
 import { ApplyStyles } from './effects/ApplyStyles';
 import { AcceptDroppedOptions } from './effects/AcceptDroppedOptions';
+import { FullscreenToggle } from './ui/FullScreenToggle';
 
 export const ThemeEditorContext = createContext({});
 
@@ -225,6 +226,7 @@ export const ThemeEditor = (props) => {
               {/* <VoiceCommands /> */}
               <CurrentTheme />
               <FullHeightFrameScale />
+              <FullscreenToggle />
             </Drawer>
           </div>
         </MovablePanels>

@@ -878,15 +878,11 @@ button:disabled {
 
 .lightness {
   --hue: var(--picked-hue, 180);
-  --lightness: var(--picked-lightness, 63%);
-  --p: 92%;
-  --from: oklch(0% var(--picked-chroma, 0.1) var(--hue, 180));
-  --to: oklch(100% var(--picked-chroma, 0.4) var(--hue, 180));
-  background: linear-gradient(to right in oklch, var(--from), var(--to));
-  box-sizing: border-box;
+  --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
+  --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
+  background: linear-gradient(to right in oklch, var(--from) var(--min-lightness), var(--to) var(--max-lightness));
 }
 .lightness::before {
-  box-sizing: border-box;
   content: "";
   position: absolute;
   width: var(--min-lightness, 0);
@@ -896,7 +892,6 @@ button:disabled {
   background: repeating-linear-gradient(45deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
 }
 .lightness::after {
-  box-sizing: border-box;
   content: "";
   position: absolute;
   width: calc(100% - var(--max-lightness, 0));
