@@ -79,7 +79,7 @@ function Dots({amount}) {
   }
 
   return <div style={{position: 'absolute', top: '4px', left: '2.4px', width: 'calc(100% - 7px)', display: 'flex', justifyContent: 'space-between'}}>
-    {dots.map(i => <span key={i} style={{height: '4px', borderLeft: '1px solid #646262'}}/>)}
+    {dots.map(i => <span key={i} style={{height: '6px', borderLeft: '1px solid #646262'}}/>)}
   </div>
 }
 
@@ -116,17 +116,46 @@ function scrollToPoint(length, event: MouseEvent) {
   const newIndex = Math.round(length * ratio);
   historyGo(length - newIndex);
 }
+function scrollWhileDragging(length, event) {
+  // Todo find reasonable pressure value.
+  if (event.pressure > 0.01) {
+    scrollToPoint(length, event);
+  }
+}
 
 export function MiniTimeline() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
 
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
 
-  return <div onClick={scrollToPoint.bind(null, past.length)} style={{width: '100%', height: '6px', padding:'2px', background: 'darkgrey', boxSizing: 'border-box'}}>
-    <div style={{width: `${percentage}%`, height: '2px', background: 'rgb(26, 217, 210)', borderRight: '3px solid black', transition: 'width .06s ease-out', boxSizing: 'border-box'}}></div>
-    <Dots amount={past.length + 1} />
-    {tutorial}
-  </div>
+  return (
+    <div
+      onPointerMove={scrollWhileDragging.bind(null, past.length)}
+      onClick={scrollToPoint.bind(null, past.length)}
+      style={{
+        width: '100%',
+        height: '8px',
+        padding: '2px',
+        background: 'darkgrey',
+        boxSizing: 'border-box',
+        userSelect: 'none',
+        touchAction: 'none', // Without this the drag is interrupted after some distance.
+      }}
+    >
+      <div
+        style={{
+          width: `${percentage}%`,
+          height: '6px',
+          background: 'rgb(26, 217, 210)',
+          borderRight: '3px solid black',
+          transition: 'width .06s ease-out',
+          boxSizing: 'border-box',
+        }}
+      ></div>
+      <Dots amount={past.length + 1} />
+      {tutorial}
+    </div>
+  );
 }
 
 export function ActivePins() {
@@ -247,10 +276,6 @@ export function HistoryControls() {
       <div onWheelCapture={scrollHistory}>
         <MiniTimeline />
         <ActivePins />
-        <HistoryBackFast />
-        <HistoryBack />
-        <HistoryForward />
-        <HistoryForwardFast />
         <Checkbox controls={[visualize, setVissualize]}>Visualize</Checkbox>
         {visualize && <Checkbox title='Always or only when in a previous state' controls={[visualizeAlways, setVissualizeAlways]}>Always</Checkbox>}
 
@@ -261,6 +286,10 @@ export function HistoryControls() {
         >
           Clear
         </button>
+        <HistoryBackFast />
+        <HistoryBack />
+        <HistoryForward />
+        <HistoryForwardFast />
         <OriginalUrl />
         <Tutorial el={HistoryControls}>
           <p>
