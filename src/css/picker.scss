@@ -99,16 +99,12 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
 
 .lightness {
     --hue: var(--picked-hue, 180);
-    --lightness: var(--picked-lightness, 63%);
-    --p: 92%;
-    --from: oklch(0% var(--picked-chroma, 0.1) var(--hue, 180));
-    --to: oklch(100% var(--picked-chroma, 0.4) var(--hue, 180));
+    --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
+    --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
 
-    background: linear-gradient(to right in oklch, var(--from), var(--to));
-    box-sizing: border-box;
+    background: linear-gradient(to right in oklch, var(--from) var(--min-lightness), var(--to) var(--max-lightness));
 
     &::before {
-    box-sizing: border-box;
         content: '';
         position: absolute;
         width: var(--min-lightness, 0);
@@ -119,7 +115,6 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
     }
 
     &::after {
-    box-sizing: border-box;
         content: '';
         position: absolute;
         width: calc(100% - var(--max-lightness, 0));
