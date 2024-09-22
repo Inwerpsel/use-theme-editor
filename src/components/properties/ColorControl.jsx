@@ -18,7 +18,7 @@ import { OklchColorControl } from './OklchColorControl';
 
 import { converter, clampGamut, formatHsl } from 'culori';
 
-export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()/;
+export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()|oklch\(/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
 
 const INTERNAL_VARS_REGEX = /^(--var-control|--server-theme|--theme-editor)/;
@@ -134,7 +134,7 @@ export const ColorControl = (props) => {
         <div style={{ display: 'flex', clear: 'both' }}>
           <CreateAlias key={value} {...{ value }} />
           <div style={{display: 'flex'}}>
-            <button style={{borderTopRightRadius: 0, borderBottomRightRadius: 0, marginRight: 0, borderRight: 'none'}} onClick={()=>setUseOk(false)} disabled={!useOk}>rbgh/hsl</button>
+            <button style={{borderTopRightRadius: 0, borderBottomRightRadius: 0, marginRight: 0, borderRight: 'none'}} onClick={()=>setUseOk(false)} disabled={!useOk}>rgb/hsl</button>
             <button style={{borderTopLeftRadius: 0, borderBottomLeftRadius: 0}} onClick={()=>setUseOk(true)} disabled={useOk}>oklch</button>
           </div>
           {/* <button
