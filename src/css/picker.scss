@@ -16,6 +16,7 @@
 
         &::-webkit-slider-runnable-track {
             background: var(--picked);
+            padding-top: 4px;
         }
     }
 }
@@ -49,35 +50,35 @@
 .chroma {
     --hue: var(--picked-hue, 180);
     --lightness: var(--picked-lightness, 63%);
-    --purest: oklch(var(--lightness) var(--max-chroma, 0.4) var(--hue));
+    --purest: oklch(var(--lightness) var(--max-chroma) var(--hue));
     --fromgray: oklch(var(--lightness) 0 0 / 1);
 
-    width: calc(340px * (var(--max-chroma) / 0.4));
+    width: calc(340px * (var(--max-chroma) / 0.37));
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 
     background: linear-gradient(
         to right in oklch,
         var(--fromgray) 0%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.05) var(--hue)) 5%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.1) var(--hue)) 10%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.15) var(--hue)) 15%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.2) var(--hue)) 20%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.25) var(--hue)) 25%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.3) var(--hue)) 30%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.35) var(--hue)) 35%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.4) var(--hue)) 40%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.45) var(--hue)) 45%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.5) var(--hue)) 50%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.55) var(--hue)) 55%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.6) var(--hue)) 60%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.65) var(--hue)) 65%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.7) var(--hue)) 70%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.75) var(--hue)) 75%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.8) var(--hue)) 80%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.85) var(--hue)) 85%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.9) var(--hue)) 90%,
-        oklch(var(--lightness) calc(var(--max-chroma, 0.4) * 0.95) var(--hue)) 95%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.05) var(--hue)) 5%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.1) var(--hue)) 10%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.15) var(--hue)) 15%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.2) var(--hue)) 20%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.25) var(--hue)) 25%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.3) var(--hue)) 30%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.35) var(--hue)) 35%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.4) var(--hue)) 40%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.45) var(--hue)) 45%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.5) var(--hue)) 50%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.55) var(--hue)) 55%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.6) var(--hue)) 60%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.65) var(--hue)) 65%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.7) var(--hue)) 70%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.75) var(--hue)) 75%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.8) var(--hue)) 80%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.85) var(--hue)) 85%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.9) var(--hue)) 90%,
+        oklch(var(--lightness) calc(var(--max-chroma) * 0.95) var(--hue)) 95%,
         var(--purest) 100%,
     );
 }

@@ -83,13 +83,18 @@ function OnlinePickerLink({l, c, h, a = 100}) {
   return <a href={`https://oklch.com/#${l},${c},${h},${a}`} target='_blank'>online picker</a>
 }
 
+function oklch(l, c, h, a) {
+  const aSuffix = a === 1 ? '' : `/ ${a}`
+  return `oklch(${l.toFixed(2)}% ${c.toFixed(3)} ${h.toFixed(2)}${aSuffix})`;
+}
+
 export function OklchColorControl({value, onChange}) {
-    const { l: _l, c, h: _h } = extract(value) || { l: 0, c: 0, h: 0 };
+    const { l: _l, c, h, alpha = 1 } = extract(value) || { l: 0, c: 0, h: 0, alpha: 1 };
     const l = 100 * _l;
-    const h = !_h ? 0 : _h;
     const clamped = clampChroma(`oklch(${l}% 0.4 ${h})`, 'oklch', 'p3');
     const maxChroma = clamped.c; 
-    const isNotInGamut = maxChroma < c;
+    // Todo: find right number to check here and possibly also use in other places.
+    const isNotInGamut = c - maxChroma > 0.001;
     const lowerL = minLightness(c, h);
     const upperL = maxLightness(c, h);
 
@@ -109,23 +114,22 @@ export function OklchColorControl({value, onChange}) {
           if (l > 0) {
             e.preventDefault();
             e.stopPropagation();
-            onChange(`oklch(${l * 100}% ${c.toFixed(3)} ${h.toFixed(2)})`)
+            onChange(oklch(l * 100, c, h, alpha));
           }
         }}>
-          <input onChange={e=>onChange(`oklch(${e.target.value}% ${c.toFixed(3)} ${h.toFixed(2)})`)} id="lightness" type="range" min={0} max={100} value={l} />
+          <input onChange={e=>onChange(oklch(Number(e.target.value), c, h, alpha))} id="lightness" type="range" min={0} max={100} value={l} step={0.1} />
         </div>
-        {/* <div className="chroma test"></div> */}
         <div className="chroma">
           <input
             id="chroma"
             type="range"
             min={0}
-            max={0.4}
+            max={0.37}
             value={c}
             step={0.001}
             onInput={e=>{
-              const input = Math.min(maxChroma.toFixed(3) - 0.001, e.target.value);
-              return onChange(`oklch(${l.toFixed(2)}% ${input.toFixed(3)} ${h.toFixed(2)})`);
+              const input = Math.min(maxChroma, Number(e.target.value));
+              return onChange(oklch(l, input, h, alpha));
             }} 
           />
         </div>
@@ -135,9 +139,9 @@ export function OklchColorControl({value, onChange}) {
           const {h} = extract(value);
           e.preventDefault();
           e.stopPropagation();
-          onChange(`oklch(${l}% ${c.toFixed(3)} ${h.toFixed(2)})`)
+          onChange(oklch(l, c, h, alpha));
         }}>
-          <input id="hue" type="range" min={0} max={360} value={h}onChange={e=>onChange(`oklch(${l.toFixed(2)}% ${c.toFixed(3)} ${e.target.value})`)}  />
+          <input id="hue" type="range" min={0} max={360} value={h} step={0.1} onChange={e =>onChange(oklch(l, c, Number(e.target.value), alpha))} />
         </div>
         <OnlinePickerLink {...{l,c,h}} />
         {isNotInGamut && <span style={{color: 'red', fontWeight: 'bold'}}>NOT IN GAMUT</span>}
