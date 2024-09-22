@@ -23,7 +23,8 @@
 
 #hue,
 #lightness,
-#chroma {
+#chroma,
+#alpha {
     position: absolute;
     top: 41px;
     width: calc(340px + 12px);
@@ -32,7 +33,19 @@
     user-select: none;
 }
 
-.hue, .chroma, .lightness {
+#alpha {
+    opacity: calc(0.5 + (1 - var(--picked-alpha, 1)) * 1000);
+
+    &:focus {
+        opacity: 1;
+        &::-webkit-slider-runnable-track {
+            background: var(--picked);
+            opacity: var(--picked-alpha);
+        }
+    }
+}
+
+.hue, .chroma, .lightness, .alpha {
     position: relative;
     height: 42px;
     width: 340px;
@@ -123,5 +136,30 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
         height: 100%;
         right: 0;
         background: $stripe-bg-r;
+    }
+}
+
+.alpha {
+    --from: oklch(var(--picked-lightness) var(--picked-chroma) var(--picked-hue) / 0);
+    --to: oklch(var(--picked-lightness) var(--picked-chroma) var(--picked-hue));
+    background: linear-gradient(to right in oklch, var(--from), var(--to)); 
+
+    --offset: calc(42px * min(1, 1000 * (1 - var(--picked-alpha, 1))));
+
+    #alpha {
+        top: var(--offset);
+    }
+
+    height: var(--offset);
+    margin-bottom: 42px;
+
+    &:before {
+        content: '';
+
+    }
+
+    &:after {
+        content: '';
+
     }
 }

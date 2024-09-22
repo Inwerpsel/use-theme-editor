@@ -89,10 +89,10 @@ function oklch(l, c, h, a) {
 }
 
 export function OklchColorControl({value, onChange}) {
-    const { l: _l, c, h, alpha = 1 } = extract(value) || { l: 0, c: 0, h: 0, alpha: 1 };
+    const { l: _l, c, h = 0, alpha = 1 } = extract(value) || { l: 0, c: 0, h: 0, alpha: 1 };
     const l = 100 * _l;
     const clamped = clampChroma(`oklch(${l}% 0.4 ${h})`, 'oklch', 'p3');
-    const maxChroma = clamped.c; 
+    const maxChroma = clamped?.c || 0; 
     // Todo: find right number to check here and possibly also use in other places.
     const isNotInGamut = c - maxChroma > 0.001;
     const lowerL = minLightness(c, h);
@@ -103,6 +103,7 @@ export function OklchColorControl({value, onChange}) {
         '--picked-lightness': `${l}%`,
         '--picked-chroma': c,
         '--picked-hue': h,
+        '--picked-alpha': alpha,
         '--max-chroma': maxChroma,
         '--min-lightness': `${lowerL}%`,
         '--max-lightness': `${upperL}%`,
@@ -143,7 +144,11 @@ export function OklchColorControl({value, onChange}) {
         }}>
           <input id="hue" type="range" min={0} max={360} value={h} step={0.1} onChange={e =>onChange(oklch(l, c, Number(e.target.value), alpha))} />
         </div>
+        <div className="alpha">
+          <input id="alpha" type="range" min={0} max={1} value={alpha} step={0.01} onChange={e =>onChange(oklch(l, c, h, Number(e.target.value)))} />
+        </div>
         <OnlinePickerLink {...{l,c,h}} />
+        {!value.startsWith('oklch(') && <button onClick={() => {onChange(oklch(l, c, h, alpha))}}>convert</button>}
         {isNotInGamut && <span style={{color: 'red', fontWeight: 'bold'}}>NOT IN GAMUT</span>}
       </div>
     );
