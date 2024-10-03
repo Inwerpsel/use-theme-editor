@@ -1,8 +1,13 @@
+import { toOk } from "../components/properties/OklchColorControl";
+
+// Based on https://github.com/luukdv/color.js/
 type Args = {
   amount: number;
   format: string;
   group: number;
   sample: number;
+  minHue: number;
+  maxHue: number;
 }
 
 const getArgs = ({
@@ -10,11 +15,11 @@ const getArgs = ({
   format = 'array',
   group = 20,
   sample = 10,
-} = {}): Args => ({ amount, format, group, sample })
+  minHue = 0,
+  maxHue = 360,
+} = {}): Args => ({ amount, format, group, sample, minHue, maxHue })
 
 type Data = Uint8ClampedArray
-
-type Handler = (data: Data, args: Args) => Output
 
 type Hex = string
 
@@ -33,11 +38,12 @@ const getSrc = (item: Item): string =>
 
 const format = (input: Input, args: Args): Output => {
   const list = input.map((val) => {
-    const rgb = Array.isArray(val) ? val : val.split(',').map(Number) as Rgb
-    return args.format === 'hex' ? rgbToHex(rgb) : rgb
+    const [r, g, b] = Array.isArray(val) ? val : val.split(',').map(Number) as Rgb
+
+    return `color(display-p3 ${r / 255} ${g / 255} ${b / 255})`;
   })
 
-  return args.amount === 1 || list.length === 1 ? list[0] : list
+  return args.amount === 1 ? list[0] : list
 }
 
 const group = (number: number, grouping: number): number => {
@@ -46,12 +52,6 @@ const group = (number: number, grouping: number): number => {
   return Math.min(grouped, 255)
 }
 
-const rgbToHex = (rgb: Rgb): Hex => '#' + rgb.map((val) => {
-  const hex = val.toString(16)
-
-  return hex.length === 1 ? '0' + hex : hex
-}).join('')
-
 const cache = new Map();
 
 const getImageData = (src: Url): Promise<Data> => {
@@ -59,9 +59,9 @@ const getImageData = (src: Url): Promise<Data> => {
     return Promise.resolve(cache.get(src));
   }
   return new Promise((resolve, reject) => {
-    const canvas = new OffscreenCanvas(200, 100);
-    const context = canvas.getContext('2d')
-    const img = new Image
+    const canvas = new OffscreenCanvas(0, 0);
+    const context = canvas.getContext('2d', { colorSpace: 'display-p3' })
+    const img = new Image();
 
     img.onload = () => {
       canvas.height = img.height
@@ -69,7 +69,7 @@ const getImageData = (src: Url): Promise<Data> => {
 
       context.drawImage(img, 0, 0)
 
-      const data = context.getImageData(0, 0, img.width, img.height).data
+      const { data } = context.getImageData(0, 0, img.width, img.height, { colorSpace: "display-p3" });
 
       cache.set(src, data);
       resolve(data)
@@ -86,18 +86,20 @@ const getImageData = (src: Url): Promise<Data> => {
 const getAverage = (data: Data, args: Args): Output => {
   const gap = 4 * args.sample
   const amount = data.length / gap
-  const rgb = { r: 0, g: 0, b: 0 }
+  let r = 0, g = 0, b = 0
 
   for (let i = 0; i < data.length; i += gap) {
-    rgb.r += data[i]
-    rgb.g += data[i + 1]
-    rgb.b += data[i + 2]
+    // Ignore fully transparent pixels.
+    if (data[i + 3] === 0) continue;
+    r += data[i]
+    g += data[i + 1]
+    b += data[i + 2]
   }
 
   return format([[
-    Math.round(rgb.r / amount),
-    Math.round(rgb.g / amount),
-    Math.round(rgb.b / amount)
+    Math.round(r / amount),
+    Math.round(g / amount),
+    Math.round(b / amount)
   ]], args)
 }
 
@@ -115,23 +117,50 @@ const getProminent = (data: Data, args: Args): Output => {
     colors[rgb] = colors[rgb] ? colors[rgb] + 1 : 1
   }
 
+  const isWrappedMin = args.minHue < 0;
+  const isWrappedMax = args.maxHue > 360;
+  // Cannot use modulo here because it's broken in JS for negative numbers.
+  const minHue = isWrappedMin ? (360 + args.minHue) : args.minHue;
+  const maxHue = args.maxHue % 360;
+
+  function hueIsInBounds(h) {
+    if (isWrappedMin) {
+      return h >= minHue || h <= maxHue;
+    }
+    if (isWrappedMax) {
+      return h <= maxHue || h >= minHue;
+    }
+
+    return h >= minHue && h <= maxHue;
+  }
+
+
   return format(
     Object.entries(colors)
-      .sort(([_keyA, valA], [_keyB, valB]) => valA > valB ? -1 : 1)
+      .filter(([, amount]) => amount > 1) 
+      .map(([color, amount]) => {
+        const [r,g,b] = color.split(',');
+        return [color, amount, toOk(`color(display-p3 ${r / 255} ${g / 255} ${b / 255})`)];
+      })
+      .filter(([,,{h}]) => hueIsInBounds(h))
+      .sort(([, ,a], [, ,b]) => a.c > b.c ? -1 : 1)
+      // .sort(([, a], [, b]) => a - b)
       .slice(0, args.amount)
-      .map(([rgb]) => rgb),
+      .map(([color]) => color),
     args
   )
 }
 
-const process = (handler: Handler, item: Item, args?: Partial<Args>): Promise<Output> =>
-  new Promise((resolve, reject) =>
-    getImageData(getSrc(item))
-      .then((data) => resolve(handler(data, getArgs(args))))
-      .catch((error) => reject(error))
-  )
+async function average(item: Item, args?: Partial<Args>) {
+  const data = await getImageData(getSrc(item));
 
-const average = (item: Item, args?: Partial<Args>) => process(getAverage, item, args)
-const prominent = (item: Item, args?: Partial<Args>) => process(getProminent, item, args)
+  return getAverage(data, getArgs(args));
+}
+
+async function prominent(item: Item, args?: Partial<Args>) {
+  const data = await getImageData(getSrc(item));
+
+  return getProminent(data, getArgs(args));
+}
 
 export { average, prominent }

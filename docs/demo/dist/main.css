@@ -25,7 +25,7 @@ body {
   border-radius: 6px;
   font-size: 16px;
 }
-.theme-editor button, .theme-editor input:not([type=checkbox], [type=radio]), .theme-editor select, .theme-editor label:has(> [type=checkbox]) {
+.theme-editor button, .theme-editor input:is([type=button], [type=text]), .theme-editor select, .theme-editor label:has(> [type=checkbox]) {
   min-width: 44px;
   min-height: 44px;
 }
@@ -374,7 +374,9 @@ div[id^=font-picker] ul {
 }
 
 #area-left-inner {
+  overflow-x: hidden;
   flex-direction: column;
+  flex-shrink: 1;
 }
 
 #drawer .area-switcher {
@@ -825,6 +827,10 @@ button:disabled {
   transition-timing-function: ease-out;
 }
 
+input[type=checkbox] + * {
+  display: inline-block;
+}
+
 .oklch-picker input[type=range] {
   min-height: 0;
   padding: 0;
@@ -847,6 +853,7 @@ button:disabled {
 #alpha {
   position: absolute;
   top: 41px;
+  max-width: 352px;
   width: 352px;
   margin-left: -6px;
   box-sizing: border-box;
@@ -871,9 +878,13 @@ button:disabled {
   margin: 20px 0;
   border-radius: 12px;
 }
+.oklch-picker:not(:focus-within) .hue, .oklch-picker:not(:focus-within) .hue *, .oklch-picker:not(:focus-within) .chroma, .oklch-picker:not(:focus-within) .chroma *, .oklch-picker:not(:focus-within) .lightness, .oklch-picker:not(:focus-within) .lightness *, .oklch-picker:not(:focus-within) .alpha, .oklch-picker:not(:focus-within) .alpha * {
+  transition-property: all;
+  transition-delay: 0.04s;
+  transition-duration: 0.16s;
+}
 
 .hue {
-  --p: 92%;
   --c: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.138) 0);
   background: linear-gradient(90deg in oklch longer hue, var(--c), var(--c));
 }
@@ -893,34 +904,49 @@ button:disabled {
   --hue: var(--picked-hue, 180);
   --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
   --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
-  background: linear-gradient(to right in oklch, var(--from) var(--min-lightness), var(--to) var(--max-lightness));
-}
-.lightness::before {
-  content: "";
-  position: absolute;
-  width: var(--min-lightness, 0);
-  top: 0;
-  height: 100%;
-  left: 0;
-  background: repeating-linear-gradient(45deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
-}
-.lightness::after {
-  content: "";
-  position: absolute;
-  width: calc(100% - var(--max-lightness, 0));
-  top: 0;
-  height: 100%;
-  right: 0;
-  background: repeating-linear-gradient(225deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
+  --min-ll: var(--min-lightness);
+  --max-ll: var(--max-lightness);
+  background: linear-gradient(to right in oklch, transparent 0%, transparent var(--min-ll), var(--from) var(--min-ll), var(--to) var(--max-ll), transparent var(--max-ll), transparent 100%), repeating-linear-gradient(45deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
 }
 
+@property --min-l {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --min-ll {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 0%;
+}
+@property --max-l {
+  syntax: "<percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --max-ll {
+  syntax: "<length-percentage>";
+  inherits: false;
+  initial-value: 100%;
+}
+@property --min-lightness {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 0%;
+}
+@property --max-lightness {
+  syntax: "<percentage>";
+  inherits: true;
+  initial-value: 100%;
+}
 .alpha {
   --from: oklch(var(--picked-lightness) var(--picked-chroma) var(--picked-hue) / 0);
   --to: oklch(var(--picked-lightness) var(--picked-chroma) var(--picked-hue));
   background: linear-gradient(to right in oklch, var(--from), var(--to));
   --offset: calc(42px * min(1, 1000 * (1 - var(--picked-alpha, 1))));
   height: var(--offset);
-  margin-bottom: 42px;
+  margin-top: 32px;
+  margin-bottom: 62px;
 }
 .alpha #alpha {
   top: var(--offset);
@@ -930,6 +956,22 @@ button:disabled {
 }
 .alpha:after {
   content: "";
+}
+
+.picked-cursor {
+  z-index: 10000000000000000;
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  width: 32px;
+  height: 32px;
+  background-color: var(--picked-value, red);
+  border-radius: 50%;
+  margin-bottom: 20rem;
+}
+
+html {
+  overflow-x: hidden;
 }
 
 /*# sourceMappingURL=main.css.map*/
