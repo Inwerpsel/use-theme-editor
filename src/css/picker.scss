@@ -27,6 +27,7 @@
 #alpha {
     position: absolute;
     top: 41px;
+    max-width: calc(340px + 12px);
     width: calc(340px + 12px);
     margin-left: -6px;
     box-sizing: border-box;
@@ -51,10 +52,15 @@
     width: 340px;
     margin: 20px 0;
     border-radius: 12px;
+
+    .oklch-picker:not(:focus-within) &, .oklch-picker:not(:focus-within) & * {
+        transition-property: all;
+        transition-delay: .04s;
+        transition-duration: .16s;
+    }
 }
 
 .hue {
-    --p: 92%;
     --c: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.138) 0);
 
     background: linear-gradient(90deg in oklch longer hue, var(--c), var(--c));
@@ -115,28 +121,56 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
     --hue: var(--picked-hue, 180);
     --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
     --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
+    --min-ll: var(--min-lightness);
+    --max-ll: var(--max-lightness);
 
-    background: linear-gradient(to right in oklch, var(--from) var(--min-lightness), var(--to) var(--max-lightness));
+    background:
+        linear-gradient(
+            to right in oklch,
+            transparent 0%,
+            transparent var(--min-ll),
+            var(--from) var(--min-ll),
+            var(--to) var(--max-ll),
+            transparent var(--max-ll),
+            transparent 100%
+        ),
+        $stripe-bg;
+}
 
-    &::before {
-        content: '';
-        position: absolute;
-        width: var(--min-lightness, 0);
-        top: 0;
-        height: 100%;
-        left: 0;
-        background: $stripe-bg;
-    }
+@property --min-l {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
 
-    &::after {
-        content: '';
-        position: absolute;
-        width: calc(100% - var(--max-lightness, 0));
-        top: 0;
-        height: 100%;
-        right: 0;
-        background: $stripe-bg-r;
-    }
+@property --min-ll {
+    syntax: "<length-percentage>";
+    inherits: false;
+    initial-value: 0%;
+}
+
+@property --max-l {
+    syntax: "<percentage>";
+    inherits: false;
+    initial-value: 100%;
+}
+
+@property --max-ll {
+    syntax: "<length-percentage>";
+    inherits: false;
+    initial-value: 100%;
+}
+
+@property --min-lightness {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 0%;
+}
+
+@property --max-lightness {
+    syntax: "<percentage>";
+    inherits: true;
+    initial-value: 100%;
 }
 
 .alpha {
@@ -144,6 +178,7 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
     --to: oklch(var(--picked-lightness) var(--picked-chroma) var(--picked-hue));
     background: linear-gradient(to right in oklch, var(--from), var(--to)); 
 
+    // Shrink the picker is alpha is 1.
     --offset: calc(42px * min(1, 1000 * (1 - var(--picked-alpha, 1))));
 
     #alpha {
@@ -151,7 +186,8 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
     }
 
     height: var(--offset);
-    margin-bottom: 42px;
+    margin-top: 32px;
+    margin-bottom: 62px;
 
     &:before {
         content: '';
@@ -162,4 +198,16 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
         content: '';
 
     }
+}
+
+.picked-cursor {
+    z-index: 10000000000000000;
+    position: fixed;
+    top: 12px;
+    left: 12px;
+    width: 32px;
+    height: 32px;
+    background-color: var(--picked-value, red);
+    border-radius: 50%;
+    margin-bottom: 20rem;
 }
