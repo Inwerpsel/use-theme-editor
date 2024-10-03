@@ -1,0 +1,17 @@
+{
+  "scopes": {
+    ":root": {
+      "--heading-font-text-transform": "none",
+      "--siteBackgroundColor": "oklch(18.50% 0.000 0.00)",
+      "--paragraphMediumColor": "hsla(0,0%,100%,1)",
+      "--siteTitleColor": "oklch(67.60% 0.187 56.71)",
+      "--navigationLinkColor": "oklch(92.90% 0.069 72.20)",
+      "--headingExtraLargeColor": "oklch(51.80% 0.288 264.05)",
+      "--headingSmallColor": "oklch(78.60% 0.091 72.20)",
+      "--paragraphSmallColor": "oklch(78.60% 0.091 72.20)",
+      "--paragraphLinkColor": "oklch(70.90% 0.196 56.71)",
+      "--primaryButtonBackgroundColor": "oklch(38.84% 0.269 264.05)",
+      "--primary-button-font-text-transform": "none"
+    }
+  }
+}
