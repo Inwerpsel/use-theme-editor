@@ -1,5 +1,5 @@
 import React, {useMemo, useContext} from 'react';
-import { useResumableLocalStorage } from '../../hooks/useLocalStorage';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { use } from '../../state';
 import {Checkbox} from '../controls/Checkbox';
 import { SelectControl } from '../controls/SelectControl';
@@ -20,7 +20,7 @@ export function MoveControls() {
 
   const [windowArrangments, setWindowArrangments] = use.windowArrangments();
 
-  const [inputName, setInputName] = useResumableLocalStorage('panel-arrangements-name', '');
+  const [inputName, setInputName] = useLocalStorage('panel-arrangements-name', '');
   const isIdenticalToExisting = useMemo(() => {
     return JSON.stringify(uiState) === windowArrangments[inputName];
   }, [windowArrangments, uiState, inputName]);
