@@ -44,7 +44,7 @@ export const previewComponents = {
     </Fragment>
   ),
 
-  THEME_EDITOR: {
+  themeEditor: {
     set: ({ payload: { scope, name, value, alternatives } }) => {
       
       return (

@@ -11,6 +11,7 @@ import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
 import { INSPECTIONS, getPrevinspections, resetInspections } from '../renderSelectedVars';
 import { Action } from '../functions/reducerOf';
+import { use } from '../state';
 
 type Reducer<T> = (previous: T, action) => T
 
@@ -280,7 +281,7 @@ function getSnapShot(id) {
       : initialStates.get(id);
 }
 
-export const interestingKeys = ['THEME_EDITOR', 'uiLayout', 'inspected-index'];
+export const interestingKeys = ['themeEditor', 'uiLayout', 'inspected-index'];
 
 // This function is used to determine which states should be visited when using fast navigation.
 // Hard coded to keep it simple for now, it could be user configurable.
@@ -997,12 +998,10 @@ export function useResumableReducer<T>(
   return [currentState as T, performAction.bind(null, id)];
 }
 
-export function useDispatcher(id: string) {
-  const dispatcher = performAction.bind(null, id);
-  if (!dispatcher) {
-    throw new Error(`Attempted to use dispatcher for ${id}, but it doesn't exist yet.`)
-  }
-  return dispatcher;
+type keys = keyof typeof use;
+
+export function useDispatcher<K extends keys>(id: K) {
+  return performAction.bind(null, id);
 }
 
 const simpleStateReducer = (s, v) => v;

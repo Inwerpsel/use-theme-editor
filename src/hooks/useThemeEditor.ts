@@ -239,14 +239,14 @@ export function useThemeEditor() {
     reducer,
     DEFAULT_STATE,
     null,
-    'THEME_EDITOR'
+    'themeEditor'
   );
 };
 
 // A function that returns the themeEditor dispatcher only, without listening.
 // Doing this locally, but would be nice to have a catch all way with proper types.
 export function editTheme() {
-    return useDispatcher('THEME_EDITOR');
+  return useDispatcher('themeEditor');
 }
 
 
