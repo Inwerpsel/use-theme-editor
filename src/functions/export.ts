@@ -1,10 +1,11 @@
 import { LOCAL_STORAGE_KEY } from '../initializeThemeEditor';
 
 export const exportThemeJson = (fileName, scopes) => {
-  saveAsJsonFile(scopes, fileName)
+  saveAsJsonFile({ scopes }, fileName)
 };
 
 export function saveAsJsonFile(data, fileName) {
+  document.exitFullscreen();
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], {type: 'application/json'});
   const url  = URL.createObjectURL(blob);
