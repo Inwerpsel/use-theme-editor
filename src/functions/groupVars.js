@@ -5,7 +5,13 @@ import { HIGHLIGHT_CLASS } from './highlight';
 
 export const toLabel = (element) => {
   const {id, tagName, classList} = element;
+  const type = tagName.toLowerCase();
   const idPart = !id ? '' : `#${ id }`;
+
+  if (type === 'body' || type === 'html') {
+    return type;
+  }
+  
   const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`.${c}`).join('').replaceAll(/([^\w-.])/g, '\\$1');
 
   const selector = tagName.toLowerCase() + idPart + classPart;
@@ -37,6 +43,15 @@ export const sortForUI = (
 ) => {
   const reg = /--(?<element>\w+(-?-\w+)*)(--(?<state>(active|focus|visited|hover|disabled)))?--(?<prop>\w+(-\w+)*)/;
 
+  // const aHasDis = nameA.includes('disabled');
+  // const bHasDis = nameB.includes('disabled');
+
+  // // Attempt to push disabled state as far as possible.
+  // if (aHasDis && !bHasDis) {
+  //   return 1;
+  // } else if (bHasDis && !aHasDis) {
+  //   return -1;
+  // }
   const {media: mediaA, property: propA} = maxSpecificA;
   const {media: mediaB, property: propB} = maxSpecificB;
 
@@ -157,6 +172,8 @@ export const groupVars = (vars, target, allVars) => {
         elementInfo: {
           src: element.getAttribute('src'),
           srcset: element.getAttribute('srcset'),
+          imgWidth: element.naturalWidth,
+          imgHeight: element.naturalHeight,
           alt: element.getAttribute('alt'),
           html: html,
           width: !isSvg ? null : element.getBoundingClientRect().width,
@@ -177,10 +194,24 @@ export const groupVars = (vars, target, allVars) => {
               break;
             }
           }
+          // let currentScope, otherScopes = [];
+          // for (const {scopeVars, selector} of scopes) {
+          //   if (selector === ':root'  || selector === 'html' || selector === ':where(html)') {
+          //     continue;
+          //   }
+          //   if (scopeVars.some(sv=>sv.name===v.name)) {
+          //     if (currentScope) {
+          //       otherScopes.push(selector);
+          //     } else {
+          //       currentScope = selector;
+          //     }
+          //   }
+          // }
 
           return {
             ...v,
             currentScope,
+            // otherScopes,
           };
         }),
         scopes,

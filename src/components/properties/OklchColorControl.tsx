@@ -4,7 +4,7 @@ import { converter, clampChroma, parse  } from 'culori';
 
 const okConv = converter('oklch');
 
-function extract(value) {
+export function toOk(value) {
     return okConv(value);
 
 }
@@ -83,13 +83,13 @@ function OnlinePickerLink({l, c, h, a = 100}) {
   return <a href={`https://oklch.com/#${l},${c},${h},${a}`} target='_blank'>online picker</a>
 }
 
-function oklch(l, c, h, a) {
+export function oklch(l, c, h, a) {
   const aSuffix = a === 1 ? '' : `/ ${a}`
   return `oklch(${l.toFixed(2)}% ${c.toFixed(3)} ${h.toFixed(2)}${aSuffix})`;
 }
 
 export function OklchColorControl({value, onChange}) {
-    const { l: _l, c, h = 0, alpha = 1 } = extract(value) || { l: 0, c: 0, h: 0, alpha: 1 };
+    const { l: _l, c, h = 0, alpha = 1 } = toOk(value) || { l: 0, c: 0, h: 0, alpha: 1 };
     const l = 100 * _l;
     const clamped = clampChroma(`oklch(${l}% 0.4 ${h})`, 'oklch', 'p3');
     const maxChroma = clamped?.c || 0; 
@@ -111,7 +111,7 @@ export function OklchColorControl({value, onChange}) {
       }}>
         <div className="lightness" onDrop={e=>{
           const value = e.dataTransfer.getData('value');
-          const {l} = extract(value);
+          const {l} = toOk(value);
           if (l > 0) {
             e.preventDefault();
             e.stopPropagation();
@@ -137,7 +137,7 @@ export function OklchColorControl({value, onChange}) {
         <div className="hue" onDrop={e=>{
           const value = e.dataTransfer.getData('value');
           if (!value) return;
-          const {h} = extract(value);
+          const {h} = toOk(value);
           e.preventDefault();
           e.stopPropagation();
           onChange(oklch(l, c, h, alpha));

@@ -55,6 +55,10 @@ export function useGlobalState<T>(key: string, defaultValue: T): StateAndUpdater
 
 const effectsDone = new Set<string>();
 
+export function readSync(key: string) {
+  return states.get(key);
+}
+
 export function useUniqueEffect(key: string, effect: (value: any) => void) {
     if (effectsDone.has(key)) return;
     effect(states.get(key));

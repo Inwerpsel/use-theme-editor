@@ -9,6 +9,16 @@ import { definedValues, scopesByProperty } from '../../functions/collectRuleVars
 import { ScrollInViewButton } from './ScrollInViewButton';
 import { get, use } from '../../state';
 import { dragValue } from '../../functions/dragValue';
+import { oklch, toOk } from '../properties/OklchColorControl';
+import { clampChroma } from 'culori';
+import { evaluateCalc } from '../properties/CalcSizeControl';
+import { findClosingBracket } from '../../functions/compare';
+import { ImageColors } from './ImageColors';
+import { Checkbox } from '../controls/Checkbox';
+import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { readSync } from '../../hooks/useGlobalState';
+import { useDispatcher } from '../../hooks/useResumableReducer';
+import { onLongPress } from '../../functions/onLongPress';
 
 const previewSize = '28px';
 
@@ -17,17 +27,21 @@ export const GroupControl = props => {
     group,
   } = props;
 
-  const { propertyFilter } = get;
+  const { propertyFilter, maximizeChroma  } = get;
   const [{scopes}, dispatch] = use.themeEditor();
 
   const [search, setSearch] = use.search();
   const [darkSvg, setDarkSvg] = use.svgDarkBg();
+  const setPicked = useDispatcher('pickedValue');
+  const [showImageColors, setShowImageColors] = useLocalStorage('image color show', false);
 
   const {
     element,
     elementInfo: {
       src,
       srcset,
+      imgWidth,
+      imgHeight,
       alt,
       title,
       html,
@@ -70,32 +84,45 @@ export const GroupControl = props => {
         }
 
         const propertyScopes = scopesByProperty[name];
-        let currentScope = null;
-        if (elementScopes.length > 0) {
+        let currentScope = someVar.currentScope;
+        if (!currentScope && (elementScopes.length > 0)) {
           for (const key in propertyScopes || {}) {
             currentScope =
-              elementScopes.find((s) => s.selector === key) || currentScope;
+              elementScopes.find((s) => s.selector === key)?.selector || currentScope;
             if (currentScope) {
               // Scopes should be sorted by specificity, and maybe also take body and html into account.
               break;
             }
           }
         }
-        const valueFromScope =
-          !scopes || !currentScope || !scopes[currentScope.selector]
-            ? null
-            : scopes[currentScope.selector][name];
-
-        const rawValue =
-          valueFromScope  ||
-          defaultValues[name] ||
+        const defaultValue =
+          definedValues[currentScope || ':root'][name] ||
           getValueFromDefaultScopes(elementScopes, someVar) ||
-          definedValues[':root'][name];
+          defaultValues[name] ||
+          someVar.maxSpecific?.defaultValue || someVar.usages[0].defaultValue;
+        const valueFromScope = !scopes || !scopes[currentScope] ? null : scopes[currentScope][name];
+        const rawValue = valueFromScope || defaultValue;
 
-        const [value] = resolveVariables(rawValue, elementScopes, scopes);
+        let [value] = resolveVariables(rawValue, elementScopes, scopes);
+
+        if (value.includes('calc(')) {
+          const scenario = {steps: []};
+          let tmp = value;
+          while (tmp.includes('calc(')) {
+            const start = tmp.indexOf('calc(');
+            const end = findClosingBracket(tmp, start + 5);
+            try {
+              const [result] = evaluateCalc(tmp.slice(start + 5, end - 1), scenario);
+              tmp = tmp.slice(0, start) + result + tmp.slice(end + 1);
+            } catch(e) {
+              break;
+            }
+          }
+          value = tmp;
+        }
 
         if (value && value!== 'inherit' && value.toLowerCase() !== 'currentcolor') {
-          colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value, rawValue]);
+          colorVars.push([someVar, someVar.cssFunc ? `${someVar.cssFunc}(${value})` : value, rawValue, currentScope]);
         }
       }
       return colorVars;
@@ -103,13 +130,54 @@ export const GroupControl = props => {
   }, [vars, elementScopes, scopes]);
 
   const isEmpty = vars.length === 0;
-  const hasContent = !isEmpty || inlineStyles;
+  const hasContent = !isEmpty || inlineStyles || src;
 
   if (!hasContent && !isDeepest && !src && !html) { 
     return null;
   }
 
   const isOpen = !!openGroups[label];
+
+  function applyHueToAllColors(event, _value = null) {
+    event.preventDefault();
+    event.stopPropagation();
+    const value = _value !== null ? _value : event.dataTransfer.getData('value');
+    const droppedColor = toOk(value);
+    if (!droppedColor) return;
+    const refs = groupColors.filter(([v])=>!v.isRawValue).map(([{name}]) => `var(${name})`);
+    let changed = false;
+    groupColors.forEach(([{name, isRawValue}, value, unparsed, scope = ':root']) => {
+      if (isRawValue) return;
+
+      if (refs.includes(unparsed)) {
+        return;
+      }
+
+      const parsed = toOk(value);
+      if (!parsed) return;
+
+      const blackOrWhite = parsed.l < 0.001 || parsed.l > 0.999;
+      
+      // Skip grayscale values as they wouldn't really change.
+      if (blackOrWhite || (!maximizeChroma && parsed.c === 0)) return;
+      const {l,c,h,alpha = 1} = clampChroma({...parsed, c: maximizeChroma ? 0.4 : parsed.c, h: droppedColor.h}, 'oklch', 'p3');
+      const newValue = oklch(l * 100,c,h,alpha);
+      if (newValue === value) {
+        return;
+      }
+      changed = true;
+      dispatch({
+        type: ACTIONS.set,
+        payload: {
+          name,
+          scope,
+          value: newValue,
+        },
+      }, {debounceTime: 0});
+    });
+
+    return changed;
+  }
 
   return (
     <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
@@ -152,7 +220,17 @@ export const GroupControl = props => {
             maxHeight: isOpen ? '128px' : '300px',
             overflowY: 'auto',
           }}
-          onClick={!hasContent ? null : () => toggleGroup(label)}
+          onClick={!hasContent ? null : (event) => {
+            const picked = readSync('pickedValue');
+            if (picked) {
+              const changed = applyHueToAllColors(event, picked);
+              // Allow still opening an element if no change was made.
+              if (changed) return;
+            }
+            toggleGroup(label);
+          }}
+          onDrop={applyHueToAllColors}
+          onDragOver={(e) => {e.preventDefault()}}
         >
           <div>
             {label} ({vars.length})
@@ -173,7 +251,7 @@ export const GroupControl = props => {
               >X</button>
               </span>}
             {groupColors.length > 0 && <div>
-              {groupColors.map(([{name}, value, rawValue]) => {
+              {groupColors.map(([{name}, value, rawValue, scope]) => {
                 const isVar = name.startsWith('--');
                 return (
                   <div
@@ -186,9 +264,11 @@ export const GroupControl = props => {
                       if (value === '') {
                         return;
                       }
-                      dispatch({type: ACTIONS.set, payload: {name, value}})
+                      dispatch({type: ACTIONS.set, payload: {name, value, scope}})
+                      event.stopPropagation();
                     }}
                     draggable
+                    {...onLongPress(() => setPicked(value))}
                     onDragStart={dragValue(rawValue)}
                     key={name}
                     title={name === value ? name : `${name}: ${rawValue}`}
@@ -228,6 +308,9 @@ export const GroupControl = props => {
         </h4>
       </div>
       {isOpen && <Fragment>
+        {src &&<Checkbox controls={[showImageColors, setShowImageColors]}>Extract colors</Checkbox>}
+        {src && <code style={{float: 'right'}}>{imgWidth} x {imgHeight}</code>}
+        {src && showImageColors && <ImageColors path={src} />}
         <ElementInlineStyles {...{group, elementScopes}}/>
         <ScopeControl {...{scopes: elementScopes, vars, element}}/>
         <ul className={'group-list'}>

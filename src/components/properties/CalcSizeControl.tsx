@@ -115,7 +115,7 @@ function resolveUnits(_value, scenario): [number, boolean?] {
   const {width = 360, height = 640, remFactor = 16, resultUnit = 'px'} = scenario;
 
   if (unitPart === '%') {
-    throw new Error('Cannot handle percentages.')
+    throw new Error('Percentages not supported yet.')
   }
 
   if (resultUnit === 'rem') {
@@ -219,7 +219,7 @@ function getArgumentListOfSameType(argString, scenario): [number[], boolean] {
   return [results.map(([n]) => n), resultHasUnit];
 }
 
-function evaluateCalc(expression, scenario): [number, boolean] {
+export function evaluateCalc(expression, scenario): [number, boolean] {
   let buffer = '' as number|string, bufferHasUnit = false;
   // [operator, first arg] sits waiting for new arg as it's discovered.
   let pendingOperation;
