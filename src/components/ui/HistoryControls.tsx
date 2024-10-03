@@ -79,7 +79,9 @@ function Dots({amount}) {
   }
 
   return <div style={{position: 'absolute', top: '4px', left: '2.4px', width: 'calc(100% - 7px)', display: 'flex', justifyContent: 'space-between'}}>
-    {dots.map(i => <span key={i} style={{height: '6px', borderLeft: '1px solid #646262'}}/>)}
+    {dots.map(i => <span onDragEnter={() => {
+      historyGo(amount - i - 1);
+    }} key={i} style={{height: '6px', borderLeft: '1px solid #646262'}}/>)}
   </div>
 }
 
@@ -110,9 +112,9 @@ const tutorial = (
 );
 
 function scrollToPoint(length, event: MouseEvent) {
-  const target = event.currentTarget;
+  const target = event.currentTarget.closest('minitimeline') || event.currentTarget;
   const rect = target.getBoundingClientRect();
-  const ratio = Math.abs((event.clientX - rect.left) / rect.width);
+  const ratio = Math.max(0, (event.clientX - rect.left) / rect.width);
   const newIndex = Math.round(length * ratio);
   historyGo(length - newIndex);
 }
@@ -130,6 +132,7 @@ export function MiniTimeline() {
 
   return (
     <div
+      className='minitimeline'
       onPointerMove={scrollWhileDragging.bind(null, past.length)}
       onClick={scrollToPoint.bind(null, past.length)}
       style={{
@@ -286,10 +289,12 @@ export function HistoryControls() {
         >
           Clear
         </button>
-        <HistoryBackFast />
-        <HistoryBack />
-        <HistoryForward />
-        <HistoryForwardFast />
+        <div style={{display: 'inline-flex'}}>
+          <HistoryBackFast />
+          <HistoryBack />
+          <HistoryForward />
+          <HistoryForwardFast />
+        </div>
         <OriginalUrl />
         <Tutorial el={HistoryControls}>
           <p>
