@@ -29,7 +29,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
     font-size: 16px;
   }
 
-  button, input:not([type=checkbox], [type=radio]), select, label:has(>[type=checkbox]) {
+  button, input:is([type=button], [type=text]), select, label:has(>[type=checkbox]) {
     min-width: $min-button-height;
     min-height: $min-button-height;
   }
@@ -686,5 +686,9 @@ button:disabled {
 //     transition-timing-function: ease-out;
 //   }
 // }
+
+input[type=checkbox] + * {
+  display: inline-block;
+}
 
 @import 'css/picker.scss';
