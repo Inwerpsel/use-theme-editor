@@ -40,6 +40,8 @@ import { StartTutorial } from '../_unstable/Tutorial';
 import { ApplyStyles } from './effects/ApplyStyles';
 import { AcceptDroppedOptions } from './effects/AcceptDroppedOptions';
 import { FullscreenToggle } from './ui/FullScreenToggle';
+import { PickedValue } from './ui/PickedValue';
+import { PickedValueCursor } from './PickedValueCursor';
 
 export const ThemeEditorContext = createContext({});
 
@@ -116,6 +118,7 @@ export const ThemeEditor = (props) => {
     >
       <ApplyStyles />
       <AcceptDroppedOptions />
+      <PickedValueCursor />
       {/* <SpeakGlobalHooks hooks={use} /> */}
       <Hotkeys {...{frameRef}}/>
       <div className="theme-editor">
@@ -138,6 +141,7 @@ export const ThemeEditor = (props) => {
                 <PropertyCategoryFilter/>
                 <PropertySearch/>
               </div>
+              <PickedValue />
               <ScreenSwitcher />
               <Palette />
             </Area>

@@ -108,6 +108,12 @@ export const use = {
     () => useGlobalState('fullHeightFrameShowFixed', true),
   fullHeightFrameScale:
     () => useResumableLocalStorage('fullHeightFrameScale', 0.05),
+  maximizeChroma:
+    () => useLocalStorage('maximizeChroma', false),
+  pickedValue:
+    () => useGlobalState('pickedValue', ''),
+  palette: 
+    () => useLocalStorage('palette', []),
   // 
   // State below this is only used in a demo element.
   //

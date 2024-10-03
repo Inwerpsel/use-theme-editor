@@ -12,6 +12,9 @@ export function ColorSettings() {
         <Checkbox controls={use.nativeColorPicker()}>
           Native color picker
         </Checkbox>
+        <Checkbox controls={use.maximizeChroma()}>
+          Maximize chroma when dropping
+        </Checkbox>
       </div>
     );
 }

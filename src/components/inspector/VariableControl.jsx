@@ -18,6 +18,7 @@ import { ToggleButton } from '../controls/ToggleButton';
 import { dragValue } from '../../functions/dragValue';
 import { findClosingBracket } from '../../functions/compare';
 import { CalcSizeControl, isSingleMathExpression } from '../properties/CalcSizeControl';
+import { onLongPress } from '../../functions/onLongPress';
 
 const capitalize = string => string.charAt(0).toUpperCase() + string.slice(1);
 const format = name => {
@@ -266,6 +267,8 @@ export const VariableControl = (props) => {
   } = get;
   const [{scopes}, dispatch] = use.themeEditor();
 
+  const [pickedValue, setPickedValue] = use.pickedValue();
+
   const {
     defaultValues,
     allVars,
@@ -408,7 +411,7 @@ export const VariableControl = (props) => {
   const otherReferencesLength = references.length - (excludedVarName ? 1 : 0);
 
   return (
-    <li
+    (<li
       onDragEnter={cssVar.isRawValue ? null : preventDefault}
       onDragOver={cssVar.isRawValue ? null : preventDefault}
       onDrop={e=> {
@@ -434,7 +437,15 @@ export const VariableControl = (props) => {
         'var-control-in-theme': isInTheme,
         'var-control-no-match-screen': !matchesScreen,
       })}
-      onClick={() => !isOpen && toggleOpen()}
+      onClick={() => {
+        if (pickedValue && pickedValue !== value) {
+          onChange(pickedValue);
+          return;
+        }
+        if (pickedValue === '' || pickedValue === value) {
+          if (!isOpen) toggleOpen();
+        }
+      }}
       style={{
         // userSelect: 'none',
         position: 'relative',
@@ -447,6 +458,7 @@ export const VariableControl = (props) => {
     >
       {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media }} />}
       <div
+        {...onLongPress((event) => {setPickedValue(value)})}
         // ref={openerRef}
         style={{
           // float: isOpen ? 'right' : 'none',
@@ -697,6 +709,6 @@ export const VariableControl = (props) => {
           )}
         </Fragment>
       )}
-    </li>
+    </li>)
   );
 };

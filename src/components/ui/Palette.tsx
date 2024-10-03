@@ -10,7 +10,8 @@ import { dragValue } from "../../functions/dragValue";
 import { MovableElementContext, useCompactSetting } from "../movable/MovableElement";
 import { CompactModeButton } from "../movable/CompactModeButton";
 import { Tutorial } from "../../_unstable/Tutorial";
-import { get } from "../../state";
+import { get, use } from "../../state";
+import { TextControl } from "../controls/TextControl";
 
 function PaletteEntry(props) {
   const {value, isHtml} = props;
@@ -161,7 +162,9 @@ function Variable(props) {
   </div>
 }
 
-function MiniPalette({values, setValues}) {
+function MiniPalette({values, setValues, width = 65}) {
+  const [pickedValue, setPickedValue] = use.pickedValue();
+  const hasPickedValue = values.some(({value}) => value === pickedValue);
   const [isVertical, setIsVertical] = useLocalStorage('palette-vertical', true);
   const [dragmode, setDragmode] = useState(false);
 
@@ -184,8 +187,9 @@ function MiniPalette({values, setValues}) {
   return <div
     style={{display: 'flex', flexDirection: isVertical ? 'column' : 'row'}}
   >
-    {dragmode && <div 
-      style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center', border: '1px dashed grey', minWidth: '35px'}}
+    {(dragmode || hasPickedValue) && <div 
+      style={{fontSize: '25px', fontWeight: 'bold', textAlign: 'center', border: '1px dashed grey', minWidth: '42px'}}
+      onClick={() => setValues(values.filter(({ value }) => value !== pickedValue))}
       onDrop={(event) => {
         const toRemove = event.dataTransfer.getData('value');
         if (toRemove === undefined) {
@@ -194,8 +198,9 @@ function MiniPalette({values, setValues}) {
         setValues(values.filter(({ value: v }) => v !== toRemove));
       } }
     >🗑</div>}
-    {!dragmode && <ToggleButton controls={[isVertical, setIsVertical]}>{isVertical ? '⇓' : '⇒'}</ToggleButton>}
-    {values.map(({ value, isHtml }) => {
+    <ManagedPalette />
+    {!dragmode && !hasPickedValue && <ToggleButton style={{maxWidth: '28px'}} controls={[isVertical, setIsVertical]}>{isVertical ? '⇓' : '⇒'}</ToggleButton>}
+    {values.map(({ value, isHtml }, index) => {
       // This doesn't really serve a purpose, but it's interesting to see how the browser treats the styles,
       // when copying fragments of HTML to the clipboard.
       // Surprisingly, many things will still look proper and show the results of changes made in the editor.
@@ -204,8 +209,8 @@ function MiniPalette({values, setValues}) {
       if (isHtml) {
         return <div
           style={{
-            width: '48px',
-            height: '48px',
+            width,
+            height: width,
             overflow: 'hidden',
             background: 'white',
           }}
@@ -217,12 +222,44 @@ function MiniPalette({values, setValues}) {
       }
 
       return (
-        <span>
+        <span style={{display: 'inline-block'}}>
           <span
             key={value}
             draggable
+            onClick={() => {
+              if (pickedValue === value) {
+                setPickedValue('');
+              }
+            }}
+            onDoubleClick={() => {
+              setPickedValue(value);
+            }}
             onDragStart={dragValue(value, () => setDragmode(true))}
             title={value}
+            onDrop={(event) => {
+              let isHtml = false, value = event.dataTransfer.getData('value');
+              if (value === '') {
+                value = event.dataTransfer.getData('text/html').trim();
+                isHtml = true;
+              }
+              if (value === '') {
+                value = event.dataTransfer.getData('text/plain').trim();
+              }
+              if (
+                values.some(
+                  ({ value }) => value === event.dataTransfer.getData('value')
+                )
+              ) {
+                const filtered = values.filter(({value: otherv}) => value !== otherv );
+                const newValues = [...filtered.slice(0, index), { value, isHtml }, ...filtered.slice(index)];
+                setValues(newValues);
+                event.stopPropagation();
+              } else {
+                setValues([...values, { value, isHtml }]);
+                event.stopPropagation();
+              }
+
+            }}
             style={{
               display: 'inline-block',
               overflow: 'hidden',
@@ -233,8 +270,9 @@ function MiniPalette({values, setValues}) {
               backgroundSize: 'cover',
               fontSize: '14px',
               textShadow: 'white 0px 10px',
-              width: '48px',
-              height: '48px',
+              width,
+              height: width,
+              outline: value === pickedValue ? '4px solid yellow' : 'none',
             }}
           >
             {value}
@@ -265,7 +303,7 @@ function MaxiPalette({values, setValues}) {
                 justifyContent: 'flex-end',
               }}
             >
-              <PaletteEntry {...entry} />
+              <PaletteEntry {...{values, setValues}} {...entry} />
               <button
                 style={{ alignSelf: 'flex-end' }}
                 onClick={() => {
@@ -280,8 +318,68 @@ function MaxiPalette({values, setValues}) {
       </ul>
 }
 
+function ManagedPalette() {
+  const [palette, setPalette] = use.palette();
+  const [open, setOpen] = useState(false);
+  const [openStored, setOpenStored] = useLocalStorage('manage palettes open', false);
+  const [name, setName] = useState('');
+  const trimmed = name.trim();
+  const [storedPalettes, setStoredPalettes] = useLocalStorage('palettes', []);
+  const currentEmpty = palette.length === 0;
+
+  return (
+    <div>
+      <ToggleButton controls={[open, setOpen]}>...</ToggleButton>
+      {open && (
+        <Fragment>
+          <TextControl value={name} onChange={setName} />
+          <button
+            disabled={trimmed === ''}
+            onClick={() => {
+              setStoredPalettes([
+                ...storedPalettes,
+                { name, contents: palette },
+              ]);
+            }}
+          >save</button>
+          <button disabled={currentEmpty} onClick={() => {
+            if (!currentEmpty) {
+              setStoredPalettes([...storedPalettes, {name: 'tmp', contents: palette}]);
+            }
+            setPalette([]);
+          }}>clear</button>
+          <ToggleButton controls={[openStored, setOpenStored]}>Stored palettes</ToggleButton>
+          {openStored && (
+            <ul>
+              {storedPalettes.map(({ name, contents = [], palette }) => (
+                <li key={name} style={{display: 'flex', justifyContent: 'flex-end'}}>
+                  {name} ({contents.length})
+                  <MiniPalette values={contents} setValues={() => {}} width={20}/>
+                  <button onClick={() => {
+                    if (!currentEmpty) {
+                      setStoredPalettes([...storedPalettes, {name: 'tmp', contents: palette}]);
+                    }
+                    setPalette(contents);
+                  }}>restore</button>
+                  <button onClick={() => {
+                    if (!confirm(`Delete palette "${name}"?`)) {
+                      return;
+                    }
+                    setStoredPalettes(storedPalettes.filter(({name: otherName}) => otherName !== name));
+                  }}>X</button>
+                </li>
+              ))}
+            </ul>
+          )}
+        </Fragment>
+      )}
+    </div>
+  );
+}
+
 export function Palette() {
-    const [values, setValues] = useLocalStorage('palette', []);
+    const [pickedValue, setPickedValue] = use.pickedValue();
+    const [values, setValues] = use.palette();
     const [compact] = useCompactSetting();
 
     return (
@@ -294,6 +392,13 @@ export function Palette() {
             )
           ) {
             event.preventDefault();
+          }
+        }}
+        onClick={() => {
+          if (pickedValue !== '' && !values.some(({value}) => value === pickedValue)) {
+            setValues([...values, { value: pickedValue, isHtml: false }]);
+            console.log('test');
+            setPickedValue('');
           }
         }}
         onDrop={(event) => {
