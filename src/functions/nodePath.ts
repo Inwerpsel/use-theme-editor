@@ -2,21 +2,36 @@ function getIndex(node: HTMLElement, parent: HTMLElement) {
     return Array.from(parent.children).findIndex(v => v === node);
 }
 
+const paths = new WeakMap<HTMLElement, []>();
+
+function hasUniqueId(node) {
+    return node.closest('html').querySelectorAll(`#${node.id}`).length === 1;
+}
+
 // Generate a path that can be used to find the node if the relevant document structure hasn't changed.
-export function toPath(node, doc = document) {
+export function toPath(node) {
+    if (node.nodeName === 'HTML' || node.nodeName === 'BODY') {
+        return [];
+    }
+    if (paths.has(node)) {
+        return paths.get(node);
+    }
     const path = [];
     // Only collected deepest id for now.
     let didId = false;
-    while (node !== doc.body && node.parentNode) {
+    while (node.nodeName !== 'BODY') {
         const parent = node.parentNode;
         const entry = [node.tagName, getIndex(node, parent)];
-        if (!didId && node.id) {
+        if (!didId && node.id && hasUniqueId(node)) {
             entry.push(node.id);
         }
         path.push(entry);
         node = parent;
     }
-    return path.reverse();
+    path.reverse();
+    // This is cached as an easy (and possibly bad) way to get the same array for an element.
+    paths.set(node, path);
+    return path;
 }
 
 // Find node from path.

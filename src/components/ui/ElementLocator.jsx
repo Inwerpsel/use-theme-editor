@@ -31,7 +31,7 @@ export function ElementLocator({
 }) {
   const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
   const didLastInspectHere = strippedSelector === lastInspectedSelector;
-  const { frameRef, lastInspectTime } = useContext(ThemeEditorContext);
+  const { frameRef } = useContext(ThemeEditorContext);
   const [elements, setElements] = useState([]);
   const [currentElement, setCurrentElement] = useState(didLastInspectHere ? lastInspectedIndex : 0);
   const [interacted, setInteracted] = useState(false);
@@ -71,7 +71,7 @@ export function ElementLocator({
     return () => {
       window.removeEventListener('message', listener);
     };
-  }, [initialized, selector, !hideIfOne || lastInspectTime]);
+  }, [initialized, selector, !hideIfOne]);
 
   useEffect(() => {
     if (interacted && elements.length > 0) {

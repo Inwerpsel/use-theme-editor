@@ -1,5 +1,5 @@
 import {getValueFromDefaultScopes, resolveVariables, VariableControl} from './VariableControl';
-import {ACTIONS} from '../../hooks/useThemeEditor';
+import {ACTIONS, editTheme} from '../../hooks/useThemeEditor';
 import React, {Fragment, useContext, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
@@ -22,6 +22,68 @@ import { onLongPress } from '../../functions/onLongPress';
 
 const previewSize = '28px';
 
+function applyHueFromDropped(data, event) {
+  event.preventDefault();
+  event.stopPropagation();
+  const color = event.dataTransfer.getData('value');
+  if (!color) return;
+  applyHueToAllColors(color, data)
+}
+
+export function applyHueToAllColors(rawColor, {groupColors, maximizeChroma}) {
+  const color = toOk(rawColor);
+  if (!color) return;
+
+  const refs = groupColors.filter(([v])=>!v.isRawValue).map(([{name}]) => `var(${name})`);
+  let changed = false;
+
+  const dispatch = editTheme();
+
+  groupColors.forEach(([{name, isRawValue}, value, unparsed, scope = ':root']) => {
+    if (isRawValue) return;
+
+    if (refs.includes(unparsed)) {
+      return;
+    }
+
+    const parsed = toOk(value);
+    if (!parsed) return;
+
+    const blackOrWhite = parsed.l < 0.001 || parsed.l > 0.999;
+    
+    // Skip grayscale values as they wouldn't really change.
+    if (blackOrWhite || (!maximizeChroma && parsed.c === 0)) return;
+    const {
+      l,
+      c,
+      h,
+      alpha = 1,
+    } = clampChroma(
+      { ...parsed, c: maximizeChroma ? 0.4 : parsed.c, h: color.h },
+      'oklch',
+      'p3'
+    );
+    const newValue = oklch(l * 100, c, h, alpha);
+    if (newValue === value) {
+      return;
+    }
+    changed = true;
+    dispatch(
+      {
+        type: ACTIONS.set,
+        payload: {
+          name,
+          scope,
+          value: newValue,
+        },
+      },
+      { debounceTime: 0 }
+    );
+  });
+
+  return changed;
+}
+
 export const GroupControl = props => {
   const {
     group,
@@ -37,6 +99,7 @@ export const GroupControl = props => {
 
   const {
     element,
+    path,
     elementInfo: {
       src,
       srcset,
@@ -59,9 +122,8 @@ export const GroupControl = props => {
   const {
     frameRef,
     defaultValues,
-    openGroups,
-    setOpenGroups,
   } = useContext(ThemeEditorContext);
+  const [openGroups, setOpenGroups] = use.openGroups();
 
   const toggleGroup = id => {
     // Todo: further reduce stored size, perhaps use different key.
@@ -138,47 +200,6 @@ export const GroupControl = props => {
 
   const isOpen = !!openGroups[label];
 
-  function applyHueToAllColors(event, _value = null) {
-    event.preventDefault();
-    event.stopPropagation();
-    const value = _value !== null ? _value : event.dataTransfer.getData('value');
-    const droppedColor = toOk(value);
-    if (!droppedColor) return;
-    const refs = groupColors.filter(([v])=>!v.isRawValue).map(([{name}]) => `var(${name})`);
-    let changed = false;
-    groupColors.forEach(([{name, isRawValue}, value, unparsed, scope = ':root']) => {
-      if (isRawValue) return;
-
-      if (refs.includes(unparsed)) {
-        return;
-      }
-
-      const parsed = toOk(value);
-      if (!parsed) return;
-
-      const blackOrWhite = parsed.l < 0.001 || parsed.l > 0.999;
-      
-      // Skip grayscale values as they wouldn't really change.
-      if (blackOrWhite || (!maximizeChroma && parsed.c === 0)) return;
-      const {l,c,h,alpha = 1} = clampChroma({...parsed, c: maximizeChroma ? 0.4 : parsed.c, h: droppedColor.h}, 'oklch', 'p3');
-      const newValue = oklch(l * 100,c,h,alpha);
-      if (newValue === value) {
-        return;
-      }
-      changed = true;
-      dispatch({
-        type: ACTIONS.set,
-        payload: {
-          name,
-          scope,
-          value: newValue,
-        },
-      }, {debounceTime: 0});
-    });
-
-    return changed;
-  }
-
   return (
     <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
       <div
@@ -192,7 +213,7 @@ export const GroupControl = props => {
         onMouseEnter={() => {
           frameRef.current?.contentWindow.postMessage(
             {
-              type: 'highlight-element-start', payload: {index: element}
+              type: 'highlight-element-start', payload: {path}
             },
             window.location.origin,
           );
@@ -200,13 +221,13 @@ export const GroupControl = props => {
         onMouseLeave={() => {
           frameRef.current?.contentWindow.postMessage(
             {
-              type: 'highlight-element-end', payload: {index: element}
+              type: 'highlight-element-end', payload: {path}
             },
             window.location.origin,
           );
         }}
       >
-        {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{element}}/>}
+        {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{path}}/>}
         
         <h4
           style={{
@@ -223,13 +244,13 @@ export const GroupControl = props => {
           onClick={!hasContent ? null : (event) => {
             const picked = readSync('pickedValue');
             if (picked) {
-              const changed = applyHueToAllColors(event, picked);
+              const changed = applyHueToAllColors(picked, {groupColors, maximizeChroma});
               // Allow still opening an element if no change was made.
               if (changed) return;
             }
             toggleGroup(label);
           }}
-          onDrop={applyHueToAllColors}
+          onDrop={applyHueFromDropped.bind(null,{groupColors, maximizeChroma})}
           onDragOver={(e) => {e.preventDefault()}}
         >
           <div>

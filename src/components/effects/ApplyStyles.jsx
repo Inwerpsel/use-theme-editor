@@ -4,7 +4,7 @@ import { updateScopedVars } from "../../initializeThemeEditor";
 import { ThemeEditorContext } from "../ThemeEditor";
 
 export function ApplyStyles() {
-    const {themeEditor: {scopes}} = get;
+    const {themeEditor: {scopes}, frameLoaded} = get;
     const {
       frameRef,
       scrollFrameRef,
@@ -31,7 +31,7 @@ export function ApplyStyles() {
         },
         window.location.origin
       );
-    }, [scopes]);
+    }, [scopes, frameLoaded]);
 
     return null;
 }

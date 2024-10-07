@@ -96,7 +96,7 @@ export function ImportExportTools() {
             reader.onload = event => {
               try {
                 const data = JSON.parse(event.target.result);
-                importHistory(data, [frameRef.current, scrollFrameRef.current]);
+                importHistory(data);
               } catch (e) {
                 console.log('failed uploading', e);
               }

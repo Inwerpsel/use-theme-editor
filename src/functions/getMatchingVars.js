@@ -11,7 +11,7 @@ export function includeDescendants(selector) {
   return `${selector}, :where(${selector}) *`.replace('\\\\', '\\');
 }
 
-let cache;
+let selectorCache;
 
 function matchVar (cssVar, target) {
   if (typeof target.matches !== 'function') {
@@ -19,13 +19,13 @@ function matchVar (cssVar, target) {
   }
   const selector = cssVar.statelessSelector;
 
-  if (cache.has(selector)) {
-    return cache.get(selector);
+  if (selectorCache.has(selector)) {
+    return selectorCache.get(selector);
   }
 
   try {
     const matches = target.matches(selector);
-    cache.set(selector, matches);
+    selectorCache.set(selector, matches);
 
     return matches;
   } catch (e) {
@@ -34,13 +34,23 @@ function matchVar (cssVar, target) {
   }
 };
 
-export const getMatchingVars = ({ cssVars, target }) => {
-  cache = new Map();
+const cache = new WeakMap();
 
+export const getMatchingVars = ({ cssVars, target }) => {
+  if (cache.has(target)) {
+    return cache.get(target);
+  }
+  selectorCache = new Map();
+
+  let result;
   try {
-    return cssVars.filter(cssVar => matchVar(cssVar, target));
+    result = cssVars.filter(cssVar => matchVar(cssVar, target));
   } catch (e) {
     console.log(target, e);
-    return [];
+    result = [];
   }
+
+  cache.set(target, result);
+
+  return result;
 };

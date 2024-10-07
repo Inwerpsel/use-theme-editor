@@ -1,5 +1,4 @@
 import { createTimeline,  initialStates, interestingKeys, restorePins, restoreOffset, setStates } from "../hooks/useResumableReducer";
-import { INSPECTIONS } from "../renderSelectedVars";
 import { use } from "../state";
 
 let db;
@@ -76,7 +75,6 @@ export function deleteStoredHistory(createSnap = false, lastState = null) {
 
     store.clear();
     localStorage.removeItem(snapshotKey);
-    localStorage.removeItem(INSPECTIONS);
 
     if (lastState) {
         // Use interesting part of current state as snapshot.

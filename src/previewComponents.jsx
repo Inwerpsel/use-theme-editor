@@ -1,11 +1,14 @@
-import React, { Fragment, useState } from 'react';
+import React, { Fragment, useContext, useState } from 'react';
 import { COLOR_VALUE_REGEX, GRADIENT_REGEX } from './components/properties/ColorControl';
-import {prevGroups} from './components/ThemeEditor';
 import { SelectControl } from './components/controls/SelectControl';
 import { Checkbox } from './components/controls/Checkbox';
 import { ElementLocator } from './components/ui/ElementLocator';
 import { dragValue } from './functions/dragValue';
 import { FormatVariableName } from './components/inspector/VariableControl';
+import { getGroupsForElement } from './initializeThemeEditor';
+import { toNode } from './functions/nodePath';
+import { ThemeEditorContext } from './components/ThemeEditor';
+import { ScrollInViewButton } from './components/inspector/ScrollInViewButton';
 
 const size = 18;
 
@@ -24,7 +27,7 @@ function FindOther({label}) {
 }
 
 export const previewComponents = {
-  OPEN_GROUPS: ({ action: groups }) => {
+  openGroups: ({ action: groups }) => {
     const items = Object.keys(groups);
     if (items.length === 0) return 'No open groups';
     return <div className='history-open-groups'>
@@ -37,12 +40,30 @@ export const previewComponents = {
     </div>;
   },
 
-  'inspected-index': ({ action: index }) => index == -1 ? null : (
-    <Fragment>
-      Inspect
-      <pre className="monospace-code">{prevGroups.length <= index ? '' : prevGroups[index][0]?.label}</pre>
-    </Fragment>
-  ),
+  inspectedPath: ({ action: path }) => {
+    const {
+      frameRef,
+      // scrollFrameRef,
+    } = useContext(ThemeEditorContext);
+
+    let group;
+    try {
+      [group] = getGroupsForElement(toNode(path, frameRef.current.contentWindow.document));
+    } catch (e) {
+    }
+
+    if (!group) {
+      return '...';
+    }
+  
+    return (
+      <Fragment>
+        Inspect
+        <pre className="monospace-code">{group?.label}</pre>
+        <ScrollInViewButton {...{path}} />
+      </Fragment>
+    );
+  },
 
   themeEditor: {
     set: ({ payload: { scope, name, value, alternatives } }) => {

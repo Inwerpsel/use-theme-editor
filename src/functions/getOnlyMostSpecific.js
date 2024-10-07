@@ -237,11 +237,17 @@ export const getOnlyMostSpecific = (vars, element) => {
   return Object.values(specificVars);
 };
 
+const cache = new WeakMap();
 
 export const filterMostSpecific = (groups) => {
-  return groups.map(({ vars, element, ...other }) => ({
-    ...other,
-    element,
-    vars: getOnlyMostSpecific(vars, element).sort(sortForUI),
-  }));
+  return groups.map(({ vars, element, ...other }) => {
+    if (cache.has(element)) return cache.get(element);
+    const result = {
+      ...other,
+      element,
+      vars: getOnlyMostSpecific(vars, element).sort(sortForUI),
+    };
+    cache.set(element, result);
+    return result;
+  });
 };

@@ -1,4 +1,4 @@
-import React, {createContext, Fragment, useLayoutEffect, useRef, useState} from 'react';
+import React, {createContext, Fragment, useRef, useState} from 'react';
 import {useLocalStorage} from '../hooks/useLocalStorage';
 import {ResizableFrame} from './ResizableFrame';
 import {ServerThemesList} from './ui/ServerThemesList';
@@ -22,10 +22,9 @@ import {CurrentTheme} from './ui/CurrentTheme';
 import { RemoveAnnoyingPrefix } from './inspector/RemoveAnnoyingPrefix';
 import { NameReplacements } from './inspector/NameReplacements';
 import { HistoryControls } from './ui/HistoryControls';
-import { useResumableState } from '../hooks/useResumableReducer';
 import { FullHeightFrameScale, SmallFullHeightFrame } from './SmallFullHeightFrame';
 import { Inspector } from './ui/Inspector';
-import { use } from '../state';
+import { get, use } from '../state';
 import { Hotkeys } from './Hotkeys';
 import { ColorSettings } from './ui/ColorSettings';
 import { InformationVisibilitySettings } from './ui/InformationVisibilitySettings';
@@ -48,19 +47,11 @@ export const ThemeEditorContext = createContext({});
 export const prevGroups = [];
 
 export const ThemeEditor = (props) => {
+  const {frameLoaded} = get;
   const {
-    groups: _unfilteredGroups,
     allVars,
     defaultValues,
-    lastInspectTime,
-    inspectedIndex,
-    isNewInspection,
   } = props;
-
-  const [currentInspected, setCurrentInspected] = use.inspectedIndex();
-  const unfilteredGroups = currentInspected === -1 ? [] : prevGroups[currentInspected] || _unfilteredGroups;
-  const [openGroups, setOpenGroups] = useResumableState('OPEN_GROUPS', {});
-  
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
 
@@ -69,40 +60,8 @@ export const ThemeEditor = (props) => {
   const [serverThemesDisplayed, setServerThemesDisplayed] = useLocalStorage('server-themes-displayed', true);
   const [sheetsDisablerDisplayed, setSheetDisablerDisplayed] = useState(false);
 
-  const [openFirstOnInspect, setOpenFirstOnInspect] = useLocalStorage('open-first-inspect', true);
   const [fullPagePreview, setFullPagePreview] = useLocalStorage('full-page-preview', false)
-
-  useLayoutEffect(() => {
-    if (currentInspected !== -1 && currentInspected <= inspectedIndex) {
-      frameRef.current?.contentWindow.postMessage(
-        {
-          type: 'inspect-previous',
-          payload: { index: currentInspected },
-        },
-        window.location.origin
-      );    
-    }
-  }, [currentInspected, prevGroups.length === 0]);
-
-  useLayoutEffect(() => {
-    if ( isNewInspection ) {
-      prevGroups[inspectedIndex] = _unfilteredGroups;
-      setCurrentInspected(inspectedIndex);
-    } 
-  }, [inspectedIndex]);
-
-  // Open first group.
-  // I don't like how this is done but it's tricky to replace at the moment.
-  useLayoutEffect(() => {
-    if (isNewInspection && currentInspected === inspectedIndex && openFirstOnInspect && unfilteredGroups.length > 0) {
-      setOpenGroups(
-        {
-          [unfilteredGroups[0].label]: true,
-        },
-        { skipHistory: true, appendOnly: true }
-      );
-    }
-  }, [unfilteredGroups, openFirstOnInspect, currentInspected, inspectedIndex, isNewInspection]);
+  const [openFirstOnInspect, setOpenFirstOnInspect] = use.openFirstOnInspect();
 
   return (
     <ThemeEditorContext.Provider
@@ -112,8 +71,6 @@ export const ThemeEditor = (props) => {
         frameRef,
         scrollFrameRef,
         setSheetDisablerDisplayed,
-        lastInspectTime,
-        openGroups, setOpenGroups,
       }}
     >
       <ApplyStyles />
@@ -161,7 +118,9 @@ export const ThemeEditor = (props) => {
           <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
             <Area id="area-left">
               <StartTutorial />
-              <Inspector {...{unfilteredGroups, inspectedIndex, currentInspected}}/>
+              <div id="Inspector">
+                {frameLoaded && <Inspector />}
+              </div>
             </Area>
             <Area id="area-left-inner" />
             {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
@@ -226,7 +185,7 @@ export const ThemeEditor = (props) => {
               <ThemeEditorExtraOptions />
               <RemoveAnnoyingPrefix />
               <NameReplacements/>
-              <SignalExample />
+              {/* <SignalExample /> */}
               {/* <VoiceCommands /> */}
               <CurrentTheme />
               <FullHeightFrameScale />

@@ -1,7 +1,6 @@
 import React, {
   createContext,
   useLayoutEffect,
-  useMemo,
   useState,
   useSyncExternalStore,
 } from 'react';
@@ -9,7 +8,6 @@ import { hotkeysOptions } from '../components/Hotkeys';
 import { useHotkeys } from 'react-hotkeys-hook';
 import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
-import { INSPECTIONS, getPrevinspections, resetInspections } from '../renderSelectedVars';
 import { Action } from '../functions/reducerOf';
 import { use } from '../state';
 
@@ -184,7 +182,6 @@ export function exportHistory() {
       pins: [...pins.entries()],
       initialStates: [...initialStates.entries()] ,
       finalStates: [...states.entries()],
-      inspections: getPrevinspections(),
       url: window.location.href,
       timeline,
     },
@@ -209,12 +206,34 @@ export function createTimeline(timeline, store = false) {
 
 let historyUrl = localStorage.getItem('originalUrl');
 
-export function importHistory({timeline, initialStates: _initialStates, finalStates, pins: newPins, offset = 0, inspections, url}, frames: HTMLIFrameElement[]) {
+function upgrade(data) {
+  const { timeline, inspections } = data;
+  return {
+    ...data,
+    timeline: timeline.map((actions) =>
+      actions.map((entry) => {
+        const k = entry[0];
+        if (k === 'inspected-index' || k === 'inspectedIndex') {
+          return ['inspectedPath', inspections[entry[1]]];
+        }
+        if (k === 'OPEN_GROUPS') {
+          return ['openGroups', entry[1]];
+        }
+        if (k === 'THEME_EDITOR') {
+          return ['themeEditor', entry[1]];
+        }
+        return entry;
+      })
+    ),
+  };
+}
+
+export function importHistory(data) {
+  const {timeline, initialStates: _initialStates, finalStates, pins: newPins, offset = 0, url} = upgrade(data);
   oldStates = pointedStates;
   past = [];
   historyOffset = 0;
   pins = new Map();
-  resetInspections();
   deleteStoredHistory();
   
   for (const [key, value] of _initialStates) {
@@ -235,12 +254,6 @@ export function importHistory({timeline, initialStates: _initialStates, finalSta
 
   pins = new Map(newPins);
   historyOffset = offset;
-
-  localStorage.setItem(INSPECTIONS, JSON.stringify(inspections));
-
-  for (const frame of frames) {
-    frame?.contentWindow.postMessage({type: 'reload-inspections'} , window.location.origin)
-  }
 
   setCurrentState();
   checkNotifyAll();
@@ -281,7 +294,7 @@ function getSnapShot(id) {
       : initialStates.get(id);
 }
 
-export const interestingKeys = ['themeEditor', 'uiLayout', 'inspected-index'];
+export const interestingKeys = ['themeEditor', 'uiLayout', 'inspectedPath'];
 
 // This function is used to determine which states should be visited when using fast navigation.
 // Hard coded to keep it simple for now, it could be user configurable.

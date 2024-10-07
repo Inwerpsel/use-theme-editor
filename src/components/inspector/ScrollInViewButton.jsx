@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import { ThemeEditorContext } from "../ThemeEditor";
 
 export function ScrollInViewButton(props) {
-    const { element } = props;
+    const { path } = props;
     const [dragged, setDragged] = useState(false);
 
     const {
@@ -34,7 +34,7 @@ export function ScrollInViewButton(props) {
                     };
             frameRef.current.contentWindow.postMessage(
                 {
-                    type: 'scroll-in-view', payload: { index: element, options }
+                    type: 'scroll-in-view', payload: { path, options }
                 },
                 window.location.href,
             );
@@ -51,12 +51,11 @@ export function ScrollInViewButton(props) {
             float: 'right',
             cursor: 'zoom-in',
         }}
-        disabled={frameRef.current && isNaN(element)}
         onClick={() => {
             if (frameRef.current) {
                 frameRef.current.contentWindow.postMessage(
                     {
-                        type: 'scroll-in-view', payload: { index: element }
+                        type: 'scroll-in-view', payload: { path }
                     },
                     window.location.href,
                 );

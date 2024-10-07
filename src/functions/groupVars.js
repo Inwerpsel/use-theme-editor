@@ -2,6 +2,7 @@ import { definedValues, scopesByProperty } from './collectRuleVars';
 import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 import { HIGHLIGHT_CLASS } from './highlight';
+import { toPath } from './nodePath';
 
 export const toLabel = (element) => {
   const {id, tagName, classList} = element;
@@ -16,8 +17,11 @@ export const toLabel = (element) => {
 
   const selector = tagName.toLowerCase() + idPart + classPart;
   let suffix;
+
+  const body = element.closest('body')
+
   try {
-    const others = [...document.querySelectorAll(selector)];
+    const others = [...body.querySelectorAll(selector)];
     if (others.length === 1) {
       suffix = '';
     } else {
@@ -104,6 +108,8 @@ function svgPartHtml(part) {
   return html;
 }
 
+const cache = new WeakMap();
+
 export const groupVars = (vars, target, allVars) => {
   const groups = [];
   // 
@@ -112,11 +118,17 @@ export const groupVars = (vars, target, allVars) => {
     previous = target,
     previousMatches = vars;
 
-  // const times = [];
   // Walk up the tree to the root to assign each variable to the deepest element they apply to. Each time we go up we
   // test the remaining variables. If the current element doesn't match all anymore, the non matching are assigned to
   // the previous (one level deeper) element.
   while (current = previous.parentNode) {
+    const element = previous;
+    if (cache.has(element)) {
+      // It SHOULD be impossible to find an element in cache if any of its parents are not in cache.
+      groups.push(cache.get(element));
+      previous = current;
+      continue;
+    }
     if (previousMatches.length === 0) {
       break;
     }
@@ -124,20 +136,18 @@ export const groupVars = (vars, target, allVars) => {
 
     const previousInlineStyles = {};
     let previousHasInlineStyles = false;
-    for (const propname of previous.style) {
+    for (const propname of element.style) {
       previousHasInlineStyles = true;
-      previousInlineStyles[propname] = previous.style[propname];
+      previousInlineStyles[propname] = element.style[propname];
     }
 
     const currentMatchesLess = currentMatches.length < previousMatches.length;
-    // times.push(performance.now() - tStart);
-    const isSvg = previous.tagName === 'svg';
-    const isInSvg = !isSvg && !!previous.closest('svg');
-    const isImage = previous.tagName === 'IMG';
-    const isDeepest = previous === target;
+    const isSvg = element.tagName === 'svg';
+    const isInSvg = !isSvg && !!element.closest('svg');
+    const isImage = element.tagName === 'IMG';
+    const isDeepest = element === target;
 
      if (isDeepest || isImage || isSvg || isInSvg || previousHasInlineStyles || currentMatchesLess) {
-      const element = previous;
       const vars = !currentMatchesLess ? [] : previousMatches.filter(match => !currentMatches.includes(match));
       const scopes = !currentMatchesLess ? [] : getMatchingScopes(element, allVars, groups);
 
@@ -167,8 +177,9 @@ export const groupVars = (vars, target, allVars) => {
             ) +  '</svg></div>';
 
       const isRootElement = element.tagName === 'HTML' || element.tagName === 'BODY'
-      groups.push({
+      const newGroup = {
         element,
+        path: toPath(element),
         elementInfo: {
           src: element.getAttribute('src'),
           srcset: element.getAttribute('srcset'),
@@ -217,16 +228,14 @@ export const groupVars = (vars, target, allVars) => {
         scopes,
         // Provide non-root custom prop values for the previews.
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
-      });
+      };
+      groups.push(newGroup);
+      cache.set(element, newGroup);
       previousMatches = currentMatches;
-      // times.push([label, performance.now() - tStart])
     }
 
     previous = current;
-    
   }
-  // console.log(groups)
-  // console.log(times)
 
   return groups;
 };

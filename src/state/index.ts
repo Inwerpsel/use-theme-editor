@@ -83,8 +83,14 @@ export const use = {
     () => useLocalStorage('visualizeHistoryAlways', true),
   svgDarkBg:
     () => useLocalStorage('svgDarkBg', false),
-  inspectedIndex:
-    () => useResumableState('inspected-index', -1),
+  inspectedPath:
+    () => useResumableState('inspectedPath', ''),
+  openGroups: 
+    () => useResumableState('openGroups', {}),
+  frameLoaded:
+    () => useGlobalState('frameLoaded', false),
+  openFirstOnInspect:
+    () =>  useLocalStorage('open-first-inspect', true),
   serverThemes:
     () => useServerThemes(),
   existsOnServer:
