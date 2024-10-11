@@ -134,6 +134,12 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   iframe {
     background-color: white;
   }
+
+  &:fullscreen {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+  }
 }
 
 .responsive-frame-container::-webkit-scrollbar {
@@ -692,3 +698,8 @@ input[type=checkbox] + * {
 }
 
 @import 'css/picker.scss';
+
+// Quick fix for preview frame, shouldn't harm editor.
+html {
+  overflow-x: hidden;
+}
