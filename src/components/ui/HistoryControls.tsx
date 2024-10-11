@@ -295,7 +295,6 @@ export function HistoryControls() {
           <HistoryForward />
           <HistoryForwardFast />
         </div>
-        <OriginalUrl />
         <Tutorial el={HistoryControls}>
           <p>
             Every step you do in the editor is tracked in a history timeline.

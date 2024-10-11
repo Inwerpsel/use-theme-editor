@@ -29,11 +29,7 @@ export function Hotkeys(props) {
       updater={(value, set) => {
         const newValue = value === 'alt' ? 'any' : 'alt';
         set(newValue);
-        const message = {
-          type: 'theme-edit-alt-click',
-          payload: { frameClickBehavior: newValue },
-        };
-        frameRef.current.contentWindow.postMessage(message, window.location.origin);
+        frameRef.current.contentDocument.documentElement.classList.toggle('force-cursor', newValue !== 'alt');
       }}
     />
   </Fragment>;

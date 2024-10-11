@@ -182,7 +182,7 @@ function ActionList(props) {
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
-            {Preview && <Preview {...{action}} payload={action.payload} />}
+            {Preview && <Preview {...{action, historyIndex}} payload={action.payload} />}
           </li>
         );
       })}

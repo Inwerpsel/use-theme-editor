@@ -45,6 +45,8 @@ export function restoreHistory() {
     };
 }
 
+let didUrl = false;
+
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
 //   so that it can be applied when replaying.
@@ -64,6 +66,11 @@ export function storeActions(actions: [string, any][], clearFuture, index): void
         const range = IDBKeyRange.lowerBound(index);
         store.delete(range);
     }
+    // Mark start of session by adding url to first action data.
+    if (!didUrl) {
+        actions[0][2] = window.location.href;
+        didUrl = true;
+    }
     store.put(actions, index);
 }
 
@@ -81,6 +88,7 @@ export function deleteStoredHistory(createSnap = false, lastState = null) {
         const snap = JSON.stringify([...lastState.entries()].filter(([k]) => interestingKeys.includes(k)));
         localStorage.setItem(snapshotKey, snap); 
     }
+    didUrl = false;
 
     console.log('Start store delete transaction in ', performance.now( ) - start) 
 }

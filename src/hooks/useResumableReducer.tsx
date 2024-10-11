@@ -189,19 +189,28 @@ export function exportHistory() {
   );
 }
 
+export let otherUrls = [] as [string, number][];
+
 export function createTimeline(timeline, store = false) {
-  let i = 0;
+  let i = 0, currentUrl = window.location.href, lastUrl;
+  otherUrls.forEach((_, i)=> {delete otherUrls[i]})
 
   for (const actions of timeline) { 
+    if (actions.length === 0) continue;
     createEmptyEntry();
-    for (const [key, action] of actions) {
-        performActionOnLatest(key, action, { force: true, debounceTime: Infinity });
+    for (const [key, action, url] of actions) {
+      if (url && (url !== currentUrl) && url !== lastUrl) {
+        otherUrls.push([url, i]);
+        lastUrl = url;
+      }
+      performActionOnLatest(key, action, { force: true, debounceTime: Infinity });
     }
     if (store) {
       storeActions(actions, false, i);
     }
     i++;
   }
+  otherUrls.reverse();
 }
 
 let historyUrl = localStorage.getItem('originalUrl');
@@ -217,7 +226,16 @@ function upgrade(data) {
           return ['inspectedPath', inspections[entry[1]]];
         }
         if (k === 'OPEN_GROUPS') {
-          return ['openGroups', entry[1]];
+          return ['openGroups', Object.entries(entry[1]).reduce((result, [k, v]) => {
+            if (!v) return;
+            const newKey = k.startsWith('body')
+              ? 'body'
+              : k.startsWith('html')
+              ? 'html'
+              : k.replaceAll(/\n\./g, ' .').replace(' .', '\n.');
+            result[newKey] = true;
+            return result;
+          }, {})];
         }
         if (k === 'THEME_EDITOR') {
           return ['themeEditor', entry[1]];
@@ -247,7 +265,7 @@ export function importHistory(data) {
 
   // Sanity check.
   for (const [key, value] of finalStates) {
-    if (states.get(key) !== value) {
+    if (typeof value !== 'object' && states.get(key) !== value) {
       console.log('Unequal value', value, states.get(key));
     }
   }

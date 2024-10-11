@@ -1,6 +1,6 @@
 import {getValueFromDefaultScopes, resolveVariables, VariableControl} from './VariableControl';
 import {ACTIONS, editTheme} from '../../hooks/useThemeEditor';
-import React, {Fragment, useContext, useMemo} from 'react';
+import React, {Fragment, useContext, useEffect, useMemo} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
 import { ScopeControl } from './ScopeControl';
@@ -19,6 +19,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { readSync } from '../../hooks/useGlobalState';
 import { useDispatcher } from '../../hooks/useResumableReducer';
 import { onLongPress } from '../../functions/onLongPress';
+import { addHighlight, removeHighlight } from '../../functions/highlight';
 
 const previewSize = '28px';
 
@@ -119,6 +120,30 @@ export const GroupControl = props => {
     inlineStyles,
   } = group;
 
+  useEffect(() => {
+    // Freeze display rules during inspection by adding as inline styles.
+    // Kinda shaky but almost anything is better than not seeing inspected element.
+
+    // When the data is in a better shape, correcting the display should be easy.
+
+    const d = getComputedStyle(element).display;
+    if (d === 'none') {
+      // Element started hidden (restored history), not attempt to figure out right display for now.
+      element.style.display = 'block';
+    } else {
+      // The element was clicked, in order to be sure to capture anything that could be overridden with none,
+      // we have to set the display of all elements as an inline style.
+      element.style.display = d;
+    }
+    element.style.opacity = 1;
+    element.style.visibility = 'visible';
+    return () => {
+    element.style.display = null;
+    element.style.visibility = null;
+    element.style.opacity = null;
+    };
+  }, []);
+
   const {
     frameRef,
     defaultValues,
@@ -211,20 +236,10 @@ export const GroupControl = props => {
           overflow: isOpen ? 'hidden' : 'auto',
         }}
         onMouseEnter={() => {
-          frameRef.current?.contentWindow.postMessage(
-            {
-              type: 'highlight-element-start', payload: {path}
-            },
-            window.location.origin,
-          );
+          addHighlight(element)
         }}
         onMouseLeave={() => {
-          frameRef.current?.contentWindow.postMessage(
-            {
-              type: 'highlight-element-end', payload: {path}
-            },
-            window.location.origin,
-          );
+          removeHighlight(element);
         }}
       >
         {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{path}}/>}
@@ -239,6 +254,7 @@ export const GroupControl = props => {
             justifyContent: 'space-between',
             alignItems: 'flex-start',
             maxHeight: isOpen ? '128px' : '300px',
+            overflowX: 'hidden',
             overflowY: 'auto',
           }}
           onClick={!hasContent ? null : (event) => {
@@ -250,7 +266,7 @@ export const GroupControl = props => {
             }
             toggleGroup(label);
           }}
-          onDrop={applyHueFromDropped.bind(null,{groupColors, maximizeChroma})}
+          onDrop={(event) => applyHueFromDropped({groupColors, maximizeChroma}, event)}
           onDragOver={(e) => {e.preventDefault()}}
         >
           <div>
@@ -271,7 +287,7 @@ export const GroupControl = props => {
                 onClick={() => { setSearch('') }}
               >X</button>
               </span>}
-            {groupColors.length > 0 && <div>
+            {groupColors.length > 0 && <div style={{overflowX: 'hidden'}}>
               {groupColors.map(([{name}, value, rawValue, scope]) => {
                 const isVar = name.startsWith('--');
                 return (
@@ -333,7 +349,7 @@ export const GroupControl = props => {
         {src && <code style={{float: 'right'}}>{imgWidth} x {imgHeight}</code>}
         {src && showImageColors && <ImageColors path={src} />}
         <ElementInlineStyles {...{group, elementScopes}}/>
-        <ScopeControl {...{scopes: elementScopes, vars, element}}/>
+        <ScopeControl {...{scopes: elementScopes, vars}}/>
         <ul className={'group-list'}>
           {vars.filter(v=>!v.currentScope).map(cssVar => {
             return <VariableControl

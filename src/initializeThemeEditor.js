@@ -317,14 +317,6 @@ export const setupThemeEditor = async (config) => {
     const {index, selector, scopes, resetAll, path} = payload || {};
 
     switch (type) {
-    case 'highlight-element-start':
-      addHighlight(toNode(path));
-      break;
-
-    case 'highlight-element-end':
-      removeHighlight(toNode(path));
-      break;
-
     case 'scroll-in-view':
       const element = selector ? locatedElements[selector][index] : toNode(payload.path);
 
@@ -352,45 +344,9 @@ export const setupThemeEditor = async (config) => {
       lastHighlightTimeout = [setTimeout(handler, 1500), handler, element];
       break;
 
-    case 'theme-edit-alt-click':
-      document.documentElement.classList.toggle('force-cursor', payload.frameClickBehavior !== 'alt');
-      break;
-
     case 'set-sheet-config':
       toggleStylesheets(JSON.parse(payload));
       break;
-    case 'locate-elements':
-      const results = document.querySelectorAll(selector);
-      locatedElements[selector] = [...results].filter(el => {
-        return el.offsetParent !== null && window.getComputedStyle(el).visibility !== 'hidden';
-      });
-      window.parent.postMessage(
-        {
-          type: 'elements-located', payload: {
-            selector,
-            elements: locatedElements[selector].map((el, index) => ({
-              index,
-              tagName: `${el.tagName}`,
-              id: `${el.id}`,
-              className: `${el.className}`,
-              isCurrentlyInspected: !!lastGroups && lastGroups.some(group => group.element === el),
-            })),
-          },
-        },
-        window.location.href,
-      );
-      break;
-      // case 'inspect-located':
-      //   const toInspect = locatedElements[selector][index];
-      //   if (toInspect) {
-      //     inspect(toInspect);
-      //     toInspect.scrollIntoView({
-      //       // behavior: 'smooth',
-      //       block: 'center',
-      //       inline: 'end',
-      //     });
-      //   }
-      //   break;
       case 'set-scopes-styles': 
         updateScopedVars(scopes, resetAll);
         break;

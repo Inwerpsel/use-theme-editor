@@ -5,7 +5,11 @@ function getIndex(node: HTMLElement, parent: HTMLElement) {
 const paths = new WeakMap<HTMLElement, []>();
 
 function hasUniqueId(node) {
-    return node.closest('html').querySelectorAll(`#${node.id}`).length === 1;
+    try {
+        return node.closest('html').querySelectorAll(`#${node.id}`).length === 1;
+    } catch (e) {
+        return false;
+    }
 }
 
 // Generate a path that can be used to find the node if the relevant document structure hasn't changed.
@@ -36,7 +40,7 @@ export function toPath(node) {
 
 // Find node from path.
 export function toNode(path: string[], doc = document) {
-    let node = doc.body;
+    let node = doc.querySelector('body');
     let i = 0;
     let deepestIdIndex;
     for (const [,,id] of path) {
@@ -62,9 +66,16 @@ export function toNode(path: string[], doc = document) {
         }
         node = next;
         if (node.tagName !== tagname) {
-            console.warn(`Expected ${tagname} but found ${node.tagName}`)
+            // console.warn(`Expected ${tagname} but found ${node.tagName}`)
         }
     }
 
     return node;
+}
+
+// Check whether a node is along a path in the tree.
+export function isInPath(node, path): boolean {
+    const endNode = toNode(path, node.getRootNode());
+
+    return node.contains(endNode);
 }

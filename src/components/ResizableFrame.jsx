@@ -11,6 +11,8 @@ const wrapperMargin = 16;
 
 let lastInspectedTime = 0;
 
+let lastClicked;
+
 function InspectOnClick({frameRef, loaded}) {
   const { frameClickBehavior, openFirstOnInspect } = get;
   const [path, setPath] = use.inspectedPath();
@@ -20,10 +22,11 @@ function InspectOnClick({frameRef, loaded}) {
     const doc = frameRef.current?.contentWindow.document;
     if (!doc) return;
     function listener(event) {
-      // if (frameClickBehavior === 'alt' && !event.altKey) {
-      //   return;
-      // }
+      if (frameClickBehavior === 'alt' && !event.altKey) {
+        return;
+      }
       const element = event.target;
+      if (element === lastClicked) return;
       const newPath = toPath(element)
       if (newPath === path) {
         return;
@@ -50,9 +53,11 @@ function InspectOnClick({frameRef, loaded}) {
       nukePointerEventsNone(element);
       element.scrollIntoView({
         block: 'nearest',
-        inline: 'end',
+        inline: 'nearest',
         behavior: 'smooth',
       });
+      document.querySelector('.area:has(.group-list)')?.scrollTo(0, 0);
+      lastClicked = element;
     }
 
     doc.addEventListener('click', listener);
@@ -73,7 +78,7 @@ function InspectOnClick({frameRef, loaded}) {
       }
       element.scrollIntoView({
         block: 'center',
-        inline: 'start',
+        inline: 'nearest',
         // behavior: 'smooth',
       });
 

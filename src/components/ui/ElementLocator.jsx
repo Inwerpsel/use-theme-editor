@@ -8,6 +8,9 @@ import React, {
 } from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { allStateSelectorsRegexp, residualNotRegexp } from '../../functions/getMatchingVars';
+import { get, use } from '../../state';
+import { isInPath, toNode, toPath } from '../../functions/nodePath';
+import { addHighlight, removeHighlight } from '../../functions/highlight';
 
 function removeStateSelectors(selector) {
   return selector
@@ -17,11 +20,31 @@ function removeStateSelectors(selector) {
   .trim()
 }
 
-let lastInspectedSelector, lastInspectedIndex;
+let lastInspectedSelector, lastHighlightTimeout;
+
+function viewHighLightSingle(element) {
+  element.scrollIntoView({behavior: 'smooth', block: 'center'});
+  addHighlight(element);
+  if (lastHighlightTimeout) {
+    const [timeout, handler, timeoutElement] = lastHighlightTimeout;
+
+    window.clearTimeout(timeout);
+    // If previous timeout was on another element, execute it immediately.
+    // Removes its focus border.
+    if (timeoutElement !== element) {
+      handler();
+    }
+  }
+  const handler = () => {
+    removeHighlight(element);
+    lastHighlightTimeout = null;
+  };
+
+  lastHighlightTimeout = [setTimeout(handler, 1500), handler, element];
+}
 
 export function ElementLocator({
   selector,
-  initialized,
   hideIfNotFound,
   hideIfOne,
   children,
@@ -29,73 +52,51 @@ export function ElementLocator({
   property = null,
   label,
 }) {
+  const { frameLoaded } = get;
+  const [inspectedPath, setInspectedPath] = use.inspectedPath();
   const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
   const didLastInspectHere = strippedSelector === lastInspectedSelector;
   const { frameRef } = useContext(ThemeEditorContext);
-  const [elements, setElements] = useState([]);
-  const [currentElement, setCurrentElement] = useState(didLastInspectHere ? lastInspectedIndex : 0);
-  const [interacted, setInteracted] = useState(false);
-  const id = useId();
-  // Should happen up front for all selectors, so that they're properly grouped from the start.
 
-  useEffect(() => {
-    if (!initialized || !strippedSelector) {
-      return;
-    }
-    const listener = ({data: {type, payload}}) => {
-      if (type === 'elements-located') {
-        const {elements, selector: messageSelector} = payload;
-        if (messageSelector === strippedSelector) {
-          let currentInspected = 0;
-          for (const index in elements) {
-            if (elements[index].isCurrentlyInspected) {
-              currentInspected = +index;
-              break;
-            }
-          }
-
-          currentElement === 0 && setCurrentElement(currentInspected);
-          setElements(elements);
-        }
-      }
-    };
-    window.addEventListener('message', listener, false);
-
-    frameRef.current?.contentWindow.postMessage(
-      {
-        type: 'locate-elements', payload: {id, selector: strippedSelector},
-      },
-      window.location.origin,
-    );
-
-    return () => {
-      window.removeEventListener('message', listener);
-    };
-  }, [initialized, selector, !hideIfOne]);
-
-  useEffect(() => {
-    if (interacted && elements.length > 0) {
-      frameRef.current?.contentWindow.postMessage(
-        {
-          type: 'scroll-in-view', payload: {selector: strippedSelector, index: currentElement},
-        },
-        window.location.href,
+  const elements = useMemo(() => {
+    if (!frameLoaded || strippedSelector === '') return [];
+    const results =
+      frameRef.current.contentWindow.document.querySelectorAll(
+        strippedSelector
       );
-    }
-  }, [currentElement]);
+
+    return [...results].map((el, index) => ({
+      index,
+      node: el,
+      tagName: `${el.tagName}`,
+      id: `${el.id}`,
+      className: `${el.className}`,
+      isCurrentlyInspected: isInPath(el, inspectedPath),
+    }));
+  }, [selector, frameLoaded]);
+
+  const [currentElement, setCurrentElement] = useState(
+    Math.max(elements.findIndex((el) => el.isCurrentlyInspected),  0)
+  );
 
   if (elements.length === 0) {
-    if ((hideIfNotFound && initialized) || hideIfOne) {
+    if (hideIfNotFound || hideIfOne) {
       return null;
     }
-    return <div style={{opacity: 0.6}}>
-      {showLabel && <div className='monospace-code'>
-      {(label || selector).trim()}
-          <span className={'var-control-property monospace-code'}>{property}</span>
-      </div>}
+    return (
+      <div style={{ opacity: 0.6 }}>
+        {showLabel && (
+          <div className="monospace-code">
+            {(label || selector).trim()}
+            <span className={'var-control-property monospace-code'}>
+              {property}
+            </span>
+          </div>
+        )}
 
         {children}
-    </div>;
+      </div>
+    );
   }
 
   if (hideIfOne && elements.length === 1) {
@@ -107,11 +108,17 @@ export function ElementLocator({
   const element = elements[currentElement];
 
   return (
-    <div style={{outline: didLastInspectHere ? '4px solid rgb(26, 217, 210)' : 'none'}}>
+    <div
+      style={{
+        outline: didLastInspectHere ? '4px solid rgb(26, 217, 210)' : 'none',
+      }}
+    >
       {showLabel && (
         <div className="monospace-code">
           {(label || selector).trim()}
-          <span className={'var-control-property monospace-code'}>{property}</span>
+          <span className={'var-control-property monospace-code'}>
+            {property}
+          </span>
         </div>
       )}
       <div
@@ -119,27 +126,20 @@ export function ElementLocator({
           display: 'flex',
           alignItems: 'flex-start',
           maxWidth: '372px',
-          fontSize: '16px'
+          fontSize: '16px',
         }}
       >
-        <div style={{flexShrink: 0, display: 'flex', flexDirection: 'row'}}>
-          {elements.length > 0 && <button
-            className='scroll-in-view'
+        <div style={{ flexShrink: 0, display: 'flex', flexDirection: 'row' }}>
+          {elements.length > 0 && (
+            <button
+              className="scroll-in-view"
               onClick={() => {
-                frameRef.current?.contentWindow.postMessage(
-                  {
-                    type: 'scroll-in-view',
-                    payload: {
-                      selector: strippedSelector,
-                      index: currentElement,
-                    },
-                  },
-                  window.location.href
-                );
+                viewHighLightSingle(elements[currentElement].node);
               }}
-          >👁
-          </button>}
-          
+            >
+              👁
+            </button>
+          )}
 
           {elements.length > 1 && (
             <Fragment>
@@ -150,7 +150,7 @@ export function ElementLocator({
                       ? elements.length - 1
                       : currentElement - 1;
                   setCurrentElement(next);
-                  setInteracted(true);
+                  viewHighLightSingle(elements[next].node);
                 }}
               >
                 ↑
@@ -162,7 +162,7 @@ export function ElementLocator({
                       ? 0
                       : currentElement + 1;
                   setCurrentElement(next);
-                  setInteracted(true);
+                  viewHighLightSingle(elements[next].node);
                 }}
               >
                 ↓
@@ -174,18 +174,7 @@ export function ElementLocator({
           {!!element && !element.isCurrentlyInspected && (
             <button
               onClick={() => {
-                lastInspectedSelector = strippedSelector;
-                lastInspectedIndex = currentElement;
-                frameRef.current?.contentWindow.postMessage(
-                  {
-                    type: 'inspect-located',
-                    payload: {
-                      index: currentElement,
-                      selector: strippedSelector,
-                    },
-                  },
-                  window.location.origin
-                );
+                setInspectedPath(toPath(element.node));
               }}
               style={{ fontSize: '10px' }}
             >
@@ -204,9 +193,9 @@ export function ElementLocator({
             }}
           >
             {element &&
-              ` ${element.tagName.toLowerCase()}.${element.className.trim().replaceAll(' ', '.')} ${
-                !element.id ? '' : `#${element.id}`
-              }`}
+              ` ${element.tagName.toLowerCase()}.${element.className
+                .trim()
+                .replaceAll(' ', '.')} ${!element.id ? '' : `#${element.id}`}`}
           </span>
         </div>
       </div>

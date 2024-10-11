@@ -9,6 +9,7 @@ import { getGroupsForElement } from './initializeThemeEditor';
 import { toNode } from './functions/nodePath';
 import { ThemeEditorContext } from './components/ThemeEditor';
 import { ScrollInViewButton } from './components/inspector/ScrollInViewButton';
+import { otherUrls } from './hooks/useResumableReducer';
 
 const size = 18;
 
@@ -40,7 +41,7 @@ export const previewComponents = {
     </div>;
   },
 
-  inspectedPath: ({ action: path }) => {
+  inspectedPath: ({ action: path, historyIndex }) => {
     const {
       frameRef,
       // scrollFrameRef,
@@ -53,14 +54,18 @@ export const previewComponents = {
     }
 
     if (!group) {
+      const [url] = otherUrls.find(([url, urlIndex]) => historyIndex > urlIndex) || [];
+      if (url) {
+        return <a href={url}>{url.replace(/http:\/\/|https:\/\//, '')}</a>;
+      }
       return '...';
     }
   
     return (
       <Fragment>
+        <ScrollInViewButton {...{path}} />
         Inspect
         <pre className="monospace-code">{group?.label}</pre>
-        <ScrollInViewButton {...{path}} />
       </Fragment>
     );
   },

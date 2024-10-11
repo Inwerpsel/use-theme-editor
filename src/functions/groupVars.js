@@ -1,4 +1,3 @@
-import { definedValues, scopesByProperty } from './collectRuleVars';
 import { getMatchingScopes } from './getMatchingScopes';
 import { getMatchingVars } from './getMatchingVars';
 import { HIGHLIGHT_CLASS } from './highlight';
@@ -13,23 +12,25 @@ export const toLabel = (element) => {
     return type;
   }
   
-  const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`.${c}`).join('').replaceAll(/([^\w-.])/g, '\\$1');
+  const classPart =  [...classList].filter(c=>c!==HIGHLIGHT_CLASS).map(c=>`.${c}`.replaceAll(/([^\w-.])/g, '\\$1')).join(' ');
 
-  const selector = tagName.toLowerCase() + idPart + classPart;
-  let suffix;
+  const selector = tagName.toLowerCase() + idPart + '\n' + classPart;
+  let suffix = '';
 
   const body = element.closest('body')
 
   try {
-    const others = [...body.querySelectorAll(selector)];
-    if (others.length === 1) {
-      suffix = '';
-    } else {
-      for (let i = 1; i <= others.length; i++) {
+    if (!idPart) {
+      const others = [...body.querySelectorAll(selector.replaceAll(/\s+/g, ''))];
+      if (others.length === 1) {
+        suffix = '';
+      } else {
+        for (let i = 1; i <= others.length; i++) {
 
+        }
+        const index = others.indexOf(element) + 1;
+        suffix = ` (${index}/${others.length})`;
       }
-      const index = others.indexOf(element) + 1;
-      suffix = ` (${index}/${others.length})`;
     }
   } catch (error) {
     // The above selector should work, however there's cases where the classlist contains things that are not
@@ -38,7 +39,7 @@ export const toLabel = (element) => {
     console.log(error);
   }
 
-  return `${selector.replaceAll('.', '\n.')}${suffix}`;
+  return `${selector}${suffix}`;
 };
 
 export const sortForUI = (
@@ -108,7 +109,7 @@ function svgPartHtml(part) {
   return html;
 }
 
-const cache = new WeakMap();
+// const cache = new WeakMap();
 
 export const groupVars = (vars, target, allVars) => {
   const groups = [];
@@ -123,12 +124,12 @@ export const groupVars = (vars, target, allVars) => {
   // the previous (one level deeper) element.
   while (current = previous.parentNode) {
     const element = previous;
-    if (cache.has(element)) {
-      // It SHOULD be impossible to find an element in cache if any of its parents are not in cache.
-      groups.push(cache.get(element));
-      previous = current;
-      continue;
-    }
+    // if (cache.has(element)) {
+    //   // It SHOULD be impossible to find an element in cache if any of its parents are not in cache.
+    //   groups.push(cache.get(element));
+    //   previous = current;
+    //   continue;
+    // }
     if (previousMatches.length === 0) {
       break;
     }
@@ -230,7 +231,7 @@ export const groupVars = (vars, target, allVars) => {
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
       };
       groups.push(newGroup);
-      cache.set(element, newGroup);
+      // cache.set(element, newGroup);
       previousMatches = currentMatches;
     }
 
