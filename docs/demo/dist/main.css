@@ -95,6 +95,11 @@ body {
 .responsive-frame-container iframe {
   background-color: white;
 }
+.responsive-frame-container:fullscreen {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+}
 
 .responsive-frame-container::-webkit-scrollbar {
   color: transparent;
@@ -374,9 +379,7 @@ div[id^=font-picker] ul {
 }
 
 #area-left-inner {
-  overflow-x: hidden;
   flex-direction: column;
-  flex-shrink: 1;
 }
 
 #drawer .area-switcher {
@@ -879,9 +882,9 @@ input[type=checkbox] + * {
   border-radius: 12px;
 }
 .oklch-picker:not(:focus-within) .hue, .oklch-picker:not(:focus-within) .hue *, .oklch-picker:not(:focus-within) .chroma, .oklch-picker:not(:focus-within) .chroma *, .oklch-picker:not(:focus-within) .lightness, .oklch-picker:not(:focus-within) .lightness *, .oklch-picker:not(:focus-within) .alpha, .oklch-picker:not(:focus-within) .alpha * {
-  transition-property: all;
+  transition-property: width, left, right, top, height, --min-lightness, --max-lightness;
   transition-delay: 0.04s;
-  transition-duration: 0.16s;
+  transition-duration: 0.2s;
 }
 
 .hue {
@@ -904,31 +907,9 @@ input[type=checkbox] + * {
   --hue: var(--picked-hue, 180);
   --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
   --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
-  --min-ll: var(--min-lightness);
-  --max-ll: var(--max-lightness);
-  background: linear-gradient(to right in oklch, transparent 0%, transparent var(--min-ll), var(--from) var(--min-ll), var(--to) var(--max-ll), transparent var(--max-ll), transparent 100%), repeating-linear-gradient(45deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
+  background: linear-gradient(to right in oklch, transparent 0%, transparent var(--min-lightness), var(--from) var(--min-lightness), var(--to) var(--max-lightness), transparent var(--max-lightness), transparent 100%), repeating-linear-gradient(45deg, grey, grey 2px, rgb(137, 137, 137) 2px, rgb(137, 137, 137) 4px);
 }
 
-@property --min-l {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 0%;
-}
-@property --min-ll {
-  syntax: "<length-percentage>";
-  inherits: false;
-  initial-value: 0%;
-}
-@property --max-l {
-  syntax: "<percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
-@property --max-ll {
-  syntax: "<length-percentage>";
-  inherits: false;
-  initial-value: 100%;
-}
 @property --min-lightness {
   syntax: "<percentage>";
   inherits: true;

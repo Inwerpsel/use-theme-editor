@@ -54,9 +54,9 @@
     border-radius: 12px;
 
     .oklch-picker:not(:focus-within) &, .oklch-picker:not(:focus-within) & * {
-        transition-property: all;
+        transition-property: width, left, right, top, height, --min-lightness, --max-lightness;
         transition-delay: .04s;
-        transition-duration: .16s;
+        transition-duration: 0.2s;
     }
 }
 
@@ -121,44 +121,18 @@ $stripe-bg-r: repeating-linear-gradient(225deg,
     --hue: var(--picked-hue, 180);
     --from: oklch(var(--min-lightness) var(--picked-chroma) var(--hue, 180));
     --to: oklch(var(--max-lightness) var(--picked-chroma) var(--hue, 180));
-    --min-ll: var(--min-lightness);
-    --max-ll: var(--max-lightness);
 
     background:
         linear-gradient(
             to right in oklch,
             transparent 0%,
-            transparent var(--min-ll),
-            var(--from) var(--min-ll),
-            var(--to) var(--max-ll),
-            transparent var(--max-ll),
+            transparent var(--min-lightness),
+            var(--from) var(--min-lightness),
+            var(--to) var(--max-lightness),
+            transparent var(--max-lightness),
             transparent 100%
         ),
         $stripe-bg;
-}
-
-@property --min-l {
-    syntax: "<percentage>";
-    inherits: false;
-    initial-value: 0%;
-}
-
-@property --min-ll {
-    syntax: "<length-percentage>";
-    inherits: false;
-    initial-value: 0%;
-}
-
-@property --max-l {
-    syntax: "<percentage>";
-    inherits: false;
-    initial-value: 100%;
-}
-
-@property --max-ll {
-    syntax: "<length-percentage>";
-    inherits: false;
-    initial-value: 100%;
 }
 
 @property --min-lightness {
