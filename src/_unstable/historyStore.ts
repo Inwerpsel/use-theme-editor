@@ -68,7 +68,7 @@ export function storeActions(actions: [string, any][], clearFuture, index): void
     }
     // Mark start of session by adding url to first action data.
     if (!didUrl) {
-        actions[0][2] = window.location.href;
+        actions[0].push(window.location.href);
         didUrl = true;
     }
     store.put(actions, index);
