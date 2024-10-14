@@ -45,7 +45,7 @@ export function restoreHistory() {
     };
 }
 
-let didUrl = false;
+let firstEntry = Infinity;
 
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
@@ -66,10 +66,11 @@ export function storeActions(actions: [string, any][], clearFuture, index): void
         const range = IDBKeyRange.lowerBound(index);
         store.delete(range);
     }
+
     // Mark start of session by adding url to first action data.
-    if (!didUrl) {
+    if (index <= firstEntry) {
         actions[0].push(window.location.href);
-        didUrl = true;
+        firstEntry = index;
     }
     store.put(actions, index);
 }
