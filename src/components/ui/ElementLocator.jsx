@@ -60,19 +60,23 @@ export function ElementLocator({
 
   const elements = useMemo(() => {
     if (!frameLoaded || strippedSelector === '') return [];
-    const results =
-      frameRef.current.contentWindow.document.querySelectorAll(
-        strippedSelector
-      );
-
-    return [...results].map((el, index) => ({
-      index,
-      node: el,
-      tagName: `${el.tagName}`,
-      id: `${el.id}`,
-      className: `${el.className}`,
-      isCurrentlyInspected: isInPath(el, inspectedPath),
-    }));
+    try {
+      const results =
+        frameRef.current.contentWindow.document.querySelectorAll(
+          strippedSelector
+        );
+      return [...results].map((el, index) => ({
+        index,
+        node: el,
+        tagName: `${el.tagName}`,
+        id: `${el.id}`,
+        className: `${el.className}`,
+        isCurrentlyInspected: isInPath(el, inspectedPath),
+      }));
+    } catch (e) {
+      console.log(e);
+      return [];
+    }
   }, [selector, frameLoaded]);
 
   const [currentElement, setCurrentElement] = useState(
