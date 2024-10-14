@@ -85,6 +85,8 @@ export function applyHueToAllColors(rawColor, {groupColors, maximizeChroma}) {
   return changed;
 }
 
+const displays = new WeakMap();
+
 export const GroupControl = props => {
   const {
     group,
@@ -120,32 +122,32 @@ export const GroupControl = props => {
     inlineStyles,
   } = group;
 
-  useEffect(() => {
-    // Freeze display rules during inspection by adding as inline styles.
-    // Kinda shaky but almost anything is better than not seeing inspected element.
+  // useEffect(() => {
+  //   // Freeze display rules during inspection by adding as inline styles.
+  //   // Kinda shaky but almost anything is better than not seeing inspected element.
 
-    // When the data is in a better shape, correcting the display should be easy.
+  //   // When the data is in a better shape, correcting the display should be easy.
 
-    const d = getComputedStyle(element).display;
-    if (d === 'none') {
-      // Element started hidden (restored history), not attempt to figure out right display for now.
-      element.style.display = 'block';
-    } else {
-      // The element was clicked, in order to be sure to capture anything that could be overridden with none,
-      // we have to set the display of all elements as an inline style.
-      element.style.display = d;
-    }
-    element.style.opacity = 1;
-    element.style.visibility = 'visible';
-    return () => {
-    element.style.display = null;
-    element.style.visibility = null;
-    element.style.opacity = null;
-    };
-  }, []);
+  //   const d = getComputedStyle(element).display;
+  //   if (d === 'none') {
+  //     // Element started hidden (restored history), not attempt to figure out right display for now.
+  //     element.style.display = 'block';
+  //   } else {
+  //     // The element was clicked, in order to be sure to capture anything that could be overridden with none,
+  //     // we have to set the display of all elements as an inline style.
+  //     element.style.display = d;
+  //   }
+  //   element.style.opacity = 1;
+  //   element.style.visibility = 'visible';
+  //   return () => {
+  //   element.style.display = null;
+  //   element.style.visibility = null;
+  //   element.style.opacity = null;
+  //   };
+  // }, []);
 
   const {
-    frameRef,
+    // frameRef,
     defaultValues,
   } = useContext(ThemeEditorContext);
   const [openGroups, setOpenGroups] = use.openGroups();
