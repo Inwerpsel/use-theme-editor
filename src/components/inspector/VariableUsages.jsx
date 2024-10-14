@@ -4,6 +4,7 @@ import {ElementLocator} from '../ui/ElementLocator';
 import { ROOT_SCOPE } from '../../hooks/useThemeEditor';
 import { Checkbox } from '../controls/Checkbox';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
+import { splitCommaSafeParentheses } from '../../functions/getOnlyMostSpecific';
 
 const currentSelectorStyle = {
   background: 'yellow',
@@ -81,7 +82,7 @@ export const VariableUsages = ({usages, maxSpecificSelector, winningSelector, sc
       <Checkbox controls={[hideIfNotFound, setHideNotFound]} title={scope}>Only on this page</Checkbox>
       <ul>
         {uniqueUsages.map(({ property, selector, position }) => {
-          const selectors = selector.split(',');
+          const selectors = splitCommaSafeParentheses(selector);
           const highLightMatch =
             usages.length > 1 && selector === maxSpecificSelector;
 
