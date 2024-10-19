@@ -227,12 +227,7 @@ function MiniPalette({values, setValues, width = 65}) {
             key={value}
             draggable
             onClick={() => {
-              if (pickedValue === value) {
-                setPickedValue('');
-              }
-            }}
-            onDoubleClick={() => {
-              setPickedValue(value);
+              setPickedValue(pickedValue === value ? '' : value);
             }}
             onDragStart={dragValue(value, () => setDragmode(true))}
             title={value}
