@@ -28,6 +28,10 @@ function FindOther({label}) {
   </Fragment>
 }
 
+function Icon({children}) {
+  return <span style={{fontSize: '1.5rem'}}>{children}</span>
+}
+
 export const previewComponents = {
   openGroups: ({ action: groups }) => {
     const items = Object.keys(groups);
@@ -70,8 +74,8 @@ export const previewComponents = {
 
     return (
       <Fragment>
+        <Icon>🔍</Icon>
         <ScrollInViewButton {...{path}} />
-        Inspect
         <pre className="monospace-code">{group?.label}</pre>
         {showLink && link}
       </Fragment>
@@ -83,7 +87,7 @@ export const previewComponents = {
       
       return (
         <Fragment>
-          {scope && <pre className="monospace-code">{scope}</pre>}
+          <Icon>🖌</Icon>{scope && <pre className="monospace-code">{scope}</pre>}
           <br />
           <b draggable onDragStart={dragValue(`var(${name})`)}><FormatVariableName {...{name}}/></b> <br />
           <span draggable onDragStart={dragValue(value)}>

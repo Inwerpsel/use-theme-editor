@@ -45,7 +45,7 @@ export function restoreHistory() {
     };
 }
 
-let firstEntry = Infinity;
+export let firstEntry = Infinity;
 
 // problem:
 // - If an action was done against a locked state, we need to keep track of this base index
@@ -89,7 +89,7 @@ export function deleteStoredHistory(createSnap = false, lastState = null) {
         const snap = JSON.stringify([...lastState.entries()].filter(([k]) => interestingKeys.includes(k)));
         localStorage.setItem(snapshotKey, snap); 
     }
-    didUrl = false;
+    firstEntry = Infinity;
 
     console.log('Start store delete transaction in ', performance.now( ) - start) 
 }

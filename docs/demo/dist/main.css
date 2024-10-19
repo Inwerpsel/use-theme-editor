@@ -864,6 +864,18 @@ input[type=checkbox] + * {
   user-select: none;
 }
 
+#hue:before,
+#lightness:before,
+#chroma:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 100%;
+  width: 100%;
+  height: 36px;
+  background: transparent;
+}
+
 #alpha {
   opacity: calc(0.5 + (1 - var(--picked-alpha, 1)) * 1000);
 }
