@@ -22,6 +22,9 @@ import { onLongPress } from '../../functions/onLongPress';
 import { addHighlight, removeHighlight } from '../../functions/highlight';
 
 const previewSize = '28px';
+// Mimic minimum value used in Chromium.
+// @see https://source.chromium.org/chromium/chromium/src/+/main:third_party/blink/renderer/platform/graphics/color.cc;drc=76bb44b2aabce7f9c99e65eb0c42c4cad81f1dd2;l=66
+const aAchromaticChroma = 1e-6;
 
 function applyHueFromDropped(data, event) {
   event.preventDefault();
@@ -53,7 +56,7 @@ export function applyHueToAllColors(rawColor, {groupColors, maximizeChroma}) {
     const blackOrWhite = parsed.l < 0.001 || parsed.l > 0.999;
     
     // Skip grayscale values as they wouldn't really change.
-    if (blackOrWhite || (!maximizeChroma && parsed.c === 0)) return;
+    if (blackOrWhite || (!maximizeChroma && parsed.c < aAchromaticChroma)) return;
     const {
       l,
       c,
