@@ -209,6 +209,7 @@ body {
   min-height: 49px;
   background: white !important;
   border: 1px solid black !important;
+  margin-top: 0 !important;
   margin-bottom: 3px !important;
   border-radius: 7px !important;
   padding: 2px 7px 7px !important;
@@ -745,7 +746,7 @@ button {
   vertical-align: top;
 }
 
-.flex-column {
+.theme-editor .flex-column {
   flex-direction: column !important;
 }
 

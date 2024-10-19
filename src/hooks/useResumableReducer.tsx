@@ -192,14 +192,14 @@ export function exportHistory() {
 export let otherUrls = [] as [string, number][];
 
 export function createTimeline(timeline, store = false) {
-  let i = 0, currentUrl = window.location.href, lastUrl;
+  let i = 0, lastUrl;
   otherUrls.forEach((_, i)=> {delete otherUrls[i]})
 
   for (const actions of timeline) { 
     if (actions.length === 0) continue;
     createEmptyEntry();
     for (const [key, action, url] of actions) {
-      if (url && (url !== currentUrl) && url !== lastUrl) {
+      if (url && url !== lastUrl) {
         otherUrls.push([url, i]);
         lastUrl = url;
       }

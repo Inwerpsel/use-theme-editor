@@ -10,6 +10,7 @@ import { toNode } from './functions/nodePath';
 import { ThemeEditorContext } from './components/ThemeEditor';
 import { ScrollInViewButton } from './components/inspector/ScrollInViewButton';
 import { otherUrls } from './hooks/useResumableReducer';
+import { firstEntry } from './_unstable/historyStore';
 
 const size = 18;
 
@@ -52,20 +53,27 @@ export const previewComponents = {
       [group] = getGroupsForElement(toNode(path, frameRef.current.contentWindow.document));
     } catch (e) {
     }
+    const isFromBeforeSession = historyIndex < firstEntry;
 
+    const [url] = !isFromBeforeSession
+      ? []
+      : otherUrls.find(([, urlIndex]) => urlIndex <= historyIndex) || [];
+    const link = !url ? null : (
+      <a href={url}>{url.replace(/http:\/\/|https:\/\//, '')}</a>
+    );
     if (!group) {
-      const [url] = otherUrls.find(([url, urlIndex]) => historyIndex > urlIndex) || [];
-      if (url) {
-        return <a href={url}>{url.replace(/http:\/\/|https:\/\//, '')}</a>;
-      }
+      if (link) return link;
       return '...';
     }
   
+    const showLink = isFromBeforeSession && (url !== window.location.href);
+
     return (
       <Fragment>
         <ScrollInViewButton {...{path}} />
         Inspect
         <pre className="monospace-code">{group?.label}</pre>
+        {showLink && link}
       </Fragment>
     );
   },
@@ -77,7 +85,7 @@ export const previewComponents = {
         <Fragment>
           {scope && <pre className="monospace-code">{scope}</pre>}
           <br />
-          <b draggable onDragStart={dragValue(`var(${name})`)}><FormatVariableName {...{name}}/></b> =&nbsp;
+          <b draggable onDragStart={dragValue(`var(${name})`)}><FormatVariableName {...{name}}/></b> <br />
           <span draggable onDragStart={dragValue(value)}>
             {(COLOR_VALUE_REGEX.test(value) ||
               GRADIENT_REGEX.test(value) ||
