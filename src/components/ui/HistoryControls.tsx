@@ -118,9 +118,9 @@ function scrollToPoint(length, event: MouseEvent) {
   const newIndex = Math.round(length * ratio);
   historyGo(length - newIndex);
 }
-function scrollWhileDragging(length, event) {
-  // Todo find reasonable pressure value.
-  if (event.pressure > 0.01) {
+function scrollWhileDragging(length, ref, event) {
+  // Checking for hover as a simple way to exclude a swipe from the top on touch screens.
+  if (event.pressure > 0.01 && ref.current?.matches(':hover')) {
     scrollToPoint(length, event);
   }
 }
@@ -129,11 +129,13 @@ export function MiniTimeline() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
 
   const percentage = past.length === 0 ? 0 : 100 - (100 * historyOffset / past.length);
+  const ref = useRef(null);
 
   return (
     <div
+      {...{ref}}
       className='minitimeline'
-      onPointerMove={scrollWhileDragging.bind(null, past.length)}
+      onPointerMove={scrollWhileDragging.bind(null, past.length, ref)}
       onClick={scrollToPoint.bind(null, past.length)}
       style={{
         width: '100%',
