@@ -54,6 +54,67 @@ function readSync(id: string): any {
   return sourceState.has(id) ? sourceState.get(id) : initialStates.get(id);
 }
 
+let lastStored;
+
+export function clearState(key: string) {
+  // Get pinned value
+  const value = readSync(key);
+
+  // Set pinned value as initial
+  initialStates.set(key, value);
+
+  const prevPast = past;
+
+  const notSameKey = ([k])=>k!==key;
+
+  deleteStoredHistory();
+  let i = 0;
+  past = prevPast.reduce((newPast, entry) => {
+    entry.states.delete(key);
+    if (entry.lastActions.has(key)) {
+      if (entry.lastActions.size > 1) {
+        newPast.push({
+          states: new Map([...entry.states.entries()]),
+          lastActions: new Map([...entry.lastActions.entries()].filter(notSameKey)),
+        });
+      }
+    } else {
+      newPast.push(entry);
+    }
+
+    if (newPast.length > 0) {
+      const lastEntry = newPast.at(-1);
+      if (lastEntry !== lastStored && lastEntry.lastActions.size > 0) {
+        lastStored = lastEntry;
+        storeActions([...lastEntry.lastActions.entries()], true, i);
+        i++;
+      }
+    }
+
+    return newPast;
+  }, []);
+
+  if (lastActions.has(key)) {
+
+    if (lastActions.size === 1) {
+      const newRecentEntry = past.at(-1);
+      past = past.slice(0, -1);
+      lastActions = newRecentEntry.lastActions;
+      states = newRecentEntry.states;
+    } else {
+      states.delete(key);
+      lastActions.delete(key);
+    }
+  }
+
+  states.delete(key);
+  oldStates = new Map();
+  historyOffset = Math.min(historyOffset, past.length);
+  removePin(key);
+  checkNotifyAll();
+}
+
+
 // Add a single perpetual effect for a key.
 // It can respond to changes regardless of whether any React element is listening
 // to changes.

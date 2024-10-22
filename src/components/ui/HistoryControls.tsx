@@ -3,6 +3,7 @@ import {
   HistoryNavigateContext,
   addPin,
   clearHistory,
+  clearState,
   historyBack,
   historyBackFast,
   historyBackOne,
@@ -15,6 +16,7 @@ import {
 import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
 import { Tutorial } from '../../_unstable/Tutorial';
+import { icons } from '../../previewComponents';
 
 function HistoryBack() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
@@ -163,6 +165,12 @@ export function MiniTimeline() {
   );
 }
 
+export function ClearState({id}) {
+  if (id === 'themeEditor') return;
+
+  return <button title={'Clear all other values and move this one to start'} onClick={clearState.bind(null, id)}>Clear others</button>
+}
+
 export function ActivePins() {
   const { pins } = useContext(HistoryNavigateContext);
 
@@ -242,13 +250,13 @@ function PinList({close}) {
             <button className={active ? 'pinned-here' : ''} style={{fontSize: '18px',background: active ? '' : 'transparent'}} autoFocus={i === 1} onClick={active ? disable : enable}>
               <span className='pin'>📌</span>
             </button>
-            {key}: { typeof value === 'object' ? '[obj]' : value}
+            {icons[key] || ''} {key}: { typeof value === 'object' ? '[obj]' : value}
             {targetOffset !== historyOffset && <button onClick={(event) => {
               historyGo(targetOffset);
               // Keep lock menu open.
               event.stopPropagation();
             }}>visit</button>}
-            
+            <ClearState {...{id: key}} />
           </li>
         );
       })}

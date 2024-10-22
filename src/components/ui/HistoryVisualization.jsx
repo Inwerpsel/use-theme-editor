@@ -5,8 +5,9 @@ import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
 import { setExcludedArea } from '../movable/Area';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { scrollHistory } from './HistoryControls';
+import { ClearState, scrollHistory } from './HistoryControls';
 import { Tutorial } from '../../_unstable/Tutorial';
+import { icons } from '../../previewComponents';
 
 function DisableScrollHistoryInArea() {
     const {hostAreaId, homeAreaId} = useContext(MovableElementContext);
@@ -60,11 +61,13 @@ function ExplainPins() {
 
 function PinState(props) {
   const { id, historyIndex } = props;
-  const { pins } = useContext(HistoryNavigateContext);
+  const { pins, historyOffset, past } = useContext(HistoryNavigateContext);
   const pinIndex = pins.get(id);
   const pinnedHere = historyIndex === pinIndex;
 
-  return (
+  const pinnedInFuture = pinIndex > (past.length - historyOffset);
+
+  return <Fragment>
     <button
       className={pinnedHere ? 'pinned-here' : ''}
       style={{
@@ -79,7 +82,8 @@ function PinState(props) {
     >
       <span className='pin'>📌</span>
     </button>
-  );
+    {pinnedHere && !pinnedInFuture && <ClearState {...{id}} />}
+  </Fragment>;
 }
 
 function PinLatest(props) {
@@ -154,6 +158,8 @@ function ActionList(props) {
 
         const isPinnedElsewhere = pins.has(id) && pins.get(id) !== historyIndex;
 
+        const icon = icons[id] || '';
+
         return (
           <li key={`${historyIndex}:${key}`}
             title={isPinnedElsewhere ? 'Overridden by pin' : ''}
@@ -162,6 +168,7 @@ function ActionList(props) {
             <PinState {...{id, historyIndex}} />
             <PinLatest {...{id, historyIndex}} />
             <PinFirst {...{id, historyIndex}} />
+            {icon}
             {!Preview && (
               <span>
                 <b>{id}</b>
