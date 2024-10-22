@@ -85,7 +85,7 @@ function OnlinePickerLink({l, c, h, a = 100}) {
 
 export function oklch(l, c, h, a) {
   const aSuffix = a === 1 ? '' : `/ ${a}`
-  return `oklch(${l.toFixed(2)}% ${c.toFixed(3)} ${h.toFixed(2)}${aSuffix})`;
+  return `oklch(${l.toFixed(2)}% ${c.toFixed(4)} ${h.toFixed(2)}${aSuffix})`;
 }
 
 export function OklchColorControl({value, onChange}) {
