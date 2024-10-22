@@ -270,6 +270,14 @@ export const GroupControl = props => {
               if (changed) return;
             }
             toggleGroup(label);
+            // Closing a group will reduce the height of the area.
+            // If we don't do a scroll here, we're pushed downwards as it applies the same
+            // scroll offset to the smaller area. The result is very confusing and broken.
+            // It feels like browsers could always try something like this instead,
+            // given that otherwise the list is always thrown into some random later position.
+            queueMicrotask(() => {
+              event.target.scrollIntoView({block: 'nearest'});
+            }, 0);
           }}
           onDrop={(event) => applyHueFromDropped({groupColors, maximizeChroma}, event)}
           onDragOver={(e) => {e.preventDefault()}}
@@ -354,13 +362,14 @@ export const GroupControl = props => {
         {src && <code style={{float: 'right'}}>{imgWidth} x {imgHeight}</code>}
         {src && showImageColors && <ImageColors path={src} />}
         <ElementInlineStyles {...{group, elementScopes}}/>
-        <ScopeControl {...{scopes: elementScopes, vars}}/>
+        <ScopeControl {...{scopes: elementScopes, vars, element}}/>
         <ul className={'group-list'}>
           {vars.filter(v=>!v.currentScope).map(cssVar => {
             return <VariableControl
               {...{
                 cssVar,
                 scopes: elementScopes,
+                element,
               }}
               key={cssVar.name}
               onChange={value => {

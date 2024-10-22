@@ -258,6 +258,7 @@ export const VariableControl = (props) => {
     scopes: elementScopes,
     parentVar,
     currentScope = ROOT_SCOPE,
+    element,
   } = props;
 
   const {
@@ -456,7 +457,7 @@ export const VariableControl = (props) => {
         paddingTop: 0,
       }}
     >
-      {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media }} />}
+      {!matchesScreen && <VariableScreenSwitcher {...{ cssVar, media, element }} />}
       <div
         {...onLongPress((event) => {setPickedValue(value)})}
         // ref={openerRef}

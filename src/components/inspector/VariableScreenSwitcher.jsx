@@ -22,10 +22,17 @@ export const isOverridden = ({media, width, cssVar}) => {
   });
 };
 
+function focus(element) {
+  setTimeout(() => {
+    element?.scrollIntoView({block: 'center'});
+  }, 0);
+}
+
 export const VariableScreenSwitcher = props => {
   const {
     cssVar,
     media,
+    element,
   } = props;
   const { screenOptions} = get;
 
@@ -54,6 +61,7 @@ export const VariableScreenSwitcher = props => {
             onClick={(event) => {
               setWidth(width);
               setHeight(height);
+              focus(element);
               event.preventDefault();
               event.stopPropagation();
             }}
