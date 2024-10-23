@@ -110,7 +110,8 @@ export function clearState(key: string) {
   states.delete(key);
   oldStates = new Map();
   historyOffset = Math.min(historyOffset, past.length);
-  removePin(key);
+  // Keep the lock, so that it's more obvious the state is being preserved, and where.
+  addPin(key, 0);
   checkNotifyAll();
 }
 
