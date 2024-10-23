@@ -82,7 +82,7 @@ function PinState(props) {
     >
       <span className='pin'>📌</span>
     </button>
-    {pinnedHere && !pinnedInFuture && <ClearState {...{id}} />}
+    {/* {pinnedHere && !pinnedInFuture && <ClearState {...{id}} />} */}
   </Fragment>;
 }
 

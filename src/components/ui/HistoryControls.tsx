@@ -251,12 +251,12 @@ function PinList({close}) {
               <span className='pin'>📌</span>
             </button>
             {icons[key] || ''} {key}: { typeof value === 'object' ? '[obj]' : value}
+            <ClearState {...{id: key}} />
             {targetOffset !== historyOffset && <button onClick={(event) => {
               historyGo(targetOffset);
               // Keep lock menu open.
               event.stopPropagation();
             }}>visit</button>}
-            <ClearState {...{id: key}} />
           </li>
         );
       })}
