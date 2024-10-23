@@ -9,7 +9,8 @@ import { ACTIONS, editTheme } from '../hooks/useThemeEditor';
 
 const wrapperMargin = 16;
 
-let lastInspectedTime = 0;
+// Can't start at 0 as otherwise it messes with page load.
+let lastInspectedTime = -Infinity;
 
 let lastClicked;
 
@@ -64,7 +65,7 @@ function InspectOnClick({frameRef, loaded}) {
     return () => {
       doc.removeEventListener('click', listener);
     }
-  }, [frameClickBehavior, loaded]);
+  }, [frameClickBehavior, loaded, openFirstOnInspect]);
 
   useEffect(() => {
     if (performance.now() - lastInspectedTime < 400) {

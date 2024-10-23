@@ -188,7 +188,7 @@ body {
 
 @keyframes pulse {
   70% {
-    outline-offset: 4px;
+    outline-offset: 8px;
   }
 }
 .theme-editor-highlight {
@@ -404,6 +404,18 @@ div[id^=font-picker] ul {
 
 #area-bottom, #area-bottom-reverse {
   flex-grow: 1;
+}
+
+#area-bottom-reverse {
+  bottom: 0;
+  margin-right: 90px;
+}
+
+#area-bottom:has(.movable-element) {
+  height: 0;
+}
+#area-bottom:has(.movable-element) .is-dragging {
+  height: auto;
 }
 
 #area-top .area-switcher {
@@ -865,6 +877,7 @@ input[type=checkbox] + * {
   margin-left: -6px;
   box-sizing: border-box;
   user-select: none;
+  margin-top: 0;
 }
 
 #hue:before,
