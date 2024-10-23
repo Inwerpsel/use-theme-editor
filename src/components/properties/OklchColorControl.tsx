@@ -99,7 +99,10 @@ export function OklchColorControl({value, onChange}) {
     const upperL = maxLightness(c, h);
 
     return (
-      <div className="oklch-picker" style={{
+      <div draggable onDragStart={(e) =>{
+        e.stopPropagation();
+        e.preventDefault();
+      } } className="oklch-picker" style={{
         '--picked-lightness': `${l}%`,
         '--picked-chroma': c,
         '--picked-hue': h,
