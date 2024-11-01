@@ -1,0 +1,66 @@
+.animated {
+    animation: filter-animation 3s infinite;
+    animation-timing-function: linear;
+}
+
+
+
+@keyframes filter-animation {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+
+    /* 50% {
+    filter: hue-rotate(360deg);
+  } */
+
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+:root {
+    --c1: oklch(71.98% 0.2606 137.88);
+    --c3: oklch(52.57% 0.2594 333.45);
+    --c4: transparent;
+    --c5: oklch(88.74% 0.2290 112.70);
+    --c6: oklch(88.74% 0.2290 112.70);
+    --c7: transparent;
+    --c2: transparent;
+    --c8: oklch(77.75% 0.1800 211.38);
+    --c9: oklch(77.75% 0.1800 211.38);
+    --blend-mode: normal;
+}
+
+.splotch-old {
+    /* --c1: lime;
+    --c2: oklch(52.57% 0.1797 333.45);
+    --c3: oklch(88.74% 0.1573 112.70); */
+    background:
+        linear-gradient(to top left, var(--c1), transparent),
+        linear-gradient(to top right, var(--c2), transparent),
+        linear-gradient(to bottom left, var(--c3), transparent),
+        radial-gradient(ellipse at bottom right, transparent 15px, blue 0) bottom right;
+    /* background: 
+        radial-gradient(ellipse at bottom right, transparent 15px, blue 0) bottom right,
+        radial-gradient(ellipse at top left, transparent 15px, red 0) top left,
+        radial-gradient(ellipse at top right, transparent 15px, green 0) top right,
+        radial-gradient(ellipse at bottom left, transparent 15px, yellow 0) bottom left
+            ; */
+}
+
+.splotch {
+    background:
+        linear-gradient(0deg, oklch(from var(--c1) l c h), oklch(from var(--c1) l c h / 0) 70.71%),
+        linear-gradient(40deg, oklch(from var(--c2) l c h), oklch(from var(--c2) l c h / 0) 70.71%),
+        linear-gradient(80deg, oklch(from var(--c3) l c h), oklch(from var(--c3) l c h / 0) 70.71%),
+        linear-gradient(120deg, oklch(from var(--c4) l c h), oklch(from var(--c4) l c h / 0) 70.71%),
+        linear-gradient(160deg, oklch(from var(--c5) l c h), oklch(from var(--c5) l c h / 0) 70.71%),
+        linear-gradient(200deg, oklch(from var(--c6) l c h), oklch(from var(--c6) l c h / 0) 70.71%),
+        linear-gradient(240deg, oklch(from var(--c7) l c h), oklch(from var(--c7) l c h / 0) 70.71%),
+        linear-gradient(280deg, oklch(from var(--c8) l c h), oklch(from var(--c8) l c h / 0) 70.71%),
+        linear-gradient(320deg, oklch(from var(--c9) l c h), oklch(from var(--c9) l c h / 0) 70.71%)
+        ;
+    background-blend-mode: var(--blend-mode);
+    border-radius: 12px;
+}

@@ -7,15 +7,17 @@ import { Checkbox } from "../controls/Checkbox";
 
 const size = 42;
 
-function PickSwatch({value}) {
-  const {palette} = get;
+function PickSwatch({value, h, rangeSize}) {
+  const {palette, pickedHue} = get;
   const [pickedValue, setPickedValue] = use.pickedValue();
   const inPalette = palette.some(({value: other} ) => other === value);
+
+  const isDifferentHueThanPicked = Math.abs(Math.abs(h) - Math.abs(pickedHue)) > rangeSize / 20;
 
   return (
     <div
       style={{
-        background: 'transparent',
+        background: isDifferentHueThanPicked ? 'white' : 'transparent',
         border: 'transparent',
         position: 'absolute',
         top: 0,
@@ -33,7 +35,7 @@ function PickSwatch({value}) {
   );
 }
 
-function Swatch({color, minLightness, maxLightness}) {
+function Swatch({color, minLightness, maxLightness, rangeSize}) {
     const conv = toOk(color);
     if (!conv) return;
 
@@ -61,7 +63,7 @@ function Swatch({color, minLightness, maxLightness}) {
           color: 'green',
         }}
       >
-        <PickSwatch {...{ value }} />
+        <PickSwatch {...{ value, h, rangeSize }} />
       </div>
     );
 }
@@ -95,6 +97,7 @@ export function ImageColors(props: {path: string}) {
 
     if (!colors) return;
 
+    const rangeSize = maxHue - minHue || 360;
 
     return <div>
         <br/>group: {group}
@@ -262,6 +265,6 @@ export function ImageColors(props: {path: string}) {
             }}
           />
         </div>
-        {colors.map((color) => <Swatch {...{color, minLightness, maxLightness}}/>)}
+        {colors.map((color) => <Swatch {...{color, minLightness, maxLightness, rangeSize}}/>)}
     </div>
 }
