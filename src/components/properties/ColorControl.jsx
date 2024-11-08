@@ -16,7 +16,7 @@ import { SelectControl } from '../controls/SelectControl';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { OklchColorControl } from './OklchColorControl';
 
-import { converter, clampGamut, formatHsl } from 'culori';
+import { converter, clampGamut, formatHsl, formatHex } from 'culori';
 
 export const COLOR_VALUE_REGEX = /(#[\da-fA-F]{3}|rgba?\()|oklch\(/;
 export const GRADIENT_REGEX = /(linear|radial|conic)-gradient\(.+\)/;
@@ -122,6 +122,7 @@ export const ColorControl = (props) => {
   const allowGradients = !usages.some(({property}) => property !== 'background');
 
   const hslValue = formatHsl(parsed);
+  const hex = formatHex(parsed);
 
   const [variant, setVariant] = useLocalStorage('color-picker-variant', 'chrome');
   const ColorPicker = pickers[variant];
@@ -218,7 +219,7 @@ export const ColorControl = (props) => {
           float: 'right',
           opacity,
         }}
-        value={hslValue}
+        value={hex}
         onChange={(event) => {
           const color = tinycolor(event.target.value);
           const newColor = pickFormat(color, opacity);
