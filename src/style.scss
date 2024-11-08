@@ -238,12 +238,12 @@ $focus-outline: 3px solid rgb(40, 155, 255);
 
 @keyframes pulse {
 	70% {
-    outline-offset: 4px;
+    outline-offset: 8px;
 	}
 }
 
 .theme-editor-highlight {
-  outline: 4px solid rgb(105, 82, 236) !important;
+  outline: 4px solid oklch(55.36% 0.2750 283.29) !important;
   outline-offset: -2px;
   animation: pulse .2s;
   // This allows you to see the edges better.
@@ -263,6 +263,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   min-height: $min-button-height + 5px;
   background: white !important;
   border: 1px solid black !important;
+  margin-top: 0 !important;
   margin-bottom: 3px !important;
   border-radius: 7px !important;
   padding: 2px 7px 7px !important;
@@ -574,7 +575,13 @@ button {
   vertical-align: top;
 }
 
-.flex-column {
+.theme-editor .flex-row {
+  display: flex;
+  flex-direction: row !important;
+}
+
+.theme-editor .flex-column {
+  display: flex;
   flex-direction: column !important;
 }
 
@@ -702,4 +709,12 @@ input[type=checkbox] + * {
 // Quick fix for preview frame, shouldn't harm editor.
 html {
   overflow-x: hidden;
+}
+
+.stretch-over-parent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
