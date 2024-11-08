@@ -9,6 +9,7 @@ export function DragHandle() {
     } = useContext(MovableElementContext);
 
     return <button
+      title="Pick up element"
       onMouseDown={() => {
         setForceDrag(true);
         // Amazingly, that's it. The click is able to initiate a drag operation

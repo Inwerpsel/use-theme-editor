@@ -98,7 +98,7 @@ export function MovableElement({homeAreaId, element, index}) {
         position: 'relative',
         order: order || null,
       }}
-      title={!dragEnabled ? null : elementId}
+      // title={!dragEnabled ? null : elementId}
       className={classnames('movable-element', { 'is-dragged': isDragged })}
       onDragStart={() => {
         if (dragEnabled || forceDrag) {
@@ -164,6 +164,28 @@ export function MovableElement({homeAreaId, element, index}) {
           className={classnames('dropzone', {
             'drag-hovered': isDragHovered ,
           })}
+          // onClick={e=>{
+          //   setDraggedElement(null);
+          //   setIsDragged(false);
+          //   movePanelTo(draggedElement, hostAreaId, elementId);
+
+          //   if (overElement) {
+          //     if (timeoutRef.current.element) {
+          //       clearTimeout(timeoutRef.current.element);
+          //       timeoutRef.current.element = null;
+          //     }
+          //     if (timeoutRef.current.area) {
+          //       clearTimeout(timeoutRef.current.area);
+          //       timeoutRef.current.area = null;
+          //     }
+          //     setOverElement(null);
+          //     return;
+          //   }
+          //   if (overArea) {
+          //     movePanelTo(elementId, overArea);
+          //   }
+     
+          // }}
           onDragEnter={() => {
             timeoutRef.current.lastEntered = elementId;
             if (timeoutRef.current.element) {
