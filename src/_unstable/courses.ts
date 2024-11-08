@@ -10,7 +10,7 @@ import { Inspector } from "../components/ui/Inspector";
 import { Palette } from "../components/ui/Palette";
 import { ScreenSwitcher } from "../components/ui/ScreenSwitcher";
 import { ServerThemesList } from "../components/ui/ServerThemesList";
-import { ThemeEditorExtraOptions } from "../components/ui/ThemeEditorExtraOptions";
+import { CursorBehavior } from "../components/ui/ThemeEditorExtraOptions";
 import { StartTutorial } from "./Tutorial";
 
 export let courses;
@@ -18,10 +18,15 @@ export let courses;
 // Need to make this in a function to avoid circular deps apparently.
 export function makeCourses() {
     courses = {
+        prep: {
+            name: 'prep',
+            steps: [
+                StartTutorial
+            ],
+        },
         basics: {
             name: 'basics',
             steps: [
-                StartTutorial,
                 ResizableFrame,
                 Inspector,
                 ScreenSwitcher,
@@ -40,18 +45,18 @@ export function makeCourses() {
                 HistoryStash,
             ],
         },
-        movable: {
-            name: 'movable',
-            steps: [
-                MoveControls,
-            ],
-        },
-        // inspection: { 
-        //     name: 'inspection', 
+        // movable: {
+        //     name: 'movable',
         //     steps: [
-        //         ThemeEditorExtraOptions,
+        //         MoveControls,
         //     ],
         // },
+        inspection: { 
+            name: 'inspection', 
+            steps: [
+                CursorBehavior,
+            ],
+        },
         changes: {
             name: 'changes',
             steps: [

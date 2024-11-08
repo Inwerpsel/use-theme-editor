@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useSyncExternalStore } from "react";
+import { useContext, useEffect, useRef, useSyncExternalStore, Fragment } from "react";
 import { courses } from "./courses";
 import { AreasContext } from "../components/movable/MovablePanels";
 import { EasyAccessors } from "../functions/getters";
@@ -7,13 +7,14 @@ import * as React from "react";
 
 let activeCourse;
 
-function forceTutorialState() {
-    // idk
+function startTutorial() {
+    activeCourse = 'prep';
+    notifyAll();
 }
 
-function startTutorial() {
-    forceTutorialState();
-    activeCourse = 'basics';
+function exitTutorial() {
+    activeCourse = null;
+    activeStepIndex = 0;
     notifyAll();
 }
 
@@ -24,8 +25,8 @@ const intro = (
     <h2>Checklist</h2>
     <ul>
       <li>
-        <b>Use a large screen</b>. Small screens can be made to work, but
-        require more effort.
+        <b>Use a large screen. </b>
+        On smaller screens you will likely have to remove some UI elements from the screen.
       </li>
       <li>
         <b>Switch to one of the preset layouts (TODO)</b>
@@ -58,7 +59,7 @@ const intro = (
         The quality and mostly the quantity of CSS on a page has a big impact on
         the quality of the experience.
       </li>
-      <li>You can display data that does not use CSS variables,</li>
+      <li>You can display data that does not use CSS variables, but can't modify those values yet.</li>
       <li>
         There are some bugs and possible crashes when using pin together with
         lock system.
@@ -68,10 +69,20 @@ const intro = (
 );
 
 export function StartTutorial() {
-    const active = useActiveTutorialElement();
-    if (active) return intro;
+  const active = useActiveTutorialElement();
+  if (active) {
+    if (activeCourse === 'prep') {
+      return (
+        <Fragment>
+          <button onClick={exitTutorial}>Exit tutorial</button>
+          {intro}
+        </Fragment>
+      );
+    }
+    return intro;
+  }
 
-    return <button onClick={startTutorial}>Start tutorial</button>
+  return <button onClick={startTutorial}>Start tutorial</button>;
 }
 
 let activeStepIndex = 0;
@@ -126,7 +137,7 @@ function prevStep(event) {
 }
 
 function PrevButton() {
-    if (activeCourse === 'basics' && activeStepIndex === 0) {
+    if (activeCourse === 'prep' && activeStepIndex === 0) {
         return null;
     }
     return <button onClick={prevStep}>Previous</button>
