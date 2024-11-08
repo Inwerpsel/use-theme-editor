@@ -13,7 +13,7 @@ import {ThemeUploadPanel} from './ui/ThemeUploadPanel';
 import {MovablePanels} from './movable/MovablePanels';
 import {FrameSizeSettings} from './ui/FrameSizeSettings';
 import {ScreenSwitcher} from './ui/ScreenSwitcher';
-import {ThemeEditorExtraOptions} from './ui/ThemeEditorExtraOptions';
+import {CursorBehavior} from './ui/ThemeEditorExtraOptions';
 import {MoveControls} from './movable/MoveControls';
 import {Area} from './movable/Area';
 import {FrameScaleSlider} from './ui/FrameScaleSlider';
@@ -41,6 +41,7 @@ import { AcceptDroppedOptions } from './effects/AcceptDroppedOptions';
 import { FullscreenToggle } from './ui/FullScreenToggle';
 import { PickedValue } from './ui/PickedValue';
 import { PickedValueCursor } from './PickedValueCursor';
+import { Selectors } from './ui/Selectors';
 
 export const ThemeEditorContext = createContext({});
 
@@ -91,16 +92,8 @@ export const ThemeEditor = (props) => {
               id="area-top"
               style={{ justifyContent: 'flex-start', flexGrow: 1 }}
             >
-              <div id="Filters" style={{
-                  display: 'flex',
-                  alignItems: 'flex-start',
-                }}>
-                <PropertyCategoryFilter/>
-                <PropertySearch/>
-              </div>
-              <PickedValue />
-              <ScreenSwitcher />
-              <Palette />
+              <HistoryControls />
+              <HistoryStash />
             </Area>
             <Area
               id="area-top-reverse"
@@ -110,56 +103,41 @@ export const ThemeEditor = (props) => {
                 flexGrow: 1,
               }}
             >
-              <HistoryControls />
-              <HistoryStash />
+              <ScreenSwitcher />
               <FrameScaleSlider/>
             </Area>
           </div>
-          <div style={{display: 'flex', justifyContent: 'space-between', flexGrow: '1'}}>
+          <div style={{display: 'flex', justifyContent: 'flex-start', flexGrow: '1'}}>
             <Area id="area-left">
+              <HistoryVisualization />
+              <MoveControls />
+              <ThemeUploadPanel/>
+              <ColorSettings />
+              <Selectors />
+            </Area>
+            <Area id="area-left-inner" >
               <StartTutorial />
+              <div id="Filters" style={{
+                  display: 'flex',
+                  alignItems: 'flex-start',
+                }}>
+                <PropertyCategoryFilter/>
+                <PropertySearch/>
+              </div>
               <div id="Inspector">
                 {frameLoaded && <Inspector />}
               </div>
             </Area>
-            <Area id="area-left-inner" />
-            {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
             <ResizableFrame src={window.location.href} />
+            {!!fullPagePreview && <SmallFullHeightFrame src={window.location.href} />}
             
             <Area id="area-right">
-              <HistoryVisualization />
-              <ThemeUploadPanel/>
-              <div id='ExtraPanelsMenu' className={'theme-editor-menu'}>
-                <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
-                  Import/export
-                </ToggleButton>
-                <ToggleButton controls={[sheetsDisablerDisplayed, setSheetDisablerDisplayed]}>
-                  Stylesheets
-                </ToggleButton>
-                <ToggleButton controls={[serverThemesDisplayed, setServerThemesDisplayed]}>
-                  Server
-                </ToggleButton>
-              </div>
               <Fragment id='ThemesList'>
                 {serverThemesDisplayed && <ServerThemesList/>}
               </Fragment>
               <Fragment id='StylesheetDisabler'>{sheetsDisablerDisplayed && <StylesheetDisabler />}</Fragment>
               <Fragment id='ImportExportTools'>{importDisplayed && <ImportExportTools />}</Fragment>
 
-              <InformationVisibilitySettings />
-              <ColorSettings />
-              <div id='InspectionSettings'>
-                <Checkbox
-                  // id={'full-page-preview'}
-                  controls={[fullPagePreview, setFullPagePreview]}
-                  title='WARNING!!! 1) Affects performance on large pages 2) If scrollable section is below body, it cannot be fully shown (e.g. Halfmoon) 3) Does not work properly for pages that have different styles based on screen height.'
-                >Full height preview</Checkbox>
-                <Checkbox
-                  // id={'open-first-on-inspect'}
-                  controls={[openFirstOnInspect, setOpenFirstOnInspect]}
-                >Auto open first group on inspect</Checkbox>
-                <WebpackHomeInput />
-              </div>
             </Area>
           </div>
           <div
@@ -171,25 +149,53 @@ export const ThemeEditor = (props) => {
               alignItems: 'flex-end',
             }}
           >
-            <Area id="area-bottom"></Area>
+            <Area id="area-bottom">
+              <Palette />
+              <PickedValue />
+            </Area>
             <Area
               id="area-bottom-reverse"
               style={{
                 flexDirection: 'row-reverse',
               }}
-            ></Area>
+            >
+              <div id='ExtraPanelsMenu' className={'theme-editor-menu'}>
+                <ToggleButton controls={[importDisplayed, setImportDisplayed]}>
+                  Import/export
+                </ToggleButton>
+                <ToggleButton controls={[sheetsDisablerDisplayed, setSheetDisablerDisplayed]}>
+                  Stylesheets
+                </ToggleButton>
+                <ToggleButton controls={[serverThemesDisplayed, setServerThemesDisplayed]}>
+                  Themes
+                </ToggleButton>
+              </div>
+            </Area>
             <Drawer>
-              <MoveControls />
-              <CustomVariableInput/>
-              <FrameSizeSettings />
-              <ThemeEditorExtraOptions />
+              <FullscreenToggle />
+              <CursorBehavior />
+              <div id='InspectionSettings'>
+                <Checkbox
+                  controls={[fullPagePreview, setFullPagePreview]}
+                  title='WARNING!!! 1) Affects performance on large pages 2) If scrollable section is below body, it cannot be fully shown (e.g. Halfmoon) 3) Does not work properly for pages that have different styles based on screen height.'
+                >Full height preview</Checkbox>
+                <Checkbox
+                  controls={[openFirstOnInspect, setOpenFirstOnInspect]}
+                >Auto open first group on inspect</Checkbox>
+                <Checkbox
+                  controls={use.enableScrollingInView()}
+                >Scroll into view in history</Checkbox>
+                <WebpackHomeInput />
+              </div>
               <RemoveAnnoyingPrefix />
               <NameReplacements/>
               {/* <SignalExample /> */}
               {/* <VoiceCommands /> */}
               <CurrentTheme />
               <FullHeightFrameScale />
-              <FullscreenToggle />
+              <InformationVisibilitySettings />
+              <CustomVariableInput/>
+              <FrameSizeSettings />
             </Drawer>
           </div>
         </MovablePanels>

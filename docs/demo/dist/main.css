@@ -192,7 +192,7 @@ body {
   }
 }
 .theme-editor-highlight {
-  outline: 4px solid rgb(105, 82, 236) !important;
+  outline: 4px solid oklch(55.36% 0.275 283.29) !important;
   outline-offset: -2px;
   animation: pulse 0.2s;
   scroll-margin-top: 12px;
@@ -423,8 +423,16 @@ div[id^=font-picker] ul {
   left: 0;
 }
 
-#area-bottom {
+#area-bottom, #area-bottom-reverse {
   position: fixed !important;
+}
+
+#area-bottom-reverse {
+  bottom: 0;
+  right: 0;
+}
+
+#area-bottom {
   bottom: 0;
   left: 0;
   z-index: 1000000;
@@ -758,7 +766,13 @@ button {
   vertical-align: top;
 }
 
+.theme-editor .flex-row {
+  display: flex;
+  flex-direction: row !important;
+}
+
 .theme-editor .flex-column {
+  display: flex;
   flex-direction: column !important;
 }
 
@@ -917,6 +931,7 @@ input[type=checkbox] + * {
 }
 
 .hue {
+  border-radius: 0;
   --c: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.138) 0);
   background: linear-gradient(90deg in oklch longer hue, var(--c), var(--c));
 }
@@ -982,6 +997,14 @@ input[type=checkbox] + * {
 
 html {
   overflow-x: hidden;
+}
+
+.stretch-over-parent {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
 }
 
 /*# sourceMappingURL=main.css.map*/
