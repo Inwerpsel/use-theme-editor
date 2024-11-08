@@ -8,6 +8,7 @@ import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { ClearState, scrollHistory } from './HistoryControls';
 import { Tutorial } from '../../_unstable/Tutorial';
 import { icons } from '../../previewComponents';
+import { ToggleButton } from '../controls/ToggleButton';
 
 function DisableScrollHistoryInArea() {
     const {hostAreaId, homeAreaId} = useContext(MovableElementContext);
@@ -126,6 +127,19 @@ function PinFirst(props) {
   </button>
 }
 
+function MoreCommands({id}) {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <div style={{position: 'relative'}}>
+      <ToggleButton controls={[open, setOpen]}>...</ToggleButton>
+      {open && <div style={{position: 'absolute', top: '100%'}}>
+        <ClearState {...{id}}/>
+        </div>}
+    </div>
+  );
+}
+
 function ActionList(props) {
   const {actions, showPayloads, historyIndex} = props;
   const {
@@ -137,6 +151,9 @@ function ActionList(props) {
     <ul className='history-actions'>
       {[...actions].map(([id, action], key) => {
         const isObject = typeof action === 'object';
+        if (action === null) {
+          return <span style={{color: 'red'}}>IT IS NULL</span>
+        }
         const isFromReducer = isObject && 'type' in action;
         const value = isFromReducer
           ? JSON.stringify(action.payload, null, 2)
@@ -156,18 +173,25 @@ function ActionList(props) {
             ? null
             : previewComponents[id][getName(action)];
 
-        const isPinnedElsewhere = pins.has(id) && pins.get(id) !== historyIndex;
+        const isPinned = pins.has(id);
+        const isPinnedElsewhere =  isPinned && pins.get(id) !== historyIndex;
 
         const icon = icons[id] || '';
 
         return (
-          <li key={`${historyIndex}:${key}`}
+          <li
+            key={`${historyIndex}:${key}`}
             title={isPinnedElsewhere ? 'Overridden by pin' : ''}
-            style={{ clear: 'both', opacity: isPinnedElsewhere ? .5 : 1}}
+            style={{ clear: 'both', opacity: isPinnedElsewhere ? 0.5 : 1 }}
           >
-            <PinState {...{id, historyIndex}} />
-            <PinLatest {...{id, historyIndex}} />
-            <PinFirst {...{id, historyIndex}} />
+            <PinState {...{ id, historyIndex }} />
+            <PinLatest {...{ id, historyIndex }} />
+            <PinFirst {...{ id, historyIndex }} />
+            {isPinned && (
+              <span style={{ float: 'right' }}>
+                <MoreCommands {...{ id }} />
+              </span>
+            )}
             {icon}
             {!Preview && (
               <span>
@@ -189,7 +213,9 @@ function ActionList(props) {
                 {value === false ? 'false' : value === true ? 'true' : value}
               </pre>
             )}
-            {Preview && <Preview {...{action, historyIndex}} payload={action.payload} />}
+            {Preview && (
+              <Preview {...{ action, historyIndex }} payload={action.payload} />
+            )}
           </li>
         );
       })}
