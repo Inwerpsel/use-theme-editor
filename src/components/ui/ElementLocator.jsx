@@ -9,7 +9,7 @@ import React, {
 import {ThemeEditorContext} from '../ThemeEditor';
 import { allStateSelectorsRegexp, residualNotRegexp } from '../../functions/getMatchingVars';
 import { get, use } from '../../state';
-import { isInPath, toNode, toPath } from '../../functions/nodePath';
+import { toNode, toPath } from '../../functions/nodePath';
 import { addHighlight, removeHighlight } from '../../functions/highlight';
 
 function removeStateSelectors(selector) {
@@ -22,8 +22,8 @@ function removeStateSelectors(selector) {
 
 let lastInspectedSelector, lastHighlightTimeout;
 
-function viewHighLightSingle(element) {
-  element.scrollIntoView({behavior: 'smooth', block: 'center'});
+function viewHighLightSingle(element, scrollOptions = {behavior: 'smooth', block: 'center'}) {
+  element.scrollIntoView(scrollOptions);
   addHighlight(element);
   if (lastHighlightTimeout) {
     const [timeout, handler, timeoutElement] = lastHighlightTimeout;
@@ -43,6 +43,8 @@ function viewHighLightSingle(element) {
   lastHighlightTimeout = [setTimeout(handler, 1500), handler, element];
 }
 
+let lastScroll = 0;
+
 export function ElementLocator({
   selector,
   hideIfNotFound,
@@ -51,6 +53,8 @@ export function ElementLocator({
   showLabel = true,
   property = null,
   label,
+  allowScroll = false,
+  allowDrag = true,
 }) {
   const { frameLoaded } = get;
   const [inspectedPath, setInspectedPath] = use.inspectedPath();
@@ -65,13 +69,18 @@ export function ElementLocator({
         frameRef.current.contentWindow.document.querySelectorAll(
           strippedSelector
         );
+      let inspectedNode;
+      try {
+        inspectedNode = toNode(inspectedPath, frameRef.current.contentWindow.document);
+      } catch (e) {
+      }
       return [...results].map((el, index) => ({
         index,
         node: el,
         tagName: `${el.tagName}`,
         id: `${el.id}`,
         className: `${el.className}`,
-        isCurrentlyInspected: isInPath(el, inspectedPath),
+        isCurrentlyInspected: el.contains(inspectedNode),
       }));
     } catch (e) {
       console.log(e);
@@ -90,7 +99,12 @@ export function ElementLocator({
     return (
       <div style={{ opacity: 0.6 }}>
         {showLabel && (
-          <div className="monospace-code">
+          <div
+            className="monospace-code"
+            draggable={allowDrag}
+            // draggable
+            onDragStart={(e) => e.dataTransfer.setData('selector', selector)}
+          >
             {(label || selector).trim()}
             <span className={'var-control-property monospace-code'}>
               {property}
@@ -111,14 +125,35 @@ export function ElementLocator({
 
   const element = elements[currentElement];
 
+  function scrollElements(event) {
+    const now = performance.now();
+    const isFast = now - lastScroll < 100;
+    lastScroll = now;
+    const delta = Math.round(event.deltaY / 100) * -1;
+    const afterStep = currentElement - delta;
+    const next = afterStep < 0 ? (elements.length + afterStep) : afterStep >= elements.length ? (afterStep - elements.length) : afterStep;
+    setCurrentElement(next);
+    viewHighLightSingle(elements[next].node, {behavior: isFast ? 'instant' : 'smooth', block: 'center'});
+    // event.preventDefault();
+    // event.stopPropagation();
+  }
+  
   return (
     <div
       style={{
         outline: didLastInspectHere ? '4px solid rgb(26, 217, 210)' : 'none',
       }}
+      onWheelCapture={allowScroll ? scrollElements : null}
     >
       {showLabel && (
-        <div className="monospace-code">
+        <div className="monospace-code"
+            draggable={allowDrag}
+            // draggable
+            onDragStart={e=>{
+              e.dataTransfer.setData('selector', selector);
+              e.stopPropagation();
+            }}
+        >
           {(label || selector).trim()}
           <span className={'var-control-property monospace-code'}>
             {property}
@@ -186,8 +221,7 @@ export function ElementLocator({
             </button>
           )}
           <span>
-            {' '}
-            {currentElement + 1}/{elements.length}{' '}
+            {currentElement + 1}/{elements.length}
           </span>
           <span
             style={{
