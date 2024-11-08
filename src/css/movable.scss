@@ -69,8 +69,9 @@ $area-speed: .2s;
 }
 
 #area-left-inner {
-  // margin-right: auto;
+  // overflow-x: hidden;
   flex-direction: column;
+  // flex-shrink: 1;
 }
 
 // .is-dragging #area-left-inner {
@@ -104,6 +105,17 @@ $area-speed: .2s;
   flex-grow: 1;
 }
 
+#area-bottom-reverse {
+  bottom: 0;
+  margin-right: 90px;
+}
+
+#area-bottom:has(.movable-element) {
+  height: 0;
+  .is-dragging  {
+    height: auto;
+  }
+}
 #area-top {
   .area-switcher  {
     bottom: 0;
@@ -111,8 +123,17 @@ $area-speed: .2s;
   }
 }
 
-#area-bottom {
+#area-bottom, #area-bottom-reverse {
   position: fixed !important;
+}
+
+#area-bottom-reverse {
+
+  bottom: 0;
+  right: 0;
+}
+
+#area-bottom {
   bottom: 0;
   left: 0;
   z-index: 1000000;

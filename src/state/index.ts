@@ -9,6 +9,7 @@ import { ROOT_SCOPE, useThemeEditor } from "../hooks/useThemeEditor";
 import { byHexValue, extractColorUsages } from "../components/properties/ColorControl";
 import { getDefaults } from "../initializeThemeEditor";
 import { useGlobalState } from "../hooks/useGlobalState";
+import { toOk } from "../components/properties/OklchColorControl";
 
 // TODO: Since each of these requires a string key as an argument,
 // it could be more convenient to fabricate the object from a simpler config,
@@ -23,7 +24,7 @@ import { useGlobalState } from "../hooks/useGlobalState";
 export const use = {
   isSimpleSizes:
     // Resumable to make restoring UI state and exact scroll positions easier.
-    () => useResumableLocalStorage('isSimpleSizes', true),
+    () => useLocalStorage('isSimpleSizes', true),
   screenOptions:
     () => [get.isSimpleSizes ? simpleScreenOptions : allScreenOptions],
   width:
@@ -49,6 +50,8 @@ export const use = {
     () => useResumableLocalStorage('excludedRawValues', ['initial', 'none'] as string[]),
   frameClickBehavior:
     () => useGlobalState('frameClickBehavior', 'any' as 'any' | 'alt'),
+  enableScrollingInView:
+    () => useLocalStorage('enableScrollingInView', true),
   nativeColorPicker:
     () => useLocalStorage('nativeColorPicker', false),
   includeDefaultPalette:
@@ -118,8 +121,12 @@ export const use = {
     () => useLocalStorage('maximizeChroma', false),
   pickedValue:
     () => useGlobalState('pickedValue', ''),
+  pickedHue:
+    () => [mem(get => toOk(get.pickedValue)?.h)],
   palette: 
     () => useLocalStorage('palette', []),
+  savedSelectors: 
+    () => useLocalStorage('savedSelectors', []),
   // 
   // State below this is only used in a demo element.
   //

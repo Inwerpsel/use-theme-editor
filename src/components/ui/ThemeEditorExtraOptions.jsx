@@ -2,12 +2,12 @@ import React from 'react';
 import { use } from '../../state';
 import { Tutorial } from '../../_unstable/Tutorial';
 
-export function ThemeEditorExtraOptions() {
+export function CursorBehavior() {
   const [frameClickBehavior, setFrameClickBehavior] = use.frameClickBehavior();
 
   const useAlt = frameClickBehavior === 'alt';
   return <div>
-    <Tutorial el={ThemeEditorExtraOptions}>Toggle whether a normal click performs an inspection and blocks default click behavior.</Tutorial>
+    <Tutorial el={CursorBehavior}>Toggle whether a normal click performs an inspection and blocks default click behavior.</Tutorial>
     <button
       title={
         useAlt 
@@ -24,4 +24,4 @@ export function ThemeEditorExtraOptions() {
   </div>;
 }
 
-ThemeEditorExtraOptions.fName = 'ThemeEditorExtraOptions';
+CursorBehavior.fName = 'CursorBehavior';

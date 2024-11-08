@@ -15,7 +15,7 @@ let lastInspectedTime = -Infinity;
 let lastClicked;
 
 function InspectOnClick({frameRef, loaded}) {
-  const { frameClickBehavior, openFirstOnInspect } = get;
+  const { frameClickBehavior, openFirstOnInspect, enableScrollingInView } = get;
   const [path, setPath] = use.inspectedPath();
   const [, setOpenGroups] = use.openGroups();
 
@@ -68,6 +68,7 @@ function InspectOnClick({frameRef, loaded}) {
   }, [frameClickBehavior, loaded, openFirstOnInspect]);
 
   useEffect(() => {
+    if (!enableScrollingInView) return;
     if (performance.now() - lastInspectedTime < 400) {
       return;
     }
@@ -94,7 +95,7 @@ function InspectOnClick({frameRef, loaded}) {
       }
     } catch (e) {
     }
-  }, [path, loaded]);
+  }, [path, loaded, enableScrollingInView]);
 }
 
 function DropColors({frameRef, loaded}) {
@@ -208,6 +209,7 @@ export const ResizableFrame = props => {
         overflow: 'hidden',
         padding: '0',
         boxSizing: 'border-box',
+        marginLeft: '1rem',
       } }
     >
       {tutorial}

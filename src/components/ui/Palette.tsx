@@ -162,10 +162,10 @@ function Variable(props) {
   </div>
 }
 
-function MiniPalette({values, setValues, width = 65}) {
+function MiniPalette({values, setValues, width = 65, mini = false}) {
   const [pickedValue, setPickedValue] = use.pickedValue();
   const hasPickedValue = values.some(({value}) => value === pickedValue);
-  const [isVertical, setIsVertical] = useLocalStorage('palette-vertical', true);
+  const [isVertical, setIsVertical] = useLocalStorage('palette-vertical', false);
   const [dragmode, setDragmode] = useState(false);
 
   useEffect(() => {
@@ -198,7 +198,7 @@ function MiniPalette({values, setValues, width = 65}) {
         setValues(values.filter(({ value: v }) => v !== toRemove));
       } }
     >🗑</div>}
-    <ManagedPalette />
+    {!mini && <ManagedPalette />}
     {!dragmode && !hasPickedValue && <ToggleButton style={{maxWidth: '28px'}} controls={[isVertical, setIsVertical]}>{isVertical ? '⇓' : '⇒'}</ToggleButton>}
     {values.map(({ value, isHtml }, index) => {
       // This doesn't really serve a purpose, but it's interesting to see how the browser treats the styles,
@@ -349,7 +349,7 @@ function ManagedPalette() {
               {storedPalettes.map(({ name, contents = [], palette }) => (
                 <li key={name} style={{display: 'flex', justifyContent: 'flex-end'}}>
                   {name} ({contents.length})
-                  <MiniPalette values={contents} setValues={() => {}} width={20}/>
+                  <MiniPalette mini values={contents} setValues={() => {}} width={20}/>
                   <button onClick={() => {
                     if (!currentEmpty) {
                       setStoredPalettes([...storedPalettes, {name: 'tmp', contents: palette}]);

@@ -110,8 +110,7 @@ export function clearState(key: string) {
   states.delete(key);
   oldStates = new Map();
   historyOffset = Math.min(historyOffset, past.length);
-  // Keep the lock, so that it's more obvious the state is being preserved, and where.
-  addPin(key, 0);
+  removePin(key);
   checkNotifyAll();
 }
 
@@ -369,9 +368,10 @@ function getSnapShot(id) {
     } else {
       sourceStates = pointedStates;
     }
-    return sourceStates.has(id)
-      ? sourceStates.get(id)
-      : initialStates.get(id);
+
+    const value = sourceStates.get(id)
+
+    return value === undefined ? initialStates.get(id) : value;
 }
 
 export const interestingKeys = ['themeEditor', 'uiLayout', 'inspectedPath'];

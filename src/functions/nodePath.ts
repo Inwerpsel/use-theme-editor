@@ -72,10 +72,3 @@ export function toNode(path: string[], doc = document) {
 
     return node;
 }
-
-// Check whether a node is along a path in the tree.
-export function isInPath(node, path): boolean {
-    const endNode = toNode(path, node.getRootNode());
-
-    return node.contains(endNode);
-}

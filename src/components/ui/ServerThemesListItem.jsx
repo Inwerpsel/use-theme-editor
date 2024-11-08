@@ -39,9 +39,6 @@ export const ServerThemesListItem = props => {
     <button
       style={{float: 'right'}}
       onClick={() => {
-        if (modifiedServerVersion && !confirm('You have some local changes that are not on the server. Cancel if you want to save changes.')) {
-          return;
-        }
         !isCurrent && setFileName(name);
         dispatch({type: ACTIONS.loadTheme, payload: {theme: serverTheme}});
       }}

@@ -18,7 +18,6 @@ export function CurrentTheme() {
     allVars,
     defaultValues,
   } = useContext(ThemeEditorContext);
-  const [initialized, setInitialized] = useState(false);
 
   const [showObsolete, setShowObsolete] = useState(false);
   const [showActive, setShowActive] = useState(true);
@@ -88,9 +87,6 @@ export function CurrentTheme() {
           <Checkbox controls={[hideNotFound, setHideNotFound]}>
             Hide not found
           </Checkbox>
-          <ToggleButton controls={[initialized, setInitialized]}>
-            INIT {initialized ? '' : '*'}
-          </ToggleButton>
         </div>
       )}
       {isOpen && (
@@ -105,7 +101,7 @@ export function CurrentTheme() {
             <li style={{ marginTop: '12px' }} key={selector}>
               <ElementLocator
                 hideIfNotFound={hideNotFound}
-                {...{ initialized, selector }}
+                {...{ selector }}
               >
                 <ul>
                   {cssVars.map((cssVar) => {

@@ -1,3 +1,7 @@
+::-webkit-slider-thumb {
+    appearance: auto !important;
+}
+
 .oklch-picker input[type=range] {
     // filter: grayscale(1);
     min-height: 0;
@@ -8,7 +12,6 @@
 
 
     &::-webkit-slider-thumb {
-        appearance: auto;
         accent-color: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
     }
 
@@ -32,7 +35,7 @@
     margin-left: -6px;
     box-sizing: border-box;
     user-select: none;
-
+    margin-top: 0;
 }
 
 #hue,
@@ -77,6 +80,7 @@
 }
 
 .hue {
+    border-radius: 0;
     --c: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.138) 0);
 
     background: linear-gradient(90deg in oklch longer hue, var(--c), var(--c));

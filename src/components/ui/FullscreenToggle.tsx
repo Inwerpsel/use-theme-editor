@@ -42,3 +42,5 @@ export function FullscreenToggle() {
       {isFullscreenPreview && createPortal(<div style={{ position: 'fixed', top: 0, right: 0}}>{previewButton}</div>, frameRef.current?.parentNode)}
     </Fragment>
 }
+
+FullscreenToggle.fName = 'FullscreenToggle';

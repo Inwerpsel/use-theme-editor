@@ -16,7 +16,7 @@ export function HistoryStash() {
     const stringied = useMemo(() => JSON.stringify(lastAlternate.map(a=>[...a.entries()].map(([k]) => k)), null, 2), [lastAlternate])
 
     return <div
-      className="flex-column" 
+      className="flex-row" 
       style={{
         background: `rgba(26, 217, 210, ${Math.min(lastAlternate.length / 20, 1)})`,
       }}

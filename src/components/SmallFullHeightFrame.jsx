@@ -206,7 +206,7 @@ export function SmallFullHeightFrame(props) {
           // left: `calc(4px * ${scale})`,
           position: 'absolute',
           display: 'inline-block',
-          outline: '3px solid indigo',
+          outline: '3px solid oklch(40.10% 0.2213 301.68)',
           // outlineOffset: '1px',
           width: width * scale,
           height: (height - 8) * scale,

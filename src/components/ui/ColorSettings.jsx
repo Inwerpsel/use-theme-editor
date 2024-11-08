@@ -9,7 +9,7 @@ export function ColorSettings() {
         <Checkbox controls={use.includeDefaultPalette()}>
           Include default palette
         </Checkbox>
-        <Checkbox controls={use.nativeColorPicker()}>
+        <Checkbox title="Disable this to get the best experience" controls={use.nativeColorPicker()}>
           Native color picker
         </Checkbox>
         <Checkbox controls={use.maximizeChroma()}>

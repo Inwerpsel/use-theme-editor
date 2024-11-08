@@ -39,6 +39,7 @@ export const icons = {
   scales: <Icon>🔬</Icon>,
   width: <Icon>↔</Icon>,
   height: <Icon>↕</Icon>,
+  search: <Icon>🕵️</Icon>
 };
 
 export const previewComponents = {
