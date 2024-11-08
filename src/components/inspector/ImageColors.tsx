@@ -72,13 +72,13 @@ export function ImageColors(props: {path: string}) {
     const {path} = props;
     const [colors, setColors] = useState();
     const [t, setT] = useState();
-    const [group, setGroup] = useResumableLocalStorage('image color group', 10)
-    const [sample, setSample] = useResumableLocalStorage('image color sample', 20)
+    const [group, setGroup] = useResumableLocalStorage('image color group', 2)
+    const [sample, setSample] = useResumableLocalStorage('image color sample', 16)
     const [amount, setAmount] = useResumableLocalStorage('image color amount', 90)
     const [minLightness, setMinLightness] = useResumableLocalStorage('image color min lightness', 0)
     const [maxLightness, setMaxLightness] = useResumableLocalStorage('image color max lightness', 100)
     const [minHue, setMinHue] = useResumableLocalStorage('image color min hue', 0)
-    const [maxHue, setMaxHue] = useResumableLocalStorage('image color max hue', 360)
+    const [maxHue, setMaxHue] = useResumableLocalStorage('image color max hue', 359)
     
     const [preserveLightnessRange, setPreserveLightnessRange] = useLocalStorage('image color preserve lightness range', false);
     const [preserveHueRange, setPreserveHueRange] = useLocalStorage('image color preserve hue range', false);
@@ -187,7 +187,7 @@ export function ImageColors(props: {path: string}) {
             type="range"
             value={maxHue % 360}
             min={1}
-            max={360}
+            max={359}
             style={{width: '95%'}}
             onChange={(e) => {
               const newValue = parseInt(e.target.value);
