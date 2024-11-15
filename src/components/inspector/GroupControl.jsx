@@ -1,6 +1,6 @@
 import {getValueFromDefaultScopes, resolveVariables, VariableControl} from './VariableControl';
 import {ACTIONS, editTheme} from '../../hooks/useThemeEditor';
-import React, {Fragment, useContext, useEffect, useMemo} from 'react';
+import React, {Fragment, useContext, useEffect, useMemo, useState} from 'react';
 import {ThemeEditorContext} from '../ThemeEditor';
 import { ElementInlineStyles } from './ElementInlineStyles';
 import { ScopeControl } from './ScopeControl';
@@ -14,7 +14,7 @@ import { clampChroma } from 'culori';
 import { evaluateCalc } from '../properties/CalcSizeControl';
 import { findClosingBracket } from '../../functions/compare';
 import { ImageColors } from './ImageColors';
-import { Checkbox } from '../controls/Checkbox';
+import { Checkbox, Checkbox2 } from '../controls/Checkbox';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { readSync } from '../../hooks/useGlobalState';
 import { useDispatcher } from '../../hooks/useResumableReducer';
@@ -88,7 +88,7 @@ export function applyHueToAllColors(rawColor, {groupColors, maximizeChroma}) {
   return changed;
 }
 
-const displays = new WeakMap();
+const hiddenElements = new WeakSet();
 
 export const GroupControl = props => {
   const {
@@ -161,6 +161,7 @@ export const GroupControl = props => {
     const newGroups = wasOpen ? other : {...other, [id]: true};
     setOpenGroups(newGroups);
   };
+  const [isHidden, setIsHidden] = useState(hiddenElements.has(element));
 
   const groupColors = useMemo(() => {
     return vars.reduce((colorVars, someVar) => {
@@ -222,7 +223,15 @@ export const GroupControl = props => {
   }, [vars, elementScopes, scopes]);
 
   const isEmpty = vars.length === 0;
-  const hasContent = !isEmpty || inlineStyles || src;
+  const hasContent = !isEmpty || src;
+
+  useEffect(() => {
+    if (isHidden) {
+      element.classList.add('force-nodisplay');
+    } else {
+      element.classList.remove('force-nodisplay');
+    }
+  }, [isHidden])
 
   if (!hasContent && !isDeepest && !src && !html) { 
     return null;
@@ -231,7 +240,7 @@ export const GroupControl = props => {
   const isOpen = !!openGroups[label];
 
   return (
-    <li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
+    (<li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
       <div
         style={{
           position: 'sticky',
@@ -345,6 +354,7 @@ export const GroupControl = props => {
             </div>}
           </div>
 
+          {inlineStyles && <span style={{...{border: '1px solid black'}, ...inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
           {src && <img src={src} srcSet={srcset} alt={alt} title={title || alt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
           {html?.length > 0 && <div
             className='svg-inspect-wrapper'
@@ -353,7 +363,6 @@ export const GroupControl = props => {
             dangerouslySetInnerHTML={{__html: html}}
           ></div>}
           {textContent && <div style={{fontSize: '12px', border: '1p solid grey',background:'lightgrey',maxWidth: '45%', margin: '4px', padding: '4px', float: 'right', maxHeight: '62px', overflow: 'auto'}}>{textContent}</div>}
-          {inlineStyles && <span style={{...{border: '1px solid black'}, ...inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
           
         </h4>
       </div>
@@ -388,7 +397,20 @@ export const GroupControl = props => {
           }
           )}
         </ul>
+        <Checkbox
+          controls={[
+            hiddenElements.has(element),
+            value => {
+              if (!value) {
+                hiddenElements.delete(element);
+              } else {
+                hiddenElements.add(element);
+              }
+              setIsHidden(value);
+            }]
+          }
+        >Hide</Checkbox>
       </Fragment>}
-    </li>
+    </li>)
   );
 };

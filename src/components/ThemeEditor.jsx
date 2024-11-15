@@ -32,7 +32,7 @@ import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
 // import { VoiceCommands } from './ui/VoiceCommands';
 // import { SpeakGlobalHooks } from '../voice/menu/state';
-import { HistoryVisualization } from './ui/HistoryVisualization';
+import { NoteBox, HistoryVisualization } from './ui/HistoryVisualization';
 import { Palette } from './ui/Palette';
 import { HistoryStash } from './ui/HistoryStash';
 import { StartTutorial } from '../_unstable/Tutorial';
@@ -110,6 +110,7 @@ export const ThemeEditor = (props) => {
           <div style={{display: 'flex', justifyContent: 'flex-start', flexGrow: '1'}}>
             <Area id="area-left">
               <HistoryVisualization />
+              <NoteBox />
               <MoveControls />
               <ThemeUploadPanel/>
               <ColorSettings />

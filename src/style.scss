@@ -86,7 +86,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
 .theme-editor *:not(.font-button):not(.monospace-code), .responsive-size-controls * {
   font-family: Roboto, sans-serif !important;
   color: black;
-  line-height: initial !important;
+  line-height: initial;
 }
 
 .responsive-size-controls {
@@ -717,4 +717,8 @@ html {
   right: 0;
   bottom: 0;
   left: 0;
+}
+
+.force-nodisplay {
+  display: none !important;
 }

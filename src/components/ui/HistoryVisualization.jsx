@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect, useRef, Fragment } from 'react';
 import { HistoryNavigateContext, addPin, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, pinInitial, pinLatest, performAction, removePin } from '../../hooks/useResumableReducer';
-import { Checkbox } from '../controls/Checkbox';
+import { Checkbox, Checkbox2 } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
 import { setExcludedArea } from '../movable/Area';
@@ -141,6 +141,7 @@ function MoreCommands({id}) {
 }
 
 function ActionList(props) {
+  const {showScrolls} = get;
   const {actions, showPayloads, historyIndex} = props;
   const {
       previewComponents,
@@ -150,6 +151,8 @@ function ActionList(props) {
   return (
     <ul className='history-actions'>
       {[...actions].map(([id, action], key) => {
+        if (!showScrolls && id.startsWith('areaOffset')) return;
+
         const isObject = typeof action === 'object';
         if (action === null) {
           return <span style={{color: 'red'}}>IT IS NULL</span>
@@ -163,7 +166,7 @@ function ActionList(props) {
 
         const name = !isFromReducer ? '' : '::' + getName(action);
         const isPayloadLess = value === '{}';
-        const isShortString = !isFromReducer && (typeof value === 'boolean' || typeof value === 'number' || value?.length < 40);
+        const isShortString = !isFromReducer && (typeof value === 'boolean' || typeof value === 'number' || value?.length < 320);
 
         const previews = previewComponents[id];
         const Preview =
@@ -223,6 +226,50 @@ function ActionList(props) {
   );
 }
 
+const tutorial = (
+  <Tutorial el={HistoryVisualization} {...{ tasks }}>
+    <ExplainPins />
+    Since history visualization is disabled, this only shows current history
+    entry.
+  </Tutorial>
+);
+
+export function NoteBox() {
+
+  const [note, setNote] = use.note();
+  const [readonly, setReadonly] = useState(true);
+
+  if (readonly) {
+    const activate = () => setReadonly(false);
+    if (note === '') {
+      return <button onClick={activate}>
+        Note
+      </button>
+    }
+    return (
+      <div
+        style={{
+          background: 'white',
+          border: '2px solid black',
+          fontSize: '2rem',
+          maxWidth: 800,
+          // wordWrap: 'break-word',
+        }}
+        onClick={activate}
+      >
+        <pre>
+          {note}
+        </pre>
+      </div>
+    );
+  }
+
+  return <textarea style={{minHeight: 160}} autoFocus onBlur={() => {setReadonly(true)}} value={note} onInput={e => setNote(e.target.value, { debounceTime: Infinity, skipHistory: true })}>
+
+  </textarea>
+}
+NoteBox.fName = 'CommentBox';
+
 function CurrentActions() {
   const {
     past,
@@ -232,7 +279,8 @@ function CurrentActions() {
   } = useContext(HistoryNavigateContext);
   const [showInitial, setShowInitial] = useState(false);
   const index = past.length - historyOffset;
-  const actions = historyOffset === 0 ? lastActions : past[index].lastActions;
+  const isLatest = historyOffset === 0;
+  const actions =  isLatest ? lastActions : past[index].lastActions;
   const isInitial = index === 0; 
   const entries =  (isInitial && showInitial)
     ? [...initialStates.entries()].filter(([id]) => id in use) 
@@ -240,13 +288,10 @@ function CurrentActions() {
   
   return (
     <div onWheelCapture={scrollHistory} style={{minWidth: '280px', maxWidth: '400px', minHeight: '240px', overflow: 'hidden visible'}}>
+      {tutorial}
       {isInitial && <Checkbox controls={[showInitial, setShowInitial]} >Show all initial values</Checkbox>}
       <ActionList historyIndex={index} actions={entries} />
       {/* Quick fix for el not always shown... */}
-      <Tutorial el={HistoryVisualization} {...{tasks}}>
-        <ExplainPins />
-        Since history visualization is disabled, this only shows current history entry.
-      </Tutorial>
     </div>
   ); 
 }
@@ -288,6 +333,7 @@ export function HistoryVisualization() {
       </Tutorial>
       <DisableScrollHistoryInArea/>
       <Checkbox controls={[showAll, setShowAll]}>Show all</Checkbox>
+      <Checkbox2 hook={use.showScrolls}>Include scroll position</Checkbox2>
       <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
 
       {debug && <div>
@@ -338,7 +384,7 @@ export function HistoryVisualization() {
                 position: 'relative',
                 outline:
                   index === currentIndex
-                    ? '2px solid yellow'
+                    ? '3px solid black'
                     : 'none',
               }}
             >
@@ -398,7 +444,7 @@ export function HistoryVisualization() {
           key={'latest'}
           style={{
             outline:
-              historyOffset === 0 ? '2px solid yellow' : 'none',
+              historyOffset === 0 ? '3px solid black' : 'none',
           }}
         >
           <span style={{marginLeft: '-32px'}}>

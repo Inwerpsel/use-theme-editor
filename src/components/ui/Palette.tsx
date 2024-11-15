@@ -265,6 +265,7 @@ function MiniPalette({values, setValues, width = 65, mini = false}) {
               backgroundSize: 'cover',
               fontSize: '14px',
               textShadow: 'white 0px 10px',
+              lineHeight: '20px',
               width,
               height: width,
               outline: value === pickedValue ? '4px solid yellow' : 'none',

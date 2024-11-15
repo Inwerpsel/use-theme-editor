@@ -374,7 +374,7 @@ function getSnapShot(id) {
     return value === undefined ? initialStates.get(id) : value;
 }
 
-export const interestingKeys = ['themeEditor', 'uiLayout', 'inspectedPath'];
+export const interestingKeys = ['themeEditor', 'uiLayout', 'inspectedPath', 'note'];
 
 // This function is used to determine which states should be visited when using fast navigation.
 // Hard coded to keep it simple for now, it could be user configurable.

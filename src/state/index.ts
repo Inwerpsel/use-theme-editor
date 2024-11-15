@@ -84,6 +84,8 @@ export const use = {
     () => useLocalStorage('visualizeHistory', false),
   visualizeHistoryAlways: 
     () => useLocalStorage('visualizeHistoryAlways', true),
+  showScrolls:
+    () => useLocalStorage('showScrolls', true),
   svgDarkBg:
     () => useLocalStorage('svgDarkBg', false),
   inspectedPath:
@@ -127,6 +129,8 @@ export const use = {
     () => useLocalStorage('palette', []),
   savedSelectors: 
     () => useLocalStorage('savedSelectors', []),
+  note:
+    () => useResumableState('note', ''),
   // 
   // State below this is only used in a demo element.
   //

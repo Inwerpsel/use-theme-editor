@@ -24,3 +24,20 @@ export const Checkbox = memo(function Checkbox ({
   );
 }, 
 controlsAreEqual);
+
+export function Checkbox2({hook, children, disabled = false, ...other}) {
+  const [enabled, setEnabled] = hook();
+
+  return (
+    <label {...other} style={{ ...other.style, marginBottom: '2px' }}>
+      <input
+        {...{disabled}}
+        type="checkbox"
+        readOnly
+        checked={!!enabled}
+        onClick={() => setEnabled(!enabled)}
+      />
+      {children}
+    </label>
+  );
+}
