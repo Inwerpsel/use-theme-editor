@@ -8,7 +8,7 @@ import { converter, formatHex, parse, clampGamut  } from 'culori';
 const invalidNameChars = /[^\w\-]/;
 const toRgb = converter('rgb');
 export function CreateAlias(props) {
-    const {value} = props;
+    const {value, origValue} = props;
     const dispatch = editTheme();
     const [open, setOpen] = useState(false);
     // Use separate state to avoid large lib going in and out of memory as you repeatedly open and close alias component.
@@ -46,7 +46,7 @@ export function CreateAlias(props) {
     return <Fragment>
         <TextControl value={name || colorSuggestion} onChange={setName} />
         <button onClick={() => {
-            dispatch({ type: ACTIONS.createAlias, payload: { name: name || colorSuggestion, value } });
+            dispatch({ type: ACTIONS.createAlias, payload: { name: name || colorSuggestion, value: origValue } });
         }}>submit</button>
         <button onClick={() => setOpen(false)}>cancel</button>
     </Fragment>

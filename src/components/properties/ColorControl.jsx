@@ -86,7 +86,7 @@ const pickerOptions = Object.keys(pickers).map(k => ({label: k, value: k}))
 const toRgb = converter('rgb');
 
 export const ColorControl = (props) => {
-  const { onChange, onUnset, value: maybeVar, resolvedValue, cssVar, cssFunc } = props;
+  const { onChange, onUnset, value: origValue, resolvedValue, cssVar, cssFunc } = props;
   const parsed = toRgb(clampGamut('hsl')(resolvedValue)) || {};
   const value = resolvedValue;
   const { nativeColorPicker } = get;
@@ -133,7 +133,7 @@ export const ColorControl = (props) => {
       <Fragment>
         {useOk && <OklchColorControl {...{value, onChange}}/>}
         <div style={{ display: 'flex', clear: 'both' }}>
-          <CreateAlias key={value} {...{ value }} />
+          <CreateAlias key={value} {...{ value, origValue }} />
           <div style={{display: 'flex'}}>
             <button style={{borderTopRightRadius: 0, borderBottomRightRadius: 0, marginRight: 0, borderRight: 'none'}} onClick={()=>setUseOk(false)} disabled={!useOk}>rgb/hsl</button>
             <button style={{borderTopLeftRadius: 0, borderBottomLeftRadius: 0}} onClick={()=>setUseOk(true)} disabled={useOk}>oklch</button>
@@ -210,7 +210,7 @@ export const ColorControl = (props) => {
 
   return (
     <div style={{ minHeight: '120px', clear: 'both' }}>
-      <CreateAlias key={value} {...{ value }} />
+      <CreateAlias key={value} {...{ value, origValue }} />
       <input
         type="color"
         style={{
