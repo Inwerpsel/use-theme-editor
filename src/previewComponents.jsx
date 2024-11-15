@@ -5,11 +5,11 @@ import { Checkbox } from './components/controls/Checkbox';
 import { ElementLocator } from './components/ui/ElementLocator';
 import { dragValue } from './functions/dragValue';
 import { FormatVariableName } from './components/inspector/VariableControl';
-import { getGroupsForElement } from './initializeThemeEditor';
+import { getGroupsForElement, isCached } from './initializeThemeEditor';
 import { toNode } from './functions/nodePath';
 import { ThemeEditorContext } from './components/ThemeEditor';
 import { ScrollInViewButton } from './components/inspector/ScrollInViewButton';
-import { otherUrls } from './hooks/useResumableReducer';
+import { HistoryNavigateContext, otherUrls } from './hooks/useResumableReducer';
 import { firstEntry } from './_unstable/historyStore';
 
 const size = 18;
@@ -29,7 +29,7 @@ function FindOther({label}) {
 }
 
 function Icon({children}) {
-  return <span style={{fontSize: '1.5rem', minWidth: '2rem', display: 'inline-block', textAlign: 'center'}}>{children}</span>
+  return <span style={{filter: 'grayscale(1)', fontSize: '1.5rem', minWidth: '2rem', display: 'inline-block', textAlign: 'center'}}>{children}</span>
 }
 
 export const icons = {
@@ -39,7 +39,8 @@ export const icons = {
   scales: <Icon>🔬</Icon>,
   width: <Icon>↔</Icon>,
   height: <Icon>↕</Icon>,
-  search: <Icon>🕵️</Icon>
+  search: <Icon>🕵️</Icon>,
+  note: <Icon>🗨</Icon>,
 };
 
 export const previewComponents = {
@@ -61,10 +62,18 @@ export const previewComponents = {
       frameRef,
       // scrollFrameRef,
     } = useContext(ThemeEditorContext);
+    const {
+      historyOffset,
+      past,
+    } = useContext(HistoryNavigateContext);
+    const inPast = historyIndex < past.length - historyOffset;
 
     let group;
     try {
-      [group] = getGroupsForElement(toNode(path, frameRef.current.contentWindow.document));
+      const node = toNode(path, frameRef.current.contentWindow.document);
+      if (!inPast || isCached(node)) {
+        [group] = getGroupsForElement(node);
+      }
     } catch (e) {
     }
     const isFromBeforeSession = historyIndex < firstEntry;

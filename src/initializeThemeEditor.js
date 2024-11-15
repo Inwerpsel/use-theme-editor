@@ -115,6 +115,10 @@ let lastGroups = [];
 
 const groupCache = new WeakMap();
 
+export function isCached(element) {
+  return groupCache.has(element);
+}
+
 export function getGroupsForElement(element) {
   if (groupCache.has(element)) {
     return groupCache.get(element);
