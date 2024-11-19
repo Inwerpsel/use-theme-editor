@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { prominent } from "../../_unstable/colorsFromImage";
 import { oklch, toOk } from "../properties/OklchColorControl";
 import { get, use } from "../../state";
@@ -68,7 +68,12 @@ function Swatch({color, minLightness, maxLightness, rangeSize}) {
     );
 }
 
+function PickableColors({minLightness, maxLightness, rangeSize, colors}) {
+  return colors.map((color) => <Swatch {...{color, minLightness, maxLightness, rangeSize}}/>)
+}
+
 export function ImageColors(props: {path: string}) {
+    const { pickedHue } = get;
     const {path} = props;
     const [colors, setColors] = useState();
     const [t, setT] = useState();
@@ -78,7 +83,7 @@ export function ImageColors(props: {path: string}) {
     const [minLightness, setMinLightness] = useResumableLocalStorage('image color min lightness', 0)
     const [maxLightness, setMaxLightness] = useResumableLocalStorage('image color max lightness', 100)
     const [minHue, setMinHue] = useResumableLocalStorage('image color min hue', 0)
-    const [maxHue, setMaxHue] = useResumableLocalStorage('image color max hue', 359)
+    const [maxHue, setMaxHue] = useResumableLocalStorage('image color max hue', 360)
     
     const [preserveLightnessRange, setPreserveLightnessRange] = useLocalStorage('image color preserve lightness range', false);
     const [preserveHueRange, setPreserveHueRange] = useLocalStorage('image color preserve hue range', false);
@@ -144,7 +149,7 @@ export function ImageColors(props: {path: string}) {
             type="number"
             value={minHue}
             min={0}
-            max={359}
+            max={360}
             onChange={(e) => {
                 setMinHue(parseInt(e.target.value));
             }}
@@ -159,18 +164,32 @@ export function ImageColors(props: {path: string}) {
                 setMaxHue(parseInt(e.target.value));
             }}
           />
-          <Checkbox disabled={(minHue <= 0) && (maxHue >= 360)} controls={[preserveHueRange, setPreserveHueRange]}>
+          <Checkbox disabled={!preserveHueRange && (maxHue - minHue >= 360)} controls={[preserveHueRange, setPreserveHueRange]}>
             Fix hue range
           </Checkbox>
         </div>
-        <div style={{background: `linear-gradient(90deg in oklch longer hue, transparent 0%, transparent 16px, oklch(71.68% 0.1505 0) 16px, oklch(71.68% 0.1505 0) calc(100% - 16px), transparent calc(100% - 16px), transparent 100%)`}}>
+        <div style={{position: 'relative', background: `linear-gradient(90deg in oklch longer hue, transparent 0%, transparent 16px, oklch(71.68% 0.1505 0) 16px, oklch(71.68% 0.1505 0) calc(100% - 16px), transparent calc(100% - 16px), transparent 100%)`}}>
+          {pickedHue && <div style={{position: 'absolute', width: '100%', height: 62, background: 'transparent', backdropFilter: 'blur(1px)'}}>
+            <div
+              style={{ border: '1px dashed black', width: '100%', height: '100%', fontSize: '2rem'}}
+              onClick={() => {
+                const currentSize = maxHue - minHue;
+                // Shrink range 10 times
+                const halfNewRangeSize = currentSize / 20;
+                setMinHue(pickedHue - halfNewRangeSize);
+                setMaxHue(pickedHue + halfNewRangeSize)
+              }}
+            >
+              click to narrow down
+            </div>
+          </div>}
           <input
             disabled={processing || minHue < 0}
             type="range"
             value={(360 + minHue) % 360} // Yes we have to do this because modulo of negative numbers is broken in js.
             min={0}
-            max={359}
-            style={{width: '95%'}}
+            max={360}
+            style={{width: '100%', height: 28, padding: 0}}
             onChange={(e) => {
               const newValue = parseInt(e.target.value);
               setMinHue(newValue);
@@ -185,10 +204,10 @@ export function ImageColors(props: {path: string}) {
           <input
             disabled={processing || maxHue > 360}
             type="range"
-            value={maxHue % 360}
+            value={maxHue === 360 ? 360 : maxHue % 360}
             min={1}
-            max={359}
-            style={{width: '95%'}}
+            max={360}
+            style={{width: '100%', height: 28, padding: 0}}
             onChange={(e) => {
               const newValue = parseInt(e.target.value);
               setMaxHue(newValue);
@@ -265,6 +284,6 @@ export function ImageColors(props: {path: string}) {
             }}
           />
         </div>
-        {colors.map((color) => <Swatch {...{color, minLightness, maxLightness, rangeSize}}/>)}
+        <PickableColors {...{minLightness, maxLightness, rangeSize, colors}} />
     </div>
 }

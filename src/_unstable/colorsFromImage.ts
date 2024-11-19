@@ -107,6 +107,10 @@ const getProminent = (data: Data, args: Args): Output => {
   const gap = 4 * args.sample
   const colors: { [key: string]: number } = {}
 
+  const noMin = args.minHue === 0;
+  const noMax = args.maxHue === 360;
+  const noHueFilter = noMin && noMax;
+
   for (let i = 0; i < data.length; i += gap) {
     const rgb = [
       group(data[i], args.group),
@@ -121,9 +125,11 @@ const getProminent = (data: Data, args: Args): Output => {
   const isWrappedMax = args.maxHue > 360;
   // Cannot use modulo here because it's broken in JS for negative numbers.
   const minHue = isWrappedMin ? (360 + args.minHue) : args.minHue;
-  const maxHue = args.maxHue % 360;
+  const maxHue = noMax ? 360 : args.maxHue % 360;
 
-  function hueIsInBounds(h) {
+  function hueIsInBounds([,,{h}]) {
+    if (noHueFilter) return true;
+
     if (isWrappedMin) {
       return h >= minHue || h <= maxHue;
     }
@@ -134,7 +140,6 @@ const getProminent = (data: Data, args: Args): Output => {
     return h >= minHue && h <= maxHue;
   }
 
-
   return format(
     Object.entries(colors)
       .filter(([, amount]) => amount > 1) 
@@ -142,7 +147,7 @@ const getProminent = (data: Data, args: Args): Output => {
         const [r,g,b] = color.split(',');
         return [color, amount, toOk(`color(display-p3 ${r / 255} ${g / 255} ${b / 255})`)];
       })
-      .filter(([,,{h}]) => hueIsInBounds(h))
+      .filter(hueIsInBounds)
       .sort(([, ,a], [, ,b]) => a.c > b.c ? -1 : 1)
       // .sort(([, a], [, b]) => a - b)
       .slice(0, args.amount)
