@@ -1,7 +1,7 @@
 import React, { memo } from 'react';
 
-export function controlsAreEqual({ controls: a }, { controls: b }) {
-  return a[0] === b[0] && a[1] === b[1];
+export function controlsAreEqual(a, b) {
+  return a.disabled === b.disabled && a.controls[0] === b.controls[0] && a.controls[1] === b.controls[1];
 }
 
 export const Checkbox = memo(function Checkbox ({
