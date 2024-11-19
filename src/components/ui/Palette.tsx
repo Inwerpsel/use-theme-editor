@@ -423,7 +423,7 @@ export function Palette() {
         <Tutorial el={Palette} tasks={[
           () => [`Add 2 items to the palette (${Math.min(2, values.length)}/2)`, values.length > 1],
         ]}>
-          You can drop values here and drag them onto the page and UI elements.
+          You can drop values from almost anywhere here, and drag them onto the page and UI elements later.
           </Tutorial>
       </div>
     );

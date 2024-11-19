@@ -30,7 +30,7 @@ export function makeCourses() {
                 ResizableFrame,
                 Inspector,
                 ScreenSwitcher,
-                FrameSizeSettings,
+                // FrameSizeSettings,
                 RemoveAnnoyingPrefix,
                 FrameScaleSlider,
             ],

@@ -28,12 +28,18 @@ const intro = (
         <b>Use a large screen. </b>
         On smaller screens you will likely have to remove some UI elements from the screen.
       </li>
-      <li>
+      {/* <li>
         <b>Switch to one of the preset layouts (TODO)</b>
+      </li> */}
+      <li>
+        <b>Mouse is required for some interactions</b>. Other types of input will be added at a later point to simplify development.
       </li>
       <li>
-        <b>Mouse is required for some interactions</b>
-        Other types of input will be added at a later point to simplify development.
+        For now, <b>a P3 capable monitor</b> is required to properly display the
+        `oklch` color pickers, but the UI does not validate this yet. You can use
+        the external <a target="_blank" href="https://oklch.com/">"online picker" link</a> below
+        color pickers, and enable the "Show P3" toggle, which will then indicate
+        whether your current environment (monitor + OS/software settings) supports P3.
       </li>
     </ul>
     {/* <h2>Focus of the online demo</h2>
@@ -51,13 +57,15 @@ const intro = (
     </p> */}
     <h2>Things to be aware of / watch out for</h2>
     <ul>
-      <li>
+      {/* <li>
         While the shown data should be accurate, sometimes more specific rules
         are missed, causing it to not show the most specific value.
-      </li>
+      </li> */}
       <li>
         The quality and mostly the quantity of CSS on a page has a big impact on
-        the quality of the experience.
+        the quality of the experience. 
+        The <a href="https://inwerpsel.github.io/use-theme-editor/demo/halfmoon/docs/forms">halfmoon demo</a> currently
+        has the most complete and glitch free experience.
       </li>
       <li>You can display data that does not use CSS variables, but can't modify those values yet.</li>
       <li>
@@ -91,7 +99,6 @@ let activeStepIndex = 0;
 function openDrawerIfNeeded() {
     lastEl = null;
     setTimeout(() => {
-        console.log(lastEl);
         if (lastEl === null) {
             openDrawer(true);
         }
@@ -193,10 +200,15 @@ export function Tutorial({ el, children, tasks = [] }: {el: any, children: any, 
     openDrawer = setDrawerOpen;
 
     const ref = useRef();
+    const buttonRef = useRef();
     const isActive = el === useActiveTutorialElement();
     useEffect(() => {
         if (isActive) lastEl = el;
         ref.current?.scrollIntoView({behavior: 'smooth'});
+    }, [isActive]);
+
+    useEffect(() => {
+      buttonRef?.current?.focus();
     }, [isActive]);
 
     if (!isActive) {
@@ -231,7 +243,7 @@ export function Tutorial({ el, children, tasks = [] }: {el: any, children: any, 
             {checkedTasks.map(([label, done]) => <CheckTask {...{label, done}} />)}
         </ul>
         <PrevButton />
-        <button disabled={!doneAll} onClick={nextStep}>Next</button>
+        <button ref={buttonRef} disabled={!doneAll} onClick={nextStep}>Next</button>
       </div>
     );
 }

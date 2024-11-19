@@ -251,7 +251,7 @@ export function NoteBox() {
         style={{
           background: 'white',
           border: '2px solid black',
-          fontSize: '2rem',
+          fontSize: '1.2rem',
           maxWidth: 800,
           // wordWrap: 'break-word',
         }}
@@ -264,7 +264,7 @@ export function NoteBox() {
     );
   }
 
-  return <textarea style={{minHeight: 160}} autoFocus onBlur={() => {setReadonly(true)}} value={note} onInput={e => setNote(e.target.value, { debounceTime: Infinity, skipHistory: true })}>
+  return <textarea style={{fontSize: '1.2rem', minHeight: 160}} autoFocus onBlur={() => {setReadonly(true)}} value={note} onInput={e => setNote(e.target.value, { debounceTime: Infinity, skipHistory: true })}>
 
   </textarea>
 }

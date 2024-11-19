@@ -390,7 +390,7 @@ div[id^=font-picker] ul {
 }
 
 #area-top, #area-bottom, #area-top-reverse, #area-bottom-reverse {
-  z-index: 10001;
+  z-index: 10002;
 }
 #area-top > *, #area-bottom > *, #area-top-reverse > *, #area-bottom-reverse > * {
   background-color: rgb(201, 190, 190);
@@ -400,6 +400,10 @@ div[id^=font-picker] ul {
 }
 #area-top label, #area-bottom label, #area-top-reverse label, #area-bottom-reverse label {
   display: inline-block;
+}
+
+#area-left {
+  z-index: 10001;
 }
 
 #area-bottom, #area-bottom-reverse {
@@ -810,6 +814,9 @@ button {
 }
 #area-left .tutorial-content, #area-left-inner .tutorial-content {
   left: 100%;
+}
+#area-bottom .tutorial-content, #area-bottom-reverse .tutorial-content {
+  bottom: 100%;
 }
 
 li[data-done] {

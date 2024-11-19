@@ -90,7 +90,7 @@ $area-speed: .2s;
   > * {
     background-color: rgb(201, 190, 190);
   }
-  z-index: 10001;
+  z-index: 10002;
 
   .area-dropzone {
     transition: width, height $area-speed ease-in;
@@ -99,6 +99,10 @@ $area-speed: .2s;
   label {
     display: inline-block;
   }
+}
+
+#area-left {
+  z-index: 10001;
 }
 
 #area-bottom, #area-bottom-reverse {

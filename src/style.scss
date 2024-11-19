@@ -632,9 +632,9 @@ button {
     left: 100%;
   }
 
-  // #area-right & {
-  //   right: 100%;
-  // }
+  #area-bottom &, #area-bottom-reverse & {
+    bottom: 100%;
+  }
 
   // #drawer &, #area-left &, #area-left-inner &, #area-right & {
   //   bottom: 100%;

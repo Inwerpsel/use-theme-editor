@@ -15,27 +15,53 @@ export function HistoryStash() {
 
     const stringied = useMemo(() => JSON.stringify(lastAlternate.map(a=>[...a.entries()].map(([k]) => k)), null, 2), [lastAlternate])
 
-    return <div
-      className="flex-row" 
-      style={{
-        background: `rgba(26, 217, 210, ${Math.min(lastAlternate.length / 20, 1)})`,
-      }}
-      >
-        <button
-          title={'Apply/create stash:\n' + stringied}
-          onClick={replayAlternate}
-          style={{textAlign: 'left'}}
-          disabled={empty && historyOffset === 0}
+    return (
+      <Fragment>
+        <div
+          className="flex-row"
+          style={{
+            background: `rgba(26, 217, 210, ${Math.min(
+              lastAlternate.length / 20,
+              1
+            )})`,
+          }}
         >
-          {content}
-        </button>
-        {!empty && <Clear />}
-        <Tutorial el={HistoryStash}>
-          If you travel back and discard future, it's still kept here.
-
-          This allows you to splice in a new edit earlier into your history and just re-apply everything after it.
+          <button
+            title={'Apply/create stash:\n' + stringied}
+            onClick={replayAlternate}
+            style={{ textAlign: 'left' }}
+            disabled={empty && historyOffset === 0}
+          >
+            {content}
+          </button>
+          {!empty && <Clear />}
+        </div>
+        <Tutorial
+          el={HistoryStash}
+          tasks={[
+            () => {
+              const { pins } = useContext(HistoryNavigateContext);
+              return [
+                'Remove all pins',
+                pins.size === 0,
+              ];
+            },
+            () => {
+              const { historyOffset } = useContext(HistoryNavigateContext);
+              return [
+                'Navigate back',
+                historyOffset !== 0 || !empty,
+              ];
+            },
+            () => ['Add future actions to the stash', !empty]
+          ]}
+        >
+          If you travel back and discard future, it's still kept here. This
+          allows you to splice in a new edit earlier into your history and just
+          re-apply everything after it.
         </Tutorial>
-    </div>
+      </Fragment>
+    );
 }
 
 function Clear() {
