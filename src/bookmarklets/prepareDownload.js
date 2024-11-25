@@ -1,7 +1,7 @@
 javascript: void (() => {
   try {
     
-    [...document.querySelectorAll('script,iframe, link[rel=preload]')].forEach((e) =>
+    [...document.querySelectorAll('script,iframe, link[rel=preload], link[rel=preconnect]')].forEach((e) =>
       e.parentNode.removeChild(e)
     );
     const titleEl = document.createElement('title');
