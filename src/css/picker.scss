@@ -15,7 +15,7 @@
         accent-color: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
     }
 
-    &:focus, .hovering-with-color {
+    &#hue, &:focus, .hovering-with-color {
 
         &::-webkit-slider-runnable-track {
             background: var(--picked);
