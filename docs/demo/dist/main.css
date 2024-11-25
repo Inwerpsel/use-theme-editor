@@ -449,7 +449,7 @@ div[id^=font-picker] ul {
 }
 #area-bottom > * {
   max-height: 50vh;
-  max-width: 50vw;
+  max-width: 400px;
   overflow-y: auto;
 }
 
@@ -713,6 +713,9 @@ div[id^=font-picker] ul {
   transition: rotate 0.1s ease-in, translate 0.12s;
   transition-delay: 0.07s, 0s;
 }
+button:has(.pin):not(:hover) {
+  border-color: transparent;
+}
 
 .pinned-here .pin {
   filter: none;
@@ -882,7 +885,7 @@ input[type=checkbox] + * {
 .oklch-picker input[type=range]::-webkit-slider-thumb {
   accent-color: oklch(var(--picked-lightness, 63%) var(--picked-chroma, 0.1) var(--picked-hue, 180));
 }
-.oklch-picker input[type=range]:focus::-webkit-slider-runnable-track, .oklch-picker input[type=range] .hovering-with-color::-webkit-slider-runnable-track {
+.oklch-picker input[type=range]#hue::-webkit-slider-runnable-track, .oklch-picker input[type=range]:focus::-webkit-slider-runnable-track, .oklch-picker input[type=range] .hovering-with-color::-webkit-slider-runnable-track {
   background: var(--picked);
   padding-top: 4px;
 }
@@ -1016,6 +1019,17 @@ html {
 
 .force-nodisplay {
   display: none !important;
+}
+
+html.doxray :not(:has(.xray), :is(.xray, .xray *)) {
+  display: none !important;
+}
+html.doxray .xray :hover {
+  outline: 3px solid yellow;
+}
+html.doxray .xray > :hover {
+  outline: 3px solid yellowgreen;
+  outline-offset: 2px;
 }
 
 /*# sourceMappingURL=main.css.map*/

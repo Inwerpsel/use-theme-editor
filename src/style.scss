@@ -513,6 +513,10 @@ $pin-out: $pin-delay, 0s;
   display: inline-block;
   transition: rotate .1s ease-in, translate .12s;
   transition-delay: $pin-out;
+
+  button:has(> &):not(:hover) {
+    border-color: transparent;
+  }
 }
 
 .pinned-here .pin { 
@@ -721,4 +725,20 @@ html {
 
 .force-nodisplay {
   display: none !important;
+}
+
+html.doxray {
+  :not(:has(.xray), :is(.xray, .xray *)) {
+    display: none !important;
+    // visibility: hidden;
+  }
+
+  .xray :hover {
+    outline: 3px solid yellow;
+  }
+
+  .xray > :hover {
+    outline: 3px solid yellowgreen;
+    outline-offset: 2px;
+  }
 }

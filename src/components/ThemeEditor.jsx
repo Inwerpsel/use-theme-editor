@@ -32,7 +32,7 @@ import { WebpackHomeInput } from './ui/WebpackHomeInput';
 import { SignalExample } from './_examples/SignalExample';
 // import { VoiceCommands } from './ui/VoiceCommands';
 // import { SpeakGlobalHooks } from '../voice/menu/state';
-import { NoteBox, HistoryVisualization } from './ui/HistoryVisualization';
+import { HistoryVisualization } from './ui/HistoryVisualization';
 import { Palette } from './ui/Palette';
 import { HistoryStash } from './ui/HistoryStash';
 import { StartTutorial } from '../_unstable/Tutorial';
@@ -42,6 +42,8 @@ import { FullscreenToggle } from './ui/FullScreenToggle';
 import { PickedValue } from './ui/PickedValue';
 import { PickedValueCursor } from './PickedValueCursor';
 import { Selectors } from './ui/Selectors';
+import { NoteBox } from './ui/NoteBox';
+import { Xray } from './ui/Xray';
 
 export const ThemeEditorContext = createContext({});
 
@@ -55,6 +57,7 @@ export const ThemeEditor = (props) => {
   } = props;
   const frameRef = useRef(null);
   const scrollFrameRef = useRef(null);
+  const xrayFrameRef = useRef(null);
 
   // Don't move out along with similar global state, hiding and showing of panels probably needs a different solution.
   const [importDisplayed, setImportDisplayed] = useState(false);
@@ -71,6 +74,7 @@ export const ThemeEditor = (props) => {
         defaultValues,
         frameRef,
         scrollFrameRef,
+        xrayFrameRef,
         setSheetDisablerDisplayed,
       }}
     >
@@ -115,6 +119,7 @@ export const ThemeEditor = (props) => {
               <ThemeUploadPanel/>
               <ColorSettings />
               <Selectors />
+              <Xray />
             </Area>
             <Area id="area-left-inner" >
               <StartTutorial />
@@ -186,8 +191,8 @@ export const ThemeEditor = (props) => {
                 <Checkbox
                   controls={use.enableScrollingInView()}
                 >Scroll into view in history</Checkbox>
-                <WebpackHomeInput />
               </div>
+              <WebpackHomeInput />
               <RemoveAnnoyingPrefix />
               <NameReplacements/>
               {/* <SignalExample /> */}

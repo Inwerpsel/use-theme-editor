@@ -8,6 +8,7 @@ export function ApplyStyles() {
     const {
       frameRef,
       scrollFrameRef,
+      xrayFrameRef,
     } = useContext(ThemeEditorContext);
   
 
@@ -25,6 +26,13 @@ export function ApplyStyles() {
       );
 
       scrollFrameRef.current?.contentWindow.postMessage(
+        {
+          type: 'set-scopes-styles',
+          payload: { scopes, resetAll: true },
+        },
+        window.location.origin
+      );
+      xrayFrameRef.current?.contentWindow.postMessage(
         {
           type: 'set-scopes-styles',
           payload: { scopes, resetAll: true },
