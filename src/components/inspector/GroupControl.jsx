@@ -88,6 +88,33 @@ export function applyHueToAllColors(rawColor, {groupColors, maximizeChroma}) {
   return changed;
 }
 
+function ClearSearchButton() {
+  const [search, setSearch] = use.search();
+  
+  if (search === '') {
+    return null;
+  }
+  return (
+    <span style={{ color: 'grey', fontSize: '12px' }}>
+      - "{search}"
+      <button
+        style={{
+          padding: '3px 3px 1px',
+          position: 'relative',
+          bottom: '4px',
+          borderColor: 'grey',
+        }}
+        title="Clear search"
+        onClick={() => {
+          setSearch('');
+        }}
+      >
+        X
+      </button>
+    </span>
+  );
+}
+
 const hiddenElements = new WeakSet();
 
 export const GroupControl = props => {
@@ -98,7 +125,6 @@ export const GroupControl = props => {
   const { propertyFilter, maximizeChroma  } = get;
   const [{scopes}, dispatch] = use.themeEditor();
 
-  const [search, setSearch] = use.search();
   const [darkSvg, setDarkSvg] = use.svgDarkBg();
   const setPicked = useDispatcher('pickedValue');
   const [showImageColors, setShowImageColors] = useLocalStorage('image color show', false);
@@ -295,20 +321,7 @@ export const GroupControl = props => {
             {label} ({vars.length})
             {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
             >{propertyFilter}</span>}
-            { search !== '' && <span style={{color: 'grey', fontSize: '12px'}}
-            >
-              - "{search}"
-              <button
-                style={{
-                  padding: '3px 3px 1px',
-                  position: 'relative',
-                  bottom: '4px',
-                  borderColor: 'grey'
-                  }}
-                title="Clear search"
-                onClick={() => { setSearch('') }}
-              >X</button>
-              </span>}
+            <ClearSearchButton />
             {groupColors.length > 0 && <div style={{overflowX: 'hidden'}}>
               {groupColors.map(([{name}, value, rawValue, scope]) => {
                 const isVar = name.startsWith('--');

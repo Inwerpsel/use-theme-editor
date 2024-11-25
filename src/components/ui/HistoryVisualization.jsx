@@ -234,42 +234,6 @@ const tutorial = (
   </Tutorial>
 );
 
-export function NoteBox() {
-
-  const [note, setNote] = use.note();
-  const [readonly, setReadonly] = useState(true);
-
-  if (readonly) {
-    const activate = () => setReadonly(false);
-    if (note === '') {
-      return <button onClick={activate}>
-        Note
-      </button>
-    }
-    return (
-      <div
-        style={{
-          background: 'white',
-          border: '2px solid black',
-          fontSize: '1.2rem',
-          maxWidth: 800,
-          // wordWrap: 'break-word',
-        }}
-        onClick={activate}
-      >
-        <pre>
-          {note}
-        </pre>
-      </div>
-    );
-  }
-
-  return <textarea style={{fontSize: '1.2rem', minHeight: 160}} autoFocus onBlur={() => {setReadonly(true)}} value={note} onInput={e => setNote(e.target.value, { debounceTime: Infinity, skipHistory: true })}>
-
-  </textarea>
-}
-NoteBox.fName = 'CommentBox';
-
 function CurrentActions() {
   const {
     past,
