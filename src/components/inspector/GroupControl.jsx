@@ -120,7 +120,9 @@ const hiddenElements = new WeakSet();
 export const GroupControl = props => {
   const {
     group,
+    index,
   } = props;
+  const isDeepest = index === 0;
 
   const { propertyFilter, maximizeChroma  } = get;
   const [{scopes}, dispatch] = use.themeEditor();
@@ -147,7 +149,6 @@ export const GroupControl = props => {
     vars,
     scopes: elementScopes,
     isRootElement,
-    isDeepest,
     inlineStyles,
   } = group;
 

@@ -92,8 +92,8 @@ export function Inspector() {
             <span className="alert">No element selected</span>
           </li>
         )}
-        {groups.map((group) => (
-          <GroupControl key={group.label} {...{ group }} />
+        {groups.map((group, index) => (
+          <GroupControl key={group.label} {...{ group, index }} />
         ))}
       </ul>
     </Fragment>
