@@ -149,7 +149,7 @@ function GoUp() {
 }
 
 export function Xray() {
-    const { width, height, inspectedPath: path } = get;
+    const { width, height, inspectedPath: path, themeEditor: {scopes} } = get;
     const [frameLoaded, setFrameLoaded] = useState(false);
     const {
         xrayFrameRef: ref,
@@ -209,7 +209,7 @@ export function Xray() {
       } catch (e) {
         console.log(e, path);
       }
-    }, [path, frameLoaded, saved, showSaved]);
+    }, [path, frameLoaded, saved, showSaved, scopes]);
 
     function isCurrentPath(somePath) {
         return somePath.toString() === path.toString();
@@ -312,6 +312,7 @@ export function Xray() {
             </div>
           </div>
         )}
+        <span>scale: {scale.toFixed(2)} </span>
       </div>
     );
 }
