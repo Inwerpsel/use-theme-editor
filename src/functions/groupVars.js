@@ -124,12 +124,12 @@ export const groupVars = (vars, target, allVars) => {
   // the previous (one level deeper) element.
   while (current = previous.parentNode) {
     const element = previous;
-    if (cache.has(element)) {
-      // It SHOULD be impossible to find an element in cache if any of its parents are not in cache.
-      groups.push(cache.get(element));
-      previous = current;
-      continue;
-    }
+    // if (cache.has(element)) {
+    //   // It SHOULD be impossible to find an element in cache if any of its parents are not in cache.
+    //   groups.push(cache.get(element));
+    //   previous = current;
+    //   continue;
+    // }
     if (previousMatches.length === 0) {
       break;
     }
@@ -231,7 +231,7 @@ export const groupVars = (vars, target, allVars) => {
         inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
       };
       groups.push(newGroup);
-      cache.set(element, newGroup);
+      // cache.set(element, newGroup);
       previousMatches = currentMatches;
     }
 
