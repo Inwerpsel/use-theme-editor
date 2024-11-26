@@ -416,12 +416,35 @@ type HistoryEntry = {
 let past: HistoryEntry[] = [];
 // Discarded future entries when doing edit in past.
 let lastAlternate: Map<string, any>[] = JSON.parse(localStorage.getItem('history-alternate') || '[]').map((entries) => new Map(entries));
+let savedStashes: [number, Map<string, any>[]] = JSON.parse(localStorage.getItem('history-stashes') || '[]').map(([index, stash]) => [index, stash.map( entries => new Map(entries))]);
 // The length of history at time of creation of last alternate.
 let lastAlternateIndex = parseInt(localStorage.getItem('history-alternate-index') || '0');
 function storeAlternate() {
   localStorage.setItem('history-alternate', JSON.stringify(lastAlternate.map(map=>[...map.entries()])));
   localStorage.setItem('history-alternate-index', lastAlternateIndex.toString());
+  localStorage.setItem('history-stashes', JSON.stringify(savedStashes.map(([originIndex, stash]) => [originIndex, stash.map(map => [...map.entries()])])));
 }
+
+
+export function replaySavedStash(index) {
+  const [, savedStash] = savedStashes[index];
+  const prevStash = lastAlternate;
+  lastAlternate = savedStash;
+  replayAlternate();
+  if (lastAlternate === savedStash) {
+    // No new stash created, restore the previous.
+    lastAlternate = prevStash;
+  }
+  removedSavedStash(index);
+}
+
+export function removedSavedStash(index) {
+
+  savedStashes.splice(index);
+  storeAlternate();
+  forceHistoryRender();
+}
+
 export function clearAlternate() {
   if (lastAlternate.length > historyWarnOnUpdateLimit && !confirm(`Clear ${lastAlternate.length} steps?`)) {
     return;
@@ -774,9 +797,10 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
     return false;
   }
   if (lastAlternate.length > historyWarnOnUpdateLimit && !options.force) {
-    if (!window.confirm(`You're about to lose ${lastAlternate.length} stashed changes, proceed?`)) {
-      return false;
-    }
+    savedStashes.push([lastAlternateIndex, lastAlternate]);
+    // if (!window.confirm(`You're about to lose ${lastAlternate.length} stashed changes, proceed?`)) {
+    //   return false;
+    // }
   }
 
   const now = performance.now();
@@ -1050,6 +1074,7 @@ export function SharedActionHistory(props) {
       states,
       lastAlternate,
       lastAlternateIndex,
+      savedStashes,
       historyUrl,
     }}>
       {children}

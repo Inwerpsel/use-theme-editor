@@ -1,9 +1,9 @@
 import { Fragment, useContext, useMemo } from "react";
-import { HistoryNavigateContext, clearAlternate, replayAlternate } from "../../hooks/useResumableReducer";
+import { HistoryNavigateContext, clearAlternate, removedSavedStash, replayAlternate, replaySavedStash } from "../../hooks/useResumableReducer";
 import { Tutorial } from "../../_unstable/Tutorial";
 
 export function HistoryStash() {
-    const { lastAlternate, historyOffset, past, lastAlternateIndex } =
+    const { lastAlternate, historyOffset, past, lastAlternateIndex, savedStashes } =
       useContext(HistoryNavigateContext);
 
     const position = past.length - historyOffset - lastAlternateIndex;
@@ -35,25 +35,43 @@ export function HistoryStash() {
             {content}
           </button>
           {!empty && <Clear />}
+          {savedStashes.length > 0 && <span> Saved: </span>}
+          {savedStashes.map(([originIndex, map], index) => {
+            return (
+              <Fragment>
+                <button
+                  title={'Apply/create stash:\n' + JSON.stringify(map)}
+                  onClick={replaySavedStash.bind(null, index)}
+                  style={{ textAlign: 'left' }}
+                >
+                  {map.length} steps<br />
+                  {past.length - historyOffset - originIndex} steps since
+                </button>
+                <button
+                  onClick={() => {
+                    if (!confirm('Permanently delete stash?')) return;
+                    removedSavedStash(index)
+                  }}
+                  style={{ textAlign: 'left' }}
+                >
+                  clear
+                </button>
+              </Fragment>
+            );
+          })}
         </div>
         <Tutorial
           el={HistoryStash}
           tasks={[
             () => {
               const { pins } = useContext(HistoryNavigateContext);
-              return [
-                'Remove all pins',
-                pins.size === 0,
-              ];
+              return ['Remove all pins', pins.size === 0];
             },
             () => {
               const { historyOffset } = useContext(HistoryNavigateContext);
-              return [
-                'Navigate back',
-                historyOffset !== 0 || !empty,
-              ];
+              return ['Navigate back', historyOffset !== 0 || !empty];
             },
-            () => ['Add future actions to the stash', !empty]
+            () => ['Add future actions to the stash', !empty],
           ]}
         >
           If you travel back and discard future, it's still kept here. This
