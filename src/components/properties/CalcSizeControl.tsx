@@ -471,7 +471,7 @@ export function CalcSizeControl(props) {
               <br />
               <code>{resolvedOuter}</code>
               <h5>Steps</h5>
-              <ul>
+              <ol>
                 {steps.map((step, i) => {
                   let comp;
                   if (step.mathFunc) {
@@ -490,7 +490,7 @@ export function CalcSizeControl(props) {
 
                   return <li key={i}>{comp}<br /><br /></li>;
                 })}
-              </ul>
+              </ol>
             </li>
           );
         })}

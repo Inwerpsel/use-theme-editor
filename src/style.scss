@@ -183,7 +183,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   padding-left: 0;
 }
 
-.var-control li {
+.var-control ul > li {
   list-style-type: none;
 }
 
@@ -203,7 +203,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   // overflow-y: scroll;
   margin-bottom: 0;
 
-  li {
+  ul > li {
     list-style-type: none;
   }
 
@@ -728,6 +728,10 @@ html {
 }
 
 html.doxray {
+  // * {
+  //   transition: none !important;
+  //   animation: none !important;
+  // }
   :not(:has(.xray), :is(.xray, .xray *)) {
     display: none !important;
     // visibility: hidden;
