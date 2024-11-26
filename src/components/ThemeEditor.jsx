@@ -109,16 +109,12 @@ export const ThemeEditor = (props) => {
             >
               <ScreenSwitcher />
               <FrameScaleSlider/>
+              <ThemeUploadPanel/>
             </Area>
           </div>
           <div style={{display: 'flex', justifyContent: 'flex-start', flexGrow: '1'}}>
             <Area id="area-left">
               <HistoryVisualization />
-              <NoteBox />
-              <MoveControls />
-              <ThemeUploadPanel/>
-              <ColorSettings />
-              <Selectors />
               <Xray />
             </Area>
             <Area id="area-left-inner" >
@@ -156,8 +152,11 @@ export const ThemeEditor = (props) => {
             }}
           >
             <Area id="area-bottom">
+              <Selectors />
+              <NoteBox />
               <Palette />
               <PickedValue />
+              <ColorSettings />
             </Area>
             <Area
               id="area-bottom-reverse"
@@ -178,6 +177,7 @@ export const ThemeEditor = (props) => {
               </div>
             </Area>
             <Drawer>
+              <MoveControls />
               <FullscreenToggle />
               <CursorBehavior />
               <div id='InspectionSettings'>
