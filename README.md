@@ -2,10 +2,15 @@
 
 This repo contains several components that combine to create a rich "theme editor" that works with the CSS it finds on any HTML page.
 
-Originally created to work only with CSS custom properties, it's currently being extended to provide broader CSS support.
-This happens in a 
+* A state management library with focus on undo/redo history
+* Many editor UI elements
+* A drag and drop library to make the UI fully customizable
+* Dedicated CSS UI elements like an `oklch` color picker
 
-Currently, the application is mostly a POC for these various components, where some parts are being kept as simple as possible to facilitate development.
+Currently, only values in custom properties can be changed in the UI, support for editing any CSS is in progress.
+This limitation can be used as a feature, it allows deciding in the code which values can be changed in a design variation.
+
+The demo application is mostly a POC for the various components, where some parts are being kept as simple as possible to facilitate development.
 For example, you cannot really do anything with the created theme except loading it in the editor, and management of created themes is very basic compared to other functionality.
 Though you can also save the result as a JSON or CSS file and use it in another application.
 
