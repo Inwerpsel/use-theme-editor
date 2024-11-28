@@ -1,25 +1,13 @@
 # `use-theme-editor`: Zero config design system for any CSS
 
-Are you tired of slow design iterations, keeping design content up to date, and oversimplified mockups that miss 99% of your app's complexity?
-Do you have a waterfall process just so that you can update a few colors?
-Do you need to have your designers spend literal months setting up and maintaining a separate design system that duplicates information already encoded in your source code?
+This repo contains several components that combine to create a rich "theme editor" that works with the CSS it finds on any HTML page.
 
-With this repo you can directly use your content to inspect every part of the design and create new design variations.
+Originally created to work only with CSS custom properties, it's currently being extended to provide broader CSS support.
+This happens in a 
 
-It works on literally any HTML page, whether it's from a SPA, CMS, SSR app, static file,... It parses all CSS on the page and makes it browsable.
-
-It also allows to edit the value of any CSS custom property in the inspector (edits to other CSS coming soon).
-
-This repository is intended to be used in various ways*:
-- Integrate the standalone theme editor page with almost no coding required (exact steps to follow)
-- Import 1 function in your own app
-- Something in between the previous options (integrate various components into an existing app)
-
-\* While it's intended to preserve this broader range of applicability,
-this may be narrowed down to some extent in the future.
-
-https://github.com/Inwerpsel/use-theme-editor/assets/7604138/2d0e5e6f-3e8c-4aeb-95e2-011204e9e8c2
-
+Currently, the application is mostly a POC for these various components, where some parts are being kept as simple as possible to facilitate development.
+For example, you cannot really do anything with the created theme except loading it in the editor, and management of created themes is very basic compared to other functionality.
+Though you can also save the result as a JSON or CSS file and use it in another application.
 
 ## Demo
 
