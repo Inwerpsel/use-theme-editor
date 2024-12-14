@@ -202,8 +202,23 @@ tags you see in [other example HTML pages at the end of the body](https://github
 * Easily locate all other elements affected by a change
 * Screen switcher on variables with a media query
 * Link variables to other variables to create a design system
-* Switch themes while deep inspecting
 * Reposition or hide any UI element with drag and drop
+* Reliable undo/redo
+
+### Unfinished business
+
+Several important aspects are missing or partially complete, usually to reduce code footprint when 90% of functionality was achieved, or because focus is shifted.
+Some others depend on a planned (partially done) rewrite of the inspection logic and will maintain most current limitations until that rewrite is done.
+
+* Most common usage patterns for CSS custom properties are well supported, with a few exceptions:
+  - If the same property name is used across multiple elements, it only is shown on the topmost (e.g. "--background" in pico demo)
+  - Not able to change color if the variable is inside the color function (e.g. `color: hsl(var(--h), var(--s), var(--l))`). Unfortunately many sites do this.
+* Usage of many media queries on the same custom properties is very likely to lead to incorrect inspection results
+* The "link" UI lists all variables with no filtering on type
+* The editor has few own CSS styles, mostly to guarantee basic functionality. As an artifact of how the editor was initially implemented,
+it loads the sheets on the inspected page before the editor styles. This can get a bit broken, but can also look good and consistent with the content.
+* Drag and drop is the only way to reorder elements in an area, on touch screens you can only move to the end of an area
+* You can put any element in any area, but some combinations will lead to unusable or broken layouts, mostly in the top and bottom areas
 
 ## Roadmap
 
