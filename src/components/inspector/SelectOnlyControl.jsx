@@ -31,6 +31,18 @@ const blendOptions = [
     'color',
     'luminosity',
   ];
+const borderStyleOptions = [
+    'none',
+    'hidden',
+    'dotted',
+    'dashed',
+    'solid',
+    'double',
+    'groove',
+    'ridge',
+    'inset',
+    'outset',
+  ]
 
 // These should be all CSS properties that only allow keywords as a value.
 const lists = {
@@ -86,18 +98,8 @@ const lists = {
   ],
   'background-blend-mode': blendOptions,
   'mix-blend-mode': blendOptions,
-  'border-style': [
-    'none',
-    'hidden',
-    'dotted',
-    'dashed',
-    'solid',
-    'double',
-    'groove',
-    'ridge',
-    'inset',
-    'outset',
-  ],
+  'border-style': borderStyleOptions,
+  'outline-style': borderStyleOptions,
   'vertical-align': [
     'baseline',
     'sub',
