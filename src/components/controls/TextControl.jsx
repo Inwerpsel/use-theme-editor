@@ -17,6 +17,7 @@ export function TextControl({
   value,
   className,
   onChange: _onChange,
+  inputRef,
   ...props
 }) {
   const onChange = (event) => _onChange(event.target.value);
@@ -24,6 +25,7 @@ export function TextControl({
   return (
     <input
       type={'text'}
+      ref={inputRef}
       {...{ value, onChange }}
       onKeyDown={preventUndoRedo}
       className="components-text-control__input"
