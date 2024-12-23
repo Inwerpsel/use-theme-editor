@@ -19,17 +19,15 @@ export function HistoryStash() {
       <Fragment>
         <div
           className="flex-row"
-          style={{
-            background: `rgba(26, 217, 210, ${Math.min(
-              lastAlternate.length / 20,
-              1
-            )})`,
-          }}
+          
         >
           <button
             title={'Apply/create stash:\n' + stringied}
             onClick={replayAlternate}
-            style={{ textAlign: 'left' }}
+            style={{
+              textAlign: 'left',
+              background: `rgba(26, 217, 210, ${Math.min( lastAlternate.length / 50, 1)})`,
+          }}
             disabled={empty && historyOffset === 0}
           >
             {content}
@@ -40,9 +38,14 @@ export function HistoryStash() {
             return (
               <Fragment>
                 <button
-                  title={'Apply/create stash:\n' + JSON.stringify(map)}
+                  title={'Apply/create stash:\n' + JSON.stringify(map.map(m => m.entries()))}
                   onClick={replaySavedStash.bind(null, index)}
-                  style={{ textAlign: 'left' }}
+                  style={{
+                    background: `rgba(26, 217, 210, ${Math.min(
+                      map.length / 50,
+                      1
+                    )})`,
+                  }}
                 >
                   {map.length} steps<br />
                   {past.length - historyOffset - originIndex} steps since
