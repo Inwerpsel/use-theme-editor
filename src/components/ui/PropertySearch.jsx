@@ -1,22 +1,22 @@
-import React, {Fragment} from 'react';
+import React, {Fragment, useRef} from 'react';
 import { use } from '../../state';
-// import {useHotkeys} from 'react-hotkeys-hook';
+import {useHotkeys} from 'react-hotkeys-hook';
 import { TextControl } from '../controls/TextControl';
-import { Checkbox } from "../controls/Checkbox";
+import { Checkbox2 } from "../controls/Checkbox";
 
 
 export function PropertySearch() {
   const [value, setValue] = use.search();
 
-  // const ref = useRef();
+  const inputRef = useRef();
 
-  // useHotkeys('ctrl+/,cmd+/', () => {
-  //   ref.current?.focus();
-  // });
+  useHotkeys('ctrl+/,cmd+/', () => {
+    inputRef.current?.focus();
+  });
 
   return <Fragment>
     <TextControl
-      {...{value}}
+      {...{value, inputRef}}
       onChange={setValue}
       placeholder={'search (cmd+/ or ctrl+/)'}
       style={{
@@ -31,8 +31,8 @@ export function PropertySearch() {
       title="clear"
       onClick={() => setValue('')}
     >x</button>}
-    <Checkbox id={'show-raw-values'} controls={use.showRawValues()} title='View only'>
+    <Checkbox2 id={'show-raw-values'} hook={use.showRawValues} title='View only'>
       Raw values
-    </Checkbox>
+    </Checkbox2>
   </Fragment>;
 }
