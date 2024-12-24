@@ -26,8 +26,8 @@ body {
   font-size: 16px;
 }
 .theme-editor button, .theme-editor input:is([type=button], [type=text]), .theme-editor select, .theme-editor label:has(> [type=checkbox]) {
-  min-width: 44px;
-  min-height: 44px;
+  min-width: 42px;
+  min-height: 42px;
 }
 .theme-editor h4 {
   font-size: 18px !important;
@@ -40,7 +40,7 @@ body {
   margin-top: 0 !important;
 }
 .theme-editor :focus {
-  outline: 3px solid rgb(40, 155, 255) !important;
+  outline: 3px solid rgb(40, 155, 255);
 }
 
 .theme-length-controls {
@@ -71,7 +71,7 @@ body {
   opacity: 1;
 }
 
-.theme-editor *:not(.font-button):not(.monospace-code), .responsive-size-controls * {
+.theme-editor *:not(.font-button, .monospace-code, .var-preview), .responsive-size-controls * {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial;
@@ -150,6 +150,7 @@ body {
 }
 
 .group-list, .server-theme-list {
+  list-style-type: none !important;
   padding: 0;
   margin-bottom: 0;
   min-width: var(--theme-editor--lists--min-width, 320px);
@@ -206,7 +207,8 @@ body {
 }
 
 .var-group {
-  min-height: 49px;
+  position: relative;
+  min-height: 47px;
   background: white !important;
   border: 1px solid black !important;
   margin-top: 0 !important;
@@ -220,6 +222,7 @@ body {
 }
 
 .var-control {
+  overflow: hidden;
   clear: both;
   min-height: 57px;
   border: 1px solid black !important;
@@ -626,6 +629,7 @@ div[id^=font-picker] ul {
   font-family: monospace !important;
   font-size: var(--monospace-code--font-size, 16px);
   background: var(--monospace-code--background, white);
+  color: var(--monospace-code--color, black);
   border: var(--monospace-code--border, 1px solid gray);
   border-radius: var(--monospace-code--border-radius, 4px);
   padding: var(--monospace-code--padding, 4px) !important;
@@ -1021,15 +1025,50 @@ html {
   display: none !important;
 }
 
-html.doxray :not(:has(.xray), :is(.xray, .xray *)) {
-  display: none !important;
+html.doxray {
+  scroll-padding-top: 0 !important;
 }
-html.doxray .xray :hover {
+html.doxray :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *) {
+  display: none !important;
+  visibility: hidden;
+  filter: opacity(0.4) blur(1.5px);
+}
+html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *), html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *) * {
+  visibility: hidden;
+  transition-property: visibility;
+  transition-delay: 0.16s;
+  filter: opacity(0.4) blur(1.5px);
+}
+html.doxray .xray :hover, html.doxray .xray .highlight-descendant {
   outline: 3px solid yellow;
 }
-html.doxray .xray > :hover {
+html.doxray .xray > :hover, html.doxray .xray > .highlight-descendant {
   outline: 3px solid yellowgreen;
   outline-offset: 2px;
+}
+html.doxray .xray > * {
+  transition: filter 0.14s ease-in, visibility 0.1s;
+  transition-delay: 0.06s;
+}
+html.doxray .xray:has(.highlight-descendant) > :not(.highlight-descendant) {
+  filter: opacity(0.4) blur(1.5px);
+}
+
+label {
+  display: inline-block;
+}
+
+html {
+  user-select: none;
+}
+
+body {
+  user-select: text;
+}
+
+::view-transition-group(*) {
+  animation-duration: 0.25s;
+  animation-delay: 0;
 }
 
 /*# sourceMappingURL=main.css.map*/

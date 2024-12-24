@@ -112,13 +112,15 @@ export const use = {
     })],
   themeEditor:
     () => useThemeEditor(),
-  path: 
-    () => useResumableLocalStorage('path', ''),
+  // path: 
+  //   () => useResumableLocalStorage('path', ''),
   fullHeightFrameShowFixed:
     // Ideally this should useLocalStorage, but that currently fails to apply it on page load.
     () => useGlobalState('fullHeightFrameShowFixed', true),
   fullHeightFrameScale:
     () => useResumableLocalStorage('fullHeightFrameScale', 0.05),
+  elementSelectionMode: 
+    () => useGlobalState('elementSelectionMode', false),
   maximizeChroma:
     () => useLocalStorage('maximizeChroma', false),
   pickedValue:
@@ -146,8 +148,6 @@ export const use = {
     // What would actually make sense as this is not very expensive.
     () => [get.width * get.height],
 } as const;
-// Todo: Check if this has any positive/negative impact.
-// Object.freeze(use);
 
 // Let's time this for now to show this doesn't take long even if we're creating
 // signals that aren't yet used.

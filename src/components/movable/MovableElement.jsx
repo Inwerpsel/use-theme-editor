@@ -97,6 +97,19 @@ export function MovableElement({homeAreaId, element, index}) {
       style={{
         position: 'relative',
         order: order || null,
+        // Use view transitions to animate moving elements in history.
+        //
+        // This "works" but is very taxing on performance, causes input delay or even missed inputs.
+        // There are also some visual artifacts, like jittering, probably because it temporarily
+        // fully renders overflowing elements.
+        // Nevertheless, it performs ANY AMOUNT OF animations, at the same time, with a visually correct result.
+        // 
+        // It's only added on every element because, for now,
+        // there are only 4 interactions with a view transition.
+        // (reset uiLayout, choose saved uiLayout, navigate into an element, and pressing single history forward backward buttons)
+        // In both cases, input discarding is not a big concern.
+        // 
+        viewTransitionName: elementId === 'HistoryControls' ? null : elementId,
       }}
       // title={!dragEnabled ? null : elementId}
       className={classnames('movable-element', { 'is-dragged': isDragged })}

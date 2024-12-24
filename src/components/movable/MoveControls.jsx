@@ -41,7 +41,7 @@ export function MoveControls() {
       </Checkbox>}
       <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
       {Object.keys(uiState.map).length > 0 && (
-        <button onClick={() => confirm('Reset to default?') && resetPanels()}>
+        <button onClick={() => document.startViewTransition(() => resetPanels())}>
           reset
         </button>
       )}
@@ -86,7 +86,9 @@ export function MoveControls() {
             if (name === '') {
               return;
             }
-            setUiState(JSON.parse(windowArrangments[name]));
+            document.startViewTransition(() => {
+              setUiState(JSON.parse(windowArrangments[name]));
+            });
           }}
         />
       </div>

@@ -276,9 +276,20 @@ function OriginalUrl() {
   return <a href={historyUrl}>{historyUrl.replace(/http:\/\/|https:\/\//, '')}</a>
 }
 
+// let lastScroll = 0;
+
 export function scrollHistory(event) {
+  // const now = performance.now();
   const delta = Math.round(event.deltaY / 100);
-  delta > 0 ? historyBack(delta, true) : historyForward(-delta, true);
+  // const navigate = () => {
+    delta > 0 ? historyBack(delta, true) : historyForward(-delta, true);
+  // };
+  // if (now - lastScroll > 300 && Math.abs(delta) === 1) {
+    // document.startViewTransition(navigate);
+  // } else {
+  //   navigate();
+  // }
+  // lastScroll = now;
 }
 
 export function HistoryControls() { 

@@ -1,6 +1,6 @@
 $accent-color: var(--theme-editor--acent-color, #007cba);
 $subtle-grey: rgb(179, 162, 162);
-$min-button-height: 44px;
+$min-button-height: 42px;
 
 html,
 body {
@@ -50,7 +50,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   }
 
   :focus {
-    outline: $focus-outline !important;
+    outline: $focus-outline;
   }
 }
 
@@ -83,7 +83,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   }
 }
 
-.theme-editor *:not(.font-button):not(.monospace-code), .responsive-size-controls * {
+.theme-editor *:not(.font-button, .monospace-code, .var-preview), .responsive-size-controls * {
   font-family: Roboto, sans-serif !important;
   color: black;
   line-height: initial;
@@ -192,7 +192,25 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   content: none !important;
 }
 
+// When using the xray element, it's visually better if the deepest element,
+// is aligned to the bottom. This keeps the list stable as elements are opened/closed.
+// For now, it uses a crude way to always enforce this in any area.
+// .area:has(.group-list) {
+  // This makes scrolling work with negative values!
+  // flex-direction: column-reverse !important;
+// }
+
+// .group-list {
+//   display: flex;
+
+//   _-- {
+//     flex-direction: column;
+//     justify-content: space-around;
+//   }
+// }
+
 .group-list, .server-theme-list {
+  list-style-type: none !important;
   --theme-editor--lists-- {
     min-width: 320px;
     @media screen and (min-width: 800px) {
@@ -260,6 +278,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
 }
 
 .var-group {
+  position: relative;
   min-height: $min-button-height + 5px;
   background: white !important;
   border: 1px solid black !important;
@@ -278,6 +297,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   _-- {
     background-color: #e2e2e2;
   }
+  overflow: hidden;
   clear: both;
   min-height: 57px;
   border: 1px solid black !important;
@@ -404,6 +424,7 @@ div[id^=font-picker] ul {
   _-- {
     font-size: 16px;
     background: white;
+    color: black;
     border: 1px solid gray;
     border-radius: 4px;
     padding: 4px !important;
@@ -727,22 +748,89 @@ html {
   display: none !important;
 }
 
+// Todo: Split off CSS that is only for the xray frame.
 html.doxray {
+  scroll-padding-top: 0 !important;
   // * {
   //   transition: none !important;
   //   animation: none !important;
   // }
-  :not(:has(.xray), :is(.xray, .xray *)) {
+  :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *) {
     display: none !important;
-    // visibility: hidden;
+    visibility: hidden;
+    // transition-property: visibility;
+    // transition-delay: .16s;
+    filter: opacity(0.4) blur(1.5px);
   }
 
-  .xray :hover {
+  :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *) {
+    &, & * {
+    visibility: hidden;
+    transition-property: visibility;
+    transition-delay: .16s;
+    // Prevent blur filter from disappearing while elements are removed.
+    filter: opacity(0.4) blur(1.5px);
+  }}
+
+  .xray :hover, .xray .highlight-descendant {
     outline: 3px solid yellow;
   }
 
-  .xray > :hover {
+  .xray > :hover, .xray > .highlight-descendant {
     outline: 3px solid yellowgreen;
     outline-offset: 2px;
   }
+
+  .xray  {
+    > * {
+      transition: filter .14s ease-in, visibility .1s;
+      transition-delay: .06s;
+    }
+
+    &:has(.highlight-descendant) > :not(.highlight-descendant) {
+      filter: opacity(0.4) blur(1.5px);
+    }
+  }
 }
+
+label {
+  display: inline-block;
+}
+
+// .group-list > li:first-child {
+//   min-height: 42px;
+
+//   @starting-style {
+//     min-height: 0;
+//   }
+
+//   transition: min-height .3s ease-out;
+// }
+
+html {
+  user-select: none;
+}
+
+body {
+  user-select: text;
+}
+
+::view-transition-group(*) {
+  animation-duration: .25s;
+  animation-delay: 0;
+  // user-select: none;
+}
+
+// ::view-transition-group(root) {
+//   animation-duration: 0s;
+//   user-select: none;
+// }
+
+// ::view-transition-image-pair(*) {
+//   user-select: none;
+// }
+
+// :root::view-transition-old(*),
+// :root::view-transition-new(*) {
+//   user-select: none;
+// }
