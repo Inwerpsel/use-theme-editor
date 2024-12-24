@@ -5,6 +5,7 @@ import { ThemeEditorContext } from "../ThemeEditor";
 import { Checkbox } from "../controls/Checkbox";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { getGroupsForElement, nukePointerEventsNone } from "../../initializeThemeEditor";
+import { focusInspectedGroup } from "../ResizableFrame";
 
 function commonAncestor(...nodes) {
     let common = nodes[0];
@@ -26,6 +27,14 @@ function commonAncestor(...nodes) {
     return common;
 }
 
+function trackDeepest(element) {
+  if (!element.contains(deepestClicked)) {
+    deepestClicked = element;
+  }
+}
+
+let deepestClicked;
+
 function Inspect({frameRef, loaded}) {
     const { frameClickBehavior, openFirstOnInspect } = get;
     const [path, setPath] = use.inspectedPath();
@@ -46,23 +55,27 @@ function Inspect({frameRef, loaded}) {
             nukePointerEventsNone(element);
             return;
         };
+        trackDeepest(element);
         const newPath = toPath(element, doc)
-        setPath(newPath);
-        // hydrate inspection
-        const groups = getGroupsForElement(element)
-        if (openFirstOnInspect) {
-          setOpenGroups(
-            {
-              [groups[0].label]: true,
-            },
-            { skipHistory: true, appendOnly: true }
-          );
-        }
-  
-        event.preventDefault();
-        event.stopPropagation();
-        nukePointerEventsNone(element);
-        document.querySelector('.area:has(.group-list)')?.scrollTo(0, 0);
+        document.startViewTransition(() => {
+          setPath(newPath);
+          focusInspectedGroup();
+          // hydrate inspection
+          const groups = getGroupsForElement(element)
+          if (openFirstOnInspect) {
+            setOpenGroups(
+              {
+                [groups[0].label]: true,
+              },
+              { skipHistory: true, appendOnly: true }
+            );
+          }
+    
+          event.preventDefault();
+          event.stopPropagation();
+          nukePointerEventsNone(element);
+          // document.querySelector('.area:has(.group-list)')?.scrollTo(0, 0);
+        });
       }
   
       doc.addEventListener('click', listener);
@@ -74,21 +87,99 @@ function Inspect({frameRef, loaded}) {
 }
 
 function tally(element) {
-  const directDescendants =  element.children.length;
+  const directDescendants =  [...element.children];
   const totalDescendants = element.querySelectorAll('*').length;
 
   const totalNodes = element.childNodes.length;
-  const textNodes = totalNodes - directDescendants;
+  const emptyTextNodes = [...element.childNodes].filter(n => (n.nodeType === Node.TEXT_NODE) && n.wholeText.trim() === '').length;
+  const textNodes = totalNodes - directDescendants.length - emptyTextNodes;
 
   return {
     directDescendants,
     totalDescendants,
     textNodes,
+    emptyTextNodes,
+    groupedDescendants: directDescendants.reduce((grouped, el) => {
+      const last = grouped.at(-1);
+      if (last && last[0]?.tagName === el.tagName) {
+        last.push(el);
+      } else {
+        grouped.push([el]);
+      }
+      return grouped;
+    }, []),
   };
 }
 
-function Stats() {
-  const {inspectedPath}= get;
+function Descendant({el, index, xrayRef}) {
+  const [inspectedPath, setInspectedPath] = use.inspectedPath();
+  const newPath = [...inspectedPath, [el.tagName, index]];
+  const doc = xrayRef.current?.contentWindow.document;
+  let node;
+  try {
+    node = toNode(newPath, doc);
+  } catch (e) {
+    return null;
+  }
+  const type = el.tagName.toLowerCase();
+
+  if (type === 'style' || type === 'script') return;
+
+  const idSuffix = !el.id ? '' : `#${el.id}`
+
+  const isHidden = !node.checkVisibility();
+
+  return (
+    <button
+      key={el}
+      className="monospace-code"
+      style={{
+        background: node === deepestClicked || node.contains(deepestClicked) ?'lightblue' : null,
+        textDecoration:  isHidden ? 'underline red' : null,
+        viewTransitionName: `inspected${inspectedPath.length + 1}-${index}`,
+      }}
+      title={isHidden && 'Element is currently not visible'}
+      onMouseEnter={() => {
+        for (const el of doc.querySelectorAll(
+          '.highlight-descendant'
+        )) {
+          el.classList.toggle('highlight-descendant', false);
+        }
+        node.classList.toggle('highlight-descendant', true);
+        node.scrollIntoView({
+          block: 'nearest',
+          inline: 'nearest',
+          behavior: 'smooth',
+        });
+      }}
+      onMouseLeave={() => {
+        node.classList.toggle('highlight-descendant', false);
+      }}
+      onClick={() => {
+        document.startViewTransition(() => {
+          node.classList.toggle('highlight-descendant', false);
+          setInspectedPath(newPath);
+          focusInspectedGroup();
+          setTimeout(() => {
+            node.scrollIntoView({
+              block: 'center',
+              inline: 'center',
+              // behavior: 'smooth',
+            });
+          }, 1);
+          trackDeepest(node);
+        });
+      }}
+    >
+      {type}
+      {idSuffix}
+    </button>
+  );
+
+}
+
+function Stats({xrayRef}) {
+  const {inspectedPath} = get;
   const { frameRef } = useContext(ThemeEditorContext);
 
   const doc = frameRef.current?.contentWindow.document;
@@ -96,22 +187,28 @@ function Stats() {
   try {
     const node = toNode(inspectedPath, doc);
     const stats = tally(node, doc);
+    // const idSuffix = !node.id ? '' : `#${node.id}`
 
     return (
       <div>
-        <code>
-          {stats.directDescendants > 0 && <span>direct: {stats.directDescendants} </span>}
-          {stats.totalDescendants > stats.directDescendants && <span>all: {stats.totalDescendants} </span>}
-          {stats.textNodes > 0 && <span>text: {stats.textNodes}</span>}
+        {/* <code key={node} style={{float: 'right', borderWidth: '3px'}} className="monospace-code">{node.tagName.toLocaleLowerCase()}{idSuffix}</code> */}
+        <code style={{float: 'right'}}>
+          {stats.directDescendants.length > 0 && <span> direct: {stats.directDescendants.length} </span>}
+          {(stats.totalDescendants > stats.directDescendants.length) && <span> all: {stats.totalDescendants} </span>}
+          {stats.textNodes > 0 && <span style={{fontWeight: 'bold'}}> text: {stats.textNodes}</span>}
+          {/* {stats.textNodes > 0 && stats.emptyTextNodes > 0 && <span style={{fontWeight: 'bold', color: 'gray'}}> empty text: {stats.emptyTextNodes}</span>} */}
         </code>
+        {stats.directDescendants.map((el, index) => <Descendant {...{el, index, xrayRef}}/>)}
       </div>
     );
   } catch (e) {
+    // console.log('STATS FAILED', e);
     return null;
   }
 }
 
 function GoUp() {
+  const [selectMode, setSelectMode] = use.elementSelectionMode();
   const [, setOpenGroups] = use.openGroups();
   const { openFirstOnInspect } = get;
   const [path, setPath] = use.inspectedPath();
@@ -119,28 +216,39 @@ function GoUp() {
 
   return (
     <button
+      style={{float: 'right', position: 'sticky', top: 0, outline: selectMode ? '4px solid indigo' : null}}
       disabled={path.length === 0}
+      onBlur={e=> {
+        setTimeout(() => {
+          setSelectMode(false)
+        }, 200);
+      }}
       onClick={(e) => {
         if (!frameRef.current) return; // Should not happen
 
+        setSelectMode(true);
+        const transition = document.startViewTransition(() => {
         const parentPath = path.slice(0, -1);
         setPath(parentPath);
+        focusInspectedGroup();
+        const parent = toNode(parentPath, frameRef.current.contentWindow.document);
         if (openFirstOnInspect) {
           try {
-            const parent = toNode(parentPath, frameRef.current.contentWindow.document);
             const groups = getGroupsForElement(parent)
-            if (openFirstOnInspect) {
-              setOpenGroups(
-                {
-                  [groups[0].label]: true,
-                },
-                { skipHistory: true, appendOnly: true }
-              );
-            }
+            setOpenGroups(
+              {
+                [groups[0].label]: true,
+              },
+              { skipHistory: true, appendOnly: true }
+            );
           } catch (e) {
             console.log('Failed getting node', e)
           }
         }
+        });
+        // setTimeout(() => {
+        //   parent.scrollIntoView({block: 'start', inline: 'start', behavior: 'smooth'});
+        // }, 100);
       }}
     >
       go up ({path.length})
@@ -163,13 +271,21 @@ export function Xray() {
     const [nodeWidth, setNodeWidth] = useState(parseInt(width));
     const [nodeHeight, setNodeHeight] = useState(parseInt(height));
     const [nodeTop, setNodeTop] = useState(0);
+    // console.log(nodeTop);
     const [nodeLeft, setNodeLeft] = useState(0);
     const _scale = 400 / nodeWidth;
     const minScale = 1.6;
-    const scale = zoomOut ? _scale: Math.max(minScale, _scale);
-    const maxHeight = nodeHeight * scale + 12;
+    const maxScale = 14;
+    const scale = Math.min(maxScale, zoomOut ? _scale: Math.max(minScale, _scale));
+    const _prevScale = useRef(null);
+    const prevScale = _prevScale.current;
+    _prevScale.current = scale;
+    const maxHeight = Math.min(
+      500,
+      Math.min(nodeHeight, height) * scale + 12,
+    );
 
-    useLayoutEffect(() => {
+    useEffect(() => {
       if (!frameLoaded) {
         return;
       }
@@ -197,19 +313,43 @@ export function Xray() {
       if (!path) return;
       try {
         const node = toNode(path, doc);
-        if (!node.matches('html, body')) {
-            let common = commonAncestor(...savedNodes, node);
-            node.classList.add('xray');
-            const rect = common.getBoundingClientRect(); 
-            setNodeWidth(rect.right - rect.left + 24);
-            setNodeHeight(rect.bottom - rect.top + 24);
-            setNodeTop(rect.top * -1);
-            setNodeLeft(rect.left * -1);
+        if (!node.matches('html')) {
+          trackDeepest(node);
+          // let common = commonAncestor(...savedNodes, node);
+          node.classList.add('xray');
+          const rect = node.getBoundingClientRect(); 
+          const nodeWidth = rect.right - rect.left + 24;
+          const isWide = nodeWidth > width;
+          setNodeWidth(nodeWidth);
+          const nodeHeight = rect.bottom - rect.top + 24;
+          const isTall = nodeHeight > height;
+          setNodeHeight(nodeHeight);
+          setNodeTop(rect.top * -1);
+          setNodeLeft(rect.left * -1);
+          const t= setTimeout(() => {
+            node?.scrollIntoView({
+              block: isTall ? 'start' : 'nearest',
+              inline: isWide ? 'start' : 'nearest',
+              // behavior: 'smooth',
+            });
+          }, 100);
+          return () => {clearTimeout(t)};
         }
       } catch (e) {
-        console.log(e, path);
+        // console.log(e, path);
       }
-    }, [path, frameLoaded, saved, showSaved, scopes]);
+    }, [path, frameLoaded, saved, showSaved, scopes, width, height]);
+
+    useLayoutEffect(() => {
+      if (!on) return;
+      const doc = ref.current?.contentWindow.document;
+      if (!doc) return null;
+      try {
+        const node = toNode(path, doc);
+        const isOverflowingX = !zoomOut && _scale < minScale;
+        node?.scrollIntoView({block: 'center', inline: isOverflowingX ? 'start' : 'center'})
+      } catch (e) {}
+    }, [path, zoomOut, nodeWidth, on]);
 
     function isCurrentPath(somePath) {
         return somePath.toString() === path.toString();
@@ -225,6 +365,9 @@ export function Xray() {
             doc.addEventListener('mousedown', e => {e.preventDefault(); e.stopPropagation()}, {capture: true})
         }
     }, [frameLoaded]);
+
+    // const isFirst = prevScale === null;
+    // const isZoomout = scale < prevScale;
 
     return (
       <div style={{ maxWidth: 400 }}>
@@ -244,6 +387,8 @@ export function Xray() {
           {on && (
             <Fragment>
               <Checkbox title="min zoom level 1.6" controls={[zoomOut, setZoomOut]}>Zoom out to fit</Checkbox>
+              <GoUp />
+              <br />
               <Checkbox
                 controls={[
                   isSaved,
@@ -259,7 +404,6 @@ export function Xray() {
                 Save
               </Checkbox>
               <Checkbox controls={[showSaved, setShowSaved]}>Show saved</Checkbox>
-              <GoUp />
               
               {showSaved && (
                 <button
@@ -272,25 +416,32 @@ export function Xray() {
               {/* <button onClick={e => {}}>next</button> */}
             </Fragment>
           )}
-          <Stats />
+          {on &&<Stats xrayRef={ref}/>}
         </div>
         {on && (
           <div
             style={{
               maxHeight,
+              // transition: (isZoomout || isFirst) ? null : 'max-height .1s ease-out',
               overflowY: 'hidden',
               overflowX: (scale > minScale || zoomOut ) ? 'hidden' : 'visible',
               visibility: !frameLoaded ? 'hidden' : 'visible',
-              background: 'white',
+              clear: 'both',
             }}
           >
             <div
               style={{
                 scale: `${scale}`,
-                transform: `translateX(${16 + nodeLeft}px) translateY(${
-                  12 + nodeTop
+                // transition: (isZoomout || isFirst) ? null : 'scale .1s ease-in .0s, transform ease-in .1s .0s',
+                // transition: (isZoomout || isFirst) ? null : 'scale .1s ease-in .0s',
+                // transition: 'scale .2s ease-out',
+                // translate: `${12 + nodeLeft}px ${12 + nodeTop}px`,
+                transform: `translateX(${(12 + nodeLeft) }px) translateY(${
+                  12  + (Math.max(-maxHeight + 12, nodeTop)) 
                 }px)`,
                 transformOrigin: 'top left',
+                // transformOrigin: 'top right',
+                // transformOrigin: 'center center',
               }}
             >
               <Inspect {...{ frameRef: ref, loaded: frameLoaded }} />
@@ -306,6 +457,7 @@ export function Xray() {
                   height,
                   style: {
                     maxWidth: 'none',
+                    background: 'white',
                   },
                 }}
               />
