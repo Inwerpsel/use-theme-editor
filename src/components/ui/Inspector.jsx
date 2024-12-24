@@ -53,7 +53,7 @@ export function Inspector() {
     const element = toNode(inspectedPath, frameRef.current?.contentWindow.document);
     unfilteredGroups = getGroupsForElement(element);
   } catch(e) {
-    console.log(e);
+    // console.log(e);
     unfilteredGroups = [];
   }
 

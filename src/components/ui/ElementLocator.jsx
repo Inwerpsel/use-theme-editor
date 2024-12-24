@@ -11,6 +11,8 @@ import { allStateSelectorsRegexp, residualNotRegexp } from '../../functions/getM
 import { get, use } from '../../state';
 import { toNode, toPath } from '../../functions/nodePath';
 import { addHighlight, removeHighlight } from '../../functions/highlight';
+import { getGroupsForElement } from '../../initializeThemeEditor';
+import { focusInspectedGroup } from '../ResizableFrame';
 
 function removeStateSelectors(selector) {
   return selector
@@ -56,8 +58,11 @@ export function ElementLocator({
   allowScroll = false,
   allowDrag = true,
 }) {
-  const { frameLoaded } = get;
+  const { frameLoaded, openFirstOnInspect } = get;
+
   const [inspectedPath, setInspectedPath] = use.inspectedPath();
+  const [, setOpenGroups] = use.openGroups();
+
   const strippedSelector = useMemo(() => removeStateSelectors(selector), []);
   const didLastInspectHere = strippedSelector === lastInspectedSelector;
   const { frameRef } = useContext(ThemeEditorContext);
@@ -86,7 +91,7 @@ export function ElementLocator({
       console.log(e);
       return [];
     }
-  }, [selector, frameLoaded]);
+  }, [selector, frameLoaded, inspectedPath]);
 
   const [currentElement, setCurrentElement] = useState(
     Math.max(elements.findIndex((el) => el.isCurrentlyInspected),  0)
@@ -129,9 +134,16 @@ export function ElementLocator({
     const now = performance.now();
     const isFast = now - lastScroll < 100;
     lastScroll = now;
-    const delta = Math.round(event.deltaY / 100) * -1;
-    const afterStep = currentElement - delta;
-    const next = afterStep < 0 ? (elements.length + afterStep) : afterStep >= elements.length ? (afterStep - elements.length) : afterStep;
+    const stepSize = Math.round(event.deltaY / 100) * -1;
+    const afterStep = currentElement - stepSize;
+    const next =
+      afterStep < 0
+        // Stepped below 0
+        ? afterStep + elements.length
+        : afterStep >= elements.length
+        // Stepped above amount of elements
+        ? afterStep - elements.length
+        : afterStep;
     setCurrentElement(next);
     viewHighLightSingle(elements[next].node, {behavior: isFast ? 'instant' : 'smooth', block: 'center'});
     // event.preventDefault();
@@ -214,10 +226,20 @@ export function ElementLocator({
             <button
               onClick={() => {
                 setInspectedPath(toPath(element.node));
+                focusInspectedGroup();
+                if (openFirstOnInspect) {
+                  const groups = getGroupsForElement(element.node)
+                  setOpenGroups(
+                    {
+                      [groups[0].label]: true,
+                    },
+                    { skipHistory: true, appendOnly: true }
+                  );
+                }
               }}
               style={{ fontSize: '10px' }}
             >
-              inspect
+              🔍
             </button>
           )}
           <span>

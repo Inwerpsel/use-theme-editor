@@ -12,7 +12,24 @@ const wrapperMargin = 16;
 // Can't start at 0 as otherwise it messes with page load.
 let lastInspectedTime = -Infinity;
 
-let lastClicked;
+export function focusInspectedGroup() {
+  setTimeout(() => {
+    // document.querySelector('.area:has(.group-list)')?.scrollTo(0, -2000000);
+
+    const el = document.querySelector('.var-group:first-child');
+    // console.log(el);
+    el?.scrollIntoView({block: 'start'});
+  }, 0);
+  // setTimeout(() => {
+  //   // document.querySelector('.area:has(.group-list)')?.scrollTo(0, -2000000);
+
+  //   const el = document.querySelector('.var-group:first-child');
+  //   // console.log(el);
+  //   el?.scrollIntoView({block: 'start'});
+  // }, 100);
+}
+
+export let lastClicked;
 
 function InspectOnClick({frameRef, loaded}) {
   const { frameClickBehavior, openFirstOnInspect, enableScrollingInView } = get;
@@ -27,6 +44,8 @@ function InspectOnClick({frameRef, loaded}) {
         return;
       }
       const element = event.target;
+      event.preventDefault();
+      event.stopPropagation();
       if (element === lastClicked) return;
       const newPath = toPath(element)
       if (newPath === path) {
@@ -44,8 +63,6 @@ function InspectOnClick({frameRef, loaded}) {
         );
       }
 
-      event.preventDefault();
-      event.stopPropagation();
       lastInspectedTime = performance.now()
       addHighlight(element);
       setTimeout(() => {
@@ -57,7 +74,7 @@ function InspectOnClick({frameRef, loaded}) {
         inline: 'nearest',
         behavior: 'smooth',
       });
-      document.querySelector('.area:has(.group-list)')?.scrollTo(0, 0);
+      focusInspectedGroup();
       lastClicked = element;
     }
 

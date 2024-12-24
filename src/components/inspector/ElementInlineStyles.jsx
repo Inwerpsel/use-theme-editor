@@ -6,10 +6,10 @@ export function ElementInlineStyles(props) {
   const dispatch = editTheme();
   const { group, elementScopes } = props;
 
-  if (!group.inlineStyles) {
+  const styles = Object.entries(group.inlineStyles)
+  if (styles.length === 0) {
       return null;
   }
-  const styles = Object.entries(group.inlineStyles)
 
   return <div>
       <h5 style={{color: 'red'}}>Inline styles</h5>
@@ -35,6 +35,7 @@ export function ElementInlineStyles(props) {
 
             return (
               <VariableControl
+                {...{group}}
                 key={cssVar.name}
                 cssVar={cssVar}
                 scopes={elementScopes}

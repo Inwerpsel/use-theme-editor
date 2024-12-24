@@ -111,6 +111,18 @@ function svgPartHtml(part) {
 
 const cache = new WeakMap();
 
+function inheritedInlineStyles(element, excluded) {
+  let parent = element, styles = {};
+  while (parent.parentNode?.style) {
+    parent = parent.parentNode;
+    for (const propname of parent.style) {
+      if ((propname in excluded)|| propname in styles) continue;
+      styles[propname] = parent.style.getPropertyValue(propname);
+    } 
+  }
+  return styles;
+}
+
 export const groupVars = (vars, target, allVars) => {
   const groups = [];
   // 
@@ -139,7 +151,7 @@ export const groupVars = (vars, target, allVars) => {
     let previousHasInlineStyles = false;
     for (const propname of element.style) {
       previousHasInlineStyles = true;
-      previousInlineStyles[propname] = element.style[propname];
+      previousInlineStyles[propname] = element.style.getPropertyValue(propname);
     }
 
     const currentMatchesLess = currentMatches.length < previousMatches.length;
@@ -192,7 +204,9 @@ export const groupVars = (vars, target, allVars) => {
           // Previously this was `element.title`, however if a form element contains an input with name "title",
           // that DOM element would be returned. This causes a crash when this data is sent as a message.
           title: element.getAttribute('title'),
-          
+        },
+        computedStyles: {
+          fontFamily: getComputedStyle(element).fontFamily,
         },
         isRootElement,
         isDeepest,
@@ -228,7 +242,8 @@ export const groupVars = (vars, target, allVars) => {
         }),
         scopes,
         // Provide non-root custom prop values for the previews.
-        inlineStyles: !previousHasInlineStyles ? null : previousInlineStyles,
+        inlineStyles: previousInlineStyles,
+        inheritedInlineStyles: inheritedInlineStyles(element, previousInlineStyles),
       };
       groups.push(newGroup);
       // cache.set(element, newGroup);

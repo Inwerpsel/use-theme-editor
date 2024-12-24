@@ -20,6 +20,7 @@ import { readSync } from '../../hooks/useGlobalState';
 import { useDispatcher } from '../../hooks/useResumableReducer';
 import { onLongPress } from '../../functions/onLongPress';
 import { addHighlight, removeHighlight } from '../../functions/highlight';
+import { toNode } from '../../functions/nodePath';
 
 const previewSize = '28px';
 // Mimic minimum value used in Chromium.
@@ -117,6 +118,80 @@ function ClearSearchButton() {
 
 const hiddenElements = new WeakSet();
 
+const svgsDone = new Set();
+
+function InlineSvg({src, element}) {
+  const [path, setPath] = use.inspectedPath();
+  const {
+    // frameRef,
+    xrayFrameRef,
+  } = useContext(ThemeEditorContext);
+
+  if (!src?.endsWith('.svg') || svgsDone.has(src)) return null;
+
+  return (
+    <button
+      onClick={() => {
+        (async () => {
+          // const constructorResult = new URL(src, window.location.href);
+          const parseResult = URL.parse(src, window.location.href);
+
+          const response = await fetch(parseResult?.href || src);
+          const content = await response.text();
+          // console.log(content);
+          const wrapper = document.createElement('div');
+          wrapper.style.minHeight = '100px';
+          wrapper.style.minWidth = '100px';
+          wrapper.innerHTML = content;
+          element.after(wrapper);
+          if (xrayFrameRef.current) {
+            const xrayDoc = xrayFrameRef.current.contentWindow.document;
+            const wrapper = xrayDoc.createElement('div');
+            wrapper.innerHTML = content;
+            wrapper.style.minHeight = '100px';
+            wrapper.style.minWidth = '100px';
+            const element = toNode(path, xrayDoc);
+            element.after(wrapper);
+            setPath([...path.slice(0, -1), ['SVG', path.at(-1)[1] + 1]]);
+          }
+          svgsDone.add(src);
+        })();
+      }}
+    >
+      inline SVG
+    </button>
+  );
+}
+
+function SelectElement({path}) {
+
+  const [elementSelectionMode, setElementSelectionMode] = use.elementSelectionMode();
+  const [, setPath] = use.inspectedPath();
+
+  if (!elementSelectionMode) return null;
+
+  return (
+    <div
+      onClick={(e) => {
+        setPath(path);
+        setElementSelectionMode(false);
+      }}
+      title={'Go up to this element'}
+      style={{
+        outline: '3px solid indigo',
+        borderRadius: '7px',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        bottom: 0,
+        right: 0,
+        zIndex: 99,
+        cursor: 'pointer',
+      }}
+    ></div>
+  );
+}
+
 export const GroupControl = props => {
   const {
     group,
@@ -124,7 +199,7 @@ export const GroupControl = props => {
   } = props;
   const isDeepest = index === 0;
 
-  const { propertyFilter, maximizeChroma  } = get;
+  const { propertyFilter, maximizeChroma, inspectedPath  } = get;
   const [{scopes}, dispatch] = use.themeEditor();
 
   const [darkSvg, setDarkSvg] = use.svgDarkBg();
@@ -144,13 +219,16 @@ export const GroupControl = props => {
       html,
       width,
     },
-    textContent,
     label,
     vars,
     scopes: elementScopes,
     isRootElement,
-    inlineStyles,
+    inlineStyles = {},
+    inheritedInlineStyles = {},
   } = group;
+  const hasInlineStyles = Object.keys(inlineStyles).length > 0;
+  const showText = isDeepest && [...element.childNodes].some(el => el.nodeType === 3 && el.textContent.trim() !== '')
+  const textContent = !showText ? null : element.textContent.trim();
 
   // useEffect(() => {
   //   // Freeze display rules during inspection by adding as inline styles.
@@ -177,7 +255,6 @@ export const GroupControl = props => {
   // }, []);
 
   const {
-    // frameRef,
     defaultValues,
   } = useContext(ThemeEditorContext);
   const [openGroups, setOpenGroups] = use.openGroups();
@@ -187,6 +264,7 @@ export const GroupControl = props => {
     const {[id]: wasOpen, ...other} = openGroups;
     const newGroups = wasOpen ? other : {...other, [id]: true};
     setOpenGroups(newGroups);
+    return !wasOpen;
   };
   const [isHidden, setIsHidden] = useState(hiddenElements.has(element));
 
@@ -221,9 +299,9 @@ export const GroupControl = props => {
           defaultValues[name] ||
           someVar.maxSpecific?.defaultValue || someVar.usages[0].defaultValue;
         const valueFromScope = !scopes || !scopes[currentScope] ? null : scopes[currentScope][name];
-        const rawValue = valueFromScope || defaultValue;
+        const rawValue = inlineStyles[name] || inheritedInlineStyles[name] || valueFromScope || defaultValue;
 
-        let [value] = resolveVariables(rawValue, elementScopes, scopes);
+        let [value] = resolveVariables(rawValue, elementScopes, scopes, 0, inlineStyles, inheritedInlineStyles);
 
         if (value.includes('calc(')) {
           const scenario = {steps: []};
@@ -267,164 +345,301 @@ export const GroupControl = props => {
   const isOpen = !!openGroups[label];
 
   return (
-    (<li className={'var-group'} key={label} style={{marginBottom: '12px'}}>
-      <div
-        style={{
-          position: 'sticky',
-          top: 0,
-          background: 'white',
-          zIndex: 12,
-          overflow: isOpen ? 'hidden' : 'auto',
-        }}
+    <li
+      className={'var-group'}
+      key={label}
+      style={{
+        viewTransitionName:
+          (isDeepest && inspectedPath.length > 1)
+            ? `inspected${inspectedPath.length}-${inspectedPath.at(-1)[1]}`
+            : index,
+        marginBottom: '12px',
+      }}
+    >
+      <div 
         onMouseEnter={() => {
-          addHighlight(element)
+          addHighlight(element);
         }}
         onMouseLeave={() => {
           removeHighlight(element);
         }}
       >
-        {isRootElement ? <span style={{float: 'right'}}>global</span> : <ScrollInViewButton {...{path}}/>}
-        
-        <h4
+        {!isDeepest && <SelectElement {...{ path }} />}
+        <div
           style={{
-            fontWeight: 400,
-            marginBottom: 0,
-            paddingRight: '4px',
-            cursor: !hasContent ? 'initial' : 'pointer',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-start',
-            maxHeight: isOpen ? '128px' : '300px',
-            overflowX: 'hidden',
-            overflowY: 'auto',
+            position: 'sticky',
+            top: 0,
+            background: 'white',
+            zIndex: 12,
+            overflow: isOpen ? 'hidden' : 'auto',
           }}
-          onClick={!hasContent ? null : (event) => {
-            const picked = readSync('pickedValue');
-            if (picked) {
-              const changed = applyHueToAllColors(picked, {groupColors, maximizeChroma});
-              // Allow still opening an element if no change was made.
-              if (changed) return;
-            }
-            toggleGroup(label);
-            // Closing a group will reduce the height of the area.
-            // If we don't do a scroll here, we're pushed downwards as it applies the same
-            // scroll offset to the smaller area. The result is very confusing and broken.
-            // It feels like browsers could always try something like this instead,
-            // given that otherwise the list is always thrown into some random later position.
-            queueMicrotask(() => {
-              event.target.scrollIntoView({block: 'nearest'});
-            }, 0);
-          }}
-          onDrop={(event) => applyHueFromDropped({groupColors, maximizeChroma}, event)}
-          onDragOver={(e) => {e.preventDefault()}}
         >
-          <div>
-            {label} ({vars.length})
-            {propertyFilter !== 'all' && <span style={{color: 'grey', fontSize: '12px'}}
-            >{propertyFilter}</span>}
-            <ClearSearchButton />
-            {groupColors.length > 0 && <div style={{overflowX: 'hidden'}}>
-              {groupColors.map(([{name}, value, rawValue, scope]) => {
-                const isVar = name.startsWith('--');
-                return (
-                  <div
-                    onDragOver={event=>event.preventDefault()}
-                    onDrop={event=> {
-                      let value = event.dataTransfer.getData('value');
-                      if (value === '') {
-                        value = event.dataTransfer.getData('text/plain').trim();
-                      }
-                      if (value === '') {
-                        return;
-                      }
-                      dispatch({type: ACTIONS.set, payload: {name, value, scope}})
-                      event.stopPropagation();
-                    }}
-                    draggable
-                    {...onLongPress(() => setPicked(value))}
-                    onDragStart={dragValue(rawValue)}
-                    key={name}
-                    title={name === value ? name : `${name}: ${rawValue}`}
-                    style={{
-                      display: 'inline-block',
-                      width: previewSize,
-                      height: previewSize,
-                      lineHeight: '1.5',
-                      border: '1px solid black',
-                      borderRadius: '6px',
-                      backgroundImage: `${value}`,
-                      backgroundColor: `${value}`,
-                      backgroundRepeat: `no-repeat`,
-                      backgroundSize: 'cover',
-                      marginTop: '3px',
-                      marginLeft: '6px',
-                      paddingTop: '3.5px',
-                      fontSize: '14px',
-                      textAlign: 'center',
-                      textShadow: isVar ? 'white 0px 3px' : 'white 2px 2px'
-                    }}>{/^var\(/.test(rawValue) ? 'v' : value === 'transparent' ? '👻' : ! isVar ? 'r': <Fragment>&nbsp;</Fragment>}</div>
-                );
-                })}
-            </div>}
-          </div>
-
-          {inlineStyles && <span style={{...{border: '1px solid black'}, ...inlineStyles, ...{maxHeight: previewSize, width: 'auto'}}}>Inline</span>}
-          {src && <img src={src} srcSet={srcset} alt={alt} title={title || alt} style={{height: '52px', float: 'right', backgroundColor: 'grey'}}/>}
-          {html?.length > 0 && <div
-            className='svg-inspect-wrapper'
-            style={{display: 'inline', position: 'relative', minWidth: `${width}px`, maxWidth: '50%', maxHeight: '160px', outline: '1px solid grey', padding: '2px', background: darkSvg ? 'black' : 'transparent'}}
-            onClick={(e) => {setDarkSvg(!darkSvg); e.stopPropagation()}}
-            dangerouslySetInnerHTML={{__html: html}}
-          ></div>}
-          {textContent && <div style={{fontSize: '12px', border: '1p solid grey',background:'lightgrey',maxWidth: '45%', margin: '4px', padding: '4px', float: 'right', maxHeight: '62px', overflow: 'auto'}}>{textContent}</div>}
-          
-        </h4>
-      </div>
-      {isOpen && <Fragment>
-        {src &&<Checkbox controls={[showImageColors, setShowImageColors]}>Extract colors</Checkbox>}
-        {src && <code style={{float: 'right'}}>{imgWidth} x {imgHeight}</code>}
-        {src && showImageColors && <ImageColors path={src} />}
-        <ElementInlineStyles {...{group, elementScopes}}/>
-        <ScopeControl {...{scopes: elementScopes, vars, element}}/>
-        <ul className={'group-list'}>
-          {vars.filter(v=>!v.currentScope).map(cssVar => {
-            return <VariableControl
-              {...{
-                cssVar,
-                scopes: elementScopes,
-                element,
-              }}
-              key={cssVar.name}
-              onChange={value => {
-                dispatch({
-                  type: ACTIONS.set,
-                  payload: {
-                    name: cssVar.name, 
-                    value,
-                  }
-                });
-              }}
-              onUnset={() => {
-                dispatch({ type: ACTIONS.unset, payload: { name: cssVar.name } });
-              }}
-            />;
-          }
+          {isRootElement ? (
+            <span style={{ float: 'right' }}>global</span>
+          ) : (
+            <ScrollInViewButton {...{ path }} />
           )}
-        </ul>
-        <Checkbox
-          controls={[
-            hiddenElements.has(element),
-            value => {
-              if (!value) {
-                hiddenElements.delete(element);
-              } else {
-                hiddenElements.add(element);
-              }
-              setIsHidden(value);
-            }]
-          }
-        >Hide</Checkbox>
-      </Fragment>}
-    </li>)
+
+          <h4
+            style={{
+              fontWeight: 400,
+              marginBottom: 0,
+              paddingRight: '4px',
+              cursor: !hasContent ? 'initial' : 'pointer',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'flex-start',
+              maxHeight: isOpen ? '128px' : '300px',
+              overflowX: 'hidden',
+              overflowY: 'auto',
+            }}
+            onClick={
+              !hasContent
+                ? null
+                : (event) => {
+                    const picked = readSync('pickedValue');
+                    if (picked) {
+                      const changed = applyHueToAllColors(picked, {
+                        groupColors,
+                        maximizeChroma,
+                      });
+                      // Allow still opening an element if no change was made.
+                      if (changed) return;
+                    }
+                    const becameOpen = toggleGroup(label);
+                    // Closing a group will reduce the height of the area.
+                    // If we don't do a scroll here, we're pushed downwards as it applies the same
+                    // scroll offset to the smaller area. The result is very confusing and broken.
+                    // It feels like browsers could always try something like this instead,
+                    // given that otherwise the list is always thrown into some random later position.
+                    queueMicrotask(() => {
+                      if (becameOpen) {
+                        event.target.closest('.var-group')?.scrollIntoView({
+                          block: 'start',
+                          // block: 'nearest',
+                          // behavior: 'smooth',
+                        });
+                      } else {
+                        event.target.scrollIntoView({
+                          block: 'nearest',
+                          // behavior: 'smooth',
+                        });
+                      }
+                    }, 0);
+                  }
+            }
+            onDrop={(event) =>
+              applyHueFromDropped({ groupColors, maximizeChroma }, event)
+            }
+            onDragOver={(e) => {
+              e.preventDefault();
+            }}
+          >
+            <div style={{flexShrink: 1}}>
+              {label} ({vars.length})
+              {propertyFilter !== 'all' && (
+                <span style={{ color: 'grey', fontSize: '12px' }}>
+                  {propertyFilter}
+                </span>
+              )}
+              <ClearSearchButton />
+              {groupColors.length > 0 && (
+                <div style={{ overflowX: 'hidden' }}>
+                  {groupColors.map(([{ name }, value, rawValue, scope]) => {
+                    const isVar = name.startsWith('--');
+                    return (
+                      <div
+                        onDragOver={(event) => event.preventDefault()}
+                        onDrop={(event) => {
+                          let value = event.dataTransfer.getData('value');
+                          if (value === '') {
+                            value = event.dataTransfer
+                              .getData('text/plain')
+                              .trim();
+                          }
+                          if (value === '') {
+                            return;
+                          }
+                          dispatch({
+                            type: ACTIONS.set,
+                            payload: { name, value, scope },
+                          });
+                          event.stopPropagation();
+                        }}
+                        draggable
+                        {...onLongPress(() => setPicked(value))}
+                        onDragStart={dragValue(rawValue)}
+                        key={name}
+                        title={name === value ? name : `${name}: ${rawValue}`}
+                        style={{
+                          display: 'inline-block',
+                          width: previewSize,
+                          height: previewSize,
+                          lineHeight: '1.5',
+                          border: '1px solid black',
+                          borderRadius: '6px',
+                          backgroundImage: `${value}`,
+                          backgroundColor: `${value}`,
+                          backgroundRepeat: `no-repeat`,
+                          backgroundSize: 'cover',
+                          marginTop: '3px',
+                          marginLeft: '6px',
+                          paddingTop: '3.5px',
+                          fontSize: '14px',
+                          textAlign: 'center',
+                          textShadow: isVar ? 'white 0px 3px' : 'white 2px 2px',
+                        }}
+                      >
+                        {/^var\(/.test(rawValue) ? (
+                          'v'
+                        ) : value === 'transparent' ? (
+                          '👻'
+                        ) : !isVar ? (
+                          'r'
+                        ) : (
+                          <Fragment>&nbsp;</Fragment>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+
+            {hasInlineStyles && (
+              <span
+                style={{
+                  ...{ border: '1px solid black' },
+                  ...inlineStyles,
+                  ...{ maxHeight: previewSize, width: 'auto' },
+                }}
+              >
+                Inline
+              </span>
+            )}
+            {src && (
+              <img
+                src={src}
+                srcSet={srcset}
+                alt={alt}
+                title={title || alt}
+                style={{
+                  height: '52px',
+                  float: 'right',
+                  backgroundColor: 'grey',
+                }}
+              />
+            )}
+            {html?.length > 0 && (
+              <div
+                className="svg-inspect-wrapper"
+                style={{
+                  display: 'inline',
+                  position: 'relative',
+                  minWidth: `${width}px`,
+                  maxWidth: '50%',
+                  maxHeight: '160px',
+                  outline: '1px solid grey',
+                  padding: '2px',
+                  background: darkSvg ? 'black' : 'transparent',
+                }}
+                onClick={(e) => {
+                  setDarkSvg(!darkSvg);
+                  e.stopPropagation();
+                }}
+                dangerouslySetInnerHTML={{ __html: html }}
+              ></div>
+            )}
+            {textContent && (
+              <div
+                style={{
+                  fontSize: '12px',
+                  border: '1p solid grey',
+                  background: 'lightgrey',
+                  maxWidth: '45%',
+                  margin: '4px',
+                  padding: '4px',
+                  float: 'right',
+                  maxHeight: '62px',
+                  overflow: 'auto',
+                }}
+              >
+                {textContent}
+              </div>
+            )}
+          </h4>
+        </div>
+      </div>
+
+      {isOpen && (
+        <Fragment>
+          {src && (
+            <Fragment>
+              <a href={src} target="_blank">
+                {src}
+              </a>
+              <br />
+              <Checkbox controls={[showImageColors, setShowImageColors]}>
+                Extract colors
+              </Checkbox>
+              <code style={{ float: 'right' }}>
+                {imgWidth} x {imgHeight}
+              </code>
+              {showImageColors && <ImageColors path={src} />}
+            </Fragment>
+          )}
+          <ElementInlineStyles {...{ group, elementScopes }} />
+          <ScopeControl {...{ scopes: elementScopes, vars, element, group }} />
+          <ul className={'group-list'}>
+            {vars
+              .filter((v) => !v.currentScope)
+              .map((cssVar) => {
+                return (
+                  <VariableControl
+                    {...{
+                      cssVar,
+                      scopes: elementScopes,
+                      element,
+                      group,
+                    }}
+                    key={cssVar.name}
+                    onChange={(value) => {
+                      dispatch({
+                        type: ACTIONS.set,
+                        payload: {
+                          name: cssVar.name,
+                          value,
+                        },
+                      });
+                    }}
+                    onUnset={() => {
+                      dispatch({
+                        type: ACTIONS.unset,
+                        payload: { name: cssVar.name },
+                      });
+                    }}
+                  />
+                );
+              })}
+          </ul>
+          <Checkbox
+            controls={[
+              hiddenElements.has(element),
+              (value) => {
+                if (!value) {
+                  hiddenElements.delete(element);
+                } else {
+                  hiddenElements.add(element);
+                }
+                setIsHidden(value);
+              },
+            ]}
+          >
+            Hide
+          </Checkbox>
+        </Fragment>
+      )}
+      <InlineSvg {...{ element, src }} />
+    </li>
   );
 };

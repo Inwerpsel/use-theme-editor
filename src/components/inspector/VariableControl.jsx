@@ -85,7 +85,7 @@ export const FormatVariableName = ({name, style}) => {
   </span>;
 };
 
-export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen}) => {
+export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen, group}) => {
   const size = PREVIEW_SIZE;
   const title = `${value}${!isDefault ? '' : ' (default)'}`;
   const isUrl = /url\(/.test(resolvedValue);
@@ -95,10 +95,11 @@ export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, reference
     GRADIENT_REGEX.test(resolvedValue);
   const presentable = isColor || isUrl;
 
-  if (resolvedValue && presentable && !/currentcolor/i.test(resolvedValue)) {
+  if (resolvedValue && presentable && resolvedValue !== 'currentcolor') {
     return (
       <Fragment>
         <span
+          className='var-preview'
           draggable
           onDragStart={dragValue(resolvedValue)}
           title={title}
@@ -132,7 +133,13 @@ export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, reference
     return null;
   }
 
+  const isContent = resolvedValue.startsWith('"') || resolvedValue.startsWith("'") || resolvedValue.startsWith('attr(');
+
+  const previewString = isContent ? resolvedValue.replaceAll('" "', '"\n"') : value;
+  // const previewString = value;
+
   return <span
+    className='var-preview'
     draggable
     onDragStart={dragValue(value)}
     key={ 1 }
@@ -141,9 +148,11 @@ export const PreviewValue = ({value, resolvedValue, cssVar, isDefault, reference
       // width: size,
       fontSize: '14px',
       float: 'right',
+      fontFamily: !isContent ? null : group?.computedStyles?.fontFamily,
+      whiteSpace: 'pre-wrap',
     } }
   >
-    { referencedVariable ? <FormatVariableName name={referencedVariable.name} /> : value}
+    { referencedVariable ? <FormatVariableName name={referencedVariable.name} /> : previewString}
   </span>;
 };
 
@@ -203,7 +212,7 @@ export const mediaMatchOptions = {
 
 const maxNesting = 20;
 // Look up value in edited state and default state.
-export function resolveVariables(value = '', elementScopes, scopes, nestingLevel = 0) {
+export function resolveVariables(value = '', elementScopes, scopes, nestingLevel = 0, inlineStyles = {}, inheritedInlineStyles = {}) {
   if (nestingLevel > maxNesting) {
     return ['<<invalid: circular reference>>'];
   }
@@ -218,7 +227,8 @@ export function resolveVariables(value = '', elementScopes, scopes, nestingLevel
     const noComma = firstComma === -1;
     const name = noComma ? args : args.slice(0, firstComma).trim();
     // const name = '--' + value.slice(matchIndex + 6).replace(/[\s\),].*/, '')
-    let replacingValue
+    const inlineValue = inlineStyles[name] || inheritedInlineStyles[name];
+    let replacingValue;
     for (const {selector} of elementScopes || []) {
       if (name in (scopes[selector] || {})) {
         replacingValue = scopes[selector][name]
@@ -231,10 +241,13 @@ export function resolveVariables(value = '', elementScopes, scopes, nestingLevel
         break;
       }
     }
+    if (inlineValue !== undefined) {
+      replacingValue = inlineValue;
+    }
     if (!replacingValue) {
       if (noComma) {
         // debugger;
-        return [`<<invalid: "${name}" is undefined>>`];
+        return [value, vars, `<<invalid: "${name}" is undefined>>`];
       }
       const fallback = args.slice(firstComma + 1).trim();
       // console.log({fallback});
@@ -243,7 +256,12 @@ export function resolveVariables(value = '', elementScopes, scopes, nestingLevel
     if (nestingLevel === 0 && !vars.includes(name)) {
       vars.push(name);
     }
-    value = value.slice(0, matchIndex) + resolveVariables(replacingValue, elementScopes, scopes, nestingLevel + 1)[0] + value.slice(closingBracket + 1);
+    const [resolvedInner,,error] = resolveVariables(replacingValue, elementScopes, scopes, nestingLevel + 1, inlineStyles, inheritedInlineStyles);
+    if (error) {
+      console.log(error)
+      return [value, vars, error];
+    }
+    value = value.slice(0, matchIndex) + resolvedInner + value.slice(closingBracket + 1);
   }
 
   return [value, vars];
@@ -252,13 +270,14 @@ export function resolveVariables(value = '', elementScopes, scopes, nestingLevel
 export const VariableControl = (props) => {
   const {
     cssVar,
-    onChange,
+    onChange: _onChange,
     onUnset,
     referenceChain = [],
     scopes: elementScopes,
     parentVar,
     currentScope = ROOT_SCOPE,
     element,
+    group,
   } = props;
 
   const {
@@ -287,7 +306,12 @@ export const VariableControl = (props) => {
 
   const uniqueSelectors = new Set(usages.map(u=>u.selector)).size;
 
-  const defaultValue =
+  const inlineValue = group?.inlineStyles[name] || group?.inheritedInlineStyles[name];
+  const usesInlineStyle = !!inlineValue;
+  const onChange = usesInlineStyle ? () => {} : _onChange;
+
+  const defaultValue = 
+    inlineValue ||
     definedValues[currentScope][name] ||
     getValueFromDefaultScopes(elementScopes, cssVar) ||
     defaultValues[name] ||
@@ -303,7 +327,7 @@ export const VariableControl = (props) => {
 
   // Resolve variables inside the value.
   // WIP: doesn't do all substitutions yet, but simple work.
-  let [resolvedValue, referencedVars] = resolveVariables(value, elementScopes, scopes);
+  let [resolvedValue, referencedVars] = resolveVariables(value, elementScopes, scopes, 0, group?.inlineStyles, group?.inheritedInlineStyles);
 
   const [referencedVariable, usedScope] = useMemo(() => {
     const varMatches = value?.match(/^var\(\s*(\-\-[\w-]+)\s*[\,\)]/);
@@ -345,6 +369,11 @@ export const VariableControl = (props) => {
   const key = referenceChainKey(referenceChain, cssVar);
 
   const excludedVarName = parentVar?.name;
+
+  // Todo: Dynamic keys for the following state doesn't work well,
+  // because there's too many different kinds of entries in the timeline.
+  // UX would probably be better if this state can be pinned together with
+  // the open inspector groups.
 
   // Open all variables that refer to variables immediately.
   const [isOpen, setIsOpen] = 
@@ -474,10 +503,6 @@ export const VariableControl = (props) => {
         onClick={() => {
           if (isOpen) {
             toggleOpen();
-            // setTimeout(() => {
-            //   openerRef.current?.scrollIntoView({block: 'nearest'});
-            //   // window.scrollBy(0, -100);
-            // }, 0);
           }
         }}
       >
@@ -500,9 +525,10 @@ export const VariableControl = (props) => {
             }}
             {...{ name }}
           />
+          {usesInlineStyle && <span style={{color: 'red'}}>inline</span>}
         </h5>
         <PreviewValue
-          {...{ value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen }}
+          {...{ value, resolvedValue, cssVar, isDefault, referencedVariable, isOpen, group }}
         />
       </div>
       <div>
