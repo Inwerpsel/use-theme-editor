@@ -233,7 +233,7 @@ export function evaluateCalc(expression, scenario): [number, boolean] {
     '('() {
       const closingBracketPosition = findClosingBracket(expression, cursor);
       if (buffer === 'var') {
-        throw new Error('Expression contains unresolved variable.')
+        throw new Error('Expression contains unresolved variable. ' + expression)
       }
 
       const inside = expression.substring(cursor + 1, closingBracketPosition);

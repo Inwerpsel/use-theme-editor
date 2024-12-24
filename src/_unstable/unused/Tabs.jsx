@@ -1,6 +1,22 @@
 import { memo, useRef, useState } from "react";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { useResumableState } from "../hooks/useResumableReducer";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useResumableState } from "../../hooks/useResumableReducer";
+
+const style = {
+  tabList: {
+    className: 'tabList',
+    style: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      listStyleType: 'none',
+      marginBottom: '-10px',
+    },
+  }
+};
+
+function Style({style}) {
+
+}
 
 // This component is functional, but I have no use case yet.
 // Tabs mean that you can only access one of the items at a time,
@@ -17,14 +33,7 @@ export function Tabs(props) {
 
   return (
     <div>
-      <ul
-        style={{
-          display: 'flex',
-          justifyContent: 'flex-start',
-          listStyleType: 'none',
-          marginBottom: '-10px',
-        }}
-      >
+      <ul {...style.tabList}>
         {children.map((element) => {
             const {props: {id, title}} = element;
             return (
@@ -58,8 +67,10 @@ export function Tabs(props) {
   );
 }
 
+const stateHook = () => useResumableState('mytabs');
+
 export function ExampleTabs() {
-    return <Tabs>
+    return <Tabs {...{stateHook}}>
         <div id="First">
             <h2>First</h2>
             <p>The content of First.</p>

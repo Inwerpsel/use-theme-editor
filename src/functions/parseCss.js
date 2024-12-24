@@ -149,7 +149,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
         commentBody = '';
 
         // remove "/"
-        buffer = buffer.substring(0, -1);
+        buffer = buffer.slice(0, -1);
       }
     },
     '*'() {
@@ -160,7 +160,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
         commentStartCol = currentIndex - lineIndex - 1;
 
         // remove "/"
-        buffer = buffer.substring(0, -1);
+        buffer = buffer.slice(0, -1);
       }
     },
     '@'() {
@@ -210,7 +210,7 @@ export function parseCss(css, {comments, rulesWithMap, rogueAtRules, sheet}) {
     },
     '\\'() {
       isEscape = true;
-      recordChar = false;
+      // recordChar = false;
     },
     ','() {
       if (!inComment && !inStylemap && !inAtRule && parenthesesLevel === 0) {

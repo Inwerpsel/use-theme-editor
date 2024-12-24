@@ -16,3 +16,4 @@ export function WebpackHomeInput() {
       />
     );
 }
+WebpackHomeInput.fName = 'WebpackHomeInput';

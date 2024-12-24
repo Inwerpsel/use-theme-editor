@@ -105,7 +105,7 @@ export const previewComponents = {
       
       return (
         <Fragment>
-          {scope && <pre className="monospace-code">{scope}</pre>}
+          {scope && <pre className="monospace-code" style={{maxHeight: '120px'}}>{scope}</pre>}
           <br />
           <b draggable onDragStart={dragValue(`var(${name})`)}><FormatVariableName {...{name}}/></b> <br />
           <span draggable onDragStart={dragValue(value)}>
@@ -151,7 +151,7 @@ export const previewComponents = {
 
     unset: ({ payload: { scope, name } }) => (
       <Fragment>
-        {scope && <pre className="monospace-code">{scope}</pre>}
+        {scope && <pre className="monospace-code" style={{maxHeight: '120px'}}>{scope}</pre>}
         <br />
         <b><FormatVariableName {...{name}} /></b> = default
       </Fragment>

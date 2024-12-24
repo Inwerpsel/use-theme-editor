@@ -1,4 +1,4 @@
-import { get, use } from '../../state';
+import { use } from '../../state';
 
 export function PickedValue() {
   const [v, setV] = use.pickedValue();
@@ -15,3 +15,5 @@ export function PickedValue() {
     </div>
   );
 }
+
+PickedValue.fName = 'PickedValue';

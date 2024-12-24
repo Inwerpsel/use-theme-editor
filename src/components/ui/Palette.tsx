@@ -198,7 +198,12 @@ function MiniPalette({values, setValues, width = 65, mini = false}) {
         setValues(values.filter(({ value: v }) => v !== toRemove));
       } }
     >🗑</div>}
-    {!mini && <ManagedPalette />}
+    {!mini && <div className={isVertical ? 'flex-row' : 'flex-column'}>
+      <ManagedPalette />
+      {/* <DragHandle /> */}
+    </div>}
+    
+    
     {!dragmode && !hasPickedValue && <ToggleButton style={{maxWidth: '28px'}} controls={[isVertical, setIsVertical]}>{isVertical ? '⇓' : '⇒'}</ToggleButton>}
     {values.map(({ value, isHtml }, index) => {
       // This doesn't really serve a purpose, but it's interesting to see how the browser treats the styles,
