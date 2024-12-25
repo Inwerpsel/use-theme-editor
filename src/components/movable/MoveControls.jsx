@@ -8,6 +8,7 @@ import {AreasContext} from './MovablePanels';
 import { Tutorial } from '../../_unstable/Tutorial';
 import { MovableElementContext } from './MovableElement';
 import { DragHandle } from './DragHandle';
+import { doTransition } from '../../functions/viewTransition';
 
 export function MoveControls() {
   const {
@@ -41,7 +42,7 @@ export function MoveControls() {
       </Checkbox>}
       <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
       {Object.keys(uiState.map).length > 0 && (
-        <button onClick={() => document.startViewTransition(() => resetPanels())}>
+        <button onClick={() => doTransition(() => resetPanels())}>
           reset
         </button>
       )}
@@ -86,7 +87,7 @@ export function MoveControls() {
             if (name === '') {
               return;
             }
-            document.startViewTransition(() => {
+            doTransition(() => {
               setUiState(JSON.parse(windowArrangments[name]));
             });
           }}

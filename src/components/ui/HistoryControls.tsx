@@ -17,6 +17,7 @@ import { Checkbox } from '../controls/Checkbox';
 import { use } from '../../state';
 import { Tutorial } from '../../_unstable/Tutorial';
 import { icons } from '../../previewComponents';
+import { doTransition } from '../../functions/viewTransition';
 
 function HistoryBack() {
   const { past, historyOffset } = useContext(HistoryNavigateContext);
@@ -285,7 +286,7 @@ export function scrollHistory(event) {
     delta > 0 ? historyBack(delta, true) : historyForward(-delta, true);
   // };
   // if (now - lastScroll > 300 && Math.abs(delta) === 1) {
-    // document.startViewTransition(navigate);
+    // doTransition(navigate);
   // } else {
   //   navigate();
   // }

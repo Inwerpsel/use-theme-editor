@@ -10,6 +10,7 @@ import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
 import { Action } from '../functions/reducerOf';
 import { use } from '../state';
+import { doTransition } from '../functions/viewTransition';
 
 type Reducer<T> = (previous: T, action) => T
 
@@ -537,13 +538,13 @@ export function historyBackOne(): void {
   // All of this happens even if the button does not move during the transition.
   // So this uses a view transition mostly because it's a very clear demonstration of these drawbacks,
   // and the other history UI makes it so you don't realy need these buttons anyway.
-  document.startViewTransition(() => {
+  doTransition(() => {
     historyBack(1);
   });
 }
 
 export function historyForwardOne(): void {
-  document.startViewTransition(() => {
+  doTransition(() => {
     historyForward(1);
   });
 }
