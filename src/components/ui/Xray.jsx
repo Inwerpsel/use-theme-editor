@@ -456,6 +456,7 @@ export function Xray() {
                   width,
                   height,
                   style: {
+                    width,
                     maxWidth: 'none',
                     background: 'white',
                   },
