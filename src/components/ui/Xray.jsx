@@ -6,6 +6,7 @@ import { Checkbox } from "../controls/Checkbox";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { getGroupsForElement, nukePointerEventsNone } from "../../initializeThemeEditor";
 import { focusInspectedGroup } from "../ResizableFrame";
+import { doTransition } from "../../functions/viewTransition";
 
 function commonAncestor(...nodes) {
     let common = nodes[0];
@@ -57,7 +58,8 @@ function Inspect({frameRef, loaded}) {
         };
         trackDeepest(element);
         const newPath = toPath(element, doc)
-        document.startViewTransition(() => {
+
+        doTransition(() => {
           setPath(newPath);
           focusInspectedGroup();
           // hydrate inspection
@@ -156,7 +158,7 @@ function Descendant({el, index, xrayRef}) {
         node.classList.toggle('highlight-descendant', false);
       }}
       onClick={() => {
-        document.startViewTransition(() => {
+        doTransition(() => {
           node.classList.toggle('highlight-descendant', false);
           setInspectedPath(newPath);
           focusInspectedGroup();
@@ -227,24 +229,24 @@ function GoUp() {
         if (!frameRef.current) return; // Should not happen
 
         setSelectMode(true);
-        const transition = document.startViewTransition(() => {
-        const parentPath = path.slice(0, -1);
-        setPath(parentPath);
-        focusInspectedGroup();
-        const parent = toNode(parentPath, frameRef.current.contentWindow.document);
-        if (openFirstOnInspect) {
-          try {
-            const groups = getGroupsForElement(parent)
-            setOpenGroups(
-              {
-                [groups[0].label]: true,
-              },
-              { skipHistory: true, appendOnly: true }
-            );
-          } catch (e) {
-            console.log('Failed getting node', e)
+        doTransition(() => {
+          const parentPath = path.slice(0, -1);
+          setPath(parentPath);
+          focusInspectedGroup();
+          const parent = toNode(parentPath, frameRef.current.contentWindow.document);
+          if (openFirstOnInspect) {
+            try {
+              const groups = getGroupsForElement(parent)
+              setOpenGroups(
+                {
+                  [groups[0].label]: true,
+                },
+                { skipHistory: true, appendOnly: true }
+              );
+            } catch (e) {
+              console.log('Failed getting node', e)
+            }
           }
-        }
         });
         // setTimeout(() => {
         //   parent.scrollIntoView({block: 'start', inline: 'start', behavior: 'smooth'});
@@ -260,7 +262,8 @@ export function Xray() {
     const { width, height, inspectedPath: path, themeEditor: {scopes} } = get;
     const [frameLoaded, setFrameLoaded] = useState(false);
     const {
-        xrayFrameRef: ref,
+      frameRef,
+      xrayFrameRef: ref,
     } = useContext(ThemeEditorContext);
     const src = window.location.href;
     // const [scale, setScale] = useState(0.1);
@@ -313,7 +316,11 @@ export function Xray() {
       if (!path) return;
       try {
         const node = toNode(path, doc);
+        const origNode = toNode(path, frameRef.current.contentWindow.document);
         if (!node.matches('html')) {
+          const origRect = origNode.getBoundingClientRect();
+          node.style.width = `${origRect.right - origRect.left}px`;
+          node.style.height = `${origRect.bottom - origRect.top}px`;
           trackDeepest(node);
           // let common = commonAncestor(...savedNodes, node);
           node.classList.add('xray');
@@ -360,7 +367,11 @@ export function Xray() {
         if (frameLoaded) {
             const doc = ref.current?.contentWindow.document;
             for (const a of doc.querySelectorAll('a')) {
-                a.href = '#';
+                try {
+                  a.href = '#';
+                } catch (e) {
+
+                }
             }
             doc.addEventListener('mousedown', e => {e.preventDefault(); e.stopPropagation()}, {capture: true})
         }
