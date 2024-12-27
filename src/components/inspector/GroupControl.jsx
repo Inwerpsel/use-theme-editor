@@ -106,8 +106,9 @@ function ClearSearchButton() {
           borderColor: 'grey',
         }}
         title="Clear search"
-        onClick={() => {
+        onClick={(e) => {
           setSearch('');
+          e.stopPropagation();
         }}
       >
         X
