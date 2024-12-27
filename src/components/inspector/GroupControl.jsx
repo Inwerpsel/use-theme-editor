@@ -357,6 +357,12 @@ export const GroupControl = props => {
       }}
     >
       <div 
+        style={{
+          position: 'sticky',
+          top: 0,
+          background: 'white',
+          zIndex: 12,
+        }}
         onMouseEnter={() => {
           addHighlight(element);
         }}
@@ -367,10 +373,6 @@ export const GroupControl = props => {
         {!isDeepest && <SelectElement {...{ path }} />}
         <div
           style={{
-            position: 'sticky',
-            top: 0,
-            background: 'white',
-            zIndex: 12,
             overflow: isOpen ? 'hidden' : 'auto',
           }}
         >
@@ -414,11 +416,11 @@ export const GroupControl = props => {
                     // given that otherwise the list is always thrown into some random later position.
                     queueMicrotask(() => {
                       if (becameOpen) {
-                        event.target.closest('.var-group')?.scrollIntoView({
-                          block: 'start',
-                          // block: 'nearest',
-                          // behavior: 'smooth',
-                        });
+                        // event.target.closest('.var-group')?.scrollIntoView({
+                        //   block: 'start',
+                        //   // block: 'nearest',
+                        //   // behavior: 'smooth',
+                        // });
                       } else {
                         event.target.scrollIntoView({
                           block: 'nearest',

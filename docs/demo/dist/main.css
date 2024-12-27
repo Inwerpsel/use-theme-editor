@@ -1028,12 +1028,12 @@ html {
 html.doxray {
   scroll-padding-top: 0 !important;
 }
-html.doxray :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *) {
+html.doxray :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *, mask, mask *) {
   display: none !important;
   visibility: hidden;
   filter: opacity(0.4) blur(1.5px);
 }
-html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *), html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *) * {
+html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *, mask, mask *), html.doxray :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *, mask, mask *) * {
   visibility: hidden;
   transition-property: visibility;
   transition-delay: 0.16s;
