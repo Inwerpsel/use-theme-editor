@@ -28,7 +28,15 @@ function HistoryBack() {
     className={'history-button'}
     disabled={noHistory}
     title={noHistory ? 'No history' : remainingLength}
-    onClick={historyBackOne}
+    // This and the next view transition are added here because it's a relatively safe place to showcase it,
+    // while not being too affected by its major drawbacks.
+    // Still, it causes the button to become unresponsive to clicks during the transition,
+    // and even results in a text selection being made of the component that it would otherwise never do when
+    // clicking on a button element.
+    // All of this happens even if the button does not move during the transition.
+    // So this uses a view transition mostly because it's a very clear demonstration of these drawbacks,
+    // and the other history UI makes it so you don't realy need these buttons anyway.
+    onClick={() => doTransition(() => historyBackOne())}
   >←
   </button>;
 }
@@ -42,7 +50,7 @@ function HistoryForward() {
     className={'history-button'}
     disabled={noFuture}
     title={noFuture ? 'No future' : historyOffset}
-    onClick={historyForwardOne}
+    onClick={() => doTransition(() => historyForwardOne())}
   >→
   </button>;
 }

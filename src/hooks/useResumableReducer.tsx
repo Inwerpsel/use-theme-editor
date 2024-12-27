@@ -530,23 +530,11 @@ function isFullyPinned(entry: HistoryEntry) {
 }
 
 export function historyBackOne(): void {
-  // This and the next view transition are added here because it's a relatively safe place to showcase it,
-  // while not being too affected by its major drawbacks.
-  // Still, it causes the button to become unresponsive to clicks during the transition,
-  // and even results in a text selection being made of the component that it would otherwise never do when
-  // clicking on a button element.
-  // All of this happens even if the button does not move during the transition.
-  // So this uses a view transition mostly because it's a very clear demonstration of these drawbacks,
-  // and the other history UI makes it so you don't realy need these buttons anyway.
-  doTransition(() => {
-    historyBack(1);
-  });
+  historyBack(1);
 }
 
 export function historyForwardOne(): void {
-  doTransition(() => {
-    historyForward(1);
-  });
+  historyForward(1);
 }
 
 export function historyBackFast(): void {
