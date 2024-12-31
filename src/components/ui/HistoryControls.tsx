@@ -288,6 +288,8 @@ function OriginalUrl() {
 // let lastScroll = 0;
 
 export function scrollHistory(event) {
+  // Quick fix to prevent confusing mayham when all elements are in the drawer.
+  if (event.target.closest('#drawer')) return;
   // const now = performance.now();
   const delta = Math.round(event.deltaY / 100);
   // const navigate = () => {

@@ -1,4 +1,4 @@
-import React, {useMemo, useContext} from 'react';
+import React, {useMemo, useContext, Fragment} from 'react';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import { use } from '../../state';
 import {Checkbox} from '../controls/Checkbox';
@@ -6,9 +6,39 @@ import { SelectControl } from '../controls/SelectControl';
 import { TextControl } from '../controls/TextControl';
 import {AreasContext} from './MovablePanels';
 import { Tutorial } from '../../_unstable/Tutorial';
-import { MovableElementContext } from './MovableElement';
+import { MovableElementContext, useCompactSetting } from './MovableElement';
 import { DragHandle } from './DragHandle';
 import { doTransition } from '../../functions/viewTransition';
+import { CompactModeButton } from './CompactModeButton';
+import { presets } from './presets';
+
+function Presets({setUiState, inputName, setInputName}) {
+  return (
+    <Fragment>
+      <label htmlFor="">Presets: </label>
+      <SelectControl
+        value={inputName}
+        options={[
+          { label: '', value: '' },
+          ...Object.entries(presets)
+            .map(([name]) => ({
+              label: name,
+              value: name,
+            })),
+        ]}
+        onChange={(name) => {
+          setInputName(name);
+          if (name === '') {
+            return;
+          }
+          doTransition(() => {
+            setUiState(presets[name]);
+          });
+        }}
+      />
+    </Fragment>
+  );
+}
 
 export function MoveControls() {
   const {
@@ -18,6 +48,8 @@ export function MoveControls() {
     showMovers, setShowMovers,
     drawerOpen,
   } = useContext(AreasContext);
+
+  const [isCompact] = useCompactSetting();
 
   const [windowArrangments, setWindowArrangments] = use.windowArrangments();
 
@@ -31,68 +63,89 @@ export function MoveControls() {
 
   return (
     <div>
-      <DragHandle/>
-      <Tutorial el={MoveControls} tasks={[
-        () => ['Enable dragging elements', useContext(MovableElementContext).hostAreaId === 'area-right' || dragEnabled],
-        () => ['Move the element from the drawer to any other area', (useContext(MovableElementContext).hostAreaId || 'drawer') !== 'drawer'],
-        () => ['Close the drawer', !drawerOpen],
-      ]}>Turn on "drag elements" to drag any element to any area. "Move elements" is very broken atm.</Tutorial>
-      {supportsDrag && <Checkbox controls={[dragEnabled, setDragEnabled]}>
-        Drag elements
-      </Checkbox>}
-      <Checkbox controls={[showMovers, setShowMovers]}>Move elements</Checkbox>
-      {Object.keys(uiState.map).length > 0 && (
-        <button onClick={() => doTransition(() => resetPanels())}>
-          reset
-        </button>
+      <DragHandle />
+      <Tutorial
+        el={MoveControls}
+        tasks={[
+          () => [
+            'Enable dragging elements',
+            useContext(MovableElementContext).hostAreaId === 'area-right' ||
+              dragEnabled,
+          ],
+          () => [
+            'Move the element from the drawer to any other area',
+            (useContext(MovableElementContext).hostAreaId || 'drawer') !==
+              'drawer',
+          ],
+          () => ['Close the drawer', !drawerOpen],
+        ]}
+      >
+        Turn on "drag elements" to drag any element to any area. "Move elements"
+        is very broken atm.
+      </Tutorial>
+      {supportsDrag && (
+        <Checkbox controls={[dragEnabled, setDragEnabled]}>
+          Drag elements
+        </Checkbox>
       )}
-      <div>
-        <TextControl
-          value={inputName}
-          onChange={setInputName}
-        />
-        <button
-          disabled={inputName.length === 0}
-          onClick={() => {
-            if (
-              inputName in windowArrangments &&
-              !confirm('Update arrangement?')
-            ) {
-              return;
-            }
-            if (inputName.length === 0) {
-              return;
-            }
-            setWindowArrangments({
-              ...windowArrangments,
-              [inputName]: JSON.stringify(uiState),
-            });
-          }}
-        >
-          Save
-        </button>
-        <SelectControl
-          value={isIdenticalToExisting ? inputName : ''}
-          options={[
-            { label: '', value: '' },
-            ...Object.entries(windowArrangments)
-              // .filter(([name]) => !name.toLowerCase().includes('prod'))
-              .map(([name]) => ({
-                label: name,
-                value: name,
-              })),
-          ]}
-          onChange={(name) => {
-            setInputName(name);
-            if (name === '') {
-              return;
-            }
-            doTransition(() => {
-              setUiState(JSON.parse(windowArrangments[name]));
-            });
-          }}
-        />
-      </div>
+      <CompactModeButton />
+      {!isCompact && (
+        <Fragment>
+          <Checkbox controls={[showMovers, setShowMovers]}>
+            Move elements
+          </Checkbox>
+          {Object.keys(uiState.map).length > 0 && (
+            <button onClick={() => doTransition(() => resetPanels())}>
+              reset
+            </button>
+          )}
+          <div>
+            <TextControl value={inputName} onChange={setInputName} />
+            <button
+              disabled={inputName.length === 0}
+              onClick={() => {
+                if (
+                  inputName in windowArrangments &&
+                  !confirm('Update arrangement?')
+                ) {
+                  return;
+                }
+                if (inputName.length === 0) {
+                  return;
+                }
+                setWindowArrangments({
+                  ...windowArrangments,
+                  [inputName]: JSON.stringify(uiState),
+                });
+              }}
+            >
+              Save
+            </button>
+            <SelectControl
+              value={isIdenticalToExisting ? inputName : ''}
+              options={[
+                { label: '', value: '' },
+                ...Object.entries(windowArrangments)
+                  // .filter(([name]) => !name.toLowerCase().includes('prod'))
+                  .map(([name]) => ({
+                    label: name,
+                    value: name,
+                  })),
+              ]}
+              onChange={(name) => {
+                setInputName(name);
+                if (name === '') {
+                  return;
+                }
+                doTransition(() => {
+                  setUiState(JSON.parse(windowArrangments[name]));
+                });
+              }}
+            />
+            <Presets {...{setUiState, inputName, setInputName}} />
+          </div>
+        </Fragment>
+      )}
     </div>
   );
 }
