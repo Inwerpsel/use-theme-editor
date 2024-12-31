@@ -21,6 +21,7 @@ function exitTutorial() {
 // Todo: check which page user is on and list preferred tutorial pages.
 const intro = (
   <Tutorial el={StartTutorial}>
+    <div style={{minWidth: '600px'}}></div>
     <h1>Preparation</h1>
     <h2>Checklist</h2>
     <ul>

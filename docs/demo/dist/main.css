@@ -19,6 +19,7 @@ body {
   background-color: var(--theme-editor--background-color, rgb(201, 190, 190));
 }
 .theme-editor button, .theme-editor input {
+  user-select: none;
   margin-right: 2px;
   border: 1px solid black;
   padding: 4px 7px;
@@ -33,6 +34,7 @@ body {
   font-size: 18px !important;
   margin-top: 0 !important;
   margin-bottom: 8px;
+  width: auto;
   white-space: var(--theme-editor--h4--white-space, break-spaces);
 }
 .theme-editor h5 {
