@@ -229,7 +229,7 @@ function GoUp() {
         if (!frameRef.current) return; // Should not happen
 
         setSelectMode(true);
-        doTransition(() => {
+        // doTransition(() => {
           const parentPath = path.slice(0, -1);
           setPath(parentPath);
           focusInspectedGroup();
@@ -247,7 +247,7 @@ function GoUp() {
               console.log('Failed getting node', e)
             }
           }
-        });
+        // });
         // setTimeout(() => {
         //   parent.scrollIntoView({block: 'start', inline: 'start', behavior: 'smooth'});
         // }, 100);
@@ -270,7 +270,7 @@ export function Xray() {
     const [saved, setSaved] = useLocalStorage('savedNodes', []);
     const [showSaved, setShowSaved] = useLocalStorage('showSavedNodes', true);
     const [zoomOut, setZoomOut] = useLocalStorage('xrayzoomout', true);
-    const [on, setOn] = useState(true);
+    const [on, setOn] = useLocalStorage('xrayon', true);
     const [nodeWidth, setNodeWidth] = useState(parseInt(width));
     const [nodeHeight, setNodeHeight] = useState(parseInt(height));
     const [nodeTop, setNodeTop] = useState(0);
@@ -316,11 +316,11 @@ export function Xray() {
       if (!path) return;
       try {
         const node = toNode(path, doc);
-        const origNode = toNode(path, frameRef.current.contentWindow.document);
+        // const origNode = toNode(path, frameRef.current.contentWindow.document);
         if (!node.matches('html')) {
-          const origRect = origNode.getBoundingClientRect();
-          node.style.width = `${origRect.right - origRect.left}px`;
-          node.style.height = `${origRect.bottom - origRect.top}px`;
+          // const origRect = origNode.getBoundingClientRect();
+          // node.style.width = `${origRect.right - origRect.left}px`;
+          // node.style.height = `${origRect.bottom - origRect.top}px`;
           trackDeepest(node);
           // let common = commonAncestor(...savedNodes, node);
           node.classList.add('xray');
