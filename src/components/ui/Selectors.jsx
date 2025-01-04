@@ -94,6 +94,7 @@ function Selector({ selector, add, remove }) {
   const [showDropTargets, setShowDropTargets] = useState(false);
   return (
     <div
+      style={{display: 'flex', justifyContent: 'space-between'}}
       // onDragEnter={(e) => {
       //   setShowDropTargets(true);
       //   ref.current && clearTimeout(ref.current);
@@ -111,10 +112,10 @@ function Selector({ selector, add, remove }) {
       // }}
     >
       <DropCombineSelector {...{ selector, add, shown: showDropTargets }} />
-      <button style={{ float: 'right' }} onClick={() => remove(selector)}>
+      <ElementLocator {...{ selector, allowScroll: true, allowDrag: false }} />
+      <button style={{alignSelf: 'flex-start'}} onClick={() => remove(selector)}>
         -
       </button>
-      <ElementLocator {...{ selector, allowScroll: true, allowDrag: false }} />
     </div>
   );
 }

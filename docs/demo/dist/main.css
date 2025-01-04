@@ -411,32 +411,26 @@ div[id^=font-picker] ul {
   z-index: 10001;
 }
 
-#area-bottom, #area-bottom-reverse {
-  flex-grow: 1;
-}
-
-#area-bottom-reverse {
-  bottom: 0;
-  margin-right: 90px;
-}
-
-#area-bottom:has(.movable-element) {
-  height: 0;
-}
-#area-bottom:has(.movable-element) .is-dragging {
-  height: auto;
-}
-
 #area-top .area-switcher {
   bottom: 0;
   left: 0;
 }
 
 #area-bottom, #area-bottom-reverse {
+  flex-grow: 1;
   position: fixed !important;
+  z-index: 1000000;
+}
+#area-bottom:has(.movable-element), #area-bottom-reverse:has(.movable-element) {
+  height: 0;
+}
+#area-bottom > *, #area-bottom-reverse > * {
+  align-self: flex-end;
+  overflow-y: auto;
 }
 
 #area-bottom-reverse {
+  margin-right: 90px;
   bottom: 0;
   right: 0;
 }
@@ -444,7 +438,6 @@ div[id^=font-picker] ul {
 #area-bottom {
   bottom: 0;
   left: 0;
-  z-index: 1000000;
   align-items: flex-end;
 }
 #area-bottom .area-switcher {
@@ -455,7 +448,6 @@ div[id^=font-picker] ul {
 #area-bottom > * {
   max-height: 50vh;
   max-width: 400px;
-  overflow-y: auto;
 }
 
 .dropzone {
@@ -497,7 +489,8 @@ div[id^=font-picker] ul {
   min-width: 120px;
 }
 .is-dragging #area-top-reverse .area-dropzone, .is-dragging #area-bottom-reverse .area-dropzone {
-  min-width: 20px;
+  min-height: 30px;
+  min-width: 40px;
 }
 .is-dragging #area-top-reverse .area-dropzone:only-child, .is-dragging #area-bottom-reverse .area-dropzone:only-child {
   height: 30px;
@@ -810,7 +803,7 @@ button {
 
 .tutorial-content {
   z-index: 1000000;
-  min-width: 320px;
+  min-width: 420px;
   padding: 0.25rem;
   padding-left: 2rem;
 }
@@ -1071,6 +1064,12 @@ body {
 ::view-transition-group(*) {
   animation-duration: 0.25s;
   animation-delay: 0;
+}
+
+#area-bottom .history, #area-bottom .history-current, #area-bottom-reverse .history, #area-bottom-reverse .history-current {
+  width: 360px !important;
+  min-width: 360px !important;
+  max-width: 360px !important;
 }
 
 /*# sourceMappingURL=main.css.map*/

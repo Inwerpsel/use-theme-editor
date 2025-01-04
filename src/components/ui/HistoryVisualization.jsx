@@ -251,7 +251,7 @@ function CurrentActions() {
     : [...actions.entries()];
   
   return (
-    <div onWheelCapture={scrollHistory} style={{minWidth: '280px', maxWidth: '400px', minHeight: '240px', overflow: 'hidden visible'}}>
+    <div className='history-current' onWheelCapture={scrollHistory} style={{minWidth: '280px', maxWidth: '400px', minHeight: '200px', overflow: 'hidden visible'}}>
       {tutorial}
       {isInitial && <Checkbox controls={[showInitial, setShowInitial]} >Show all initial values</Checkbox>}
       <ActionList historyIndex={index} actions={entries} />

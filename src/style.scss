@@ -22,6 +22,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   text-align: start;
 
   button, input {
+    user-select: none;
     margin-right: 2px;
     border: 1px solid black;
     padding: 4px 7px;
@@ -42,6 +43,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
     font-size: 18px !important;
     margin-top: 0 !important;
     margin-bottom: 8px;
+    width: auto;
   }
 
   h5 {
@@ -637,7 +639,7 @@ button {
 
 .tutorial-content {
   z-index: 1000000;
-  min-width: 320px;
+  min-width: 420px;
   padding: .25rem;
   padding-left: 2rem;
 
@@ -755,7 +757,7 @@ html.doxray {
   //   transition: none !important;
   //   animation: none !important;
   // }
-  :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *) {
+  :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *, mask, mask *) {
     display: none !important;
     visibility: hidden;
     // transition-property: visibility;
@@ -763,7 +765,7 @@ html.doxray {
     filter: opacity(0.4) blur(1.5px);
   }
 
-  :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *) {
+  :has(> .xray) > :not(.xray, symbol, symbol *, defs, defs *, mask, mask *) {
     &, & * {
     visibility: hidden;
     transition-property: visibility;
@@ -834,3 +836,13 @@ body {
 // :root::view-transition-new(*) {
 //   user-select: none;
 // }
+
+// Without this quick fix the component jiggles other UI.
+$fixed-history-width: 360px !important;
+#area-bottom, #area-bottom-reverse {
+  .history, .history-current {
+    width: $fixed-history-width;
+    min-width: $fixed-history-width;
+    max-width: $fixed-history-width;
+  }
+}

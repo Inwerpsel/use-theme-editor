@@ -105,21 +105,6 @@ $area-speed: .2s;
   z-index: 10001;
 }
 
-#area-bottom, #area-bottom-reverse {
-  flex-grow: 1;
-}
-
-#area-bottom-reverse {
-  bottom: 0;
-  margin-right: 90px;
-}
-
-#area-bottom:has(.movable-element) {
-  height: 0;
-  .is-dragging  {
-    height: auto;
-  }
-}
 #area-top {
   .area-switcher  {
     bottom: 0;
@@ -128,11 +113,22 @@ $area-speed: .2s;
 }
 
 #area-bottom, #area-bottom-reverse {
+  flex-grow: 1;
   position: fixed !important;
+  z-index: 1000000;
+
+  &:has(.movable-element) {
+    height: 0;
+  }
+
+  > * { 
+    align-self: flex-end;
+    overflow-y: auto;
+  }
 }
 
 #area-bottom-reverse {
-
+  margin-right: 90px;
   bottom: 0;
   right: 0;
 }
@@ -140,7 +136,6 @@ $area-speed: .2s;
 #area-bottom {
   bottom: 0;
   left: 0;
-  z-index: 1000000;
   align-items: flex-end;
 
   .area-switcher {
@@ -153,7 +148,6 @@ $area-speed: .2s;
   > * {
     max-height: 50vh;
     max-width: 400px;
-    overflow-y: auto;
   }
 }
 
@@ -208,7 +202,8 @@ $area-speed: .2s;
 
   #area-top-reverse, #area-bottom-reverse {
     .area-dropzone {
-      min-width: 20px;
+      min-height: 30px;
+      min-width: 40px;
 
       &:only-child {
         height: 30px;
