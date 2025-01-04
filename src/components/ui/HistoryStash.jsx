@@ -17,17 +17,17 @@ export function HistoryStash() {
 
     return (
       <Fragment>
-        <div
-          className="flex-row"
-          
-        >
+        <div className="flex-row">
           <button
             title={'Apply/create stash:\n' + stringied}
             onClick={replayAlternate}
             style={{
               textAlign: 'left',
-              background: `rgba(26, 217, 210, ${Math.min( lastAlternate.length / 50, 1)})`,
-          }}
+              background: `rgba(26, 217, 210, ${Math.min(
+                lastAlternate.length / 50,
+                1
+              )})`,
+            }}
             disabled={empty && historyOffset === 0}
           >
             {content}
@@ -38,7 +38,10 @@ export function HistoryStash() {
             return (
               <Fragment>
                 <button
-                  title={'Apply/create stash:\n' + JSON.stringify(map.map(m => m.entries()))}
+                  title={
+                    'Apply/create stash:\n' +
+                    JSON.stringify(map.map((m) => m.entries()))
+                  }
                   onClick={replaySavedStash.bind(null, index)}
                   style={{
                     background: `rgba(26, 217, 210, ${Math.min(
@@ -47,13 +50,14 @@ export function HistoryStash() {
                     )})`,
                   }}
                 >
-                  {map.length} steps<br />
+                  {map.length} steps
+                  <br />
                   {past.length - historyOffset - originIndex} steps since
                 </button>
                 <button
                   onClick={() => {
                     if (!confirm('Permanently delete stash?')) return;
-                    removedSavedStash(index)
+                    removedSavedStash(index);
                   }}
                   style={{ textAlign: 'left' }}
                 >
@@ -77,9 +81,31 @@ export function HistoryStash() {
             () => ['Add future actions to the stash', !empty],
           ]}
         >
-          If you travel back and discard future, it's still kept here. This
-          allows you to splice in a new edit earlier into your history and just
-          re-apply everything after it.
+          <p>
+            Every time you "cut off" a piece of the end of the timeline, rather
+            than just throwing these steps away, they're kept in the "stash".
+          </p>
+          <p>
+            Typically, this would happen implicitly when making new changes
+            after undoing others.
+          </p>
+          <p>
+            If the stash already had steps before, those will get removed to
+            make place for the new steps, unless the amount of steps was 9 or
+            more. In the latter case it's stored in a list of saved stashes and
+            has to be cleared manually.
+          </p>
+          <p>
+            Besides this clearing of small recent stashes, stashing is a fully <b>non-destructive</b> and <b>reversible</b> process.
+          </p>
+          <p>
+            This means that you can confidently rely on the stash to make
+            changes at any part of the timeline, and be sure that all your work
+            after it cannot accidentally disappear.
+          </p>
+          <p>
+            You can also create a stash explicitly using the "Stash" button.
+          </p>
         </Tutorial>
       </Fragment>
     );
