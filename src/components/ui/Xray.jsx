@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useLayoutEffect, useRef, useState } from "react";
+import { Fragment, useContext, useEffect, useInsertionEffect, useState } from "react";
 import { get, use } from "../../state";
 import { toNode, toPath } from "../../functions/nodePath";
 import { ThemeEditorContext } from "../ThemeEditor";
@@ -127,7 +127,10 @@ function Descendant({el, index, xrayRef}) {
 
   if (type === 'style' || type === 'script') return;
 
-  const idSuffix = !el.id ? '' : `#${el.id}`
+  const hasLongId = el.id?.length > 32;
+
+  // Ids longer than 32 are probably a UUID and take too much space.
+  const idSuffix = (!el.id || hasLongId) ? '' : `#${el.id}`
 
   const isHidden = !node.checkVisibility();
 
@@ -140,7 +143,8 @@ function Descendant({el, index, xrayRef}) {
         textDecoration:  isHidden ? 'underline red' : null,
         viewTransitionName: `inspected${inspectedPath.length + 1}-${index}`,
       }}
-      title={isHidden && 'Element is currently not visible'}
+      // title={isHidden && 'Element is currently not visible'}
+      title={hasLongId && el.id}
       onMouseEnter={() => {
         for (const el of doc.querySelectorAll(
           '.highlight-descendant'
@@ -228,9 +232,9 @@ function GoUp() {
       onClick={(e) => {
         if (!frameRef.current) return; // Should not happen
 
-        setSelectMode(true);
         // doTransition(() => {
           const parentPath = path.slice(0, -1);
+          setSelectMode(parentPath.length > 0);
           setPath(parentPath);
           focusInspectedGroup();
           const parent = toNode(parentPath, frameRef.current.contentWindow.document);
@@ -262,7 +266,7 @@ export function Xray() {
     const { width, height, inspectedPath: path, themeEditor: {scopes} } = get;
     const [frameLoaded, setFrameLoaded] = useState(false);
     const {
-      frameRef,
+      // frameRef,
       xrayFrameRef: ref,
     } = useContext(ThemeEditorContext);
     const src = window.location.href;
@@ -280,15 +284,15 @@ export function Xray() {
     const minScale = 1.6;
     const maxScale = 14;
     const scale = Math.min(maxScale, zoomOut ? _scale: Math.max(minScale, _scale));
-    const _prevScale = useRef(null);
-    const prevScale = _prevScale.current;
-    _prevScale.current = scale;
+    // const _prevScale = useRef(null);
+    // const prevScale = _prevScale.current;
+    // _prevScale.current = scale;
     const maxHeight = Math.min(
       500,
       Math.min(nodeHeight, height) * scale + 12,
     );
 
-    useEffect(() => {
+    useInsertionEffect(() => {
       if (!frameLoaded) {
         return;
       }
@@ -334,6 +338,8 @@ export function Xray() {
           setNodeTop(rect.top * -1);
           setNodeLeft(rect.left * -1);
           const t= setTimeout(() => {
+            // const isOverflowingX = !zoomOut && _scale < minScale;
+            // node?.scrollIntoView({block: 'center', inline: isOverflowingX ? 'start' : 'center'})
             node?.scrollIntoView({
               block: isTall ? 'start' : 'nearest',
               inline: isWide ? 'start' : 'nearest',
@@ -345,18 +351,7 @@ export function Xray() {
       } catch (e) {
         // console.log(e, path);
       }
-    }, [path, frameLoaded, saved, showSaved, scopes, width, height]);
-
-    useLayoutEffect(() => {
-      if (!on) return;
-      const doc = ref.current?.contentWindow.document;
-      if (!doc) return null;
-      try {
-        const node = toNode(path, doc);
-        const isOverflowingX = !zoomOut && _scale < minScale;
-        node?.scrollIntoView({block: 'center', inline: isOverflowingX ? 'start' : 'center'})
-      } catch (e) {}
-    }, [path, zoomOut, nodeWidth, on]);
+    }, [path, frameLoaded, saved, showSaved, scopes, width, height, zoomOut]);
 
     function isCurrentPath(somePath) {
         return somePath.toString() === path.toString();
