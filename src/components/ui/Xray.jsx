@@ -1,4 +1,4 @@
-import { Fragment, useContext, useEffect, useInsertionEffect, useState } from "react";
+import { Fragment, useContext, useEffect, useInsertionEffect, useLayoutEffect, useRef, useState } from "react";
 import { get, use } from "../../state";
 import { toNode, toPath } from "../../functions/nodePath";
 import { ThemeEditorContext } from "../ThemeEditor";
@@ -135,10 +135,17 @@ function Descendant({el, index, xrayRef}) {
   const isHidden = !node.checkVisibility();
 
   const isLatest = node === deepestClicked || node.contains(deepestClicked);
+  const ref = useRef();
+
+  useLayoutEffect(() => {
+    if (isLatest) {
+      ref.current?.scrollIntoView({block: 'center'});
+    }
+  }, []);
 
   return (
     <button
-      autoFocus={isLatest}
+      {...{ref}}
       key={el}
       className="monospace-code"
       style={{
