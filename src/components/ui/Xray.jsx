@@ -134,12 +134,15 @@ function Descendant({el, index, xrayRef}) {
 
   const isHidden = !node.checkVisibility();
 
+  const isLatest = node === deepestClicked || node.contains(deepestClicked);
+
   return (
     <button
+      autoFocus={isLatest}
       key={el}
       className="monospace-code"
       style={{
-        background: node === deepestClicked || node.contains(deepestClicked) ?'lightblue' : null,
+        background: isLatest ? 'lightblue' : null,
         textDecoration:  isHidden ? 'underline red' : null,
         viewTransitionName: `inspected${inspectedPath.length + 1}-${index}`,
       }}
@@ -196,7 +199,7 @@ function Stats({xrayRef}) {
     // const idSuffix = !node.id ? '' : `#${node.id}`
 
     return (
-      <div>
+      <div style={{maxHeight: '170px', overflow: 'auto'}}>
         {/* <code key={node} style={{float: 'right', borderWidth: '3px'}} className="monospace-code">{node.tagName.toLocaleLowerCase()}{idSuffix}</code> */}
         <code style={{float: 'right'}}>
           {stats.directDescendants.length > 0 && <span> direct: {stats.directDescendants.length} </span>}
