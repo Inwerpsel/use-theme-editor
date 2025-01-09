@@ -57,6 +57,7 @@ export function ElementLocator({
   label,
   allowScroll = false,
   allowDrag = true,
+  instant = false,
 }) {
   const { frameLoaded, openFirstOnInspect } = get;
 
@@ -145,7 +146,12 @@ export function ElementLocator({
         ? afterStep - elements.length
         : afterStep;
     setCurrentElement(next);
-    viewHighLightSingle(elements[next].node, {behavior: isFast ? 'instant' : 'smooth', block: 'center'});
+    const element = elements[next];
+    if (instant) {
+      setInspectedPath(toPath(element.node));
+    } else {
+      viewHighLightSingle(element.node, {behavior: isFast ? 'instant' : 'smooth', block: 'center'});
+    }
     // event.preventDefault();
     // event.stopPropagation();
   }
@@ -201,7 +207,11 @@ export function ElementLocator({
                       ? elements.length - 1
                       : currentElement - 1;
                   setCurrentElement(next);
-                  viewHighLightSingle(elements[next].node);
+                  if (instant) {
+                    setInspectedPath(toPath(elements[next].node));
+                  } else {
+                    viewHighLightSingle(elements[next].node);
+                  }
                 }}
               >
                 ↑
@@ -213,7 +223,11 @@ export function ElementLocator({
                       ? 0
                       : currentElement + 1;
                   setCurrentElement(next);
-                  viewHighLightSingle(elements[next].node);
+                  if (instant) {
+                    setInspectedPath(toPath(elements[next].node));
+                  } else {
+                    viewHighLightSingle(elements[next].node);
+                  }
                 }}
               >
                 ↓

@@ -5,6 +5,7 @@ import { ToggleButton } from "../controls/ToggleButton";
 import { TextControl } from "../controls/TextControl";
 import { ThemeEditorContext } from "../ThemeEditor";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { Checkbox } from "../controls/Checkbox";
 
 // let isCaptureMode = false, params = {};
 
@@ -92,6 +93,7 @@ function DropCombineSelector({selector, add, shown}) {
 function Selector({ selector, add, remove }) {
   // const ref = useRef();
   const [showDropTargets, setShowDropTargets] = useState(false);
+  const [instant, setInstant] = useState(false);
   return (
     <div
       style={{display: 'flex', justifyContent: 'space-between'}}
@@ -112,10 +114,13 @@ function Selector({ selector, add, remove }) {
       // }}
     >
       <DropCombineSelector {...{ selector, add, shown: showDropTargets }} />
-      <ElementLocator {...{ selector, allowScroll: true, allowDrag: false }} />
-      <button style={{alignSelf: 'flex-start'}} onClick={() => remove(selector)}>
-        -
-      </button>
+      <ElementLocator {...{ selector, allowScroll: true, allowDrag: false, instant }} />
+      <div style={{display: 'flex', flexDirection: 'column'}}>
+        <button style={{alignSelf: 'flex-start'}} onClick={() => remove(selector)}>
+          -
+        </button>
+        <Checkbox controls={[instant, setInstant]}>🗲</Checkbox>
+      </div>
     </div>
   );
 }
