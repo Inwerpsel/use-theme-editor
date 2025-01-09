@@ -7,6 +7,8 @@ import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { getGroupsForElement, nukePointerEventsNone } from "../../initializeThemeEditor";
 import { focusInspectedGroup } from "../ResizableFrame";
 import { doTransition } from "../../functions/viewTransition";
+import { CompactModeButton } from "../movable/CompactModeButton";
+import { useCompactSetting } from "../movable/MovableElement";
 
 function commonAncestor(...nodes) {
     let common = nodes[0];
@@ -113,35 +115,56 @@ function tally(element) {
   };
 }
 
-function Descendant({el, index, xrayRef}) {
+function Descendant({el, xrayEl, path, index, showClasses}) {
   const [inspectedPath, setInspectedPath] = use.inspectedPath();
-  const newPath = [...inspectedPath, [el.tagName, index]];
-  const doc = xrayRef.current?.contentWindow.document;
-  let node;
-  try {
-    node = toNode(newPath, doc);
-  } catch (e) {
-    return null;
-  }
   const type = el.tagName.toLowerCase();
-
-  if (type === 'style' || type === 'script') return;
 
   const hasLongId = el.id?.length > 32;
 
   // Ids longer than 32 are probably a UUID and take too much space.
-  const idSuffix = (!el.id || hasLongId) ? '' : `#${el.id}`
+  const suffix = el.id
+    ? `#${el.id}`
+    : showClasses && el.classList[0]
+    ? `.${el.classList[0]}`
+    : '';
 
-  const isHidden = !node.checkVisibility();
+  const isHidden = !el.checkVisibility();
 
-  const isLatest = node === deepestClicked || node.contains(deepestClicked);
+  const isLatest = xrayEl === deepestClicked || xrayEl.contains(deepestClicked);
+
   const ref = useRef();
-
   useLayoutEffect(() => {
     if (isLatest) {
       ref.current?.scrollIntoView({block: 'center'});
     }
   }, []);
+
+  if (type === 'style' || type === 'script') return;
+
+  // In case of defs, for some reason it scrolls outside the svg's box,
+  // seemingly always to the start of the page.
+  // Could be a browser bug.
+  const dontScroll = type === 'defs';
+
+  function setHighlighted() {
+    // for (const el of doc.querySelectorAll(
+    //   '.highlight-descendant'
+    // )) {
+    //   if (el.classList.contains('highlight-descendant')) {
+    //     el.classList.toggle('highlight-descendant', false);
+    //   }
+    // }
+    xrayEl.classList.add('highlight-descendant');
+    !dontScroll && xrayEl.scrollIntoView({
+      block: 'nearest',
+      inline: 'nearest',
+      behavior: 'smooth',
+    });
+  }
+
+  function removeHighlighted() {
+    xrayEl.classList.remove('highlight-descendant');
+  }
 
   return (
     <button
@@ -155,46 +178,35 @@ function Descendant({el, index, xrayRef}) {
       }}
       // title={isHidden && 'Element is currently not visible'}
       title={hasLongId && el.id}
-      onMouseEnter={() => {
-        for (const el of doc.querySelectorAll(
-          '.highlight-descendant'
-        )) {
-          el.classList.toggle('highlight-descendant', false);
-        }
-        node.classList.toggle('highlight-descendant', true);
-        node.scrollIntoView({
-          block: 'nearest',
-          inline: 'nearest',
-          behavior: 'smooth',
-        });
-      }}
-      onMouseLeave={() => {
-        node.classList.toggle('highlight-descendant', false);
-      }}
+      onMouseEnter={setHighlighted}
+      onMouseLeave={removeHighlighted}
+      onFocus={setHighlighted}
+      onBlur={removeHighlighted}
       onClick={() => {
         doTransition(() => {
-          node.classList.toggle('highlight-descendant', false);
-          setInspectedPath(newPath);
+          xrayEl.classList.toggle('highlight-descendant', false);
+          setInspectedPath(path);
+          focusGoUp();
           focusInspectedGroup();
           setTimeout(() => {
-            node.scrollIntoView({
+            xrayEl.scrollIntoView({
               block: 'center',
               inline: 'center',
               // behavior: 'smooth',
             });
           }, 1);
-          trackDeepest(node);
+          trackDeepest(xrayEl);
         });
       }}
     >
       {type}
-      {idSuffix}
+      {suffix}
     </button>
   );
 
 }
 
-function Stats({xrayRef}) {
+function Stats({xrayRef, showClasses}) {
   const {inspectedPath} = get;
   const { frameRef } = useContext(ThemeEditorContext);
 
@@ -206,7 +218,7 @@ function Stats({xrayRef}) {
     // const idSuffix = !node.id ? '' : `#${node.id}`
 
     return (
-      <div style={{maxHeight: '170px', overflow: 'auto'}}>
+      <Fragment>
         {/* <code key={node} style={{float: 'right', borderWidth: '3px'}} className="monospace-code">{node.tagName.toLocaleLowerCase()}{idSuffix}</code> */}
         <code style={{float: 'right'}}>
           {stats.directDescendants.length > 0 && <span> direct: {stats.directDescendants.length} </span>}
@@ -214,13 +226,31 @@ function Stats({xrayRef}) {
           {stats.textNodes > 0 && <span style={{fontWeight: 'bold'}}> text: {stats.textNodes}</span>}
           {/* {stats.textNodes > 0 && stats.emptyTextNodes > 0 && <span style={{fontWeight: 'bold', color: 'gray'}}> empty text: {stats.emptyTextNodes}</span>} */}
         </code>
-        {stats.directDescendants.map((el, index) => <Descendant {...{el, index, xrayRef}}/>)}
-      </div>
+        <div style={{maxHeight: '180px', overflow: 'auto', padding: '4px'}}>
+          {stats.directDescendants.map((el, index) => {
+            const path = [...inspectedPath, [el.tagName, index]];
+            const doc = xrayRef.current?.contentWindow.document;
+            let xrayEl;
+            try {
+              xrayEl = toNode(path, doc);
+            } catch (e) {
+              return null;
+            }
+            return <Descendant {...{ el, xrayEl,doc, path, index, xrayRef, showClasses }} />;
+          })}
+        </div>
+      </Fragment>
     );
   } catch (e) {
     // console.log('STATS FAILED', e);
     return null;
   }
+}
+
+export function focusGoUp() {
+  queueMicrotask(() => {
+    document.querySelector('.inspector-go-up')?.focus();
+  });
 }
 
 function GoUp() {
@@ -232,7 +262,8 @@ function GoUp() {
 
   return (
     <button
-      style={{float: 'right', position: 'sticky', top: 0, outline: selectMode ? '4px solid indigo' : null}}
+      className={'inspector-go-up'}
+      style={{outline: selectMode ? '4px solid indigo' : null}}
       disabled={path.length === 0}
       onBlur={e=> {
         setTimeout(() => {
@@ -242,11 +273,12 @@ function GoUp() {
       onClick={(e) => {
         if (!frameRef.current) return; // Should not happen
 
-        // doTransition(() => {
+        doTransition(() => {
           const parentPath = path.slice(0, -1);
           setSelectMode(parentPath.length > 0);
           setPath(parentPath);
           focusInspectedGroup();
+          focusGoUp();
           const parent = toNode(parentPath, frameRef.current.contentWindow.document);
           if (openFirstOnInspect) {
             try {
@@ -261,7 +293,7 @@ function GoUp() {
               console.log('Failed getting node', e)
             }
           }
-        // });
+        });
         // setTimeout(() => {
         //   parent.scrollIntoView({block: 'start', inline: 'start', behavior: 'smooth'});
         // }, 100);
@@ -284,6 +316,7 @@ export function Xray() {
     const [saved, setSaved] = useLocalStorage('savedNodes', []);
     const [showSaved, setShowSaved] = useLocalStorage('showSavedNodes', true);
     const [zoomOut, setZoomOut] = useLocalStorage('xrayzoomout', true);
+    const [showClasses, setShowClasses] = useLocalStorage('xrayShowClasses', true);
     const [on, setOn] = useLocalStorage('xrayon', true);
     const [nodeWidth, setNodeWidth] = useState(parseInt(width));
     const [nodeHeight, setNodeHeight] = useState(parseInt(height));
@@ -301,6 +334,10 @@ export function Xray() {
       500,
       Math.min(nodeHeight, height) * scale + 12,
     );
+
+    // useInsertionEffect(() => {
+
+    // }, []);
 
     useInsertionEffect(() => {
       if (!frameLoaded) {
@@ -339,24 +376,37 @@ export function Xray() {
           // let common = commonAncestor(...savedNodes, node);
           node.classList.add('xray');
           const rect = node.getBoundingClientRect(); 
-          const nodeWidth = rect.right - rect.left + 24;
+          const nodeWidth = rect.right - rect.left;
+          let nodeHeight = rect.bottom - rect.top;
+
+          const mightBeDoingWeirdPositionStuff = nodeHeight === 0 && nodeWidth > 0;
+
+          if (mightBeDoingWeirdPositionStuff) {
+            const parentRect = node.parentNode.getBoundingClientRect();
+            nodeHeight = parentRect.bottom - parentRect.top;
+          }
+
           const isWide = nodeWidth > width;
-          setNodeWidth(nodeWidth);
-          const nodeHeight = rect.bottom - rect.top + 24;
           const isTall = nodeHeight > height;
-          setNodeHeight(nodeHeight);
+
+          setNodeWidth(nodeWidth + 24);
+          setNodeHeight(nodeHeight + 24);
           setNodeTop(rect.top * -1);
           setNodeLeft(rect.left * -1);
+
+
           const t= setTimeout(() => {
             // const isOverflowingX = !zoomOut && _scale < minScale;
             // node?.scrollIntoView({block: 'center', inline: isOverflowingX ? 'start' : 'center'})
             node?.scrollIntoView({
-              block: isTall ? 'start' : 'nearest',
+              block: isTall ? 'start' : 'center',
               inline: isWide ? 'start' : 'nearest',
               // behavior: 'smooth',
             });
-          }, 100);
-          return () => {clearTimeout(t)};
+          }, 20);
+          return () => {
+            clearTimeout(t)
+          };
         }
       } catch (e) {
         // console.log(e, path);
@@ -385,8 +435,11 @@ export function Xray() {
     // const isFirst = prevScale === null;
     // const isZoomout = scale < prevScale;
 
+    const [compact] = useCompactSetting();
+
     return (
       <div style={{ maxWidth: 400 }}>
+        <CompactModeButton />
         {!on && <h3 style={{ display: 'inline-block' }}>Xray</h3>}
         <div>
           <Checkbox
@@ -400,10 +453,10 @@ export function Xray() {
           >
             Enable
           </Checkbox>
-          {on && (
+          {on && !compact && (
             <Fragment>
               <Checkbox title="min zoom level 1.6" controls={[zoomOut, setZoomOut]}>Zoom out to fit</Checkbox>
-              <GoUp />
+              <Checkbox title="Show first class of descendant elements" controls={[showClasses, setShowClasses]}>Show class</Checkbox>
               <br />
               <Checkbox
                 controls={[
@@ -432,7 +485,10 @@ export function Xray() {
               {/* <button onClick={e => {}}>next</button> */}
             </Fragment>
           )}
-          {on &&<Stats xrayRef={ref}/>}
+          <div>
+            <GoUp key={path.length}/>
+            {on && <Stats xrayRef={ref} {...{showClasses}}/>}
+          </div>
         </div>
         {on && (
           <div
@@ -452,9 +508,7 @@ export function Xray() {
                 // transition: (isZoomout || isFirst) ? null : 'scale .1s ease-in .0s',
                 // transition: 'scale .2s ease-out',
                 // translate: `${12 + nodeLeft}px ${12 + nodeTop}px`,
-                transform: `translateX(${(12 + nodeLeft) }px) translateY(${
-                  12  + (Math.max(-maxHeight + 12, nodeTop)) 
-                }px)`,
+                transform: `translateX(${(12 + nodeLeft) }px) `,
                 transformOrigin: 'top left',
                 // transformOrigin: 'top right',
                 // transformOrigin: 'center center',
@@ -481,7 +535,8 @@ export function Xray() {
             </div>
           </div>
         )}
-        <span>scale: {scale.toFixed(2)} </span>
+        {on && <span>scale: {scale.toFixed(2)} </span>}
+        
       </div>
     );
 }

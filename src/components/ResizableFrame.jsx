@@ -6,6 +6,7 @@ import { toNode, toPath } from '../functions/nodePath';
 import { getGroupsForElement, nukePointerEventsNone } from '../initializeThemeEditor';
 import { addHighlight, removeHighlight } from '../functions/highlight';
 import { ACTIONS, editTheme } from '../hooks/useThemeEditor';
+import { focusGoUp } from './ui/Xray';
 
 const wrapperMargin = 16;
 
@@ -75,6 +76,7 @@ function InspectOnClick({frameRef, loaded}) {
         behavior: 'smooth',
       });
       focusInspectedGroup();
+      focusGoUp();
       lastClicked = element;
     }
 

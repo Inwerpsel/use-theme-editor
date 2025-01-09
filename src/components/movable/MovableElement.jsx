@@ -109,7 +109,8 @@ export function MovableElement({homeAreaId, element, index}) {
         // (reset uiLayout, choose saved uiLayout, navigate into an element, and pressing single history forward backward buttons)
         // In both cases, input discarding is not a big concern.
         // 
-        viewTransitionName: elementId === 'HistoryControls' ? null : elementId,
+        // viewTransitionName: elementId === 'HistoryControls' ? null : elementId,
+        viewTransitionName: elementId,
       }}
       // title={!dragEnabled ? null : elementId}
       className={classnames('movable-element', { 'is-dragged': isDragged })}
