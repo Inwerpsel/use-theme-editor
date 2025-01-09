@@ -44,6 +44,7 @@ import { PickedValueCursor } from './PickedValueCursor';
 import { Selectors } from './ui/Selectors';
 import { NoteBox } from './ui/NoteBox';
 import { Xray } from './ui/Xray';
+import { ToggleViewTransitions } from '../functions/viewTransition';
 
 export const ThemeEditorContext = createContext({});
 
@@ -191,6 +192,7 @@ export const ThemeEditor = (props) => {
                 <Checkbox
                   controls={use.enableScrollingInView()}
                 >Scroll into view in history</Checkbox>
+                <ToggleViewTransitions />
               </div>
               <WebpackHomeInput />
               <RemoveAnnoyingPrefix />
