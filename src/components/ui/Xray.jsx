@@ -299,7 +299,7 @@ function GoUp() {
         // }, 100);
       }}
     >
-      go up ({path.length})
+      Outer ({path.length})
     </button>
   );
 }

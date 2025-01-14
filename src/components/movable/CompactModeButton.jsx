@@ -11,7 +11,7 @@ export function CompactModeButton() {
         setIsCompact(!isCompact);
       }}
     >
-      {isCompact ? '+' : '-'}
+      {isCompact ? '🖃' : '-'}
     </button>
   );
 }

@@ -3,7 +3,8 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 
 const supports = !!document.startViewTransition;
 
-let enableTransitions = localStorage.getItem('enableTransitions') !== 'false', setState = null;
+const stored = localStorage.getItem('enableTransitions');
+let enableTransitions = stored && stored !== 'false';
 
 export function ToggleViewTransitions() {
     const [on, setOn] = useLocalStorage('enableTransitions', enableTransitions);
@@ -13,7 +14,7 @@ export function ToggleViewTransitions() {
         setOn(on);
     }
 
-    return <Checkbox controls={[on, toggle]}>View transitions</Checkbox>
+    return <Checkbox title="Enable view transitions on navigation and UI layout changes. Some interactions will still not animate because they're too fast for view transitions." controls={[on, toggle]}>View transitions</Checkbox>
 }
 
 export function toggleViewTransitions(on: boolean) {

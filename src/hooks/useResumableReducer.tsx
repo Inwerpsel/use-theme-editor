@@ -10,7 +10,6 @@ import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
 import { Action } from '../functions/reducerOf';
 import { use } from '../state';
-import { doTransition } from '../functions/viewTransition';
 
 type Reducer<T> = (previous: T, action) => T
 
@@ -781,7 +780,9 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
   // it should result in a new entry in any subsequent dispatches to the same id.
   // Otherwise, it would be possible to remove multiple recent entries (with different values)
   // just by having the same value for any short amount of time.
-  lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
+  if (!options?.skipHistory) {
+    lastSet = skippedHistoryNowSameAsPrevious ? 0 : now;
+  }
 
   lastActions.set(id, action);
 

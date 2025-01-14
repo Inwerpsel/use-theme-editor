@@ -608,9 +608,11 @@ div[id^=font-picker] ul {
 .movable-element-collapse {
   z-index: 999999999999999;
   position: absolute;
-  padding-top: 2px;
-  min-width: 24px !important;
-  min-height: 24px !important;
+  padding: 0 !important;
+  min-width: 32px !important;
+  min-height: 30px !important;
+  width: 32px !important;
+  height: 30px !important;
   top: 0;
   right: 0;
 }

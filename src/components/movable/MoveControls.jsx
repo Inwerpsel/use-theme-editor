@@ -85,7 +85,7 @@ export function MoveControls() {
       </Tutorial>
       {supportsDrag && (
         <Checkbox controls={[dragEnabled, setDragEnabled]}>
-          Drag elements
+          Drag anything
         </Checkbox>
       )}
       <CompactModeButton />
