@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect, useRef, Fragment } from 'react';
-import { HistoryNavigateContext, addPin, exportHistory, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, pinInitial, pinLatest, performAction, removePin } from '../../hooks/useResumableReducer';
+import { HistoryNavigateContext, addPin, historyBack, historyForward, interestingKeys, isInterestingState, latestOccurrence, pinInitial, pinLatest, performAction, removePin } from '../../hooks/useResumableReducer';
 import { Checkbox, Checkbox2 } from '../controls/Checkbox';
 import { get, use } from '../../state';
 import { MovableElementContext } from '../movable/MovableElement';
@@ -208,7 +208,7 @@ function ActionList(props) {
                 style={{ margin: 0, float: 'right' }}
                 className="monospace-code"
               >
-                {value === false ? 'false' : value === true ? 'true' : value}
+                {value === false ? 'off' : value === true ? 'on' : value}
               </pre>
             )}
             {!isPayloadLess && showPayloads && (
@@ -264,6 +264,7 @@ export function HistoryVisualization() {
   const [visualizeAlways, setVisualizeAlways] = use.visualizeHistoryAlways();
   const [debug, setDebug] = useState(false);
   const [showAll, setShowAll] = useLocalStorage('showAllHistory', true);
+  const [window, setWindow] = useLocalStorage('windowHistory', false);
   const [showJson, setShowJson] = useState(false);
   const [showPayloads, setShowPayloads] = useState(false);
   const {
@@ -279,7 +280,7 @@ export function HistoryVisualization() {
   let currentRef = useRef();
 
   useEffect(() => {
-    currentRef.current?.scrollIntoView({block: 'nearest'});
+    currentRef.current?.scrollIntoView({block: 'center'});
   }, [historyOffset]);
 
   if (!showHistory) {
@@ -299,6 +300,9 @@ export function HistoryVisualization() {
       <Checkbox controls={[showAll, setShowAll]}>Show all</Checkbox>
       <Checkbox2 hook={use.showScrolls}>Include scroll position</Checkbox2>
       <Checkbox controls={[debug, setDebug]}>Debug</Checkbox>
+      <Checkbox controls={[window, setWindow]}>
+        window
+      </Checkbox>
 
       {debug && <div>
         <Checkbox controls={[showJson, setShowJson]}>
@@ -308,7 +312,6 @@ export function HistoryVisualization() {
           Show payloads
         </Checkbox>
         <button onClick={() => console.log(pointedStates)}>console.log</button>
-        <button onClick={exportHistory}>export</button>
         {showJson && (
           <pre className="monospace-code">
             {JSON.stringify(Object.fromEntries(pointedStates), null, 2)}
@@ -322,6 +325,9 @@ export function HistoryVisualization() {
           // We don't use this in the present so it can be true already.
           isInFuture = isInFuture || isPresent;
           const amount = Math.abs(index - currentIndex);
+          if (window && amount > 10) {
+            return null;
+          }
 
           // Check if simple state would be changed by replaying.
           // Reducer actions are assumed to always be able to change state.
@@ -330,7 +336,7 @@ export function HistoryVisualization() {
               typeof action === 'object' || states.get(id) !== pointedStates.get(id)
           );
 
-          if (!isPresent && !showAll && index !== 0 && !isInterestingState(lastActions)) {
+          if (!isPresent && !showAll && index !== 0 && amount !== 1 && !isInterestingState(lastActions)) {
             // Always display an entry if state is pinned to its index
             const keys = [...lastActions.keys()];
             const anyPinnedHere = keys.some(id=>pins.has(id) && pins.get(id) === index);

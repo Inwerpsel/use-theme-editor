@@ -5,8 +5,7 @@ import {
   GooglePicker,
 } from 'react-color';
 import { ACTIONS, editTheme } from '../../hooks/useThemeEditor';
-import React, { Fragment, useState } from 'react';
-import tinycolor from 'tinycolor2';
+import React, { Fragment } from 'react';
 import { ThemePalettePicker } from '../ThemePalettePicker';
 import { useThrottler } from '../../hooks/useThrottler';
 import { TextControl } from '../controls/TextControl';
@@ -14,7 +13,7 @@ import { CreateAlias } from '../inspector/CreateAlias';
 import { get } from '../../state';
 import { SelectControl } from '../controls/SelectControl';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { OklchColorControl } from './OklchColorControl';
+import { OklchColorControl, toOk } from './OklchColorControl';
 
 import { converter, clampGamut, formatHsl, formatHex } from 'culori';
 
@@ -27,8 +26,8 @@ export const PREVIEW_SIZE = '39px';
 
 export const pickFormat = (color, opacity) =>
   opacity === 1
-    ? color.toHexString()
-    : color.setAlpha(opacity).toRgbString();
+    ? formatHex(color)
+    : `rgb(${color.r},${color.g},${color.b},${opacity})`;
 
 const extractUsage = (colors , [name, color]) => {
   if (/px/.test(color)) {
@@ -58,18 +57,21 @@ export const extractColorUsages = (theme, defaultValues) => {
   );
 };
 
-export const byHexValue = ({ color: color1 }, { color: color2 }) => {
-  const hex1 = tinycolor(color1).toHex();
-  const hex2 = tinycolor(color2).toHex();
+export const byOklchParams = ({ color: color1 }, { color: color2 }) => {
+  const a = toOk(color1);
+  const b = toOk(color2);
 
-  if (hex1 === hex2) {
-    if (color1 === color2) {
-      return 0;
-    }
-    return color1 < color2 ? 1 : -1;
-  }
+  if (!a) return -1;
+  if (!b) return 1;
 
-  return hex1 < hex2 ? 1 : -1;
+  if (a.l > b.l) return 1;
+
+  if (a.l < b.l) return -1;
+
+  if (a.h > b.h) return 1;
+  if (a.h > b.h) return -1;
+
+  return a.c - b.c;
 };
 
 const pickerSize = '80px';
@@ -90,28 +92,7 @@ export const ColorControl = (props) => {
   const parsed = toRgb(clampGamut('hsl')(resolvedValue)) || {};
   const value = resolvedValue;
   const { nativeColorPicker } = get;
-  // const { onChange: _onChange, onUnset, value: _value, cssVar, cssFunc } = props;
-
-  // const value = !cssFunc ? _value : `${cssFunc}(${value})`
-
-  // const onChange = !cssFunc ? _onChange : v => {
-  //   const color = tinycolor(v);
-
-  //   switch (cssFunc) {
-  //     case 'rgb':{
-  //       _onChange(color.toRgbString());
-  //     }
-  //     case 'hsl':{
-  //       _onChange(color.toHslString());
-  //     }
-  //   }
-  // }
-
   const {name, usages} = cssVar;
-  // const [hideColorPicker, setHideColorPicker] = useResumableState(
-  //   `color-picker~~${cssVar.name}`,
-  //   true
-  // );
 
   const dispatch = editTheme();
 
@@ -221,7 +202,7 @@ export const ColorControl = (props) => {
         }}
         value={hex}
         onChange={(event) => {
-          const color = tinycolor(event.target.value);
+          const color = toRgb(event.target.value);
           const newColor = pickFormat(color, opacity);
 
           // Native picker emits values much more frequently than can be distinguished when applied.
@@ -241,9 +222,9 @@ export const ColorControl = (props) => {
         value={parsed.a}
         onChange={(event) => {
           const opacity = Number(event.target.value);
-          const color = tinycolor(value);
+          const newColor = pickFormat(parsed, opacity);
 
-          onChange(pickFormat(color, opacity));
+          onChange(newColor);
         }}
       />
       <button

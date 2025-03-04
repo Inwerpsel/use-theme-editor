@@ -55,7 +55,8 @@ export function useGlobalState<T>(key: string, defaultValue: T): StateAndUpdater
 
 const effectsDone = new Set<string>();
 
-export function readSync(key: string) {
+// Todo: TypeScript
+export function readSyncGlobal(key: string) {
   return states.get(key);
 }
 

@@ -196,10 +196,15 @@ export const ResizableFrame = props => {
 
   const [width, setWidth] = use.width();
   const [height, setHeight] = use.height();
-  const scale = get.scales[`${width}x${height}`] || 1;
+  const scales = get.scales;
+  const key = `${width}x${height}`;
+  const scale = !(key in scales) ? 1 : scales[key];
 
   return <div
-    style={{ overflow: 'hidden' }}
+    style={{ 
+      // overflow: 'hidden',
+      maxWidth: `${width * scale + 32}px`,
+     }}
     className='responsive-frame-outer-container'
   >
     <div
@@ -225,7 +230,7 @@ export const ResizableFrame = props => {
         width: `max(calc(${ wrapperMargin + parseInt(width) }px * ${scale}), ${ wrapperMargin + parseInt(width) }px)`,
         minHeight: '200px',
         height: `${ wrapperMargin + parseInt(height) }px`,
-        overflow: 'hidden',
+        overflowX: 'hidden',
         padding: '0',
         boxSizing: 'border-box',
         marginLeft: '1rem',

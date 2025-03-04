@@ -6,7 +6,7 @@ import { allScreenOptions, simpleScreenOptions } from "../screenOptions";
 import { useResumableState } from "../hooks/useResumableReducer";
 import { useServerThemes } from "../hooks/useServerThemes";
 import { ROOT_SCOPE, useThemeEditor } from "../hooks/useThemeEditor";
-import { byHexValue, extractColorUsages } from "../components/properties/ColorControl";
+import { byOklchParams, extractColorUsages } from "../components/properties/ColorControl";
 import { getDefaults } from "../initializeThemeEditor";
 import { useGlobalState } from "../hooks/useGlobalState";
 import { toOk } from "../components/properties/OklchColorControl";
@@ -59,7 +59,7 @@ export const use = {
   colorUsages:
     () => [mem(
       get => extractColorUsages(
-        get.themeEditor.scopes[ROOT_SCOPE], !get.includeDefaultPalette ? {} : getDefaults()).sort(byHexValue)
+        get.themeEditor.scopes[ROOT_SCOPE], !get.includeDefaultPalette ? {} : getDefaults()).sort(byOklchParams)
     )],
   fileName:
     () => useResumableLocalStorage('fileName', 'theme'),
@@ -133,6 +133,10 @@ export const use = {
     () => useLocalStorage('savedSelectors', []),
   note:
     () => useResumableState('note', ''),
+  demoMode:
+    () => useGlobalState('demoMode', false),
+  playTime:
+    () => useResumableState('playtime', 0),
   // 
   // State below this is only used in a demo element.
   //

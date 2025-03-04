@@ -10,6 +10,8 @@ import { deleteStoredHistory, storeActions } from '../_unstable/historyStore';
 import { saveAsJsonFile } from '../functions/export';
 import { Action } from '../functions/reducerOf';
 import { use } from '../state';
+import { readSyncGlobal } from './useGlobalState';
+import { doTransition } from '../functions/viewTransition';
 
 type Reducer<T> = (previous: T, action) => T
 
@@ -362,6 +364,12 @@ function subscribe(notify) {
 
 function getSnapShot(id) {
     let sourceStates;
+
+    const isDemo = readSyncGlobal('demoMode');
+    if (isDemo && transitingState && transitingState[0] === id) {
+      return transitingState[1];
+    }
+
     if (pins.has(id)) {
       const index = pins.get(id);
       sourceStates = index >= past.length ? states : past[index].states;
@@ -529,11 +537,15 @@ function isFullyPinned(entry: HistoryEntry) {
 }
 
 export function historyBackOne(): void {
-  historyBack(1);
+  doTransition(() => {
+    historyBack(1);
+  })
 }
 
 export function historyForwardOne(): void {
-  historyForward(1);
+  doTransition(() => {
+    historyForward(1);
+  })
 }
 
 export function historyBackFast(): void {
@@ -645,8 +657,7 @@ export function replayAlternate(): void {
       }
     }
     currentOffset++;
-    storeActions([...map.entries()], false, past.length);
-    // console.log('storing', [...map.entries()], false, past.length);
+    storeActions([...map.entries()], false, past.length - 1);
   }
 
   if (entries.length === 0) {
@@ -657,7 +668,7 @@ export function replayAlternate(): void {
     lastActions = newLatest.lastActions;
     past = past.slice(0, -historyOffset);
     // Clear future by storing same record again.
-    storeActions([...newLatest.lastActions.entries()], true, past.length)
+    storeActions([...newLatest.lastActions.entries()], true, past.length - 1)
     historyOffset = 0;
   } else {
     historyOffset = Math.min(entries.length, past.length - 1);
@@ -686,17 +697,17 @@ export function performAction(id, action, options?: HistoryOptions): void {
     return;
   }
 
-  const changed = wasPast
-    ? performActionOnPast(id, action, options)
-    : performActionOnLatest(id, action, options);
-  if (!changed) return;
-
   // Quick and dirty fix, should be safe for now.
   if (typeof action.type === 'function') {
     action.type = action.type.name;
   }
+
+  const changed = wasPast
+    ? performActionOnPast(id, action, options)
+    : performActionOnLatest(id, action, options);
+  if (!changed) return;
   
-  storeActions([...lastActions.entries()], wasPast, past.length);
+  storeActions([...lastActions.entries()], wasPast, past.length - 1);
   notifyOne(id);
 }
 
@@ -793,11 +804,151 @@ export function performActionOnLatest(id, action, options: HistoryOptions = {}):
   return true;
 }
 
+let transitingState = null, lastNumbers = null, transitingTimeout = null, blockTransit = false;
+
+const NUMBER_REGEX = /(\d(\.\d+)?)+/g; 
+
+function textOnly(s: string) {
+  return s.replaceAll(NUMBER_REGEX, '\n');
+}
+
+function allNumbers(s: string): number[] {
+  return [...s.matchAll(NUMBER_REGEX)].map(r=>Number(r[0]));
+}
+
+function hasMultipleChangingComponents(numbersA: number[], numbersB: number[]) {
+  let i = -1, hasOne = false;
+  for (const a of numbersA) {
+    i++;
+    const b = numbersB[i];
+    const changes = a !== b;
+    if (hasOne) {
+      if (changes) {
+        return true;
+      }
+    } else {
+      if (changes) {
+        hasOne = true;
+      }
+    }
+  }
+  return false;
+}
+
+function moveApproachesNextAction(move: string, goal: string): [boolean, number[]?] {
+  const goalNumbers = allNumbers(goal);
+  if (goalNumbers.length === 0) return [false];
+
+  if (textOnly(move) !== textOnly(goal)) {
+    return [false];
+  }
+  const moveNumbers = allNumbers(move);
+
+
+  if (!transitingState) {
+    return [
+      moveNumbers.length === goalNumbers.length &&
+        !hasMultipleChangingComponents(moveNumbers, goalNumbers),
+      moveNumbers,
+    ];
+  }
+
+  // console.log('CHECK MOVE', {moveNumbers, goalNumbers, lastNumbers: [...lastNumbers]});
+  let i = -1, hasOneDifference = false;
+  for (const n of moveNumbers) {
+    i++;
+    const goal = goalNumbers[i];
+    const last = (lastNumbers || goalNumbers)[i]
+
+    if (n !== goal) {
+      if (hasOneDifference) {
+        // Only allow a single numeric component to approach.
+        console.log('MULTIPLE DIFFERENCES', {move, goal});
+        return [false];
+      } else {
+        hasOneDifference = true;
+      }
+    }
+
+    const beforeGoal = n < goal;
+    const afterGoal = n > goal;
+    const beforeLast = n < last;
+    const afterLast = n > last;
+
+    // console.log('a',{n, goal, last});
+    if (goal === last) {
+      if (n !== goal) return [false];
+      continue;
+    }
+    if (goal > last) {
+      if (beforeLast || afterGoal) return [false];
+    } else {
+      if (afterLast || beforeGoal) return [false];
+    }
+    // console.log(`${n} between last ${last} and goal ${goal}`);
+  }
+
+  return [true, moveNumbers];
+}
+
 function performActionOnPast(id, action, options: HistoryOptions = {}): boolean {
   const reducer = reducers.get(id) || simpleStateReducer;
   if (!reducer) {
     return false;
   }
+  const baseIndex = past.length - historyOffset;
+  const prevEntry = past[baseIndex];
+  const prevStates = prevEntry.states;
+
+  // const isFirst = !lastNumbers;
+
+  if (readSyncGlobal('demoMode')) {
+    if (blockTransit) return false;
+    const nextActions = past[baseIndex + 1]?.lastActions || lastActions;
+    if (nextActions.has(id) ) {
+      const goal = JSON.stringify(nextActions.get(id));
+      const move = JSON.stringify(action);
+
+      if (move === goal) {
+        clearTimeout(transitingTimeout);
+        transitingState = null;
+        lastNumbers = null;
+        doTransition(() => { historyGo(historyOffset - 1); });
+        blockTransit = true;
+        setTimeout(() => {
+          blockTransit = false;
+        }, 1500);
+      } else {
+        const [approaches, numbers] = moveApproachesNextAction(move, goal);
+        // if (!lastNumbers) lastNumbers = numbers;
+        if (approaches) {
+          clearTimeout(transitingTimeout);
+
+          lastNumbers = numbers;
+          // if (!isFirst) return false;
+          // Update temporary state.
+          transitingState = [id, reducer(prevStates.has(id) ? prevStates.get(id) : initialStates.get(id), action)]
+          // Ensure the intermediate state does not stay on the screen too long if interrupted.
+          transitingTimeout = setTimeout(() => {
+            transitingState = null;
+            lastNumbers = null;
+            doTransition(() => {
+              historyGo(historyOffset - 1);
+              notifyOne(id);
+            });
+            blockTransit = true;
+            setTimeout(() => {
+              blockTransit = false;
+            }, 1000);
+          }, 300);
+          notifyOne(id);
+        }
+      }
+    }
+    return false;
+  }
+
+  const now = performance.now();
   if (lastAlternate.length > historyWarnOnUpdateLimit && !options.force) {
     savedStashes.push([lastAlternateIndex, lastAlternate]);
     // if (!window.confirm(`You're about to lose ${lastAlternate.length} stashed changes, proceed?`)) {
@@ -805,10 +956,6 @@ function performActionOnPast(id, action, options: HistoryOptions = {}): boolean 
     // }
   }
 
-  const now = performance.now();
-  const baseIndex = past.length - historyOffset;
-  const prevEntry = past[baseIndex];
-  const prevStates = prevEntry.states;
   const pinIndex = pins.has(id) ? pins.get(id) : baseIndex;
   const baseStatesWithPin = past[pinIndex]?.states || states;
 
@@ -920,6 +1067,14 @@ function setCurrentState() {
     historyOffset > 0
       ? past[past.length - historyOffset].states
       : states;
+}
+
+export function goToStart() {
+  historyGo(past.length);
+}
+
+export function getCurrentOffset() {
+  return historyOffset;
 }
 
 function storeOffset() {

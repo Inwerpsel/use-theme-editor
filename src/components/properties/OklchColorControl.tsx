@@ -92,7 +92,10 @@ export function OklchColorControl({value, onChange}) {
     const { l: _l, c, h = 0, alpha = 1 } = toOk(value) || { l: 0, c: 0, h: 0, alpha: 1 };
     const l = 100 * _l;
     const clamped = clampChroma(`oklch(${l}% 0.4 ${h})`, 'oklch', 'p3');
-    const maxChroma = clamped?.c || 0; 
+    let maxChroma = clamped?.c || 0; 
+    if (maxChroma < 0.001) {
+      maxChroma = 0;
+    }
     // Todo: find right number to check here and possibly also use in other places.
     const isNotInGamut = c - maxChroma > 0.001;
     const lowerL = minLightness(c, h);
@@ -126,6 +129,7 @@ export function OklchColorControl({value, onChange}) {
         <div className="chroma">
           <input
             id="chroma"
+            disabled={maxChroma === 0}
             type="range"
             min={0}
             max={0.37}
@@ -152,7 +156,7 @@ export function OklchColorControl({value, onChange}) {
         </div>
         <OnlinePickerLink {...{l,c,h}} />
         {!value.startsWith('oklch(') && <button onClick={() => {onChange(oklch(l, c, h, alpha))}}>convert</button>}
-        {isNotInGamut && <span style={{color: 'red', fontWeight: 'bold'}}>NOT IN GAMUT</span>}
+        {isNotInGamut && <span style={{color: 'red', fontWeight: 'bold'}}> Color does not exist</span>}
       </div>
     );
 }

@@ -16,7 +16,7 @@ import { findClosingBracket } from '../../functions/compare';
 import { ImageColors } from './ImageColors';
 import { Checkbox, Checkbox2 } from '../controls/Checkbox';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { readSync } from '../../hooks/useGlobalState';
+import { readSyncGlobal } from '../../hooks/useGlobalState';
 import { useDispatcher } from '../../hooks/useResumableReducer';
 import { onLongPress } from '../../functions/onLongPress';
 import { addHighlight, removeHighlight } from '../../functions/highlight';
@@ -397,10 +397,11 @@ export const GroupControl = props => {
               overflowY: 'auto',
             }}
             onClick={
-              !hasContent
-                ? null
-                : (event) => {
-                    const picked = readSync('pickedValue');
+              // !hasContent
+              //   ? null
+              //   : 
+                (event) => {
+                    const picked = readSyncGlobal('pickedValue');
                     if (picked) {
                       const changed = applyHueToAllColors(picked, {
                         groupColors,
@@ -439,7 +440,7 @@ export const GroupControl = props => {
             }}
           >
             <div style={{flexShrink: 1}}>
-              {label} ({vars.length})
+              {element.tagName === 'INPUT' ? `${element?.attributes?.type?.value || ''} ` : ''}{label} ({vars.length})
               {propertyFilter !== 'all' && (
                 <span style={{ color: 'grey', fontSize: '12px' }}>
                   {propertyFilter}

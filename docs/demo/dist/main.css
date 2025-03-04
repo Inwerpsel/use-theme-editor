@@ -27,6 +27,7 @@ body {
   font-size: 16px;
 }
 .theme-editor button, .theme-editor input:is([type=button], [type=text]), .theme-editor select, .theme-editor label:has(> [type=checkbox]) {
+  box-sizing: border-box;
   min-width: 42px;
   min-height: 42px;
 }
@@ -89,6 +90,11 @@ body {
 
 .force-cursor, .force-cursor * {
   cursor: help !important;
+}
+
+.responsive-frame {
+  border: none;
+  outline: 2px solid gray;
 }
 
 .responsive-frame-container {
@@ -1026,6 +1032,9 @@ html {
 html.doxray {
   scroll-padding-top: 0 !important;
 }
+html.doxray :has(.xray) {
+  margin-top: 0 !important;
+}
 html.doxray :not(:has(.xray), :has(> .xray) > *, :has(> .xray) > * *, .xray, .xray *, symbol, symbol *, defs, defs *, mask, mask *) {
   display: none !important;
   visibility: hidden;
@@ -1065,7 +1074,7 @@ body {
 }
 
 ::view-transition-group(*) {
-  animation-duration: 0.25s;
+  animation-duration: 0.3s;
   animation-delay: 0;
 }
 
@@ -1077,6 +1086,43 @@ body {
 
 .var-group:focus, .var-group:focus-within {
   outline: 2px solid #144f62;
+}
+
+input[type=file]:not(:hover) {
+  color: transparent;
+}
+
+::file-selector-button {
+  color: black;
+}
+
+@property --countdown {
+  syntax: "<integer>";
+  inherits: false;
+  initial-value: 0;
+}
+@keyframes count {
+  from {
+    --countdown: var(--countdown-length);
+  }
+  to {
+    --countdown: 0;
+  }
+}
+.countdown::after {
+  --countdown: var(--countdown-length);
+  animation: calc(1s * var(--countdown-length)) linear count;
+  animation-fill-mode: forwards;
+  animation-delay: 0.5s;
+  counter-reset: countdown calc(0 + var(--countdown));
+  content: counter(countdown);
+  width: calc(var(countdown) / var(countdown-length) * 100%);
+}
+
+@starting-style {
+  .countdown::after {
+    --countdown: var(--countdown-length);
+  }
 }
 
 /*# sourceMappingURL=main.css.map*/

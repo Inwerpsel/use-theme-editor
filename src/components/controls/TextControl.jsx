@@ -28,7 +28,6 @@ export function TextControl({
       ref={inputRef}
       {...{ value, onChange }}
       onKeyDown={preventUndoRedo}
-      className="components-text-control__input"
       autoCapitalize="off"
       {...props}
     />

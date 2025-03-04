@@ -1,0 +1,26 @@
+@property --countdown {
+	syntax: "<integer>";
+	inherits: false;
+	initial-value: 0;
+}
+
+@keyframes count {
+	from { --countdown: var(--countdown-length); }
+	to { --countdown: 0; }
+}
+
+.countdown::after {
+    --countdown: var(--countdown-length);
+	animation: calc(1s * var(--countdown-length)) linear count;
+	animation-fill-mode: forwards;
+    animation-delay: .5s;
+	counter-reset: countdown calc(0 + var(--countdown));
+	content: counter(countdown);
+    width: calc((var(countdown) / var(countdown-length)) * 100%);
+}
+
+@starting-style {
+	.countdown::after {
+		--countdown: var(--countdown-length);
+	}
+}

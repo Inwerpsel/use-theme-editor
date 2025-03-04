@@ -6,7 +6,7 @@ import {CustomVariableInput} from './ui/CustomVariableInput';
 import {StylesheetDisabler} from './ui/StylesheetDisabler';
 import {PropertyCategoryFilter} from './ui/PropertyCategoryFilter';
 import {PropertySearch} from './ui/PropertySearch';
-import {Checkbox} from './controls/Checkbox';
+import {Checkbox, Checkbox2} from './controls/Checkbox';
 import {ToggleButton} from './controls/ToggleButton';
 import {ImportExportTools} from './ui/ImportExportTools';
 import {ThemeUploadPanel} from './ui/ThemeUploadPanel';
@@ -45,6 +45,9 @@ import { Selectors } from './ui/Selectors';
 import { NoteBox } from './ui/NoteBox';
 import { Xray } from './ui/Xray';
 import { ToggleViewTransitions } from '../functions/viewTransition';
+import { Play } from './ui/Play';
+import { Session } from './ui/Session';
+import { PlayTime } from './ui/PlayTime';
 
 export const ThemeEditorContext = createContext({});
 
@@ -178,6 +181,9 @@ export const ThemeEditor = (props) => {
               </div>
             </Area>
             <Drawer>
+              <PlayTime />
+              <Session />
+              <Play />
               <MoveControls />
               <FullscreenToggle />
               <CursorBehavior />
@@ -193,6 +199,9 @@ export const ThemeEditor = (props) => {
                   controls={use.enableScrollingInView()}
                 >Scroll into view in history</Checkbox>
                 <ToggleViewTransitions />
+                <Checkbox2
+                  hook={use.demoMode}
+                >Demo mode</Checkbox2>
               </div>
               <WebpackHomeInput />
               <RemoveAnnoyingPrefix />

@@ -80,32 +80,7 @@ export function ImportExportTools() {
       </label>
     </div>
     <div>
-      <label
-        style={{
-          background: 'rgba(255,255,255,.3)',
-          cursor: 'copy',
-        }}
-      > Import history JSON
-        <input
-          type="file"
-          accept={'.json'}
-          onChange={event => {
-            const reader = new FileReader();
-            // const name = event.target.files[0]?.name;
-          
-            reader.onload = event => {
-              try {
-                const data = JSON.parse(event.target.result);
-                importHistory(data);
-              } catch (e) {
-                console.log('failed uploading', e);
-              }
-            };
-            reader.readAsText(event.target.files[0]);
-          }}
-          style={{cursor: 'copy'}}
-        />
-      </label>
+      
     </div>
     <TextControl
       value={''}

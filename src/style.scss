@@ -31,6 +31,7 @@ $focus-outline: 3px solid rgb(40, 155, 255);
   }
 
   button, input:is([type=button], [type=text]), select, label:has(>[type=checkbox]) {
+    box-sizing: border-box;
     min-width: $min-button-height;
     min-height: $min-button-height;
   }
@@ -128,6 +129,11 @@ $focus-outline: 3px solid rgb(40, 155, 255);
 
 .force-cursor, .force-cursor * {
   cursor: help !important;
+}
+
+.responsive-frame {
+  border: none;
+  outline: 2px solid gray;
 }
 
 .responsive-frame-container {
@@ -750,9 +756,17 @@ html {
   display: none !important;
 }
 
-// Todo: Split off CSS that is only for the xray frame.
+// Todo
+// * Split off CSS that is only for the xray frame.
+// * Check selector performance, particularly `:has()`
+// * Improve quick fixes for definitions in SVG (long selectors)
 html.doxray {
   scroll-padding-top: 0 !important;
+
+  // Quick fix that improves some elements being pushed down, and doesn't seem to cause problems otherwise.
+  :has(.xray) {
+    margin-top: 0 !important;
+  }
   // * {
   //   transition: none !important;
   //   animation: none !important;
@@ -818,7 +832,7 @@ body {
 }
 
 ::view-transition-group(*) {
-  animation-duration: .25s;
+  animation-duration: .3s;
   animation-delay: 0;
   // user-select: none;
 }
@@ -846,3 +860,21 @@ $fixed-history-width: 360px !important;
     max-width: $fixed-history-width;
   }
 }
+
+.var-group {
+  &:focus, &:focus-within {
+    outline: 2px solid #144f62;
+  }
+}
+
+input[type=file]:not(:hover) {
+  color: transparent;
+}
+::file-selector-button {
+  color: black;
+  // font-size: 1.5rem;
+  // width: 3.5rem;
+  // height: 5rem;
+}
+
+@import "css/countdown.scss";
