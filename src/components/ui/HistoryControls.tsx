@@ -168,7 +168,7 @@ export function MiniTimeline() {
           boxSizing: 'border-box',
         }}
       ></div>
-      <Dots amount={past.length + 1} />
+      {past.length < 200 && <Dots amount={past.length + 1} />}
       {tutorial}
     </div>
   );
